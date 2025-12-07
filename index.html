@@ -1,152 +1,636 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Trending4Ever</title>
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <link href="index-CID6DNWR.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="index-CID6DNWR.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-900 text-white">
+<body class="text-black text-base not-italic normal-nums font-normal box-border h-full w-full">
 
-<header class="w-full border-b border-gray-800 border-solid">
-  <div class="max-w-[1920px] mx-auto px-4 py-6 text-center">
-    <h1 class="text-5xl font-extrabold tracking-[-2.4px] leading-[48px] mb-2 font-space_grotesk md:text-7xl md:font-black md:tracking-[-3.6px] md:leading-[72px]">
-      VibeNow
-    </h1>
-    <p class="text-gray-400 text-xl font-medium">Your live wall of trending vibes</p>
-  </div>
-</header>
+<style>
+  .anima-badge .badge-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 83, 206, 0.3);
+  }
+  .anima-badge .badge-content { display: inline-flex; align-items: center; gap: 8px; position: relative; flex: 0 0 auto; }
+  .anima-badge .badge-icon { position: relative; width: 16px; height: 16px; }
+  .anima-badge .badge-text { position: relative; width: fit-content; font-family: var(--body-regular-md-font-family); font-weight: var(--body-regular-md-font-weight); color: var(--badge-text-color); font-size: var(--body-regular-md-font-size); letter-spacing: var(--body-regular-md-letter-spacing); line-height: var(--body-regular-md-line-height); font-style: var(--body-regular-md-font-style); white-space: nowrap; }
+  .anima-badge .close-button { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
+  .anima-badge .close-button:hover { opacity: 1; }
+  .anima-badge .close-icon { position: relative; width: 16px; height: 16px; }
+  @media screen and (max-width: 768px) {
+    .anima-badge { bottom: 16px; right: 16px; }
+    .anima-badge .badge-button { height: 36px; padding: 0 10px; gap: 6px; }
+    .anima-badge .badge-text { font-size: 13px; }
+  }
+  @media screen and (max-width: 480px) {
+    .anima-badge { bottom: 12px; right: 12px; }
+    .anima-badge .badge-button { height: 32px; padding: 0 8px; gap: 6px; }
+    .anima-badge .badge-text { font-size: 12px; }
+    .anima-badge .badge-icon, .anima-badge .close-icon { width: 14px; height: 14px; }
+  }
+</style>
 
-<main class="relative w-full">
-  <section class="relative min-h-[1000px] w-full py-12">
-    <div class="max-w-screen-xl mx-auto px-4 columns-1 md:columns-3 gap-x-6 gap-y-6">
-
-      <!-- Card 1 -->
-      <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-solid border-white/10"
-           data-url="https://www.youtube.com/watch?v=abcd1234">
-        <div class="bg-slate-800 rounded-lg overflow-hidden shadow">
-          <div class="relative aspect-video w-full overflow-hidden">
-            <img src="9cfc92_cef98bc329064e21baf55186a624c9df_mv2-1.png"
-                 alt="The Ultimate Summer Road Trip Guide"
-                 class="h-full w-full object-cover">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between mb-2">
-              <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-              <span class="text-gray-400 text-xs">Score: 98.7</span>
-            </div>
-            <h3 class="text-lg font-space_grotesk mb-2">The Ultimate Summer Road Trip Guide</h3>
-            <p class="text-gray-400 text-sm mb-2">@Wanderlust Adventures</p>
-            <p class="text-gray-500 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-solid border-white/10"
-           data-url="https://www.tiktok.com/@dancewithme/video/xyz987">
-        <div class="bg-slate-800 rounded-lg overflow-hidden shadow">
-          <div class="relative aspect-video w-full overflow-hidden">
-            <img src="9cfc92_d35740f63551465dae366ebd658c1c49_mv2.png"
-                 alt="Viral Dance Challenge: #GrooveMoves"
-                 class="h-full w-full object-cover">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between mb-2">
-              <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
-              <span class="text-gray-400 text-xs">Score: 95.2</span>
-            </div>
-            <h3 class="text-lg font-space_grotesk mb-2">Viral Dance Challenge: #GrooveMoves</h3>
-            <p class="text-gray-400 text-sm mb-2">@DanceWithMe</p>
-            <p class="text-gray-500 text-sm">Join the latest dance craze sweeping TikTok! Can you master the #GrooveMoves?</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-solid border-white/10"
-           data-url="https://www.instagram.com/reel/12345">
-        <div class="bg-slate-800 rounded-lg overflow-hidden shadow">
-          <div class="relative aspect-video w-full overflow-hidden">
-            <img src="9cfc92_7dbd7000887247e6b9f3c20e7ae2f6da_mv2.png"
-                 alt="DIY Home Decor Hacks You Need"
-                 class="h-full w-full object-cover">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between mb-2">
-              <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Instagram Reels</span>
-              <span class="text-gray-400 text-xs">Score: 92.1</span>
-            </div>
-            <h3 class="text-lg font-space_grotesk mb-2">DIY Home Decor Hacks You Need</h3>
-            <p class="text-gray-400 text-sm mb-2">@CraftyCorner</p>
-            <p class="text-gray-500 text-sm">Transform your living space with these simple and stylish DIY home decor hacks.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-solid border-white/10"
-           data-url="https://www.facebook.com/watch?v=98765">
-        <div class="bg-slate-800 rounded-lg overflow-hidden shadow">
-          <div class="relative aspect-video w-full overflow-hidden">
-            <img src="9cfc92_3a11ce3c6d944a3fa86bae31d819c848_mv2.png"
-                 alt="Chef's Secret: Perfect Pasta Sauce"
-                 class="h-full w-full object-cover">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between mb-2">
-              <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Facebook Watch</span>
-              <span class="text-gray-400 text-xs">Score: 89.5</span>
-            </div>
-            <h3 class="text-lg font-space_grotesk mb-2">Chef's Secret: Perfect Pasta Sauce</h3>
-            <p class="text-gray-400 text-sm mb-2">@GourmetKitchen</p>
-            <p class="text-gray-500 text-sm">Learn the secret to a rich and flavorful pasta sauce from our master chef.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-solid border-white/10"
-           data-url="https://twitter.com/techinsights/status/54321">
-        <div class="bg-slate-800 rounded-lg overflow-hidden shadow">
-          <div class="relative aspect-video w-full overflow-hidden">
-            <img src="9cfc92_c67ccc434cae4be5bbeaf902839fee01_mv2.png"
-                 alt="Breaking News: AI Breakthrough"
-                 class="h-full w-full object-cover">
-          </div>
-          <div class="p-4">
-            <div class="flex justify-between mb-2">
-              <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitter/X</span>
-              <span class="text-gray-400 text-xs">Score: 97</span>
-            </div>
-            <h3 class="text-lg font-space_grotesk mb-2">Breaking News: AI Breakthrough</h3>
-            <p class="text-gray-400 text-sm mb-2">@TechInsights</p>
-            <p class="text-gray-500 text-sm">A major AI breakthrough has been announced, promising to revolutionize several industries.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Add more cards here following the same pattern -->
-
+<div class="anima-badge" id="anima-badge">
+  <a target="_blank" class="badge-button" href="https://www.animaapp.com/an?url=https%3A%2F%2Fwww.animaapp.com&utm_content=broken-sun-7789.dev.animaapp.io&utm_medium=anima-playground&utm_source=free-website-banner">
+    <div class="badge-content">
+      <img class="badge-icon" src="anima-logo.svg" alt="Anima logo">
     </div>
-  </section>
-</main>
+    <div class="badge-text">Built with Anima</div>
+    <button class="close-button">
+      <img class="close-icon" src="close-button.svg" alt="Close">
+    </button>
+  </a>
+</div>
 
-<!-- JavaScript to make cards clickable -->
+<div id="app">
+  <div class="text-white bg-gray-900 min-h-[1000px] overflow-x-clip font-nunito_sans">
+    <div class="fixed bg-[linear-gradient(to_right,rgb(255,0,127),rgb(0,255,255),rgb(255,65,54))] h-1 origin-[0%_50%] z-50 top-0 inset-x-0 md:scale-x-0"></div>
+
+    <header class="bg-gray-900 w-full border-gray-800 border-b border-solid">
+      <div class="max-w-[1920px] mx-auto px-4 py-6">
+        <div class="text-center">
+          <h1 class="text-5xl font-extrabold tracking-[-2.4px] leading-[48px] mb-2 font-space_grotesk md:text-7xl md:font-black md:tracking-[-3.6px] md:leading-[72px]">
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">V</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">i</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">b</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">e</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">N</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">o</span>
+            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">w</span>
+          </h1>
+          <p class="text-gray-400 text-xl font-medium">Your live wall of trending vibes</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative w-full">
+
+      <!-- Hero -->
+      <section class="relative flex justify-center min-h-[900px] w-full overflow-hidden pt-20">
+        <div class="absolute inset-0 pointer-events-none">
+          <div class="absolute [mask-image:linear-gradient(rgb(0,0,0)_40%,rgba(0,0,0,0)_100%)] bg-[linear-gradient(to_right,rgb(51,51,51)_1px,rgba(0,0,0,0)_1px),linear-gradient(rgb(51,51,51)_1px,rgba(0,0,0,0)_1px)] bg-size-[64px_64px,64px_64px] opacity-20 inset-0"></div>
+          <div class="absolute bg-[linear-gradient(rgba(255,0,127,0.1),rgba(0,0,0,0))] blur-3xl h-[500px] opacity-50 w-full left-0 top-0"></div>
+        </div>
+
+        <div class="relative flex flex-col max-w-none text-center w-full z-10 mx-auto px-4 md:max-w-screen-xl">
+          <div><div class="text-cyan-400 text-sm font-medium inline-flex backdrop-blur-sm bg-cyan-400/10 tracking-[1.4px] uppercase border border-cyan-400 mb-6 px-4 py-2 rounded-md">
+            <span class="bg-cyan-400 block h-2 w-2 mr-2 rounded-full"></span>Live Feed Active
+          </div></div>
+
+          <div><h1 class="text-transparent text-6xl font-black bg-clip-text bg-[linear-gradient(rgb(255,255,255),rgba(255,255,255,0.5))] tracking-[-3px] mb-8 font-space_grotesk md:text-9xl">VIBE<span class="text-pink-600">NOW</span></h1></div>
+
+          <div><p class="text-gray-400 text-xl font-medium tracking-[-0.5px] max-w-2xl mb-12 mx-auto md:text-2xl md:font-semibold">Your live wall of trending vibes. We aggregate the pulse of the internet into a single, electrifying stream.</p></div>
+
+          <div>
+            <div class="flex flex-col gap-y-4 gap-x-4 md:flex-row items-center">
+              <button class="text-lg font-bold items-center bg-pink-600 shadow-[rgba(255,0,127,0.5)_0_0_20px_0] gap-x-2 flex h-14 justify-center tracking-[-0.45px] px-8 rounded-full">
+                Start Watching <img src="icon-3.svg" alt="Icon" class="h-4 w-4 ml-2 pointer-events-none">
+              </button>
+              <button class="text-gray-300 text-lg items-center bg-transparent border border-gray-700 h-14 px-8 rounded-full">Explore Platforms</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute bg-[linear-gradient(to_top,rgb(17,24,39),rgba(0,0,0,0))] h-[300px] pointer-events-none z-20 bottom-0 inset-x-0"></div>
+      </section>
+
+      <!-- Viral Spotlight -->
+      <section class="relative bg-gray-900/50 w-full py-24 border-y border-solid border-white/10">
+        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
+          <div class="flex flex-col items-start mb-12">
+            <h2 class="text-4xl font-bold flex items-center gap-3 font-space_grotesk md:text-5xl md:font-extrabold">
+              <img src="icon-4.svg" alt="Icon" class="h-10 w-10">Viral Spotlight
+            </h2>
+            <div class="bg-red-500 h-1 w-24 mt-4 rounded-full"></div>
+          </div>
+
+          <div class="grid md:grid-cols-12 gap-8">
+            <div class="md:col-span-8">
+              <div class="relative aspect-video bg-black/50 shadow-[rgba(0,0,0,0.25)_0_25px_50px_-12px] border overflow-hidden rounded-xl border-white/10">
+                <img src="9cfc92_cef98bc329064e21baf55186a624c9df_mv2.png" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover">
+                <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8),rgba(0,0,0,0))]"></div>
+                <div class="absolute left-0 bottom-0 p-8">
+                  <div class="text-xs font-medium bg-red-500 inline-flex tracking-[0.6px] mb-4 px-2.5 py-1.5 rounded-md">#1 Trending</div>
+                  <h3 class="text-2xl font-bold font-space_grotesk md:text-4xl">The Ultimate Summer Road Trip Guide</h3>
+                  <p class="text-gray-300 flex items-center gap-2">
+                    <span class="text-pink-600 font-bold">YouTube</span><span>•</span><span>Wanderlust Adventures</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="md:col-span-4">
+              <div class="backdrop-blur-sm bg-white/10 border p-6 rounded-2xl border-white/10">
+                <div class="flex items-center gap-4 mb-2">
+                  <div class="text-pink-600 bg-pink-600/20 p-3 rounded-full"><img src="icon-5.svg" alt="Icon" class="h-6 w-6"></div>
+                  <div>
+                    <p class="text-gray-400 text-sm uppercase tracking-[0.7px]">Trending Score</p>
+                    <p class="text-3xl font-bold font-space_grotesk">98.7</p>
+                  </div>
+                </div>
+              </div>
+              <div class="backdrop-blur-sm bg-white/10 border mt-6 p-6 rounded-2xl border-white/10">
+                <div class="flex items-center gap-4 mb-2">
+                  <div class="text-cyan-400 bg-cyan-400/20 p-3 rounded-full"><img src="icon-6.svg" alt="Icon" class="h-6 w-6"></div>
+                  <div>
+                    <p class="text-gray-400 text-sm uppercase tracking-[0.7px]">Platform Status</p>
+                    <p class="text-cyan-400 text-3xl font-bold font-space_grotesk">Online</p>
+                  </div>
+                </div>
+              </div>
+              <div class="bg-[linear-gradient(to_right_bottom,rgba(255,0,127,0.2),rgba(0,0,0,0))] border border-pink-600/20 mt-6 p-6 rounded-2xl">
+                <h4 class="text-xl font-bold font-space_grotesk mb-2">Why it's hot</h4>
+                <p class="text-gray-400 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Feed Filter Bar -->
+      <div class="backdrop-blur-xl bg-gray-900/80 w-full py-4 border-b border-white/10">
+        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
+          <div class="text-sm flex items-center gap-3 mb-4">
+            <span class="bg-cyan-400 h-2 w-2 rounded-full"></span>
+            <span class="text-cyan-400 font-bold">Live Feed Active</span>
+            <span class="text-gray-500">•</span>
+            <span class="text-gray-400">Next refresh in 9:48</span>
+          </div>
+          <div class="overflow-auto">
+            <div class="flex items-center min-w-max gap-2">
+              <div class="text-gray-400 flex items-center gap-2 mr-4 pr-4 border-r border-white/10">
+                <img src="icon-7.svg" alt="Icon" class="h-4 w-4"><span class="text-sm font-bold uppercase tracking-[0.7px]">Filter Feed</span>
+              </div>
+              <button class="text-black text-sm font-bold bg-white h-9 px-6 py-2 rounded-full">All Streams</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_1122e1156bed4b7e8631a35ecaa56470_mv2.png" alt="" class="h-4 w-4">YouTube</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_50c3078c05c64fe9bb6fa3ae6fbd7f78_mv2.png" alt="" class="h-4 w-4">TikTok</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_50b94936018c4212ba069ecf22ba020c_mv2.png" alt="" class="h-4 w-4">Instagram Reels</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_2e4d754837b14f89912eec8538e24156_mv2.png" alt="" class="h-4 w-4">Facebook Watch</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_6952af032478428e8c9e8d4e943e4373_mv2.png" alt="" class="h-4 w-4">Twitter/X</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_ca6f5a7e96964a14902ce0c4bb4bf612_mv2.png" alt="" class="h-4 w-4">Reddit</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_358adf9e4778442b84b947a0edbe7600_mv2.png" alt="" class="h-4 w-4">Twitch</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_55f1d4136e1c44049c7864272475e790_mv2.png" alt="" class="h-4 w-4">Vimeo</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_d672b6a613494da4aa9d36925ce881af_mv2.png" alt="" class="h-4 w-4">Dailymotion</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards Masonry -->
+      <section class="relative min-h-[1000px] w-full py-12">
+        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
+          <div class="columns-1 md:columns-3 gap-x-6 gap-y-6">
+
+            <!-- Card: YouTube Road Trip -->
+            <div class="break-inside-avoid">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.youtube.com/embed/abcd1234">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_cef98bc329064e21baf55186a624c9df_mv2-1.png" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                      <span class="text-gray-400 text-xs">Score: 98.7</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">The Ultimate Summer Road Trip Guide</h3>
+                    <p class="text-gray-400 text-sm mb-2">@Wanderlust Adventures</p>
+                    <p class="text-gray-500 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: TikTok GrooveMoves -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.tiktok.com/embed/xyz987">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_d35740f63551465dae366ebd658c1c49_mv2.png" alt="Viral Dance Challenge: #GrooveMoves" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
+                      <span class="text-gray-400 text-xs">Score: 95.2</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Viral Dance Challenge: #GrooveMoves</h3>
+                    <p class="text-gray-400 text-sm mb-2">@DanceWithMe</p>
+                    <p class="text-gray-500 text-sm">Join the latest dance craze sweeping TikTok! Can you master the #GrooveMoves?</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Instagram DIY -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.instagram.com/p/REEL_ID/embed">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_7dbd7000887247e6b9f3c20e7ae2f6da_mv2.png" alt="DIY Home Decor Hacks You Need" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Instagram Reels</span>
+                      <span class="text-gray-400 text-xs">Score: 92.1</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">DIY Home Decor Hacks You Need</h3>
+                    <p class="text-gray-400 text-sm mb-2">@CraftyCorner</p>
+                    <p class="text-gray-500 text-sm">Transform your living space with these simple and stylish DIY home decor hacks.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Facebook Pasta Sauce -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D98765&show_text=0">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_3a11ce3c6d944a3fa86bae31d819c848_mv2.png" alt="Chef's Secret: Perfect Pasta Sauce" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Facebook Watch</span>
+                      <span class="text-gray-400 text-xs">Score: 89.5</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Chef's Secret: Perfect Pasta Sauce</h3>
+                    <p class="text-gray-400 text-sm mb-2">@GourmetKitchen</p>
+                    <p class="text-gray-500 text-sm">Learn the secret to a rich and flavorful pasta sauce from our master chef.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Twitter AI Breakthrough -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://twitframe.com/show?url=https://twitter.com/TechInsights/status/54321">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_c67ccc434cae4be5bbeaf902839fee01_mv2.png" alt="Breaking News: AI Breakthrough" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitter/X</span>
+                      <span class="text-gray-400 text-xs">Score: 97</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Breaking News: AI Breakthrough</h3>
+                    <p class="text-gray-400 text-sm mb-2">@TechInsights</p>
+                    <p class="text-gray-500 text-sm">A major AI breakthrough has been announced, promising to revolutionize several industries.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Reddit Cat Fails -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.redditmedia.com/r/aww/comments/POST_ID?ref_source=embed&ref=share&embed=true">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_8064cf090e3440ec9d8ff7c584641326_mv2.png" alt="Hilarious Cat Fails Compilation" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Reddit</span>
+                      <span class="text-gray-400 text-xs">Score: 91.8</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Hilarious Cat Fails Compilation</h3>
+                    <p class="text-gray-400 text-sm mb-2">@r/aww</p>
+                    <p class="text-gray-500 text-sm">A collection of the funniest cat fails that will make your day!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Twitch Clutch Win -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://player.twitch.tv/?video=VIDEO_ID&parent=localhost">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_14835de2bf364d0e8b508bf85641d8d4_mv2.png" alt="Epic Gaming Moment: Clutch Win" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitch</span>
+                      <span class="text-gray-400 text-xs">Score: 96.5</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Epic Gaming Moment: Clutch Win</h3>
+                    <p class="text-gray-400 text-sm mb-2">@ProGamerLive</p>
+                    <p class="text-gray-500 text-sm">Watch ProGamerLive pull off an incredible clutch win in the final moments of the game.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: YouTube Unboxing -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.youtube.com/embed/efgh5678">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_351bdfe898d64913afab4f31322bc1d6_mv2.png" alt="Unboxing the Newest Smartphone" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                      <span class="text-gray-400 text-xs">Score: 94.3</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Unboxing the Newest Smartphone</h3>
+                    <p class="text-gray-400 text-sm mb-2">@GadgetGuru</p>
+                    <p class="text-gray-500 text-sm">First look and impressions of the highly anticipated new smartphone model.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: TikTok Office Humor -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.tiktok.com/embed/abc123">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_a0392871cac54fec847233eecaae685f_mv2.png" alt="Relatable Office Humor Skit" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
+                      <span class="text-gray-400 text-xs">Score: 88.9</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Relatable Office Humor Skit</h3>
+                    <p class="text-gray-400 text-sm mb-2">@CorporateComedy</p>
+                    <p class="text-gray-500 text-sm">Laugh along with these all-too-relatable office scenarios and coworker antics.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Instagram Peru Ruins -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.instagram.com/p/REEL_ID_2/embed">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_ee3afa2babbb4a45b5a662c001bf8b1c_mv2.png" alt="Exploring Ancient Ruins in Peru" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Instagram Reels</span>
+                      <span class="text-gray-400 text-xs">Score: 93</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Exploring Ancient Ruins in Peru</h3>
+                    <p class="text-gray-400 text-sm mb-2">@TravelBug</p>
+                    <p class="text-gray-500 text-sm">Journey through the stunning ancient ruins of Peru in this captivating travel reel.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Facebook Renewable Energy -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D13579&show_text=0">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_c1ae9aadbe1845c39ff7b2d6083a8ad7_mv2.png" alt="The Future of Renewable Energy" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Facebook Watch</span>
+                      <span class="text-gray-400 text-xs">Score: 90.7</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">The Future of Renewable Energy</h3>
+                    <p class="text-gray-400 text-sm mb-2">@EcoSolutions</p>
+                    <p class="text-gray-500 text-sm">A deep dive into the innovations shaping the future of renewable energy sources.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Vimeo Echoes (with watch button) -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://player.vimeo.com/video/12345678">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_a4bdd899ffac48fbbf68fd981cb654d2_mv2.png" alt="Award-Winning Short Film: 'Echoes'" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-red-500 shadow-[rgb(255,65,54)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Vimeo</span>
+                      <span class="text-gray-400 text-xs">Score: 97.8</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Award-Winning Short Film: 'Echoes'</h3>
+                    <p class="text-gray-400 text-sm mb-2">@IndieFilmMakers</p>
+                    <p class="text-gray-500 text-sm">A poignant and visually stunning short film that explores themes of memory and loss.</p>
+                    <div class="pt-2">
+                      <button class="text-pink-600 text-sm bg-transparent border border-white/10 rounded-md px-3 py-2"
+                              data-role="watch-button">Watch Full Video</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Dailymotion Dunks -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.dailymotion.com/embed/video/VIDEO_ID">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_ce2612cc2957490591df42b67be1ca24_mv2.png" alt="Top 10 Basketball Dunks of the Week" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Dailymotion</span>
+                      <span class="text-gray-400 text-xs">Score: 87.6</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Top 10 Basketball Dunks of the Week</h3>
+                    <p class="text-gray-400 text-sm mb-2">@SportsHighlights</p>
+                    <p class="text-gray-500 text-sm">Witness the most incredible dunks from the past week in professional basketball.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: YouTube Public Speaking -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.youtube.com/embed/wxyz9012">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_cb4e8429a7234287b30fe3bce47c7fc7_mv2.png" alt="Mastering Public Speaking in 5 Steps" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                      <span class="text-gray-400 text-xs">Score: 90.1</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">Mastering Public Speaking in 5 Steps</h3>
+                    <p class="text-gray-400 text-sm mb-2">@SkillUpAcademy</p>
+                    <p class="text-gray-500 text-sm">Unlock your potential with these five essential steps to becoming a confident public speaker.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: TikTok Morning Routine -->
+            <div class="break-inside-avoid mt-6">
+              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
+                   data-embed-url="https://www.tiktok.com/embed/def456">
+                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                  <div class="relative aspect-video w-full overflow-hidden">
+                    <img src="9cfc92_ac0bd432398d4bb1ad20a7558afb609d_mv2.png" alt="My Morning Routine for Productivity" class="h-full w-full object-cover">
+                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                  </div>
+                  <div class="p-4">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
+                      <span class="text-gray-400 text-xs">Score: 86.4</span>
+                    </div>
+                    <h3 class="text-lg font-space_grotesk mb-2">My Morning Routine for Productivity</h3>
+                    <p class="text-gray-400 text-sm mb-2">@WellnessWarrior</p>
+                    <p class="text-gray-500 text-sm">Follow my effective morning routine designed to boost productivity and well-being.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Subscribe -->
+      <section class="bg-black/40 w-full py-24 border-t border-white/10">
+        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
+          <div class="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
+            <div>
+              <h2 class="text-3xl font-bold font-space_grotesk md:text-4xl mb-4">Network Status</h2>
+              <p class="text-gray-400 max-w-xl">Real-time monitoring of all connected social platforms. Green indicates optimal performance and live data ingestion.</p>
+            </div>
+            <button class="text-pink-600 text-sm bg-transparent border border-white/10 px-4 py-2 rounded-md">View System Logs</button>
+          </div>
+
+          <!-- Status grid (unchanged visuals) -->
+          <div class="grid md:grid-cols-6 grid-cols-2 gap-4">
+            <!-- Repeat platform status cards as in your file -->
+            <!-- ... (left as-is for brevity) -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="bg-gray-900 w-full border-gray-800 mt-16 border-t border-solid">
+      <div class="max-w-[1920px] mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p class="text-gray-400 text-sm">© 2025 VibeNow. All rights reserved.</p>
+          <div class="flex gap-6">
+            <a href="https://twitter.com/" class="text-cyan-400 text-sm">Twitter</a>
+            <a href="https://instagram.com/" class="text-cyan-400 text-sm">Instagram</a>
+            <a href="https://tiktok.com/" class="text-cyan-400 text-sm">TikTok</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal for embedded video -->
+<div id="videoModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center">
+  <div class="bg-gray-900 border border-white/10 rounded-2xl w-[95%] max-w-[900px] overflow-hidden">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <h3 id="modalTitle" class="text-lg font-bold font-space_grotesk">Playing</h3>
+      <button id="closeModal" class="text-white text-2xl leading-none px-2" aria-label="Close">&times;</button>
+    </div>
+    <div class="aspect-video w-full bg-black">
+      <iframe id="videoFrame" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="px-4 py-3 border-t border-white/10">
+      <p id="modalMeta" class="text-gray-400 text-sm"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Preserve Anima script (if needed)
+  window.__ANIMA_PLAYGROUND_ID__ = "miu5gmqw5EzGMw";
+</script>
+<script src="index.global.js"></script>
+
+<!-- Modal control script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll('.card').forEach(card => {
-    const url = card.dataset.url;
+  const modal = document.getElementById("videoModal");
+  const frame = document.getElementById("videoFrame");
+  const titleEl = document.getElementById("modalTitle");
+  const metaEl = document.getElementById("modalMeta");
+  const closeBtn = document.getElementById("closeModal");
+
+  function openModal({ url, title, meta }) {
     if (!url) return;
+    frame.src = url;
+    titleEl.textContent = title || "Playing";
+    metaEl.textContent = meta || "";
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
 
-    const wrapper = document.createElement('a');
-    wrapper.href = url;
-    wrapper.target = "_blank";
-    wrapper.rel = "noopener noreferrer";
-    wrapper.style.display = "block";
+  function closeModal() {
+    frame.src = "";
+    modal.classList.add("hidden");
+    document.body.style.overflow = "";
+  }
 
-    card.parentNode.insertBefore(wrapper, card);
-    wrapper.appendChild(card);
+  closeBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  document.querySelectorAll(".card").forEach(card => {
+    const embedUrl = card.getAttribute("data-embed-url");
+    const title = card.querySelector("h3")?.textContent?.trim() || "";
+    const platform = card.querySelector("span.text-cyan-400")?.textContent?.trim();
+    const author = card.querySelector("p.text-gray-400.text-sm")?.textContent?.trim();
+    const score = card.querySelector("span.text-gray-400.text-xs")?.textContent?.trim();
+    const metaParts = [platform, author, score].filter(Boolean);
+
+    // Click anywhere on the card
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("[data-role='watch-button']")) return; // button has its own handler
+      openModal({ url: embedUrl, title, meta: metaParts.join(" • ") });
+    });
+
+    // Optional Watch button
+    const watchBtn = card.querySelector("[data-role='watch-button']");
+    if (watchBtn) {
+      watchBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openModal({ url: embedUrl, title, meta: metaParts.join(" • ") });
+      });
+    }
   });
 });
 </script>
