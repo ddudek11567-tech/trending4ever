@@ -4,45 +4,104 @@
   <meta charset="UTF-8" />
   <title>Trending4Ever</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="index-CID6DNWR.css" rel="stylesheet" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            space_grotesk: ['"Space Grotesk"', 'sans-serif'],
+            nunito_sans: ['"Nunito Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Anima Badge Styles */
+    .anima-badge .badge-button:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(108, 83, 206, 0.3); }
+    .anima-badge .badge-content { display: inline-flex; align-items: center; gap: 8px; position: relative; flex: 0 0 auto; }
+    .anima-badge .badge-icon { position: relative; width: 16px; height: 16px; }
+    .anima-badge .badge-text { position: relative; width: fit-content; font-family: 'Nunito Sans', sans-serif; color: white; font-size: 14px; white-space: nowrap; }
+    .anima-badge { position: fixed; bottom: 20px; right: 20px; z-index: 100; background: #4F46E5; padding: 8px 12px; border-radius: 8px; display: flex; gap: 8px; align-items: center; text-decoration: none; color: white; }
+
+    /* Custom Scrollbar for comments */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+    /* Modal Animation */
+    .modal-enter { opacity: 0; transform: scale(0.95); }
+    .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .modal-exit { opacity: 1; transform: scale(1); }
+    .modal-exit-active { opacity: 0; transform: scale(0.95); transition: opacity 0.2s ease, transform 0.2s ease; }
+
+    /* Waterfall Entry Animation (Individual Card Entry) */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card-entry {
+        opacity: 0; /* Hidden by default until animation kicks in */
+    }
+
+    /* === WATERFALL BACKGROUND EFFECT (Applied to the Feed Section Container) === */
+    @keyframes flow {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 1000px; /* Define flow height */ }
+    }
+    
+    #feed-container {
+        position: relative; /* Container for the absolute pseudo-element */
+        overflow: hidden; /* Prevents background animation from spilling out */
+    }
+
+    #feed-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* Subtle repeating linear-gradient for the droplet effect */
+        background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(173, 216, 230, 0.05), /* Very light blue for subtle effect */
+            rgba(173, 216, 230, 0.05) 1px,
+            transparent 1px,
+            transparent 15px /* Space between droplets */
+        );
+        background-size: 100% 1000px; /* Size of the repeating pattern */
+        animation: flow 10s linear infinite; /* Slow, continuous downward flow */
+        z-index: 1; /* Below content */
+        pointer-events: none;
+    }
+
+    /* Hide the scrollbar only for the auto-scrolling area for a cleaner look */
+    #feed-scroll-area::-webkit-scrollbar {
+        display: none;
+    }
+    #feed-scroll-area {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+  </style>
 </head>
-<body class="text-black text-base not-italic normal-nums font-normal box-border h-full w-full">
+<body class="text-black text-base not-italic normal-nums font-normal box-border h-full w-full bg-gray-900">
 
-<style>
-  .anima-badge .badge-button:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(108, 83, 206, 0.3);
-  }
-  .anima-badge .badge-content { display: inline-flex; align-items: center; gap: 8px; position: relative; flex: 0 0 auto; }
-  .anima-badge .badge-icon { position: relative; width: 16px; height: 16px; }
-  .anima-badge .badge-text { position: relative; width: fit-content; font-family: var(--body-regular-md-font-family); font-weight: var(--body-regular-md-font-weight); color: var(--badge-text-color); font-size: var(--body-regular-md-font-size); letter-spacing: var(--body-regular-md-letter-spacing); line-height: var(--body-regular-md-line-height); font-style: var(--body-regular-md-font-style); white-space: nowrap; }
-  .anima-badge .close-button { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
-  .anima-badge .close-button:hover { opacity: 1; }
-  .anima-badge .close-icon { position: relative; width: 16px; height: 16px; }
-  @media screen and (max-width: 768px) {
-    .anima-badge { bottom: 16px; right: 16px; }
-    .anima-badge .badge-button { height: 36px; padding: 0 10px; gap: 6px; }
-    .anima-badge .badge-text { font-size: 13px; }
-  }
-  @media screen and (max-width: 480px) {
-    .anima-badge { bottom: 12px; right: 12px; }
-    .anima-badge .badge-button { height: 32px; padding: 0 8px; gap: 6px; }
-    .anima-badge .badge-text { font-size: 12px; }
-    .anima-badge .badge-icon, .anima-badge .close-icon { width: 14px; height: 14px; }
-  }
-</style>
-
+<!-- Anima Badge -->
 <div class="anima-badge" id="anima-badge">
-  <a target="_blank" class="badge-button" href="https://www.animaapp.com/an?url=https%3A%2F%2Fwww.animaapp.com&utm_content=broken-sun-7789.dev.animaapp.io&utm_medium=anima-playground&utm_source=free-website-banner">
-    <div class="badge-content">
-      <img class="badge-icon" src="anima-logo.svg" alt="Anima logo">
-    </div>
-    <div class="badge-text">Built with Anima</div>
-    <button class="close-button">
-      <img class="close-icon" src="close-button.svg" alt="Close">
-    </button>
-  </a>
+  <div class="badge-text">Built with Anima</div>
 </div>
 
 <div id="app">
@@ -53,13 +112,13 @@
       <div class="max-w-[1920px] mx-auto px-4 py-6">
         <div class="text-center">
           <h1 class="text-5xl font-extrabold tracking-[-2.4px] leading-[48px] mb-2 font-space_grotesk md:text-7xl md:font-black md:tracking-[-3.6px] md:leading-[72px]">
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">V</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">i</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">b</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">e</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">N</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">o</span>
-            <span class="bg-clip-text bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">w</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">V</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">i</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">b</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">e</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">N</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(0,255,255)_0%,rgb(255,0,127)_100%)] inline-block">o</span>
+            <span class="bg-clip-text text-transparent bg-[linear-gradient(135deg,rgb(255,0,127)_0%,rgb(0,255,255)_100%)] inline-block">w</span>
           </h1>
           <p class="text-gray-400 text-xl font-medium">Your live wall of trending vibes</p>
         </div>
@@ -69,7 +128,7 @@
     <main class="relative w-full">
 
       <!-- Hero -->
-      <section class="relative flex justify-center min-h-[900px] w-full overflow-hidden pt-20">
+      <section class="relative flex justify-center min-h-[500px] w-full overflow-hidden pt-12 md:pt-20">
         <div class="absolute inset-0 pointer-events-none">
           <div class="absolute [mask-image:linear-gradient(rgb(0,0,0)_40%,rgba(0,0,0,0)_100%)] bg-[linear-gradient(to_right,rgb(51,51,51)_1px,rgba(0,0,0,0)_1px),linear-gradient(rgb(51,51,51)_1px,rgba(0,0,0,0)_1px)] bg-size-[64px_64px,64px_64px] opacity-20 inset-0"></div>
           <div class="absolute bg-[linear-gradient(rgba(255,0,127,0.1),rgba(0,0,0,0))] blur-3xl h-[500px] opacity-50 w-full left-0 top-0"></div>
@@ -80,69 +139,76 @@
             <span class="bg-cyan-400 block h-2 w-2 mr-2 rounded-full"></span>Live Feed Active
           </div></div>
 
-          <div><h1 class="text-transparent text-6xl font-black bg-clip-text bg-[linear-gradient(rgb(255,255,255),rgba(255,255,255,0.5))] tracking-[-3px] mb-8 font-space_grotesk md:text-9xl">VIBE<span class="text-pink-600">NOW</span></h1></div>
+          <div><h1 class="text-transparent text-6xl font-black bg-clip-text bg-[linear-gradient(rgb(255,255,255),rgba(255,255,255,0.5))] tracking-[-3px] mb-8 font-space_grotesk md:text-8xl">VIBE<span class="text-pink-600">NOW</span></h1></div>
 
           <div><p class="text-gray-400 text-xl font-medium tracking-[-0.5px] max-w-2xl mb-12 mx-auto md:text-2xl md:font-semibold">Your live wall of trending vibes. We aggregate the pulse of the internet into a single, electrifying stream.</p></div>
 
           <div>
-            <div class="flex flex-col gap-y-4 gap-x-4 md:flex-row items-center">
-              <button class="text-lg font-bold items-center bg-pink-600 shadow-[rgba(255,0,127,0.5)_0_0_20px_0] gap-x-2 flex h-14 justify-center tracking-[-0.45px] px-8 rounded-full">
-                Start Watching <img src="icon-3.svg" alt="Icon" class="h-4 w-4 ml-2 pointer-events-none">
+            <div class="flex flex-col gap-y-4 gap-x-4 md:flex-row items-center justify-center">
+              <button class="text-lg font-bold items-center bg-pink-600 shadow-[rgba(255,0,127,0.5)_0_0_20px_0] gap-x-2 flex h-14 justify-center tracking-[-0.45px] px-8 rounded-full hover:bg-pink-500 transition-colors text-white">
+                Start Watching
               </button>
-              <button class="text-gray-300 text-lg items-center bg-transparent border border-gray-700 h-14 px-8 rounded-full">Explore Platforms</button>
+              <button class="text-gray-300 text-lg items-center bg-transparent border border-gray-700 h-14 px-8 rounded-full hover:bg-gray-800 transition-colors">Explore Platforms</button>
             </div>
           </div>
         </div>
-
-        <div class="absolute bg-[linear-gradient(to_top,rgb(17,24,39),rgba(0,0,0,0))] h-[300px] pointer-events-none z-20 bottom-0 inset-x-0"></div>
+        <div class="absolute bg-[linear-gradient(to_top,rgb(17,24,39),rgba(0,0,0,0))] h-[150px] pointer-events-none z-20 bottom-0 inset-x-0"></div>
       </section>
 
       <!-- Viral Spotlight -->
-      <section class="relative bg-gray-900/50 w-full py-24 border-y border-solid border-white/10">
+      <section class="relative bg-gray-900/50 w-full py-16 border-y border-solid border-white/10">
         <div class="w-full mx-auto px-4 md:max-w-screen-xl">
-          <div class="flex flex-col items-start mb-12">
-            <h2 class="text-4xl font-bold flex items-center gap-3 font-space_grotesk md:text-5xl md:font-extrabold">
-              <img src="icon-4.svg" alt="Icon" class="h-10 w-10">Viral Spotlight
+          <div class="flex flex-col items-start mb-10">
+            <h2 class="text-3xl font-bold flex items-center gap-3 font-space_grotesk md:text-4xl md:font-extrabold text-white">
+              Viral Spotlight
             </h2>
-            <div class="bg-red-500 h-1 w-24 mt-4 rounded-full"></div>
+            <div class="bg-red-500 h-1 w-20 mt-3 rounded-full"></div>
           </div>
 
-          <div class="grid md:grid-cols-12 gap-8">
-            <div class="md:col-span-8">
+          <div class="grid md:grid-cols-12 gap-6">
+            <div class="md:col-span-8 cursor-pointer group card-trigger" data-embed-url="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" data-title="The Ultimate Summer Road Trip Guide" data-author="Wanderlust Adventures" data-platform="YouTube">
               <div class="relative aspect-video bg-black/50 shadow-[rgba(0,0,0,0.25)_0_25px_50px_-12px] border overflow-hidden rounded-xl border-white/10">
-                <img src="9cfc92_cef98bc329064e21baf55186a624c9df_mv2.png" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover">
+                <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8),rgba(0,0,0,0))]"></div>
-                <div class="absolute left-0 bottom-0 p-8">
-                  <div class="text-xs font-medium bg-red-500 inline-flex tracking-[0.6px] mb-4 px-2.5 py-1.5 rounded-md">#1 Trending</div>
-                  <h3 class="text-2xl font-bold font-space_grotesk md:text-4xl">The Ultimate Summer Road Trip Guide</h3>
-                  <p class="text-gray-300 flex items-center gap-2">
+                <!-- Play Icon Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,0,127,0.6)]">
+                        <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                </div>
+                <div class="absolute left-0 bottom-0 p-6 md:p-8 pointer-events-none">
+                  <div class="text-xs font-medium bg-red-500 text-white inline-flex tracking-[0.6px] mb-3 px-2.5 py-1.5 rounded-md">#1 Trending</div>
+                  <h3 class="text-xl font-bold font-space_grotesk md:text-4xl text-white">The Ultimate Summer Road Trip Guide</h3>
+                  <p class="text-gray-300 flex items-center gap-2 text-sm md:text-base">
                     <span class="text-pink-600 font-bold">YouTube</span><span>•</span><span>Wanderlust Adventures</span>
                   </p>
                 </div>
               </div>
             </div>
 
-            <div class="md:col-span-4">
-              <div class="backdrop-blur-sm bg-white/10 border p-6 rounded-2xl border-white/10">
-                <div class="flex items-center gap-4 mb-2">
-                  <div class="text-pink-600 bg-pink-600/20 p-3 rounded-full"><img src="icon-5.svg" alt="Icon" class="h-6 w-6"></div>
+            <div class="md:col-span-4 space-y-4">
+              <div class="backdrop-blur-sm bg-white/10 border p-4 rounded-xl border-white/10">
+                <div class="flex items-center gap-4 mb-1">
+                  <div class="text-pink-600 bg-pink-600/20 p-3 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl">#</div>
                   <div>
-                    <p class="text-gray-400 text-sm uppercase tracking-[0.7px]">Trending Score</p>
-                    <p class="text-3xl font-bold font-space_grotesk">98.7</p>
+                    <p class="text-gray-400 text-xs uppercase tracking-[0.7px]">Trending Score</p>
+                    <p class="text-2xl font-bold font-space_grotesk text-white">98.7</p>
                   </div>
                 </div>
               </div>
-              <div class="backdrop-blur-sm bg-white/10 border mt-6 p-6 rounded-2xl border-white/10">
-                <div class="flex items-center gap-4 mb-2">
-                  <div class="text-cyan-400 bg-cyan-400/20 p-3 rounded-full"><img src="icon-6.svg" alt="Icon" class="h-6 w-6"></div>
+              <div class="backdrop-blur-sm bg-white/10 border p-4 rounded-xl border-white/10">
+                <div class="flex items-center gap-4 mb-1">
+                  <div class="text-cyan-400 bg-cyan-400/20 p-3 rounded-full h-10 w-10 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  </div>
                   <div>
-                    <p class="text-gray-400 text-sm uppercase tracking-[0.7px]">Platform Status</p>
-                    <p class="text-cyan-400 text-3xl font-bold font-space_grotesk">Online</p>
+                    <p class="text-gray-400 text-xs uppercase tracking-[0.7px]">Platform Status</p>
+                    <p class="text-cyan-400 text-2xl font-bold font-space_grotesk">Online</p>
                   </div>
                 </div>
               </div>
-              <div class="bg-[linear-gradient(to_right_bottom,rgba(255,0,127,0.2),rgba(0,0,0,0))] border border-pink-600/20 mt-6 p-6 rounded-2xl">
-                <h4 class="text-xl font-bold font-space_grotesk mb-2">Why it's hot</h4>
+              <div class="bg-[linear-gradient(to_right_bottom,rgba(255,0,127,0.2),rgba(0,0,0,0))] border border-pink-600/20 p-4 rounded-xl">
+                <h4 class="text-lg font-bold font-space_grotesk mb-1 text-white">Why it's hot</h4>
                 <p class="text-gray-400 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
               </div>
             </div>
@@ -151,516 +217,674 @@
       </section>
 
       <!-- Live Feed Filter Bar -->
-      <div class="backdrop-blur-xl bg-gray-900/80 w-full py-4 border-b border-white/10">
+      <div class="backdrop-blur-xl bg-gray-900/80 w-full py-4 border-b border-white/10 sticky top-0 z-40 shadow-lg">
         <div class="w-full mx-auto px-4 md:max-w-screen-xl">
-          <div class="text-sm flex items-center gap-3 mb-4">
-            <span class="bg-cyan-400 h-2 w-2 rounded-full"></span>
-            <span class="text-cyan-400 font-bold">Live Feed Active</span>
-            <span class="text-gray-500">•</span>
-            <span class="text-gray-400">Next refresh in 9:48</span>
+          <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
+             <div class="text-sm flex items-center gap-3">
+                <span class="bg-cyan-400 h-2 w-2 rounded-full animate-pulse"></span>
+                <span class="text-cyan-400 font-bold">Live Feed Active</span>
+                <span class="text-gray-500">•</span>
+                <span class="text-gray-400">Next refresh in 9:48</span>
+             </div>
+             <!-- Auto Scroll Control -->
+             <button id="toggle-scroll" class="text-xs flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 transition-colors">
+                <span id="scroll-icon">⏸</span> <span id="scroll-text">Pause Auto-Scroll</span>
+             </button>
           </div>
-          <div class="overflow-auto">
+          
+          <div class="overflow-auto pb-2 scrollbar-hide">
             <div class="flex items-center min-w-max gap-2">
               <div class="text-gray-400 flex items-center gap-2 mr-4 pr-4 border-r border-white/10">
-                <img src="icon-7.svg" alt="Icon" class="h-4 w-4"><span class="text-sm font-bold uppercase tracking-[0.7px]">Filter Feed</span>
+                 <span class="text-sm font-bold uppercase tracking-[0.7px]">Filter Feed</span>
               </div>
-              <button class="text-black text-sm font-bold bg-white h-9 px-6 py-2 rounded-full">All Streams</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_1122e1156bed4b7e8631a35ecaa56470_mv2.png" alt="" class="h-4 w-4">YouTube</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_50c3078c05c64fe9bb6fa3ae6fbd7f78_mv2.png" alt="" class="h-4 w-4">TikTok</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_50b94936018c4212ba069ecf22ba020c_mv2.png" alt="" class="h-4 w-4">Instagram Reels</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_2e4d754837b14f89912eec8538e24156_mv2.png" alt="" class="h-4 w-4">Facebook Watch</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_6952af032478428e8c9e8d4e943e4373_mv2.png" alt="" class="h-4 w-4">Twitter/X</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_ca6f5a7e96964a14902ce0c4bb4bf612_mv2.png" alt="" class="h-4 w-4">Reddit</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_358adf9e4778442b84b947a0edbe7600_mv2.png" alt="" class="h-4 w-4">Twitch</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_55f1d4136e1c44049c7864272475e790_mv2.png" alt="" class="h-4 w-4">Vimeo</button>
-              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full"><img src="9cfc92_d672b6a613494da4aa9d36925ce881af_mv2.png" alt="" class="h-4 w-4">Dailymotion</button>
+              <button class="text-black text-sm font-bold bg-white h-9 px-6 py-2 rounded-full hover:bg-gray-200">All Streams</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full border border-gray-700 hover:border-pink-500 hover:text-pink-500 transition-colors">YouTube</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full border border-gray-700 hover:border-cyan-400 hover:text-cyan-400 transition-colors">TikTok</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full border border-gray-700 hover:border-purple-500 hover:text-purple-500 transition-colors">Instagram</button>
+              <button class="text-gray-400 text-sm bg-transparent h-9 px-6 py-2 rounded-full border border-gray-700 hover:border-blue-500 hover:text-blue-500 transition-colors">Twitter/X</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Cards Masonry -->
-      <section class="relative min-h-[1000px] w-full py-12">
-        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
-          <div class="columns-1 md:columns-3 gap-x-6 gap-y-6">
+      <!-- Cards Masonry (The section with the Waterfall Background and Local Scroll) -->
+      <section class="relative w-full py-8" id="feed-container">
+        <div class="w-full mx-auto px-4 md:max-w-screen-xl feed-content-wrapper">
+          <!-- THIS IS THE NEW SCROLLABLE AREA -->
+          <div id="feed-scroll-area" class="h-[75vh] overflow-y-auto relative z-20"> 
+            <div class="columns-1 md:columns-3 gap-6">
 
-            <!-- Card: YouTube Road Trip -->
-            <div class="break-inside-avoid">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.youtube.com/embed/abcd1234">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_cef98bc329064e21baf55186a624c9df_mv2-1.png" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                      <span class="text-gray-400 text-xs">Score: 98.7</span>
+              <!-- Card 1: YouTube Road Trip -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
                     </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">The Ultimate Summer Road Trip Guide</h3>
-                    <p class="text-gray-400 text-sm mb-2">@Wanderlust Adventures</p>
-                    <p class="text-gray-500 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: TikTok GrooveMoves -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.tiktok.com/embed/xyz987">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_d35740f63551465dae366ebd658c1c49_mv2.png" alt="Viral Dance Challenge: #GrooveMoves" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
-                      <span class="text-gray-400 text-xs">Score: 95.2</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Viral Dance Challenge: #GrooveMoves</h3>
-                    <p class="text-gray-400 text-sm mb-2">@DanceWithMe</p>
-                    <p class="text-gray-500 text-sm">Join the latest dance craze sweeping TikTok! Can you master the #GrooveMoves?</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Instagram DIY -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.instagram.com/p/REEL_ID/embed">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_7dbd7000887247e6b9f3c20e7ae2f6da_mv2.png" alt="DIY Home Decor Hacks You Need" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Instagram Reels</span>
-                      <span class="text-gray-400 text-xs">Score: 92.1</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">DIY Home Decor Hacks You Need</h3>
-                    <p class="text-gray-400 text-sm mb-2">@CraftyCorner</p>
-                    <p class="text-gray-500 text-sm">Transform your living space with these simple and stylish DIY home decor hacks.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Facebook Pasta Sauce -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D98765&show_text=0">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_3a11ce3c6d944a3fa86bae31d819c848_mv2.png" alt="Chef's Secret: Perfect Pasta Sauce" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Facebook Watch</span>
-                      <span class="text-gray-400 text-xs">Score: 89.5</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Chef's Secret: Perfect Pasta Sauce</h3>
-                    <p class="text-gray-400 text-sm mb-2">@GourmetKitchen</p>
-                    <p class="text-gray-500 text-sm">Learn the secret to a rich and flavorful pasta sauce from our master chef.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Twitter AI Breakthrough -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://twitframe.com/show?url=https://twitter.com/TechInsights/status/54321">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_c67ccc434cae4be5bbeaf902839fee01_mv2.png" alt="Breaking News: AI Breakthrough" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitter/X</span>
-                      <span class="text-gray-400 text-xs">Score: 97</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Breaking News: AI Breakthrough</h3>
-                    <p class="text-gray-400 text-sm mb-2">@TechInsights</p>
-                    <p class="text-gray-500 text-sm">A major AI breakthrough has been announced, promising to revolutionize several industries.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Reddit Cat Fails -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.redditmedia.com/r/aww/comments/POST_ID?ref_source=embed&ref=share&embed=true">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_8064cf090e3440ec9d8ff7c584641326_mv2.png" alt="Hilarious Cat Fails Compilation" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Reddit</span>
-                      <span class="text-gray-400 text-xs">Score: 91.8</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Hilarious Cat Fails Compilation</h3>
-                    <p class="text-gray-400 text-sm mb-2">@r/aww</p>
-                    <p class="text-gray-500 text-sm">A collection of the funniest cat fails that will make your day!</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Twitch Clutch Win -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://player.twitch.tv/?video=VIDEO_ID&parent=localhost">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_14835de2bf364d0e8b508bf85641d8d4_mv2.png" alt="Epic Gaming Moment: Clutch Win" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitch</span>
-                      <span class="text-gray-400 text-xs">Score: 96.5</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Epic Gaming Moment: Clutch Win</h3>
-                    <p class="text-gray-400 text-sm mb-2">@ProGamerLive</p>
-                    <p class="text-gray-500 text-sm">Watch ProGamerLive pull off an incredible clutch win in the final moments of the game.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: YouTube Unboxing -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.youtube.com/embed/efgh5678">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_351bdfe898d64913afab4f31322bc1d6_mv2.png" alt="Unboxing the Newest Smartphone" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                      <span class="text-gray-400 text-xs">Score: 94.3</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Unboxing the Newest Smartphone</h3>
-                    <p class="text-gray-400 text-sm mb-2">@GadgetGuru</p>
-                    <p class="text-gray-500 text-sm">First look and impressions of the highly anticipated new smartphone model.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: TikTok Office Humor -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.tiktok.com/embed/abc123">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_a0392871cac54fec847233eecaae685f_mv2.png" alt="Relatable Office Humor Skit" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
-                      <span class="text-gray-400 text-xs">Score: 88.9</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Relatable Office Humor Skit</h3>
-                    <p class="text-gray-400 text-sm mb-2">@CorporateComedy</p>
-                    <p class="text-gray-500 text-sm">Laugh along with these all-too-relatable office scenarios and coworker antics.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Instagram Peru Ruins -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.instagram.com/p/REEL_ID_2/embed">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_ee3afa2babbb4a45b5a662c001bf8b1c_mv2.png" alt="Exploring Ancient Ruins in Peru" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Instagram Reels</span>
-                      <span class="text-gray-400 text-xs">Score: 93</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Exploring Ancient Ruins in Peru</h3>
-                    <p class="text-gray-400 text-sm mb-2">@TravelBug</p>
-                    <p class="text-gray-500 text-sm">Journey through the stunning ancient ruins of Peru in this captivating travel reel.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Facebook Renewable Energy -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D13579&show_text=0">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_c1ae9aadbe1845c39ff7b2d6083a8ad7_mv2.png" alt="The Future of Renewable Energy" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Facebook Watch</span>
-                      <span class="text-gray-400 text-xs">Score: 90.7</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">The Future of Renewable Energy</h3>
-                    <p class="text-gray-400 text-sm mb-2">@EcoSolutions</p>
-                    <p class="text-gray-500 text-sm">A deep dive into the innovations shaping the future of renewable energy sources.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Card: Vimeo Echoes (with watch button) -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://player.vimeo.com/video/12345678">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_a4bdd899ffac48fbbf68fd981cb654d2_mv2.png" alt="Award-Winning Short Film: 'Echoes'" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-red-500 shadow-[rgb(255,65,54)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Vimeo</span>
-                      <span class="text-gray-400 text-xs">Score: 97.8</span>
-                    </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Award-Winning Short Film: 'Echoes'</h3>
-                    <p class="text-gray-400 text-sm mb-2">@IndieFilmMakers</p>
-                    <p class="text-gray-500 text-sm">A poignant and visually stunning short film that explores themes of memory and loss.</p>
-                    <div class="pt-2">
-                      <button class="text-pink-600 text-sm bg-transparent border border-white/10 rounded-md px-3 py-2"
-                              data-role="watch-button">Watch Full Video</button>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                        <span class="text-gray-400 text-xs">Score: 98.7</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">The Ultimate Summer Road Trip Guide</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Wanderlust Adventures</p>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Card: Dailymotion Dunks -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.dailymotion.com/embed/video/VIDEO_ID">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_ce2612cc2957490591df42b67be1ca24_mv2.png" alt="Top 10 Basketball Dunks of the Week" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Dailymotion</span>
-                      <span class="text-gray-400 text-xs">Score: 87.6</span>
+              <!-- Card 2: TikTok GrooveMoves -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-[9/16] w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
                     </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Top 10 Basketball Dunks of the Week</h3>
-                    <p class="text-gray-400 text-sm mb-2">@SportsHighlights</p>
-                    <p class="text-gray-500 text-sm">Witness the most incredible dunks from the past week in professional basketball.</p>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-pink-500 text-sm uppercase font-space_grotesk">TikTok</span>
+                        <span class="text-gray-400 text-xs">Score: 95.2</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Viral Dance Challenge: #GrooveMoves</h3>
+                      <p class="text-gray-400 text-sm mb-2">@DanceWithMe</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Card: YouTube Public Speaking -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.youtube.com/embed/wxyz9012">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_cb4e8429a7234287b30fe3bce47c7fc7_mv2.png" alt="Mastering Public Speaking in 5 Steps" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                      <span class="text-gray-400 text-xs">Score: 90.1</span>
+              <!-- Card 3: Instagram DIY -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-square w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
                     </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">Mastering Public Speaking in 5 Steps</h3>
-                    <p class="text-gray-400 text-sm mb-2">@SkillUpAcademy</p>
-                    <p class="text-gray-500 text-sm">Unlock your potential with these five essential steps to becoming a confident public speaker.</p>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-purple-400 text-sm uppercase font-space_grotesk">Reels</span>
+                        <span class="text-gray-400 text-xs">Score: 92.1</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">DIY Home Decor Hacks You Need</h3>
+                      <p class="text-gray-400 text-sm mb-2">@CraftyCorner</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Card: TikTok Morning Routine -->
-            <div class="break-inside-avoid mt-6">
-              <div class="card relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10"
-                   data-embed-url="https://www.tiktok.com/embed/def456">
-                <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                  <div class="relative aspect-video w-full overflow-hidden">
-                    <img src="9cfc92_ac0bd432398d4bb1ad20a7558afb609d_mv2.png" alt="My Morning Routine for Productivity" class="h-full w-full object-cover">
-                    <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                  </div>
-                  <div class="p-4">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
-                      <span class="text-gray-400 text-xs">Score: 86.4</span>
+              <!-- Card 4: Facebook Pasta Sauce (Restored) -->
+               <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/zH3-Lg3f1wM?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
                     </div>
-                    <h3 class="text-lg font-space_grotesk mb-2">My Morning Routine for Productivity</h3>
-                    <p class="text-gray-400 text-sm mb-2">@WellnessWarrior</p>
-                    <p class="text-gray-500 text-sm">Follow my effective morning routine designed to boost productivity and well-being.</p>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-blue-500 text-sm uppercase font-space_grotesk">Facebook</span>
+                        <span class="text-gray-400 text-xs">Score: 89.5</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Chef's Secret: Perfect Pasta Sauce</h3>
+                      <p class="text-gray-400 text-sm mb-2">@GourmetKitchen</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
+              <!-- Card 5: Twitter AI -->
+               <div class="break-inside-avoid mb-6 card-entry">
+                  <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                       data-embed-url="https://www.youtube.com/embed/7GHtU0f2PQA?autoplay=1">
+                    <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                      <div class="relative aspect-video w-full overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                      </div>
+                      <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitter/X</span>
+                          <span class="text-gray-400 text-xs">Score: 97</span>
+                        </div>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Breaking News: AI Breakthrough</h3>
+                        <p class="text-gray-400 text-sm mb-2">@TechInsights</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              <!-- Card 6: Reddit Cat Fails (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/hY7m5jjJ9mM?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-orange-500 text-sm uppercase font-space_grotesk">Reddit</span>
+                        <span class="text-gray-400 text-xs">Score: 91.8</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Hilarious Cat Fails Compilation</h3>
+                      <p class="text-gray-400 text-sm mb-2">@r/aww</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 7: Twitch Clutch Win -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                  <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                       data-embed-url="https://www.youtube.com/embed/S70L6Jt67Nw?autoplay=1">
+                    <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                      <div class="relative aspect-video w-full overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                      </div>
+                      <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-purple-500 text-sm uppercase font-space_grotesk">Twitch</span>
+                          <span class="text-gray-400 text-xs">Score: 96.5</span>
+                        </div>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Epic Gaming Moment: Clutch Win</h3>
+                        <p class="text-gray-400 text-sm mb-2">@ProGamerLive</p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+
+              <!-- Card 8: YouTube Unboxing (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1556656793-02715d8dd6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                        <span class="text-gray-400 text-xs">Score: 94.3</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Unboxing the Newest Smartphone</h3>
+                      <p class="text-gray-400 text-sm mb-2">@GadgetGuru</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 9: TikTok Office Humor (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-pink-500 text-sm uppercase font-space_grotesk">TikTok</span>
+                        <span class="text-gray-400 text-xs">Score: 88.9</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Relatable Office Humor Skit</h3>
+                      <p class="text-gray-400 text-sm mb-2">@CorporateComedy</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 10: Instagram Peru Ruins (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/Zk9J5xnNDHQ?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-[9/16] w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-purple-400 text-sm uppercase font-space_grotesk">Reels</span>
+                        <span class="text-gray-400 text-xs">Score: 93</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Exploring Ancient Ruins in Peru</h3>
+                      <p class="text-gray-400 text-sm mb-2">@TravelBug</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 11: Facebook Renewable Energy (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/1kUE0BZtTRc?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-blue-500 text-sm uppercase font-space_grotesk">Facebook</span>
+                        <span class="text-gray-400 text-xs">Score: 90.7</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">The Future of Renewable Energy</h3>
+                      <p class="text-gray-400 text-sm mb-2">@EcoSolutions</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+               <!-- Card 12: Vimeo Echoes (Restored) -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://player.vimeo.com/video/146022717?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-red-500 shadow-[rgb(255,65,54)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Vimeo</span>
+                        <span class="text-gray-400 text-xs">Score: 97.8</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Award-Winning Short Film: 'Echoes'</h3>
+                      <p class="text-gray-400 text-sm mb-2">@IndieFilmMakers</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 13: Dailymotion Dunks -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.dailymotion.com/embed/video/x84628g?autoplay=1">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1505666287802-931dc83948e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Top 10 Basketball Dunks" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Dailymotion</span>
+                        <span class="text-gray-400 text-xs">Score: 87.6</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Top 10 Basketball Dunks of the Week</h3>
+                      <p class="text-gray-400 text-sm mb-2">@SportsHighlights</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 14: YouTube Public Speaking -->
+              <div class="break-inside-avoid mb-6 card-entry">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                     data-embed-url="https://www.youtube.com/embed/wxyz9012">
+                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                    <div class="relative aspect-video w-full overflow-hidden">
+                      <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mastering Public Speaking" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
+                        <span class="text-gray-400 text-xs">Score: 90.1</span>
+                      </div>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Mastering Public Speaking in 5 Steps</h3>
+                      <p class="text-gray-400 text-sm mb-2">@SkillUpAcademy</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+                <!-- Card 15: TikTok Morning Routine -->
+                <div class="break-inside-avoid mb-6 card-entry">
+                  <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                       data-embed-url="https://www.youtube.com/embed/def456">
+                    <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
+                      <div class="relative aspect-video w-full overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Morning Routine" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
+                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
+                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                      </div>
+                      </div>
+                      <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-cyan-400 text-sm uppercase font-space_grotesk">TikTok</span>
+                          <span class="text-gray-400 text-xs">Score: 86.4</span>
+                        </div>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">My Morning Routine for Productivity</h3>
+                        <p class="text-gray-400 text-sm mb-2">@WellnessWarrior</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+            </div>
           </div>
+          <!-- END OF SCROLLABLE AREA -->
         </div>
       </section>
-
-      <!-- CTA Subscribe -->
-      <section class="bg-black/40 w-full py-24 border-t border-white/10">
-        <div class="w-full mx-auto px-4 md:max-w-screen-xl">
-          <div class="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
-            <div>
-              <h2 class="text-3xl font-bold font-space_grotesk md:text-4xl mb-4">Network Status</h2>
-              <p class="text-gray-400 max-w-xl">Real-time monitoring of all connected social platforms. Green indicates optimal performance and live data ingestion.</p>
-            </div>
-            <button class="text-pink-600 text-sm bg-transparent border border-white/10 px-4 py-2 rounded-md">View System Logs</button>
-          </div>
-
-          <!-- Status grid (unchanged visuals) -->
-          <div class="grid md:grid-cols-6 grid-cols-2 gap-4">
-            <!-- Repeat platform status cards as in your file -->
-            <!-- ... (left as-is for brevity) -->
-          </div>
-        </div>
-      </section>
-
     </main>
+  </div>
+</div>
 
-    <footer class="bg-gray-900 w-full border-gray-800 mt-16 border-t border-solid">
-      <div class="max-w-[1920px] mx-auto px-4 py-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p class="text-gray-400 text-sm">© 2025 VibeNow. All rights reserved.</p>
-          <div class="flex gap-6">
-            <a href="https://twitter.com/" class="text-cyan-400 text-sm">Twitter</a>
-            <a href="https://instagram.com/" class="text-cyan-400 text-sm">Instagram</a>
-            <a href="https://tiktok.com/" class="text-cyan-400 text-sm">TikTok</a>
-          </div>
+<!-- ========================================== -->
+<!-- THE POPUP MODAL -->
+<!-- ========================================== -->
+<div id="video-modal" class="fixed inset-0 z-[999] hidden" role="dialog" aria-modal="true">
+    <div id="modal-backdrop" class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity duration-300"></div>
+
+    <div class="relative z-10 w-full h-full flex items-center justify-center p-4">
+        <div class="bg-gray-900 w-full max-w-6xl h-[90vh] md:h-[80vh] rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col md:flex-row transform transition-all duration-300 scale-95 opacity-0" id="modal-panel">
+            
+            <div class="w-full md:w-[400px] flex flex-col bg-gray-900 border-r border-white/10 h-1/2 md:h-full order-2 md:order-1 relative">
+                <div class="p-5 border-b border-white/10 flex justify-between items-start">
+                    <div>
+                        <span id="modal-platform" class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/10 text-cyan-400 mb-2 inline-block">YOUTUBE</span>
+                        <h2 id="modal-title" class="text-xl font-bold font-space_grotesk text-white leading-tight">Video Title</h2>
+                        <p id="modal-author" class="text-sm text-gray-400 mt-1">@AuthorName</p>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-5 custom-scrollbar bg-black/20">
+                    <h3 class="text-sm font-bold text-gray-300 uppercase tracking-widest mb-4">Comments</h3>
+                    <div id="modal-comments" class="space-y-4">
+                        <!-- Comments will be injected via JS -->
+                    </div>
+                </div>
+
+                <div class="p-5 border-t border-white/10 bg-gray-800/50">
+                    <div class="flex gap-3 mb-4">
+                        <button class="flex-1 flex items-center justify-center gap-2 bg-pink-600 hover:bg-pink-500 text-white py-3 rounded-lg font-bold transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            Like
+                        </button>
+                        <button class="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            Save
+                        </button>
+                    </div>
+                    <div class="text-center text-xs text-gray-500">
+                        Viewed by 12,402 people right now
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 bg-black relative h-1/2 md:h-full order-1 md:order-2 group">
+                <button id="close-modal-btn" class="absolute top-4 right-4 z-50 bg-black/50 hover:bg-red-500/80 text-white p-2 rounded-full backdrop-blur-md transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div id="video-container" class="w-full h-full flex items-center justify-center bg-black relative">
+                    <div id="video-thumbnail-wrapper" class="absolute inset-0 cursor-pointer w-full h-full">
+                        <img id="video-thumbnail" src="" class="w-full h-full object-contain opacity-80 group-hover:opacity-60 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-pink-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,0,127,0.6)] transform group-hover:scale-110 transition-transform">
+                                <svg class="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-10 w-full text-center">
+                            <p class="text-white font-bold text-lg tracking-widest uppercase">Click to Play</p>
+                        </div>
+                    </div>
+                    <div id="iframe-wrapper" class="w-full h-full hidden"></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </footer>
-  </div>
-</div>
-
-<!-- Modal updated to show thumbnail left and info/actions right -->
-<div id="videoModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center">
-  <div class="bg-gray-900 border border-white/10 rounded-2xl w-[95%] max-w-[1000px] overflow-hidden flex flex-col md:flex-row relative">
-    <!-- Left: Thumbnail / Player -->
-    <div class="w-full md:w-2/3 bg-black relative">
-      <img id="modalThumb" src="" alt="Video thumbnail" class="w-full h-full object-cover cursor-pointer">
-      <iframe id="videoFrame" class="hidden absolute inset-0 w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-    <!-- Right: Info / Actions -->
-    <div class="w-full md:w-1/3 flex flex-col justify-between p-4">
-      <div>
-        <h3 id="modalTitle" class="text-lg font-bold font-space_grotesk mb-2">Title</h3>
-        <p id="modalMeta" class="text-gray-400 text-sm mb-4">Platform • Author • Score</p>
-        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2 mb-2">Save Video</button>
-        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2 mb-2">Like</button>
-      </div>
-      <div>
-        <h4 class="text-gray-300 text-sm mb-2">Comments</h4>
-        <textarea class="w-full bg-gray-800 text-gray-200 text-sm p-2 rounded-md mb-2" placeholder="Add a comment..."></textarea>
-        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2">Post Comment</button>
-      </div>
-    </div>
-    <!-- Close -->
-    <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl leading-none px-2" aria-label="Close">&times;</button>
-  </div>
 </div>
 
 <script>
-  // Preserve Anima script (if needed)
-  window.__ANIMA_PLAYGROUND_ID__ = "miu5gmqw5EzGMw";
-</script>
-<script src="index.global.js"></script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- Setup for Local Scrolling ---
+        const scrollableElement = document.getElementById('feed-scroll-area');
+        if (!scrollableElement) {
+            console.error("Scrollable element #feed-scroll-area not found.");
+            return;
+        }
 
-<!-- Modal control script updated to avoid autoplay and play on thumbnail click -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("videoModal");
-  const frame = document.getElementById("videoFrame");
-  const thumb = document.getElementById("modalThumb");
-  const titleEl = document.getElementById("modalTitle");
-  const metaEl = document.getElementById("modalMeta");
-  const closeBtn = document.getElementById("closeModal");
 
-  function openModal({ thumbUrl, embedUrl, title, meta }) {
-    // Reset player and show thumbnail
-    frame.src = "";
-    frame.classList.add("hidden");
-    thumb.src = thumbUrl || "";
-    thumb.classList.remove("hidden");
-    thumb.dataset.embedUrl = embedUrl || "";
-    titleEl.textContent = title || "Title";
-    metaEl.textContent = meta || "";
-    modal.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
-  }
+        // --- Waterfall Animation (Individual Card Entry) ---
+        const cards = document.querySelectorAll('.card-entry');
+        cards.forEach((card, index) => {
+            // Stagger animation by 100ms for each card
+            card.style.animation = `fadeInUp 0.6s ease-out forwards ${index * 0.1}s`;
+        });
 
-  function closeModal() {
-    frame.src = "";
-    modal.classList.add("hidden");
-    document.body.style.overflow = "";
-  }
+        // --- Auto Scroll Feature ---
+        let autoScrollActive = true;
+        let scrollInterval;
+        const scrollSpeed = 1; // 1px per tick
+        const scrollTick = 50; // ms
 
-  closeBtn.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+        const toggleBtn = document.getElementById('toggle-scroll');
+        const scrollIcon = document.getElementById('scroll-icon');
+        const scrollText = document.getElementById('scroll-text');
 
-  // Click thumbnail to load and play the embedded player
-  thumb.addEventListener("click", () => {
-    const embedUrl = thumb.dataset.embedUrl;
-    if (embedUrl) {
-      frame.src = embedUrl;
-      frame.classList.remove("hidden");
-      thumb.classList.add("hidden");
-    }
-  });
+        function startAutoScroll() {
+            if(scrollInterval) clearInterval(scrollInterval);
+            scrollInterval = setInterval(() => {
+                const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
 
-  // Wire up cards to open modal with thumbnail + metadata
-  document.querySelectorAll(".card").forEach(card => {
-    const embedUrl = card.getAttribute("data-embed-url");
-    const thumbUrl = card.querySelector("img")?.src || "";
-    const title = card.querySelector("h3")?.textContent?.trim() || "";
-    const platform = card.querySelector("span.text-cyan-400")?.textContent?.trim();
-    const author = card.querySelector("p.text-gray-400.text-sm")?.textContent?.trim();
-    const score = card.querySelector("span.text-gray-400.text-xs")?.textContent?.trim();
-    const metaParts = [platform, author, score].filter(Boolean);
+                if (atBottom) {
+                     // If bottom reached, reset to the top for a continuous loop effect
+                     scrollableElement.scrollTop = 0; 
+                } else {
+                    scrollableElement.scrollTop += scrollSpeed;
+                }
+            }, scrollTick);
+            
+            // UI Update
+            scrollIcon.textContent = '⏸';
+            scrollText.textContent = 'Pause Auto-Scroll';
+            toggleBtn.classList.add('border-cyan-400', 'text-cyan-400');
+            autoScrollActive = true;
+        }
 
-    // Click anywhere on the card opens modal without autoplay
-    card.addEventListener("click", (e) => {
-      if (e.target.closest("[data-role='watch-button']")) return; // button has its own handler
-      openModal({ thumbUrl, embedUrl, title, meta: metaParts.join(" • ") });
+        function stopAutoScroll() {
+            if(scrollInterval) clearInterval(scrollInterval);
+            
+            // UI Update
+            scrollIcon.textContent = '▶';
+            scrollText.textContent = 'Resume Scroll';
+            toggleBtn.classList.remove('border-cyan-400', 'text-cyan-400');
+            autoScrollActive = false;
+        }
+
+        // Toggle Click
+        toggleBtn.addEventListener('click', () => {
+            if(autoScrollActive) stopAutoScroll();
+            else startAutoScroll();
+        });
+
+        // Pause on Hover over the local feed area
+        scrollableElement.addEventListener('mouseenter', () => {
+            if(autoScrollActive) clearInterval(scrollInterval);
+        });
+        scrollableElement.addEventListener('mouseleave', () => {
+            if(autoScrollActive) startAutoScroll();
+        });
+
+        // Start initially
+        startAutoScroll();
+
+
+        // --- Modal Logic (Existing) ---
+        const modal = document.getElementById('video-modal');
+        const modalPanel = document.getElementById('modal-panel');
+        const backdrop = document.getElementById('modal-backdrop');
+        const closeBtn = document.getElementById('close-modal-btn');
+        const triggers = document.querySelectorAll('.card-trigger');
+        const mTitle = document.getElementById('modal-title');
+        const mAuthor = document.getElementById('modal-author');
+        const mPlatform = document.getElementById('modal-platform');
+        const mThumb = document.getElementById('video-thumbnail');
+        const mThumbWrapper = document.getElementById('video-thumbnail-wrapper');
+        const mIframeWrapper = document.getElementById('iframe-wrapper');
+        const mComments = document.getElementById('modal-comments');
+
+        // Store scroll state before modal opens
+        let wasScrollActiveBeforeModal = false;
+
+        function generateComments(count) {
+            const names = ["Alex_Pro", "SarahJ", "VibeMaster", "TechGeek99", "LunaStar"];
+            const texts = ["This is actually insane! 🔥", "Does anyone know the song used here?", "First time seeing this, love it.", "The ending got me 😂", "Quality content right here."];
+            let html = '';
+            for(let i=0; i<count; i++) {
+                const name = names[Math.floor(Math.random() * names.length)];
+                const text = texts[Math.floor(Math.random() * texts.length)];
+                html += `
+                    <div class="flex gap-3 items-start animate-fade-in" style="animation-delay: ${i * 0.1}s">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex-shrink-0"></div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold mb-0.5">${name}</p>
+                            <p class="text-sm text-gray-200">${text}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        function openModal(data) {
+            wasScrollActiveBeforeModal = autoScrollActive;
+            stopAutoScroll(); // Force stop scroll when modal opens
+            
+            mIframeWrapper.innerHTML = '';
+            mIframeWrapper.classList.add('hidden');
+            mThumbWrapper.classList.remove('hidden');
+
+            mTitle.textContent = data.title;
+            mAuthor.textContent = data.author;
+            mPlatform.textContent = data.platform;
+            mThumb.src = data.imgSrc;
+            mComments.innerHTML = generateComments(5);
+
+            mThumbWrapper.onclick = () => {
+                mThumbWrapper.classList.add('hidden');
+                mIframeWrapper.classList.remove('hidden');
+                mIframeWrapper.innerHTML = `<iframe src="${data.embedUrl}" class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            };
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalPanel.classList.remove('scale-95', 'opacity-0');
+                modalPanel.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalPanel.classList.remove('scale-100', 'opacity-100');
+            modalPanel.classList.add('scale-95', 'opacity-0');
+            
+            // Resume scroll only if it was active when the modal opened
+            if (wasScrollActiveBeforeModal) {
+                 startAutoScroll();
+            }
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                mIframeWrapper.innerHTML = '';
+            }, 300);
+        }
+
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const img = trigger.querySelector('img');
+                const titleEl = trigger.querySelector('h3');
+                const pTags = trigger.querySelectorAll('p');
+                const platformEl = trigger.querySelector('.text-cyan-400') || trigger.querySelector('.text-pink-500') || trigger.querySelector('.text-purple-400') || trigger.querySelector('.text-purple-500') || trigger.querySelector('.text-blue-500') || trigger.querySelector('.text-orange-500') || trigger.querySelector('.text-red-500');
+
+                let authorText = "@Unknown";
+                pTags.forEach(p => {
+                    if(p.textContent.includes('@')) authorText = p.textContent;
+                });
+
+                const data = {
+                    embedUrl: trigger.dataset.embedUrl,
+                    title: titleEl ? titleEl.textContent : "Video",
+                    author: authorText,
+                    platform: platformEl ? platformEl.textContent : "VibeNow",
+                    imgSrc: img ? img.src : ''
+                };
+                openModal(data);
+            });
+        });
+
+        closeBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+        });
     });
-
-    // Optional Watch button in card also opens modal (no autoplay)
-    const watchBtn = card.querySelector("[data-role='watch-button']");
-    if (watchBtn) {
-      watchBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openModal({ thumbUrl, embedUrl, title, meta: metaParts.join(" • ") });
-      });
-    }
-  });
-});
 </script>
 
 </body>
