@@ -558,19 +558,30 @@
   </div>
 </div>
 
-<!-- Modal for embedded video -->
+<!-- Modal updated to show thumbnail left and info/actions right -->
 <div id="videoModal" class="hidden fixed inset-0 bg-black/75 z-50 flex items-center justify-center">
-  <div class="bg-gray-900 border border-white/10 rounded-2xl w-[95%] max-w-[900px] overflow-hidden">
-    <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
-      <h3 id="modalTitle" class="text-lg font-bold font-space_grotesk">Playing</h3>
-      <button id="closeModal" class="text-white text-2xl leading-none px-2" aria-label="Close">&times;</button>
+  <div class="bg-gray-900 border border-white/10 rounded-2xl w-[95%] max-w-[1000px] overflow-hidden flex flex-col md:flex-row relative">
+    <!-- Left: Thumbnail / Player -->
+    <div class="w-full md:w-2/3 bg-black relative">
+      <img id="modalThumb" src="" alt="Video thumbnail" class="w-full h-full object-cover cursor-pointer">
+      <iframe id="videoFrame" class="hidden absolute inset-0 w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-    <div class="aspect-video w-full bg-black">
-      <iframe id="videoFrame" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <!-- Right: Info / Actions -->
+    <div class="w-full md:w-1/3 flex flex-col justify-between p-4">
+      <div>
+        <h3 id="modalTitle" class="text-lg font-bold font-space_grotesk mb-2">Title</h3>
+        <p id="modalMeta" class="text-gray-400 text-sm mb-4">Platform • Author • Score</p>
+        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2 mb-2">Save Video</button>
+        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2 mb-2">Like</button>
+      </div>
+      <div>
+        <h4 class="text-gray-300 text-sm mb-2">Comments</h4>
+        <textarea class="w-full bg-gray-800 text-gray-200 text-sm p-2 rounded-md mb-2" placeholder="Add a comment..."></textarea>
+        <button class="text-pink-600 text-sm border border-white/10 rounded-md px-3 py-2">Post Comment</button>
+      </div>
     </div>
-    <div class="px-4 py-3 border-t border-white/10">
-      <p id="modalMeta" class="text-gray-400 text-sm"></p>
-    </div>
+    <!-- Close -->
+    <button id="closeModal" class="absolute top-2 right-2 text-white text-2xl leading-none px-2" aria-label="Close">&times;</button>
   </div>
 </div>
 
@@ -580,19 +591,24 @@
 </script>
 <script src="index.global.js"></script>
 
-<!-- Modal control script -->
+<!-- Modal control script updated to avoid autoplay and play on thumbnail click -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("videoModal");
   const frame = document.getElementById("videoFrame");
+  const thumb = document.getElementById("modalThumb");
   const titleEl = document.getElementById("modalTitle");
   const metaEl = document.getElementById("modalMeta");
   const closeBtn = document.getElementById("closeModal");
 
-  function openModal({ url, title, meta }) {
-    if (!url) return;
-    frame.src = url;
-    titleEl.textContent = title || "Playing";
+  function openModal({ thumbUrl, embedUrl, title, meta }) {
+    // Reset player and show thumbnail
+    frame.src = "";
+    frame.classList.add("hidden");
+    thumb.src = thumbUrl || "";
+    thumb.classList.remove("hidden");
+    thumb.dataset.embedUrl = embedUrl || "";
+    titleEl.textContent = title || "Title";
     metaEl.textContent = meta || "";
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
@@ -609,26 +625,38 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
+  // Click thumbnail to load and play the embedded player
+  thumb.addEventListener("click", () => {
+    const embedUrl = thumb.dataset.embedUrl;
+    if (embedUrl) {
+      frame.src = embedUrl;
+      frame.classList.remove("hidden");
+      thumb.classList.add("hidden");
+    }
+  });
+
+  // Wire up cards to open modal with thumbnail + metadata
   document.querySelectorAll(".card").forEach(card => {
     const embedUrl = card.getAttribute("data-embed-url");
+    const thumbUrl = card.querySelector("img")?.src || "";
     const title = card.querySelector("h3")?.textContent?.trim() || "";
     const platform = card.querySelector("span.text-cyan-400")?.textContent?.trim();
     const author = card.querySelector("p.text-gray-400.text-sm")?.textContent?.trim();
     const score = card.querySelector("span.text-gray-400.text-xs")?.textContent?.trim();
     const metaParts = [platform, author, score].filter(Boolean);
 
-    // Click anywhere on the card
+    // Click anywhere on the card opens modal without autoplay
     card.addEventListener("click", (e) => {
       if (e.target.closest("[data-role='watch-button']")) return; // button has its own handler
-      openModal({ url: embedUrl, title, meta: metaParts.join(" • ") });
+      openModal({ thumbUrl, embedUrl, title, meta: metaParts.join(" • ") });
     });
 
-    // Optional Watch button
+    // Optional Watch button in card also opens modal (no autoplay)
     const watchBtn = card.querySelector("[data-role='watch-button']");
     if (watchBtn) {
       watchBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        openModal({ url: embedUrl, title, meta: metaParts.join(" • ") });
+        openModal({ thumbUrl, embedUrl, title, meta: metaParts.join(" • ") });
       });
     }
   });
