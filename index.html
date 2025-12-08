@@ -242,7 +242,7 @@
                 <span class="bg-cyan-400 h-2 w-2 rounded-full animate-pulse"></span>
                 <span class="text-cyan-400 font-bold">Live Feed Active</span>
                 <span class="text-gray-500">•</span>
-                <span id="refresh-countdown" class="text-gray-400"></span>
+                <span id="refresh-countdown" class="text-gray-400">Next refresh in 10:00</span>
              </div>
              <!-- Auto Scroll Control -->
              <button id="toggle-scroll" class="text-xs flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 transition-colors">
@@ -748,19 +748,8 @@
         function updateCountdown() {
             secondsLeft--;
             if (secondsLeft < 0) {
-                 async function refreshFeedLive() {
-  if (!API_KEY) return;
-  try {
-    const allVideos = await fetchTrendingYouTube(30, 'US'); // fetch enough to distribute
-    distributeVideosToPlatforms(allVideos);
-    // ❌ REMOVE the reset line:
-    // PLATFORMS.forEach(p => rotationIndexByPlatform[p] = 0);
-    // ✅ Instead, just re-render with current indices:
-    renderAllPlatforms();
-  } catch (e) {
-    console.error('Live refresh failed:', e);
-    if (apiError) apiError.classList.remove('hidden');
-  }
+                // Refresh the data but DO NOT reset rotation indices
+                refreshFeedLive(); 
                 secondsLeft = REFRESH_INTERVAL_SECONDS;
             }
             countdownEl.textContent = `Next refresh in ${formatTime(secondsLeft)}`;
@@ -921,9 +910,9 @@
         const videosByPlatform = {}; // { platformId: [top3Videos] }
 
         // Initialize rotation indices
-    
+        PLATFORMS.forEach(p => rotationIndexByPlatform[p] = 0);
 
-        async function fetchTrendingYouTube(maxResults = 15, regionCode = 'US') {
+        async function fetchTrendingYouTube(maxResults = 30, regionCode = 'US') {
             if (!API_KEY) return null;
             const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${regionCode}&maxResults=${maxResults}&key=${API_KEY}`;
             const res = await fetch(url);
@@ -940,15 +929,12 @@
             return typeof score === 'number' ? score.toFixed(1) : '—';
         }
 
-        // Assign initial sets (top 3) to each platform from the global trending list
+        // Assign sets (top 3) to each platform from the global trending list
         function distributeVideosToPlatforms(allVideos) {
-            // For simplicity, we slice chunks of 3 sequential videos per platform
-            // across the fetched list. This gives each platform its own rotating set.
             let cursor = 0;
             PLATFORMS.forEach(p => {
                 const subset = allVideos.slice(cursor, cursor + MAX_TRENDING_PER_PLATFORM);
                 if (subset.length < MAX_TRENDING_PER_PLATFORM) {
-                    // wrap if near end
                     const remaining = MAX_TRENDING_PER_PLATFORM - subset.length;
                     videosByPlatform[p] = subset.concat(allVideos.slice(0, remaining));
                 } else {
@@ -963,7 +949,10 @@
             const list = videosByPlatform[platformId];
             if (!list || list.length === 0) return;
 
-            const idx = rotationIndexByPlatform[platformId] || 0;
+            // keep index within bounds in case list length changed
+            rotationIndexByPlatform[platformId] = rotationIndexByPlatform[platformId] % list.length;
+
+            const idx = rotationIndexByPlatform[platformId];
             const v = list[idx];
             const vidId = v.id;
             const title = v.snippet.title;
@@ -973,7 +962,6 @@
               (v.snippet.thumbnails?.high?.url) ||
               (v.snippet.thumbnails?.medium?.url) || '';
 
-            // Find the first card for this platformId within masonry (top to bottom mapping)
             const card = document.querySelector(`#card-masonry .card-entry[data-platform-id="${CSS.escape(platformId)}"] .card-trigger`);
             if (!card) return;
 
@@ -995,7 +983,7 @@
             const scoreEl = card.querySelector('.score');
             if (scoreEl) scoreEl.textContent = approximateScore(v.statistics?.viewCount);
 
-            // Update spotlight with the current top video (YouTube only)
+            // Update spotlight with the current top video (YouTube primary card only when index is 0)
             if (platformId === 'YouTube' && spotlightCard && idx === 0) {
                 spotlightCard.dataset.embedUrl = `https://www.youtube.com/embed/${vidId}?autoplay=1`;
                 spotlightCard.dataset.title = title;
@@ -1018,14 +1006,13 @@
             showPlatformVideo(platformId);
         }
 
-        // Render all platforms at their current indices
+        // Render all platforms at their current indices (keeps spacing intact)
         function renderAllPlatforms() {
             PLATFORMS.forEach(p => showPlatformVideo(p));
         }
 
-        // Start rotation intervals per platform (staggered slightly to avoid synchronized swaps)
+        // Start rotation intervals (one unified interval for smooth spacing)
         function startRotationLoop() {
-            // A single interval rotating all platforms together every ROTATION_INTERVAL_MS
             setInterval(() => {
                 PLATFORMS.forEach(p => rotatePlatform(p));
             }, ROTATION_INTERVAL_MS);
@@ -1035,9 +1022,17 @@
             if (!API_KEY) return;
             try {
                 const allVideos = await fetchTrendingYouTube(30, 'US'); // fetch enough to distribute
+                // Preserve current indices; just reassign lists
                 distributeVideosToPlatforms(allVideos);
-                // Reset rotation indices to 0 on refresh so next cycle begins at current #1
-                PLATFORMS.forEach(p => rotationIndexByPlatform[p] = 0);
+                PLATFORMS.forEach(p => {
+                    // keep current rotation index within bounds (no reset to 0)
+                    const list = videosByPlatform[p] || [];
+                    if (list.length > 0) {
+                        rotationIndexByPlatform[p] = rotationIndexByPlatform[p] % list.length;
+                    } else {
+                        rotationIndexByPlatform[p] = 0;
+                    }
+                });
                 renderAllPlatforms();
             } catch (e) {
                 console.error('Live refresh failed:', e);
@@ -1058,8 +1053,6 @@
             startAutoScroll();
             startCountdown();
             startRotationLoop();      // continuous rotation
-
-            // The countdown triggers refreshFeedLive() every 10 minutes
         });
 
         // Close modal handlers
