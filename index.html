@@ -748,7 +748,19 @@
         function updateCountdown() {
             secondsLeft--;
             if (secondsLeft < 0) {
-                refreshFeedLive(); 
+                 async function refreshFeedLive() {
+  if (!API_KEY) return;
+  try {
+    const allVideos = await fetchTrendingYouTube(30, 'US'); // fetch enough to distribute
+    distributeVideosToPlatforms(allVideos);
+    // ❌ REMOVE the reset line:
+    // PLATFORMS.forEach(p => rotationIndexByPlatform[p] = 0);
+    // ✅ Instead, just re-render with current indices:
+    renderAllPlatforms();
+  } catch (e) {
+    console.error('Live refresh failed:', e);
+    if (apiError) apiError.classList.remove('hidden');
+  }
                 secondsLeft = REFRESH_INTERVAL_SECONDS;
             }
             countdownEl.textContent = `Next refresh in ${formatTime(secondsLeft)}`;
@@ -909,7 +921,7 @@
         const videosByPlatform = {}; // { platformId: [top3Videos] }
 
         // Initialize rotation indices
-        PLATFORMS.forEach(p => rotationIndexByPlatform[p] = 0);
+    
 
         async function fetchTrendingYouTube(maxResults = 15, regionCode = 'US') {
             if (!API_KEY) return null;
