@@ -95,6 +95,12 @@
         scrollbar-width: none;  /* Firefox */
     }
 
+    /* API key input bar sticky styling */
+    .key-input-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
   </style>
 </head>
 <body class="text-black text-base not-italic normal-nums font-normal box-border h-full w-full bg-gray-900">
@@ -107,6 +113,16 @@
 <div id="app">
   <div class="text-white bg-gray-900 min-h-[1000px] overflow-x-clip font-nunito_sans">
     <div class="fixed bg-[linear-gradient(to_right,rgb(255,0,127),rgb(0,255,255),rgb(255,65,54))] h-1 origin-[0%_50%] z-50 top-0 inset-x-0 md:scale-x-0"></div>
+
+    <!-- API Key input (appears once; removed after submission) -->
+    <div id="api-key-bar" class="key-input-sticky backdrop-blur-xl bg-gray-900/90 w-full border-b border-white/10">
+      <div class="w-full mx-auto px-4 py-4 md:max-w-screen-xl flex items-center gap-3">
+        <label for="api-key-input" class="text-sm text-gray-300 font-semibold">Paste YouTube API key:</label>
+        <input id="api-key-input" type="text" class="flex-1 max-w-md rounded-md px-3 py-2 text-black" placeholder="Enter API key">
+        <button id="api-key-submit" class="text-sm font-bold bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-md">Start Live Feed</button>
+        <div id="api-key-error" class="text-sm text-red-400 ml-2 hidden">Invalid key or quota exceeded.</div>
+      </div>
+    </div>
 
     <header class="bg-gray-900 w-full border-gray-800 border-b border-solid">
       <div class="max-w-[1920px] mx-auto px-4 py-6">
@@ -166,11 +182,10 @@
           </div>
 
           <div class="grid md:grid-cols-12 gap-6">
-            <div class="md:col-span-8 cursor-pointer group card-trigger" data-embed-url="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" data-title="The Ultimate Summer Road Trip Guide" data-author="Wanderlust Adventures" data-platform="YouTube">
+            <div class="md:col-span-8 cursor-pointer group card-trigger" data-embed-url="" data-title="Loading…" data-author="Loading…" data-platform="YouTube">
               <div class="relative aspect-video bg-black/50 shadow-[rgba(0,0,0,0.25)_0_25px_50px_-12px] border overflow-hidden rounded-xl border-white/10">
-                <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="The Ultimate Summer Road Trip Guide" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <img id="spotlight-img" src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Spotlight" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.8),rgba(0,0,0,0))]"></div>
-                <!-- Play Icon Overlay -->
                 <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,0,127,0.6)]">
                         <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -178,9 +193,9 @@
                 </div>
                 <div class="absolute left-0 bottom-0 p-6 md:p-8 pointer-events-none">
                   <div class="text-xs font-medium bg-red-500 text-white inline-flex tracking-[0.6px] mb-3 px-2.5 py-1.5 rounded-md">#1 Trending</div>
-                  <h3 class="text-xl font-bold font-space_grotesk md:text-4xl text-white">The Ultimate Summer Road Trip Guide</h3>
-                  <p class="text-gray-300 flex items-center gap-2 text-sm md:text-base">
-                    <span class="text-pink-600 font-bold">YouTube</span><span>•</span><span>Wanderlust Adventures</span>
+                  <h3 id="spotlight-title" class="text-xl font-bold font-space_grotesk md:text-4xl text-white">Loading…</h3>
+                  <p id="spotlight-meta" class="text-gray-300 flex items-center gap-2 text-sm md:text-base">
+                    <span class="text-pink-600 font-bold">YouTube</span><span>•</span><span id="spotlight-author">Loading…</span>
                   </p>
                 </div>
               </div>
@@ -192,7 +207,7 @@
                   <div class="text-pink-600 bg-pink-600/20 p-3 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl">#</div>
                   <div>
                     <p class="text-gray-400 text-xs uppercase tracking-[0.7px]">Trending Score</p>
-                    <p class="text-2xl font-bold font-space_grotesk text-white">98.7</p>
+                    <p class="text-2xl font-bold font-space_grotesk text-white" id="spotlight-score">—</p>
                   </div>
                 </div>
               </div>
@@ -209,7 +224,7 @@
               </div>
               <div class="bg-[linear-gradient(to_right_bottom,rgba(255,0,127,0.2),rgba(0,0,0,0))] border border-pink-600/20 p-4 rounded-xl">
                 <h4 class="text-lg font-bold font-space_grotesk mb-1 text-white">Why it's hot</h4>
-                <p class="text-gray-400 text-sm">Explore breathtaking landscapes and hidden gems in this epic summer road trip guide.</p>
+                <p class="text-gray-400 text-sm" id="spotlight-why">Pulled from YouTube trending every 10 minutes.</p>
               </div>
             </div>
           </div>
@@ -247,19 +262,17 @@
         </div>
       </div>
 
-      <!-- Cards Masonry (The section with the Waterfall Background and Local Scroll) -->
+      <!-- Cards Masonry -->
       <section class="relative w-full py-8" id="feed-container">
         <div class="w-full mx-auto px-4 md:max-w-screen-xl feed-content-wrapper">
-          <!-- THIS IS THE NEW SCROLLABLE AREA -->
           <div id="feed-scroll-area" class="h-[75vh] overflow-y-auto relative z-20"> 
             <div id="card-masonry" class="columns-1 md:columns-3 gap-6">
 
-              <!-- Hardcoded Cards (Initial Load) -->
-
-              <!-- Card 1: YouTube Road Trip -->
+              <!-- The 15 original cards (unchanged structure) -->
+              <!-- Card 1 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="YouTube">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" data-title="The Ultimate Summer Road Trip Guide" data-author="@Wanderlust Adventures" data-platform="YouTube" data-img-src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="YouTube" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -273,19 +286,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                        <span class="text-gray-400 text-xs">Score: 98.7</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">The Ultimate Summer Road Trip Guide</h3>
-                      <p class="text-gray-400 text-sm mb-2">@Wanderlust Adventures</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 2: TikTok GrooveMoves -->
+              <!-- Card 2 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="TikTok">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1" data-title="Viral Dance Challenge: #GrooveMoves" data-author="@DanceWithMe" data-platform="TikTok" data-img-src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="TikTok" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-[9/16] w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -299,19 +312,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-pink-500 text-sm uppercase font-space_grotesk">TikTok</span>
-                        <span class="text-gray-400 text-xs">Score: 95.2</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Viral Dance Challenge: #GrooveMoves</h3>
-                      <p class="text-gray-400 text-sm mb-2">@DanceWithMe</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 3: Instagram DIY -->
+              <!-- Card 3 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Instagram">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1" data-title="DIY Home Decor Hacks You Need" data-author="@CraftyCorner" data-platform="Reels" data-img-src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Reels" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-square w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -325,19 +338,23 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-purple-400 text-sm uppercase font-space_grotesk">Reels</span>
-                        <span class="text-gray-400 text-xs">Score: 92.1</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">DIY Home Decor Hacks You Need</h3>
-                      <p class="text-gray-400 text-sm mb-2">@CraftyCorner</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 4: Facebook Pasta Sauce (Restored) -->
-               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Facebook">
+              <!-- Cards 4-15 (unchanged structure, set to Loading…) -->
+              <!-- For brevity, the remaining cards mirror your original HTML but with data placeholders.
+                   Keep them as-is; the script will update them with live data. -->
+              
+              <!-- Card 4 -->
+              <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Facebook">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/zH3-Lg3f1wM?autoplay=1" data-title="Chef's Secret: Perfect Pasta Sauce" data-author="@GourmetKitchen" data-platform="Facebook" data-img-src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Facebook" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -349,19 +366,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-blue-500 text-sm uppercase font-space_grotesk">Facebook</span>
-                        <span class="text-gray-400 text-xs">Score: 89.5</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Chef's Secret: Perfect Pasta Sauce</h3>
-                      <p class="text-gray-400 text-sm mb-2">@GourmetKitchen</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 5: Twitter AI -->
-               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Twitter/X">
-                  <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                       data-embed-url="https://www.youtube.com/embed/7GHtU0f2PQA?autoplay=1" data-title="Breaking News: AI Breakthrough" data-author="@TechInsights" data-platform="Twitter/X" data-img-src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+              <!-- Card 5 -->
+              <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Twitter/X">
+                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
+                       data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Twitter/X" data-img-src="">
                     <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                       <div class="relative aspect-video w-full overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -373,19 +390,19 @@
                       <div class="p-4">
                         <div class="flex items-center justify-between mb-2">
                           <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Twitter/X</span>
-                          <span class="text-gray-400 text-xs">Score: 97</span>
+                          <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                         </div>
-                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Breaking News: AI Breakthrough</h3>
-                        <p class="text-gray-400 text-sm mb-2">@TechInsights</p>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                        <p class="text-gray-400 text-sm mb-2">@Loading</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-              <!-- Card 6: Reddit Cat Fails (Restored) -->
+              <!-- Card 6 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Reddit">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/hY7m5jjJ9mM?autoplay=1" data-title="Hilarious Cat Fails Compilation" data-author="@r/aww" data-platform="Reddit" data-img-src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Reddit" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -397,19 +414,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-orange-500 text-sm uppercase font-space_grotesk">Reddit</span>
-                        <span class="text-gray-400 text-xs">Score: 91.8</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Hilarious Cat Fails Compilation</h3>
-                      <p class="text-gray-400 text-sm mb-2">@r/aww</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 7: Twitch Clutch Win -->
+              <!-- Card 7 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Twitch">
                   <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                       data-embed-url="https://www.youtube.com/embed/S70L6Jt67Nw?autoplay=1" data-title="Epic Gaming Moment: Clutch Win" data-author="@ProGamerLive" data-platform="Twitch" data-img-src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                       data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Twitch" data-img-src="">
                     <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                       <div class="relative aspect-video w-full overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -421,19 +438,19 @@
                       <div class="p-4">
                         <div class="flex items-center justify-between mb-2">
                           <span class="text-purple-500 text-sm uppercase font-space_grotesk">Twitch</span>
-                          <span class="text-gray-400 text-xs">Score: 96.5</span>
+                          <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                         </div>
-                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Epic Gaming Moment: Clutch Win</h3>
-                        <p class="text-gray-400 text-sm mb-2">@ProGamerLive</p>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                        <p class="text-gray-400 text-sm mb-2">@Loading</p>
                       </div>
                     </div>
                   </div>
               </div>
 
-              <!-- Card 8: YouTube Unboxing (Restored) -->
+              <!-- Card 8 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="YouTube">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1" data-title="Unboxing the Newest Smartphone" data-author="@GadgetGuru" data-platform="YouTube" data-img-src="https://images.unsplash.com/photo-1556656793-02715d8dd6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="YouTube" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1556656793-02715d8dd6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -445,19 +462,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                        <span class="text-gray-400 text-xs">Score: 94.3</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Unboxing the Newest Smartphone</h3>
-                      <p class="text-gray-400 text-sm mb-2">@GadgetGuru</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 9: TikTok Office Humor (Restored) -->
+              <!-- Card 9 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="TikTok">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1" data-title="Relatable Office Humor Skit" data-author="@CorporateComedy" data-platform="TikTok" data-img-src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="TikTok" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -469,19 +486,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-pink-500 text-sm uppercase font-space_grotesk">TikTok</span>
-                        <span class="text-gray-400 text-xs">Score: 88.9</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Relatable Office Humor Skit</h3>
-                      <p class="text-gray-400 text-sm mb-2">@CorporateComedy</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 10: Instagram Peru Ruins (Restored) -->
+              <!-- Card 10 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Instagram">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/Zk9J5xnNDHQ?autoplay=1" data-title="Exploring Ancient Ruins in Peru" data-author="@TravelBug" data-platform="Reels" data-img-src="https://images.unsplash.com/photo-1526392060635-9d6019884377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Reels" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-[9/16] w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -493,19 +510,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-purple-400 text-sm uppercase font-space_grotesk">Reels</span>
-                        <span class="text-gray-400 text-xs">Score: 93</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Exploring Ancient Ruins in Peru</h3>
-                      <p class="text-gray-400 text-sm mb-2">@TravelBug</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 11: Facebook Renewable Energy (Restored) -->
+              <!-- Card 11 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Facebook">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/1kUE0BZtTRc?autoplay=1" data-title="The Future of Renewable Energy" data-author="@EcoSolutions" data-platform="Facebook" data-img-src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Facebook" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -517,19 +534,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-blue-500 text-sm uppercase font-space_grotesk">Facebook</span>
-                        <span class="text-gray-400 text-xs">Score: 90.7</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">The Future of Renewable Energy</h3>
-                      <p class="text-gray-400 text-sm mb-2">@EcoSolutions</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-               <!-- Card 12: Vimeo Echoes (Restored) -->
+              <!-- Card 12 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Vimeo">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://player.vimeo.com/video/146022717?autoplay=1" data-title="Award-Winning Short Film: 'Echoes'" data-author="@IndieFilmMakers" data-platform="Vimeo" data-img-src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Vimeo" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
                       <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -541,22 +558,22 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Vimeo</span>
-                        <span class="text-gray-400 text-xs">Score: 97.8</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Award-Winning Short Film: 'Echoes'</h3>
-                      <p class="text-gray-400 text-sm mb-2">@IndieFilmMakers</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 13: Dailymotion Dunks -->
+              <!-- Card 13 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="Dailymotion">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.dailymotion.com/embed/video/x84628g?autoplay=1" data-title="Top 10 Basketball Dunks of the Week" data-author="@SportsHighlights" data-platform="Dailymotion" data-img-src="https://images.unsplash.com/photo-1505666287802-931dc83948e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="Dailymotion" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
-                      <img src="https://images.unsplash.com/photo-1505666287802-931dc83948e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Top 10 Basketball Dunks" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <img src="https://images.unsplash.com/photo-1505666287802-931dc83948e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Dunks" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
                       <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
                       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
                           <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
@@ -567,22 +584,22 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-cyan-400 text-sm uppercase font-space_grotesk">Dailymotion</span>
-                        <span class="text-gray-400 text-xs">Score: 87.6</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Top 10 Basketball Dunks of the Week</h3>
-                      <p class="text-gray-400 text-sm mb-2">@SportsHighlights</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Card 14: YouTube Public Speaking -->
+              <!-- Card 14 -->
               <div class="break-inside-avoid mb-6 card-entry" data-platform-id="YouTube">
                 <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="https://www.youtube.com/embed/wxyz9012" data-title="Mastering Public Speaking in 5 Steps" data-author="@SkillUpAcademy" data-platform="YouTube" data-img-src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                     data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="YouTube" data-img-src="">
                   <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                     <div class="relative aspect-video w-full overflow-hidden">
-                      <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mastering Public Speaking" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <img src="https://images.unsplash.com/photo-1544928147-79a2dbc1f389?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Public Speaking" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
                       <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
                       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
                           <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
@@ -593,19 +610,19 @@
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-cyan-400 text-sm uppercase font-space_grotesk">YouTube</span>
-                        <span class="text-gray-400 text-xs">Score: 90.1</span>
+                        <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                       </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Mastering Public Speaking in 5 Steps</h3>
-                      <p class="text-gray-400 text-sm mb-2">@SkillUpAcademy</p>
+                      <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                      <p class="text-gray-400 text-sm mb-2">@Loading</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-                <!-- Card 15: TikTok Morning Routine -->
-                <div class="break-inside-avoid mb-6 card-entry" data-platform-id="TikTok">
+              <!-- Card 15 -->
+              <div class="break-inside-avoid mb-6 card-entry" data-platform-id="TikTok">
                   <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                       data-embed-url="https://www.youtube.com/embed/def456" data-title="My Morning Routine for Productivity" data-author="@WellnessWarrior" data-platform="TikTok" data-img-src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80">
+                       data-embed-url="" data-title="Loading…" data-author="@Loading" data-platform="TikTok" data-img-src="">
                     <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
                       <div class="relative aspect-video w-full overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Morning Routine" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -619,10 +636,10 @@
                       <div class="p-4">
                         <div class="flex items-center justify-between mb-2">
                           <span class="text-pink-500 text-sm uppercase font-space_grotesk">TikTok</span>
-                          <span class="text-gray-400 text-xs">Score: 86.4</span>
+                          <span class="text-gray-400 text-xs">Score: <span class="score">—</span></span>
                         </div>
-                        <h3 class="text-lg font-space_grotesk mb-2 text-white">My Morning Routine for Productivity</h3>
-                        <p class="text-gray-400 text-sm mb-2">@WellnessWarrior</p>
+                        <h3 class="text-lg font-space_grotesk mb-2 text-white">Loading…</h3>
+                        <p class="text-gray-400 text-sm mb-2">@Loading</p>
                       </div>
                     </div>
                   </div>
@@ -630,7 +647,6 @@
 
             </div>
           </div>
-          <!-- END OF SCROLLABLE AREA -->
         </div>
       </section>
     </main>
@@ -657,9 +673,7 @@
 
                 <div class="flex-1 overflow-y-auto p-5 custom-scrollbar bg-black/20">
                     <h3 class="text-sm font-bold text-gray-300 uppercase tracking-widest mb-4">Comments</h3>
-                    <div id="modal-comments" class="space-y-4">
-                        <!-- Comments will be injected via JS -->
-                    </div>
+                    <div id="modal-comments" class="space-y-4"></div>
                 </div>
 
                 <div class="p-5 border-t border-white/10 bg-gray-800/50">
@@ -705,32 +719,18 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        
         // --- DOM Elements ---
         const scrollableElement = document.getElementById('feed-scroll-area');
         const cardMasonry = document.getElementById('card-masonry');
         const countdownEl = document.getElementById('refresh-countdown');
-        if (!scrollableElement || !cardMasonry || !countdownEl) {
-            console.error("Critical DOM element not found.");
-            return;
-        }
+        if (!scrollableElement || !cardMasonry || !countdownEl) return;
 
         // --- Live Refresh Constants (10 minutes) ---
-        // NOTE: Set to 10 minutes (600 seconds) as requested. Change for faster testing.
         const REFRESH_INTERVAL_SECONDS = 600; // 10 minutes
         let secondsLeft = REFRESH_INTERVAL_SECONDS;
         let countdownInterval;
 
-        // Mock data for new content simulation
-        const NEW_CONTENT_MOCK = [
-            { platform: "NewTube", color: "text-red-500", handle: "@CodeMaster", title: "Modern JavaScript Secrets", imgSrc: "https://images.unsplash.com/photo-1549692520-219e69335835?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", score: 99.1, embed: "https://www.youtube.com/embed/P-1mC-F46J4?autoplay=1" },
-            { platform: "Snap", color: "text-yellow-300", handle: "@FoodieFlash", title: "3-Ingredient Dinner Hacks", imgSrc: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", score: 96.8, embed: "https://www.youtube.com/embed/zH3-Lg3f1wM?autoplay=1" },
-            { platform: "Medium", color: "text-green-400", handle: "@FutureThinker", title: "Web3 and the Metaverse Future", imgSrc: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", score: 95.5, embed: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1" },
-            { platform: "X", color: "text-blue-300", handle: "@MarketPulse", title: "Stock Market Jumps 200 Points", imgSrc: "https://images.unsplash.com/photo-1502945015378-0e284e828588?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", score: 98.2, embed: "https://www.youtube.com/embed/7GHtU0f2PQA?autoplay=1" },
-        ];
-
-
-        // --- Helper function to format time (MM:SS) ---
+        // --- Helper: format time (MM:SS) ---
         function formatTime(totalSeconds) {
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = totalSeconds % 60;
@@ -741,98 +741,21 @@
         function updateCountdown() {
             secondsLeft--;
             if (secondsLeft < 0) {
-                // Time to refresh!
-                refreshFeed(); 
+                refreshFeedLive(); 
                 secondsLeft = REFRESH_INTERVAL_SECONDS;
             }
             countdownEl.textContent = `Next refresh in ${formatTime(secondsLeft)}`;
         }
-
         function startCountdown() {
             if (countdownInterval) clearInterval(countdownInterval);
-            updateCountdown(); // Initial call
+            updateCountdown();
             countdownInterval = setInterval(updateCountdown, 1000);
         }
 
-        // --- Generate a new card HTML string ---
-        function generateNewCardHtml(data) {
-            return `
-              <div class="break-inside-avoid mb-6 card-entry" data-platform-id="${data.platform}" style="animation-delay: ${Math.random() * 0.5}s;">
-                <div class="card-trigger relative bg-gray-900/50 border overflow-hidden rounded-2xl border-white/10 cursor-pointer group hover:border-cyan-400/50 transition-colors"
-                     data-embed-url="${data.embed}" data-title="${data.title}" data-author="${data.handle}" data-platform="${data.platform}" data-img-src="${data.imgSrc}">
-                  <div class="bg-slate-800 shadow rounded-lg overflow-hidden">
-                    <div class="relative aspect-video w-full overflow-hidden">
-                      <img src="${data.imgSrc}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
-                      <div class="absolute flex gap-2 right-3 top-3"><div class="h-3 w-3 rounded-full bg-cyan-400 shadow-[rgb(0,255,255)_0_0_10px_0]"></div></div>
-                       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30">
-                          <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
-                               <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                          </div>
-                      </div>
-                    </div>
-                    <div class="p-4">
-                      <div class="flex items-center justify-between mb-2">
-                        <span class="${data.color} text-sm uppercase font-space_grotesk">${data.platform}</span>
-                        <span class="text-gray-400 text-xs">Score: ${data.score}</span>
-                      </div>
-                      <h3 class="text-lg font-space_grotesk mb-2 text-white">${data.title}</h3>
-                      <p class="text-gray-400 text-sm mb-2">${data.handle}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-        }
-
-        // --- Refresh Logic ---
-        function refreshFeed() {
-            console.log('--- LIVE FEED REFRESHING ---');
-            const newCardsHtml = document.createElement('div');
-            newCardsHtml.classList.add('new-cards-batch'); // Temp container
-
-            // Select 2-3 random items to prepend
-            const itemsToPrepend = [];
-            const shuffledMock = NEW_CONTENT_MOCK.sort(() => 0.5 - Math.random());
-            const count = Math.floor(Math.random() * 2) + 2; // 2 or 3 new items
-
-            for (let i = 0; i < count; i++) {
-                // Ensure we get a unique mock piece if possible, or just repeat
-                const data = shuffledMock[i % shuffledMock.length];
-                itemsToPrepend.push(data);
-            }
-
-            // Generate HTML for the new cards
-            itemsToPrepend.forEach((data, index) => {
-                const cardHtml = generateNewCardHtml(data);
-                newCardsHtml.insertAdjacentHTML('beforeend', cardHtml);
-            });
-            
-            // Prepend the new cards to the masonry container
-            cardMasonry.prepend(newCardsHtml);
-
-            // Re-apply trigger listeners for the new cards
-            newCardsHtml.querySelectorAll('.card-trigger').forEach(newTrigger => {
-                newTrigger.addEventListener('click', handleCardClick);
-            });
-
-            // Cleanup the temporary container and animate
-            const newCardElements = newCardsHtml.querySelectorAll('.card-entry');
-             newCardElements.forEach((card, index) => {
-                // Stagger animation for new cards
-                card.style.animation = `fadeInUp 0.6s ease-out forwards ${index * 0.15}s`;
-            });
-
-            // Flatten the structure: move children up and remove the wrapper
-            while (newCardsHtml.firstChild) {
-                cardMasonry.insertBefore(newCardsHtml.firstChild, newCardsHtml);
-            }
-            newCardsHtml.remove();
-        }
-
-        // --- Auto Scroll Feature (UNCHANGED) ---
+        // --- Auto Scroll Feature ---
         let autoScrollActive = true;
         let scrollInterval;
-        const scrollSpeed = 1; // 1px per tick
+        const scrollSpeed = 1; // px
         const scrollTick = 50; // ms
 
         const toggleBtn = document.getElementById('toggle-scroll');
@@ -842,46 +765,30 @@
         function startAutoScroll() {
             if(scrollInterval) clearInterval(scrollInterval);
             scrollInterval = setInterval(() => {
-                const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop <= scrollableElement.clientHeight + 1; // Add tolerance for fractional scrolling
-
-                if (atBottom) {
-                     // If bottom reached, reset to the top for a continuous loop effect
-                     scrollableElement.scrollTop = 0; 
-                } else {
-                    scrollableElement.scrollTop += scrollSpeed;
-                }
+                const atBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop <= scrollableElement.clientHeight + 1;
+                if (atBottom) scrollableElement.scrollTop = 0; 
+                else scrollableElement.scrollTop += scrollSpeed;
             }, scrollTick);
-            
-            // UI Update
             scrollIcon.textContent = '⏸';
             scrollText.textContent = 'Pause Auto-Scroll';
             toggleBtn.classList.add('border-cyan-400', 'text-cyan-400');
             autoScrollActive = true;
         }
-
         function stopAutoScroll() {
             if(scrollInterval) clearInterval(scrollInterval);
-            
-            // UI Update
             scrollIcon.textContent = '▶';
             scrollText.textContent = 'Resume Scroll';
             toggleBtn.classList.remove('border-cyan-400', 'text-cyan-400');
             autoScrollActive = false;
         }
-
         toggleBtn.addEventListener('click', () => {
             if(autoScrollActive) stopAutoScroll();
             else startAutoScroll();
         });
+        scrollableElement.addEventListener('mouseenter', () => { if(autoScrollActive) clearInterval(scrollInterval); });
+        scrollableElement.addEventListener('mouseleave', () => { if(autoScrollActive) startAutoScroll(); });
 
-        scrollableElement.addEventListener('mouseenter', () => {
-            if(autoScrollActive) clearInterval(scrollInterval);
-        });
-        scrollableElement.addEventListener('mouseleave', () => {
-            if(autoScrollActive) startAutoScroll();
-        });
-
-        // --- Modal Logic (Mostly Unchanged) ---
+        // --- Modal Logic ---
         const modal = document.getElementById('video-modal');
         const modalPanel = document.getElementById('modal-panel');
         const backdrop = document.getElementById('modal-backdrop');
@@ -894,7 +801,6 @@
         const mThumbWrapper = document.getElementById('video-thumbnail-wrapper');
         const mIframeWrapper = document.getElementById('iframe-wrapper');
         const mComments = document.getElementById('modal-comments');
-
         let wasScrollActiveBeforeModal = false;
 
         function generateComments(count) {
@@ -919,8 +825,7 @@
 
         function openModal(data) {
             wasScrollActiveBeforeModal = autoScrollActive;
-            stopAutoScroll(); // Force stop scroll when modal opens
-            
+            stopAutoScroll(); 
             mIframeWrapper.innerHTML = '';
             mIframeWrapper.classList.add('hidden');
             mThumbWrapper.classList.remove('hidden');
@@ -928,7 +833,7 @@
             mTitle.textContent = data.title;
             mAuthor.textContent = data.author;
             mPlatform.textContent = data.platform;
-            mThumb.src = data.imgSrc || data.img_src; // Use data-img-src
+            mThumb.src = data.imgSrc || data.img_src || '';
             mComments.innerHTML = generateComments(5);
 
             mThumbWrapper.onclick = () => {
@@ -947,18 +852,12 @@
         function closeModal() {
             modalPanel.classList.remove('scale-100', 'opacity-100');
             modalPanel.classList.add('scale-95', 'opacity-0');
-            
-            if (wasScrollActiveBeforeModal) {
-                 startAutoScroll();
-            }
-
+            if (wasScrollActiveBeforeModal) startAutoScroll();
             setTimeout(() => {
                 modal.classList.add('hidden');
                 mIframeWrapper.innerHTML = '';
             }, 300);
         }
-        
-        // Unified event handler for new and old cards
         function handleCardClick() {
             const trigger = this;
             const data = {
@@ -970,25 +869,124 @@
             };
             openModal(data);
         }
-
-
-        // --- Initial setup ---
-
-        // 1. Start Waterfall Entry Animation for initial cards
-        const initialCards = document.querySelectorAll('.card-entry');
-        initialCards.forEach((card, index) => {
-            card.style.animation = `fadeInUp 0.6s ease-out forwards ${index * 0.1}s`;
-        });
-        
-        // 2. Attach listeners to existing cards
         document.querySelectorAll('.card-trigger').forEach(trigger => {
             trigger.addEventListener('click', handleCardClick);
         });
 
-        // 3. Start the Live timers
-        startAutoScroll();
-        startCountdown();
+        // --- Initial card entry animation ---
+        const initialCards = document.querySelectorAll('.card-entry');
+        initialCards.forEach((card, index) => {
+            card.style.animation = `fadeInUp 0.6s ease-out forwards ${index * 0.1}s`;
+        });
 
+        // --- API Key handling and live YouTube trending integration ---
+        let API_KEY = null;
+        const apiBar = document.getElementById('api-key-bar');
+        const apiInput = document.getElementById('api-key-input');
+        const apiSubmit = document.getElementById('api-key-submit');
+        const apiError = document.getElementById('api-key-error');
+
+        // Spotlight elements
+        const spotlightCard = document.querySelector('.grid.md\\:grid-cols-12 .card-trigger');
+        const spotlightImg = document.getElementById('spotlight-img');
+        const spotlightTitle = document.getElementById('spotlight-title');
+        const spotlightAuthor = document.getElementById('spotlight-author');
+        const spotlightScore = document.getElementById('spotlight-score');
+
+        async function fetchTrendingYouTube(maxResults = 12, regionCode = 'US') {
+            if (!API_KEY) return null;
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${regionCode}&maxResults=${maxResults}&key=${API_KEY}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (!data.items) throw new Error('Invalid API response');
+            return data.items;
+        }
+
+        function assignVideosToCards(videos) {
+            const triggers = Array.from(document.querySelectorAll('#card-masonry .card-trigger'));
+            const count = Math.min(triggers.length, videos.length);
+            for (let i = 0; i < count; i++) {
+                const t = triggers[i];
+                const v = videos[i];
+                const vidId = v.id;
+                const title = v.snippet.title;
+                const author = v.snippet.channelTitle;
+                const thumb = (v.snippet.thumbnails?.standard?.url) || (v.snippet.thumbnails?.high?.url) || (v.snippet.thumbnails?.medium?.url) || '';
+
+                // Update dataset for modal
+                t.dataset.embedUrl = `https://www.youtube.com/embed/${vidId}?autoplay=1`;
+                t.dataset.title = title;
+                t.dataset.author = author;
+                t.dataset.platform = t.dataset.platform || 'YouTube';
+                t.dataset.imgSrc = thumb;
+
+                // Update visible card content
+                const imgEl = t.querySelector('img');
+                if (imgEl && thumb) imgEl.src = thumb;
+                const titleEl = t.querySelector('h3');
+                if (titleEl) titleEl.textContent = title;
+                const authorEl = t.querySelector('p');
+                if (authorEl) authorEl.textContent = author;
+
+                // Lightweight score from views if available
+                const views = Number(v.statistics?.viewCount || 0);
+                const scoreApprox = views ? Math.min(99.9, Math.round((Math.log10(views + 1) / 6) * 1000) / 10) : '—';
+                const scoreEl = t.querySelector('.score');
+                if (scoreEl) scoreEl.textContent = typeof scoreApprox === 'number' ? scoreApprox.toFixed(1) : scoreApprox;
+            }
+
+            // Update spotlight with the top video
+            const top = videos[0];
+            if (top && spotlightCard) {
+                const topId = top.id;
+                const topTitle = top.snippet.title;
+                const topAuthor = top.snippet.channelTitle;
+                const topThumb = (top.snippet.thumbnails?.maxres?.url) || (top.snippet.thumbnails?.high?.url) || (top.snippet.thumbnails?.medium?.url) || '';
+
+                spotlightCard.dataset.embedUrl = `https://www.youtube.com/embed/${topId}?autoplay=1`;
+                spotlightCard.dataset.title = topTitle;
+                spotlightCard.dataset.author = topAuthor;
+                spotlightCard.dataset.platform = 'YouTube';
+                spotlightCard.dataset.imgSrc = topThumb;
+
+                if (spotlightImg && topThumb) spotlightImg.src = topThumb;
+                if (spotlightTitle) spotlightTitle.textContent = topTitle;
+                if (spotlightAuthor) spotlightAuthor.textContent = topAuthor;
+
+                const viewsTop = Number(top.statistics?.viewCount || 0);
+                const spotlightScoreVal = viewsTop ? Math.min(99.9, Math.round((Math.log10(viewsTop + 1) / 6) * 1000) / 10) : '—';
+                if (spotlightScore) spotlightScore.textContent = typeof spotlightScoreVal === 'number' ? spotlightScoreVal.toFixed(1) : spotlightScoreVal;
+            }
+        }
+
+        async function refreshFeedLive() {
+            if (!API_KEY) return;
+            try {
+                const videos = await fetchTrendingYouTube(15, 'US'); // fetch up to 15 for all cards
+                assignVideosToCards(videos);
+            } catch (e) {
+                console.error('Live refresh failed:', e);
+                if (apiError) apiError.classList.remove('hidden');
+            }
+        }
+
+        apiSubmit.addEventListener('click', async () => {
+            API_KEY = (apiInput.value || '').trim();
+            if (!API_KEY) { apiError.classList.remove('hidden'); return; }
+            apiError.classList.add('hidden');
+            // Remove key bar
+            apiBar.remove();
+
+            // Start live behavior
+            await refreshFeedLive();
+            startAutoScroll();
+            startCountdown();
+
+            // Also refresh every 10 minutes via countdown handler trigger
+            // The countdown already calls refreshFeedLive() when secondsLeft < 0
+        });
+
+        // Close modal handlers
         closeBtn.addEventListener('click', closeModal);
         backdrop.addEventListener('click', closeModal);
         document.addEventListener('keydown', (e) => {
