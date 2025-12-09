@@ -1,510 +1,125 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query'; // Keep react-query for local caching/state management
-
-export default function TrendTracker() { // Renamed from VibeNow to TrendTracker
-    const [apiKey, setApiKey] = useState('');
-    const [isLive, setIsLive] = useState(false);
-    const [videosByPlatform, setVideosByPlatform] = useState({});
-    const [rotationIndex, setRotationIndex] = useState({});
-    const [countdown, setCountdown] = useState(600);
-    const [autoScrollActive, setAutoScrollActive] = useState(true);
-    const [apiError, setApiError] = useState(false);
-    const [selectedVideo, setSelectedVideo] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [showIframe, setShowIframe] = useState(false);
-    const [neonMode, setNeonMode] = useState(true);
-    const [user, setUser] = useState(null); // User state kept, but auth decoupled
-    const [comments, setComments] = useState([]);
-    const [loadingComments, setLoadingComments] = useState(false);
-    const [liked, setLiked] = useState(false);
-    const [showSparkles, setShowSparkles] = useState(false);
-    const [showWaterfall, setShowWaterfall] = useState(false);
-
-    const queryClient = useQueryClient();
-
-    const scrollRef = useRef(null);
-    const scrollIntervalRef = useRef(null);
-    const countdownIntervalRef = useRef(null);
-    const rotationIntervalRef = useRef(null);
-    const wasScrollActiveRef = useRef(false);
-
-    const PLATFORMS = [
-        "YouTube", "TikTok", "Instagram", "Facebook", "Twitter/X",
-        "Reddit", "Twitch", "YouTube", "TikTok", "Instagram",
-        "Facebook", "Vimeo", "Dailymotion", "YouTube", "TikTok"
-    ];
-
-    const MAX_TRENDING = 3;
-    const REFRESH_INTERVAL = 600; // 10 minutes in seconds
-    const ROTATION_INTERVAL = 5 * 60 * 1000; // 5 minutes
-
-    // Load API key and decouple user authentication
-    useEffect(() => {
-        const savedKey = localStorage.getItem('youtube_api_key');
-        if (savedKey) {
-            setApiKey(savedKey);
-            setIsLive(true);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base44 Clock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional: Add a smooth scroll for the body */
+        body {
+            transition: background-color 2.5s ease;
         }
-
-        // --- BASE44 AUTHENTICATION REMOVAL ---
-        // base44.auth.me() and related login/signup logic has been removed.
-        // If you need user authentication, you must integrate your own system here.
-        // --- END REMOVAL ---
-
-        // Show waterfall on first visit
-        const hasVisited = localStorage.getItem('has_visited');
-        if (!hasVisited) {
-            setShowWaterfall(true);
-            localStorage.setItem('has_visited', 'true');
-            setTimeout(() => setShowWaterfall(false), 5000);
+        /* Hide the scrollbar but keep it functional */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-    }, []);
-
-
-    // --- BASE44 VIDEO SAVING FUNCTIONALITY STUBBED OUT ---
-    // These functions relied on the Base44 backend.
-    // They are now stubbed to prevent errors. You need to integrate your own
-    // database/API here if you want to keep the "Save Video" feature.
-
-    const savedVideos = []; // Always empty until you implement your own data fetch.
-
-    const saveVideoMutation = {
-        mutate: (videoData) => {
-            console.log("SAVE VIDEO FAILED: Base44 dependency removed. Implement your own save API.");
-            // queryClient.invalidateQueries({ queryKey: ['savedVideos'] });
-        },
-    };
-
-    const unsaveVideoMutation = {
-        mutate: (videoId) => {
-            console.log("UNSAVE VIDEO FAILED: Base44 dependency removed. Implement your own delete API.");
-            // queryClient.invalidateQueries({ queryKey: ['savedVideos'] });
-        },
-    };
-
-    const isVideoSaved = (videoId) => {
-        return savedVideos.some(v => v.video_id === videoId);
-    };
-
-    const handleSaveToggle = (video, platform) => {
-        if (isVideoSaved(video.id)) {
-            unsaveVideoMutation.mutate(video.id);
-        } else {
-            saveVideoMutation.mutate({
-                video_id: video.id,
-                title: video.snippet.title,
-                thumbnail: video.snippet.thumbnails?.high?.url,
-                channel_title: video.snippet.channelTitle,
-                platform: platform
-            });
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
-    };
-    // --- END STUBBED FUNCTIONS ---
+    </style>
+</head>
+<body class="bg-black text-white font-mono flex items-center justify-center min-h-screen">
 
-    // Fetch trending YouTube videos (This logic is independent and kept)
-    const fetchTrending = async (key) => {
-        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=US&maxResults=30&key=${key}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (!data.items) throw new Error('Invalid API response');
-        return data.items;
-    };
-
-    // ... (All other core logic for score, distribution, rotation, etc., remains the same)
-    const approximateScore = (views) => {
-        const v = Number(views || 0);
-        if (!v) return '—';
-        return Math.min(99.9, Math.round((Math.log10(v + 1) / 6) * 1000) / 10).toFixed(1);
-    };
-
-    const distributeVideos = (allVideos) => {
-        const distributed = {};
-        const indices = {};
-        let cursor = 0;
-
-        PLATFORMS.forEach(p => {
-            const subset = allVideos.slice(cursor, cursor + MAX_TRENDING);
-            if (subset.length < MAX_TRENDING) {
-                const remaining = MAX_TRENDING - subset.length;
-                distributed[p] = subset.concat(allVideos.slice(0, remaining));
-            } else {
-                distributed[p] = subset;
-            }
-            indices[p] = indices[p] || 0;
-            cursor = (cursor + MAX_TRENDING) % allVideos.length;
-        });
-
-        return { distributed, indices };
-    };
-
-    const refreshFeed = async () => {
-        if (!apiKey) return;
-        try {
-            setApiError(false);
-            const videos = await fetchTrending(apiKey);
-            const { distributed, indices } = distributeVideos(videos);
-            setVideosByPlatform(distributed);
-            setRotationIndex(prev => {
-                const updated = { ...prev };
-                Object.keys(distributed).forEach(p => {
-                    const list = distributed[p];
-                    if (list && list.length > 0) {
-                        updated[p] = (prev[p] || 0) % list.length;
-                    }
-                });
-                return updated;
-            });
-        } catch (error) {
-            console.error('Refresh failed:', error);
-            setApiError(true);
-        }
-    };
-
-    const handleKeySubmit = async () => {
-        const trimmedKey = apiKey.trim();
-        if (!trimmedKey) {
-            setApiError(true);
-            return;
-        }
-        localStorage.setItem('youtube_api_key', trimmedKey);
-        setApiKey(trimmedKey);
-        setApiError(false);
-        setIsLive(true);
-    };
-
-    useEffect(() => {
-        if (!autoScrollActive || !scrollRef.current) return;
-
-        scrollIntervalRef.current = setInterval(() => {
-            const el = scrollRef.current;
-            if (!el) return;
-            const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
-            if (atBottom) {
-                el.scrollTop = 0;
-            } else {
-                el.scrollTop += 1;
-            }
-        }, 30);
-
-        return () => clearInterval(scrollIntervalRef.current);
-    }, [autoScrollActive]);
-
-    useEffect(() => {
-        if (!isLive) return;
-
-        countdownIntervalRef.current = setInterval(() => {
-            setCountdown(prev => {
-                if (prev <= 1) {
-                    refreshFeed();
-                    return REFRESH_INTERVAL;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(countdownIntervalRef.current);
-    }, [isLive, apiKey]);
-
-    useEffect(() => {
-        if (!isLive) return;
-
-        rotationIntervalRef.current = setInterval(() => {
-            setRotationIndex(prev => {
-                const updated = { ...prev };
-                PLATFORMS.forEach(p => {
-                    const list = videosByPlatform[p];
-                    if (list && list.length > 0) {
-                        updated[p] = ((prev[p] || 0) + 1) % list.length;
-                    }
-                });
-                return updated;
-            });
-        }, ROTATION_INTERVAL);
-
-        return () => clearInterval(rotationIntervalRef.current);
-    }, [isLive, videosByPlatform]);
-
-    useEffect(() => {
-        if (isLive && apiKey) {
-            refreshFeed();
-        }
-    }, [isLive]);
-
-    const formatTime = (seconds) => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    };
-
-    const getCurrentVideo = (platform, index) => {
-        const videos = videosByPlatform[platform];
-        if (!videos || videos.length === 0) return null;
-        const idx = (rotationIndex[platform] || 0) % videos.length;
-        return videos[idx];
-    };
-
-    const fetchComments = async (videoId) => {
-        if (!apiKey) return;
-        setLoadingComments(true);
-        try {
-            const url = `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=10&key=${apiKey}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            if (data.items) {
-                setComments(data.items.map(item => ({
-                    author: item.snippet.topLevelComment.snippet.authorDisplayName,
-                    text: item.snippet.topLevelComment.snippet.textDisplay,
-                    avatar: item.snippet.topLevelComment.snippet.authorProfileImageUrl,
-                    likes: item.snippet.topLevelComment.snippet.likeCount
-                })));
-            }
-        } catch (error) {
-            console.error('Failed to fetch comments:', error);
-            setComments([]);
-        }
-        setLoadingComments(false);
-    };
-
-    const openModal = (video, platform) => {
-        wasScrollActiveRef.current = autoScrollActive;
-        setAutoScrollActive(false);
-        setSelectedVideo({ ...video, platform });
-        setShowModal(true);
-        setShowIframe(false);
-        setLiked(false);
-        setComments([]);
-        fetchComments(video.id);
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        setShowIframe(false);
-        setComments([]);
-        setLiked(false);
-        if (wasScrollActiveRef.current) setAutoScrollActive(true);
-    };
-
-    const handleLike = () => {
-        setLiked(!liked);
-        if (!liked) {
-            setShowSparkles(true);
-            setTimeout(() => setShowSparkles(false), 1000);
-        }
-    };
-
-    const shareToFacebook = (video) => {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=https://www.youtube.com/watch?v=${video.id}`, '_blank', 'width=600,height=400');
-    };
-
-    const shareToTwitter = (video) => {
-        window.open(`https://twitter.com/intent/tweet?url=https://www.youtube.com/watch?v=${video.id}&text=${encodeURIComponent(video.snippet.title)}`, '_blank', 'width=600,height=400');
-    };
-
-    const copyLink = (video) => {
-        navigator.clipboard.writeText(`https://www.youtube.com/watch?v=${video.id}`);
-        alert('Link copied to clipboard!');
-    };
-
-    const platformColors = {
-        YouTube: 'text-red-500',
-        TikTok: 'text-pink-500',
-        Instagram: 'text-purple-400',
-        Reels: 'text-purple-400',
-        Facebook: 'text-blue-500',
-        'Twitter/X': 'text-cyan-400',
-        Reddit: 'text-orange-500',
-        Twitch: 'text-purple-500',
-        Vimeo: 'text-cyan-400',
-        Dailymotion: 'text-cyan-400'
-    };
-
-    const spotlightVideo = getCurrentVideo('YouTube', 0);
-
-    return (
-        <div className={`min-h-screen text-white font-sans transition-colors duration-500 ${neonMode ? 'bg-black' : 'bg-gray-900'}`}>
-            {/* CSS STYLES ARE INCLUDED HERE */}
-            <style>{/* ... (all your existing CSS animations like fadeInUp, flow, neonPulse, flicker, etc.) ... */}</style>
-            
-            {/* --- Removed all Base44 ads and links from the navigation/footers --- */}
-
-            {/* If Not Live: API Key Setup */}
-            {!isLive && (
-                <section className="flex items-center justify-center min-h-screen">
-                    {/* ... (Your existing API key input form logic) ... */}
-                    <div className="text-center p-8 backdrop-blur-md bg-white/5 rounded-xl border border-white/10 shadow-2xl max-w-lg w-full">
-                        <h1 className="text-4xl font-bold mb-4 neon-text">TrendTracker</h1>
-                        <p className="text-gray-400 mb-6">Enter your YouTube API Key to activate the live trending feed.</p>
-                        <input
-                            type="text"
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                            placeholder="Enter YouTube API Key..."
-                            className={`w-full p-3 mb-4 rounded-lg bg-gray-800 text-white focus:outline-none transition-all ${apiError ? 'border-2 border-red-500' : 'border border-gray-700'}`}
-                        />
-                        <button
-                            onClick={handleKeySubmit}
-                            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg transition-colors shadow-lg"
-                        >
-                            Go Live
-                        </button>
-                        {apiError && (
-                            <p className="text-red-500 mt-3 text-sm">Please enter a valid API key.</p>
-                        )}
-                        <p className="text-xs text-gray-500 mt-4">
-                            You can get a free YouTube Data API key from Google.
-                        </p>
-                    </div>
-                </section>
-            )}
-
-            {/* If Live: Main Dashboard */}
-            {isLive && (
-                <main className="max-w-screen-xl mx-auto px-4 py-8">
-                    {/* Spotlight Section */}
-                    {spotlightVideo && (
-                        <section className="mb-8">
-                            {/* ... (Your existing Spotlight Grid logic) ... */}
-                            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                                {/* Video Player Card */}
-                                <div className="md:col-span-8 relative h-96 rounded-xl overflow-hidden shadow-xl group cursor-pointer border border-white/10" onClick={() => openModal(spotlightVideo, 'YouTube')}>
-                                    <img
-                                        src={spotlightVideo.snippet.thumbnails?.standard?.url || spotlightVideo.snippet.thumbnails?.high?.url}
-                                        alt={spotlightVideo.snippet.title}
-                                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <div className="w-16 h-16 bg-pink-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,0,127,0.6)]">
-                                            <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                        </div>
-                                    </div>
-                                    <div className="absolute left-0 bottom-0 p-6 md:p-8">
-                                        <div className="text-xs font-medium bg-red-500 text-white inline-flex tracking-wider mb-3 px-2.5 py-1.5 rounded-md">#1 Trending</div>
-                                        <h3 className="text-xl md:text-4xl font-bold mb-2">{spotlightVideo.snippet.title}</h3>
-                                        <p className="text-gray-300 flex items-center gap-2 text-sm md:text-base">
-                                            <span className="text-pink-600 font-bold">YouTube</span>
-                                            <span>•</span>
-                                            <span>{spotlightVideo.snippet.channelTitle}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                {/* Stats Cards */}
-                                <div className="md:col-span-4 space-y-4">
-                                    <div className="backdrop-blur-sm bg-white/10 border p-4 rounded-xl border-white/10">
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-pink-600 bg-pink-600/20 p-3 rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl">#</div>
-                                            <div>
-                                                <p className="text-gray-400 text-xs uppercase tracking-wider">Trending Score</p>
-                                                <p className="text-2xl font-bold">{approximateScore(spotlightVideo.statistics?.viewCount)}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="backdrop-blur-sm bg-white/10 border p-4 rounded-xl border-white/10">
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-cyan-400 bg-cyan-400/20 p-3 rounded-full h-10 w-10 flex items-center justify-center">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                                            </div>
-                                            <div>
-                                                <p className="text-gray-400 text-xs uppercase tracking-wider">Platform Status</p>
-                                                <p className="text-cyan-400 text-2xl font-bold">Online</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-pink-500/20 to-transparent border border-pink-600/20 p-4 rounded-xl">
-                                        <h4 className="text-lg font-bold mb-1">Why it's hot</h4>
-                                        <p className="text-gray-400 text-sm">
-                                            Auto-refreshes every 10 minutes. Rotates through top trending videos continuously.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    )}
-
-                    {/* Filter Bar */}
-                    <div className="backdrop-blur-xl bg-gray-900/80 w-full py-4 border-b border-white/10 sticky top-0 z-40 shadow-lg">
-                        {/* ... (Your existing Filter Bar logic for Auto-Scroll and Timer) ... */}
-                        <div className="max-w-screen-xl mx-auto px-4">
-                            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
-                                <div className="text-sm flex items-center gap-3">
-                                    <span className="bg-cyan-400 h-2 w-2 rounded-full animate-pulse"></span>
-                                    <span className="text-cyan-400 font-bold">Live Feed Active</span>
-                                    <span className="text-gray-500">•</span>
-                                    <span className="text-gray-400">Next refresh in {formatTime(countdown)}</span>
-                                </div>
-                                <button
-                                    onClick={() => setAutoScrollActive(!autoScrollActive)}
-                                    className="text-xs flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-gray-300 hover:bg-white/10 transition-colors"
-                                >
-                                    <span>{autoScrollActive ? '⏸' : '▶'}</span>
-                                    <span>{autoScrollActive ? 'Pause Auto-Scroll' : 'Resume Scroll'}</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Trending Cards Feed */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 py-6 feed-scroll-area" ref={scrollRef}>
-                        {/* ... (Your existing Logic to map and render video cards) ... */}
-                        {PLATFORMS.map((platform, index) => {
-                            const video = getCurrentVideo(platform, index);
-                            if (!video) return null;
-                            const videoId = video.id.videoId || video.id;
-                            const isCurrentSaved = isVideoSaved(videoId);
-
-                            return (
-                                <div key={`${platform}-${index}-${videoId}`} className="card-entry backdrop-blur-sm bg-white/10 border border-white/10 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:border-pink-600/50 transition-all duration-300">
-                                    <div className="relative cursor-pointer" onClick={() => openModal(video, platform)}>
-                                        {/* Thumbnail */}
-                                        <img src={video.snippet.thumbnails?.high?.url} alt={video.snippet.title} className="w-full h-48 object-cover" />
-                                        {/* Play Icon Overlay */}
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity">
-                                            <svg className="w-12 h-12 text-white opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                        </div>
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex justify-between items-start mb-2">
-                                            {/* Platform Tag */}
-                                            <span className={`text-xs font-medium uppercase ${platformColors[platform]}`}>{platform}</span>
-                                            {/* Save Button */}
-                                            <button 
-                                                onClick={(e) => { e.stopPropagation(); handleSaveToggle(video, platform); }}
-                                                className={`transition-colors ${isCurrentSaved ? 'text-pink-500 hover:text-pink-400' : 'text-gray-500 hover:text-white'}`}
-                                                title={isCurrentSaved ? 'Unsave Video' : 'Save Video'}
-                                            >
-                                                <svg className="w-5 h-5" fill={isCurrentSaved ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        {/* Title */}
-                                        <h3 className="text-base font-bold text-white mb-2 line-clamp-2 min-h-[48px]">{video.snippet.title}</h3>
-                                        {/* Channel */}
-                                        <p className="text-xs text-gray-400 truncate">{video.snippet.channelTitle}</p>
-                                        {/* Score/Views */}
-                                        <div className="flex justify-between items-center mt-3">
-                                            <span className="text-sm font-bold text-pink-500">{approximateScore(video.statistics?.viewCount)}%</span>
-                                            <span className="text-xs text-gray-500">{Number(video.statistics?.viewCount).toLocaleString()} views</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </main>
-            )}
-
-            {/* Modal and other shared components (left intact) */}
-            {/* ... (Your existing Modal logic for video playback, comments, etc., remains here) ... */}
-
-            {/* --- Base44 Call-to-Action / Ad Section Removed --- */}
-
-            {/* Waterfall Effect on First Visit (left intact) */}
-            {showWaterfall && (
-                <div className="fixed inset-0 z-[9999] pointer-events-none">
-                    {/* ... (Waterfall HTML elements) ... */}
-                </div>
-            )}
+    <div id="base44-clock" class="text-4xl sm:text-7xl md:text-9xl font-bold tracking-tighter">
         </div>
-    );
-}
+
+    <div id="info-overlay" class="fixed top-4 right-4 text-xs sm:text-sm p-2 rounded-lg bg-gray-800 bg-opacity-70 backdrop-blur-sm shadow-xl">
+        <div class="text-gray-400">Decimal Time: <span id="decimal-time" class="text-white font-medium"></span></div>
+        <div class="text-gray-400">Base44 Time: <span id="base44-time" class="text-white font-medium"></span></div>
+    </div>
+
+    <script>
+        // --- BASE44 CONVERSION LOGIC ---
+
+        const BASE44_SYMBOLS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+';
+        const BASE = 44;
+
+        /**
+         * Converts a decimal number to a Base44 string representation.
+         * @param {number} decimalNumber
+         * @returns {string}
+         */
+        function base44Convert(decimalNumber) {
+            if (decimalNumber === 0) return BASE44_SYMBOLS[0];
+
+            let base44 = '';
+            let current = decimalNumber;
+
+            while (current > 0) {
+                const remainder = current % BASE;
+                base44 = BASE44_SYMBOLS[remainder] + base44;
+                current = Math.floor(current / BASE);
+            }
+
+            return base44;
+        }
+
+        // --- TIME & DOM UPDATE LOGIC ---
+
+        const base44Clock = document.getElementById('base44-clock');
+        const decimalTimeElement = document.getElementById('decimal-time');
+        const base44TimeElement = document.getElementById('base44-time');
+        const bodyElement = document.body;
+
+        /**
+         * The main function to calculate and update all time displays.
+         */
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+
+            // 1. Calculate Base44 total seconds of the day
+            const secondsInDay = (hours * 3600) + (minutes * 60) + seconds;
+            const decimalTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            // 2. Convert total seconds to Base44
+            const base44Result = base44Convert(secondsInDay);
+
+            // The resulting time string needs to be padded to 3 characters for consistency (44^3 = 85184, and 86400 seconds in a day is too much for 3 characters, but the conversion is for the whole day, so 3 chars will suffice for the *parts* if we break it down, but the original was one single number)
+            // *The React component converted the TOTAL seconds of the day to a single Base44 number.*
+            // Since 86400 total seconds of the day is too large for 3 Base44 characters (max is 85183), the output will be 4 characters long most of the day.
+            const fullBase44Time = base44Result.padStart(4, '0');
+
+
+            // 3. Extract the parts for the main display and format
+            const part1 = fullBase44Time.slice(0, 1);
+            const part2 = fullBase44Time.slice(1, 2);
+            const part3 = fullBase44Time.slice(2, 3);
+            const part4 = fullBase44Time.slice(3, 4);
+
+            base44Clock.innerHTML = `
+                <span class="text-gray-600">${part1}</span>
+                <span class="text-gray-400">${part2}</span>
+                <span class="text-white">${part3}</span>
+                <span class="text-4xl sm:text-7xl md:text-9xl text-green-500 animate-pulse">:</span>
+                <span class="text-green-500">${part4}</span>
+            `;
+
+            // 4. Update the info overlay
+            decimalTimeElement.textContent = decimalTime;
+            base44TimeElement.textContent = fullBase44Time;
+
+            // 5. Update Background Color (Based on the last Base44 character's index)
+            const lastChar = fullBase44Time.slice(-1);
+            const index = BASE44_SYMBOLS.indexOf(lastChar);
+            
+            // Normalize index (0-43) to a hue (0-360) for color
+            const hue = Math.round((index / (BASE - 1)) * 360);
+            bodyElement.style.backgroundColor = `hsl(${hue}, 50%, 5%)`;
+        }
+
+        // --- INITIALIZE ---
+
+        // Run immediately to prevent a flash of unstyled/empty content
+        updateTime();
+
+        // Update every 1000ms (1 second)
+        setInterval(updateTime, 1000);
+    </script>
+
+</body>
+</html>
