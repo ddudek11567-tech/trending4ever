@@ -56,7 +56,24 @@
     </style>
 </head>
 <body>
+<video id="liveStream" controls autoplay width="100%" style="background:black;"></video>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+  const video = document.getElementById('liveStream');
+  const streamUrl = "https://rtmp-live-ingest-ap-northeast-2-universe-dacast-com.akamaized.net/transmuxv1/streams/f08fcd45-1d04-9a8c-39ca-f56091820e5c.m3u8";
+
+  if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(streamUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          video.play();
+      });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = streamUrl;
+      video.addEventListener('loadedmetadata', () => video.play());
+  }
     <h1>Channels</h1>
 <!-- Kutonen -->
         <div class="channel-card">
