@@ -3,2690 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Channels</title>
+    <title>Live Channels</title>
+
+    <!-- Professional font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #0f0f13;
+            color: #e8e8e8;
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
+
         h1 {
             text-align: center;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888888;
+            font-size: 0.9rem;
             margin-bottom: 30px;
         }
+
+        /* ---------- VIDEO PLAYER ---------- */
+        .player-section {
+            max-width: 1000px;
+            margin: 0 auto 30px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+
+        .player-section video {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border: none;
+        }
+
+        .player-status {
+            position: absolute;
+            bottom: 10px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ---------- CHANNEL GRID ---------- */
         .channel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .channel-card {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            padding: 15px;
+            background: #1c1c22;
+            border-radius: 14px;
+            padding: 20px 12px;
             text-align: center;
             text-decoration: none;
             color: #ffffff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .channel-card:hover {
             transform: translateY(-5px);
-            background-color: #2c2c2c;
+            background: #282830;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.15);
         }
+
+        .channel-card:active {
+            transform: translateY(-2px);
+        }
+
         .channel-logo {
-            width: 80px;
-            height: 80px;
+            width: 72px;
+            height: 72px;
             object-fit: contain;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #fff;
+            padding: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
         }
+
+        .channel-card:hover .channel-logo {
+            transform: scale(1.05);
+        }
+
         .channel-name {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.3;
             word-break: break-word;
+            color: #f0f0f0;
+        }
+
+        .channel-quality {
+            font-size: 0.7rem;
+            color: #7a7a85;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        /* ---------- LOADING / ERROR STATUS ---------- */
+        .status-text {
+            font-size: 14px;
+            color: #ffa500;
+            padding: 4px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .channel-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 10px;
+            }
+
+            .channel-logo {
+                width: 56px;
+                height: 56px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h1>Channels</h1>
-<!-- Kutonen -->
-        <div class="channel-card">
-            <a href="https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Kutonen" alt="Kutonen" class="channel-logo">
-                <span class="channel-name">Kutonen</span>
-            </a>
-        </div>
+    <h1>📺 Live Channels</h1>
+    <p class="subtitle">Click a channel logo to start watching</p>
+
+    <!-- Video Player -->
+    <div class="player-section">
+        <video id="liveStream" controls autoplay muted></video>
+        <div class="player-status" id="playerStatus">Loading stream...</div>
+    </div>
+
+    <!-- Channel Grid -->
+    <div class="channel-grid">
+
+        <!-- Kutonen -->
+        <a href="https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Kutonen');">
+            <img src="https://ui-avatars.com/api/?name=Kutonen&background=FF6A00&color=fff&size=128"
+                 alt="Kutonen" class="channel-logo">
+            <span class="channel-name">Kutonen</span>
+            <span class="channel-quality">720p</span>
+        </a>
 
         <!-- TLC Finland -->
-        <div class="channel-card">
-            <a href="https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv" target="_blank">
-                <img src="https://via.placeholder.com/80?text=TLC" alt="TLC Finland" class="channel-logo">
-                <span class="channel-name">TLC Finland</span>
-            </a>
-        </div>
+        <a href="https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'TLC Finland');">
+            <img src="https://ui-avatars.com/api/?name=TLC&background=E9004C&color=fff&size=128"
+                 alt="TLC Finland" class="channel-logo">
+            <span class="channel-name">TLC Finland</span>
+            <span class="channel-quality">720p</span>
+        </a>
 
         <!-- Star Channel Finland -->
-        <div class="channel-card">
-            <a href="https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Star" alt="Star Channel Finland" class="channel-logo">
-                <span class="channel-name">Star Channel Finland</span>
-            </a>
-        </div>
+        <a href="https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Star Channel Finland');">
+            <img src="https://ui-avatars.com/api/?name=Star&background=0047AB&color=fff&size=128"
+                 alt="Star Channel Finland" class="channel-logo">
+            <span class="channel-name">Star Channel Finland</span>
+            <span class="channel-quality">720p</span>
+        </a>
 
         <!-- MTV Ava -->
-        <div class="channel-card">
-            <a href="https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Ava" alt="MTV Ava" class="channel-logo">
-                <span class="channel-name">MTV Ava</span>
-            </a>
-        </div>
+        <a href="https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'MTV Ava');">
+            <img src="https://ui-avatars.com/api/?name=Ava&background=00A859&color=fff&size=128"
+                 alt="MTV Ava" class="channel-logo">
+            <span class="channel-name">MTV Ava</span>
+            <span class="channel-quality">720p</span>
+        </a>
 
         <!-- Hero -->
-        <div class="channel-card">
-            <a href="https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Hero" alt="Hero" class="channel-logo">
-                <span class="channel-name">Hero</span>
-            </a>
-        </div>
-    <div class="channel-grid">
-        <a href="https://3abn.bozztv.com/3abncanada/3ABN/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Canada&background=random&color=fff&size=128" alt="3ABN Canada" class="channel-logo">
-            <span class="channel-name">3ABN Canada (720p)</span>
+        <a href="https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Hero');">
+            <img src="https://ui-avatars.com/api/?name=Hero&background=E67E22&color=fff&size=128"
+                 alt="Hero" class="channel-logo">
+            <span class="channel-name">Hero</span>
+            <span class="channel-quality">720p</span>
+        </a>
+
+        <!-- 3ABN Canada -->
+        <a href="https://3abn.bozztv.com/3abncanada/3ABN/master.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, '3ABN Canada');">
+            <img src="https://ui-avatars.com/api/?name=3ABN+Canada&background=7D3C98&color=fff&size=128"
+                 alt="3ABN Canada" class="channel-logo">
+            <span class="channel-name">3ABN Canada</span>
+            <span class="channel-quality">720p</span>
+        </a>
+
+        <!-- 5AAB TV -->
+        <a href="http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, '5AAB TV');">
+            <img src="https://ui-avatars.com/api/?name=5AAB+TV&background=2980B9&color=fff&size=128"
+                 alt="5AAB TV" class="channel-logo">
+            <span class="channel-name">5AAB TV</span>
+            <span class="channel-quality">720p</span>
         </a>
 
-        <a href="http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=5AAB+TV&background=random&color=fff&size=128" alt="5AAB TV" class="channel-logo">
-            <span class="channel-name">5AAB TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=48+Hours&background=random&color=fff&size=128" alt="48 Hours" class="channel-logo">
-            <span class="channel-name">48 Hours</span>
-        </a>
-
-        <a href="https://gpuserver3.tier1streams.com/AE/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=AE&background=random&color=fff&size=128" alt="A&E" class="channel-logo">
-            <span class="channel-name">A&E (1080p)</span>
-        </a>
-
-        <a href="https://live.relentlessinnovations.net:1936/afghannobel/afghannobel/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Afghan+Nobel+Movies&background=random&color=fff&size=128" alt="Afghan Nobel Movies" class="channel-logo">
-            <span class="channel-name">Afghan Nobel Movies (720p)</span>
-        </a>
-
-        <a href="https://live.relentlessinnovations.net:1936/afghannobeltv/afghannobeltv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Afghan+Nobel+TV&background=random&color=fff&size=128" alt="Afghan Nobel TV" class="channel-logo">
-            <span class="channel-name">Afghan Nobel TV (720p)</span>
-        </a>
-
-        <a href="https://uni01rtmp.tulix.tv/amazingdtv/amazingdtv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Amazing+Discoveries&background=random&color=fff&size=128" alt="Amazing Discoveries TV" class="channel-logo">
-            <span class="channel-name">Amazing Discoveries TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-68679fc6bb46d0bdd38ac9a4.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ANTM&background=random&color=fff&size=128" alt="America's Next Top Model" class="channel-logo">
-            <span class="channel-name">America's Next Top Model</span>
-        </a>
-
-        <a href="https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Animation+Plus&background=random&color=fff&size=128" alt="Animation+" class="channel-logo">
-            <span class="channel-name">Animation+ (1080p)</span>
-        </a>
-
-        <a href="https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Autentic+History&background=random&color=fff&size=128" alt="Autentic History" class="channel-logo">
-            <span class="channel-name">Autentic History (1080p)</span>
-        </a>
-
-        <a href="https://cb0c87cc605942ff9766a4e6744bbadc.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticTravel/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Autentic+Travel&background=random&color=fff&size=128" alt="Autentic Travel" class="channel-logo">
-            <span class="channel-name">Autentic Travel (1080p)</span>
-        </a>
-
-        <a href="https://janya-ayaztv.vgcdn.net/ptnr-WebApp/title-Ayaz_TV/v1/vglive-sk-934820/main.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Ayaz+TV&background=random&color=fff&size=128" alt="Ayaz TV" class="channel-logo">
-            <span class="channel-name">Ayaz TV (720p)</span>
-        </a>
-
-        <a href="https://dbcanada.sonarbanglatv.com/azantv/atv/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Azan+TV&background=random&color=fff&size=128" alt="Azan TV" class="channel-logo">
-            <span class="channel-name">Azan TV</span>
-        </a>
-
-        <a href="https://live.livestreamtv.ca/azstar/amlst:azstar/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Azstar+TV&background=random&color=fff&size=128" alt="Azstar TV HD" class="channel-logo">
-            <span class="channel-name">Azstar TV HD (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Bar+Rescue&background=random&color=fff&size=128" alt="Bar Rescue" class="channel-logo">
-            <span class="channel-name">Bar Rescue</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6310cbee5a8ad300070fdb7c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Drew+Barrymore&background=random&color=fff&size=128" alt="Best of The Drew Barrymore Show" class="channel-logo">
-            <span class="channel-name">Best of The Drew Barrymore Show</span>
-        </a>
-
-        <a href="https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=BNN+Bloomberg&background=random&color=fff&size=128" alt="BNN Bloomberg" class="channel-logo">
-            <span class="channel-name">BNN Bloomberg</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66588931a3865300085ca800.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Bob+L+Ponge&background=random&color=fff&size=128" alt="Bob l' ponge" class="channel-logo">
-            <span class="channel-name">Bob l' ponge (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Bonanza&background=random&color=fff&size=128" alt="Bonanza" class="channel-logo">
-            <span class="channel-name">Bonanza</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66166989635c7500084105a2.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Bondi+Rescue&background=random&color=fff&size=128" alt="Bondi Rescue" class="channel-logo">
-            <span class="channel-name">Bondi Rescue (720p)</span>
-        </a>
-
-        <a href="https://2-fss-2.streamhoster.com/pl_120/206508-3261972-1/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=C+Malayalam&background=random&color=fff&size=128" alt="C Malayalam TV" class="channel-logo">
-            <span class="channel-name">C Malayalam TV (1080p)</span>
-        </a>
-
-        <a href="https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8?iimae0UC2aendtime=1665196120&iimae0UC2ahash=NzcDbuotaJAVf1DsNxuGHBlfCXSvHDIt5sqMUMgrRMU=&iimae0UC2astarttime=1665181720" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cable+14&background=random&color=fff&size=128" alt="Cable 14 Hamilton" class="channel-logo">
-            <span class="channel-name">Cable 14 Hamilton</span>
-        </a>
-
-        <a href="http://cdn8.live247stream.com/canadaone/tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Canada+One&background=random&color=fff&size=128" alt="Canada One" class="channel-logo">
-            <span class="channel-name">Canada One (720p)</span>
-        </a>
-
-        <a href="https://hls.savoir.media/live/stream.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Canal+Savoir&background=random&color=fff&size=128" alt="Canal Savoir" class="channel-logo">
-            <span class="channel-name">Canal Savoir (360p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f8a2a23a0d700008a6ed7b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Catfish&background=random&color=fff&size=128" alt="Catfish" class="channel-logo">
-            <span class="channel-name">Catfish</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042763/CBCRCLINEAR_TOR_9/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Calgary&background=random&color=fff&size=128" alt="CBC Calgary" class="channel-logo">
-            <span class="channel-name">CBC Calgary (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042765/CBCRCLINEAR_TOR_11/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Edmonton&background=random&color=fff&size=128" alt="CBC Edmonton" class="channel-logo">
-            <span class="channel-name">CBC Edmonton (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042767/CBCRCLINEAR_TOR_13/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Manitoba&background=random&color=fff&size=128" alt="CBC Manitoba" class="channel-logo">
-            <span class="channel-name">CBC Manitoba (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042761/CBCRCLINEAR_TOR_7/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Montreal&background=random&color=fff&size=128" alt="CBC Montreal" class="channel-logo">
-            <span class="channel-name">CBC Montreal (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042757/CBCRCLINEAR_TOR_3/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+NB&background=random&color=fff&size=128" alt="CBC New Brunswick" class="channel-logo">
-            <span class="channel-name">CBC New Brunswick (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042755/CBCRCLINEAR_TOR_1/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+NL&background=random&color=fff&size=128" alt="CBC Newfoundland" class="channel-logo">
-            <span class="channel-name">CBC Newfoundland (720p)</span>
-        </a>
-
-        <a href="https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+News&background=random&color=fff&size=128" alt="CBC News" class="channel-logo">
-            <span class="channel-name">CBC News (1080p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042766/CBCRCLINEAR_TOR_12/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+North&background=random&color=fff&size=128" alt="CBC North" class="channel-logo">
-            <span class="channel-name">CBC North (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042758/CBCRCLINEAR_TOR_4/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+NS&background=random&color=fff&size=128" alt="CBC Nova Scotia" class="channel-logo">
-            <span class="channel-name">CBC Nova Scotia (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042762/CBCRCLINEAR_TOR_8/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Ottawa&background=random&color=fff&size=128" alt="CBC Ottawa" class="channel-logo">
-            <span class="channel-name">CBC Ottawa (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042756/CBCRCLINEAR_TOR_2/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+PEI&background=random&color=fff&size=128" alt="CBC PEI" class="channel-logo">
-            <span class="channel-name">CBC Prince Edward Island (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042764/CBCRCLINEAR_TOR_10/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Sask&background=random&color=fff&size=128" alt="CBC Saskatchewan" class="channel-logo">
-            <span class="channel-name">CBC Saskatchewan (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042760/CBCRCLINEAR_TOR_6/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Toronto&background=random&color=fff&size=128" alt="CBC Toronto" class="channel-logo">
-            <span class="channel-name">CBC Toronto (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042768/CBCRCLINEAR_TOR_14/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Vancouver&background=random&color=fff&size=128" alt="CBC Vancouver" class="channel-logo">
-            <span class="channel-name">CBC Vancouver (720p)</span>
-        </a>
-
-        <a href="https://cbcrclinear-tor.akamaized.net/hls/live/2042759/CBCRCLINEAR_TOR_5/master5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CBC+Windsor&background=random&color=fff&size=128" alt="CBC Windsor" class="channel-logo">
-            <span class="channel-name">CBC Windsor (720p)</span>
-        </a>
-
-        <a href="http://stream.cammonitorplus.net/1712/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CFTO&background=random&color=fff&size=128" alt="CFTO-DT" class="channel-logo">
-            <span class="channel-name">CFTO-DT (720p)</span>
-        </a>
-
-        <a href="http://cdn19.live247stream.com/channely/tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Channel+Y&background=random&color=fff&size=128" alt="Channel Y" class="channel-logo">
-            <span class="channel-name">Channel Y (720p)</span>
-        </a>
-
-        <a href="http://185.246.209.113/CHCHHD/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CHCH&background=random&color=fff&size=128" alt="CHCH-DT" class="channel-logo">
-            <span class="channel-name">CHCH-DT (720p)</span>
-        </a>
-
-        <a href="https://temp4.isilive.ca/live/CHCOTV/live/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CHCO&background=random&color=fff&size=128" alt="CHCO-TV" class="channel-logo">
-            <span class="channel-name">CHCO-TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cheers&background=random&color=fff&size=128" alt="Cheers" class="channel-logo">
-            <span class="channel-name">Cheers</span>
-        </a>
-
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CityNews+Calgary&background=random&color=fff&size=128" alt="CityNews Calgary" class="channel-logo">
-            <span class="channel-name">CityNews Calgary (720p)</span>
-        </a>
-
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CityNews+Edmonton&background=random&color=fff&size=128" alt="CityNews Edmonton" class="channel-logo">
-            <span class="channel-name">CityNews Edmonton</span>
-        </a>
-
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CityNews+Toronto&background=random&color=fff&size=128" alt="CityNews Toronto" class="channel-logo">
-            <span class="channel-name">CityNews Toronto (720p)</span>
-        </a>
-
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CityNews+Vancouver&background=random&color=fff&size=128" alt="CityNews Vancouver" class="channel-logo">
-            <span class="channel-name">CityNews Vancouver (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Comedy+Central&background=random&color=fff&size=128" alt="Comedy Central" class="channel-logo">
-            <span class="channel-name">Comedy Central</span>
-        </a>
-
-        <a href="http://185.246.209.113/CottageLife/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cottage+Life&background=random&color=fff&size=128" alt="Cottage Life" class="channel-logo">
-            <span class="channel-name">Cottage Life (720p)</span>
-        </a>
-
-        <a href="https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cowboy+Channel&background=random&color=fff&size=128" alt="Cowboy Channel" class="channel-logo">
-            <span class="channel-name">Cowboy Channel (1080p)</span>
-        </a>
-
-        <a href="https://trs1.aynaott.com/cp24/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CP24&background=random&color=fff&size=128" alt="CP24" class="channel-logo">
-            <span class="channel-name">CP24 (576p)</span>
-        </a>
-
-        <a href="https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CPAC&background=random&color=fff&size=128" alt="CPAC" class="channel-logo">
-            <span class="channel-name">CPAC (720p)</span>
-        </a>
-
-        <a href="http://stream.cammonitorplus.net/1731/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CTV+2+Atlantic&background=random&color=fff&size=128" alt="CTV 2 Atlantic" class="channel-logo">
-            <span class="channel-name">CTV 2 Atlantic (720p)</span>
-        </a>
-
-        <a href="http://185.246.209.113/ANIMALPLANETHD/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CTV+Life&background=random&color=fff&size=128" alt="CTV Life Channel" class="channel-logo">
-            <span class="channel-name">CTV Life Channel (720p)</span>
-        </a>
-
-        <a href="https://gpuserver3.tier1streams.com/DISCOVERY_SCIENCE_HD/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=CTV+Speed&background=random&color=fff&size=128" alt="CTV Speed Channel" class="channel-logo">
-            <span class="channel-name">CTV Speed Channel (720p)</span>
-        </a>
-
-        <a href="https://dbcanada.sonarbanglatv.com/deshebideshe/dbtv/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=DesheBideshe+TV&background=random&color=fff&size=128" alt="DesheBideshe TV" class="channel-logo">
-            <span class="channel-name">DesheBideshe TV</span>
-        </a>
-
-        <a href="https://deshitv.deshitv24.net/live/myStream/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Deshi+TV&background=random&color=fff&size=128" alt="Deshi TV" class="channel-logo">
-            <span class="channel-name">Deshi TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65fd548f29adfd00089c662c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Diagnosis+Murder&background=random&color=fff&size=128" alt="Diagnosis Murder" class="channel-logo">
-            <span class="channel-name">Diagnosis Murder</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e922f6675f71000736db3b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Doc+Martin&background=random&color=fff&size=128" alt="Doc Martin" class="channel-logo">
-            <span class="channel-name">Doc Martin</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e951258a26d40007b3034c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Service&background=random&color=fff&size=128" alt="Service" class="channel-logo">
-            <span class="channel-name">Service</span>
-        </a>
-
-        <a href="https://3d46w.doyeltv.com/memfs/aa3aa6f7-ec12-41a2-8183-a891e157bbf8.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Doyel+TV&background=random&color=fff&size=128" alt="Doyel TV" class="channel-logo">
-            <span class="channel-name">Doyel TV</span>
-        </a>
-
-        <a href="http://cdn12.henico.net:8080/live/dncal/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Dukh+Nivaran&background=random&color=fff&size=128" alt="Dukh Nivaran" class="channel-logo">
-            <span class="channel-name">Dukh Nivaran (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e919ca865c590007ecd0bd.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Dynasty&background=random&color=fff&size=128" alt="Dynasty" class="channel-logo">
-            <span class="channel-name">Dynasty</span>
-        </a>
-
-        <a href="https://streamer12.vdn.dstreamone.net/saazoawaz/saazoawaz/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Eawaz+TV&background=random&color=fff&size=128" alt="Eawaz TV" class="channel-logo">
-            <span class="channel-name">Eawaz TV (720p)</span>
-        </a>
-
-        <a href="https://eu.streamjo.com/eetlive/eettv.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=EET+TV&background=random&color=fff&size=128" alt="EET TV" class="channel-logo">
-            <span class="channel-name">EET TV (1080p)</span>
-        </a>
-
-        <a href="https://hls.erfanhalgheh.live/hls/stream.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Erfan+Halgheh&background=random&color=fff&size=128" alt="Erfan Halgheh TV" class="channel-logo">
-            <span class="channel-name">Erfan Halgheh TV (720p)</span>
-        </a>
-
-        <a href="https://cdn3.wowza.com/1/YW5wSWZiRGd2eFlU/bGV0aVBq/hls/live/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=EWTN+Canada&background=random&color=fff&size=128" alt="EWTN Canada" class="channel-logo">
-            <span class="channel-name">EWTN Canada (720p)</span>
-        </a>
-
-        <a href="http://tvsen5.aynascope.net/familyjr/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Family+Jr&background=random&color=fff&size=128" alt="Family Jr" class="channel-logo">
-            <span class="channel-name">Family Jr (576p)</span>
-        </a>
-
-        <a href="https://d21x3vavxu7p2x.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/DistroTV-MuxIP-FEVATV/416.m3u8?ads.vf=nn5CUAdOxVu" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=FEVA+TV&background=random&color=fff&size=128" alt="FEVA TV" class="channel-logo">
-            <span class="channel-name">FEVA TV (1080p)</span>
-        </a>
-
-        <a href="https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=FIFA+US&background=random&color=fff&size=128" alt="FIFA+ United States" class="channel-logo">
-            <span class="channel-name">FIFA+ United States (720p)</span>
-        </a>
-
-        <a href="https://d12a2vxqkkh1bo.cloudfront.net/hls/main.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Fight+Network&background=random&color=fff&size=128" alt="Fight Network" class="channel-logo">
-            <span class="channel-name">Fight Network (1080p)</span>
-        </a>
-
-        <a href="https://dvu7aia8rjlfm.cloudfront.net/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=FilmRise+Anime&background=random&color=fff&size=128" alt="FilmRise Anime" class="channel-logo">
-            <span class="channel-name">FilmRise Anime (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62f4f90e39183b000769f12b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Frasier&background=random&color=fff&size=128" alt="Frasier" class="channel-logo">
-            <span class="channel-name">Frasier</span>
-        </a>
-
-        <a href="https://a-cdn.klowdtv.com/live2/fntsy_720p/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Game+Plus&background=random&color=fff&size=128" alt="Game+" class="channel-logo">
-            <span class="channel-name">Game+ (720p)</span>
-        </a>
-
-        <a href="http://cdn6.live247stream.com/gaundapunjab/tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Gaunda+Punjab&background=random&color=fff&size=128" alt="Gaunda Punjab TV" class="channel-logo">
-            <span class="channel-name">Gaunda Punjab TV (720p)</span>
-        </a>
-
-        <a href="https://stream.bozztv.com/tvstat-tamar/tvstat-tamar/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=GH+Canada&background=random&color=fff&size=128" alt="GH Canada TV" class="channel-logo">
-            <span class="channel-name">GH Canada TV</span>
-        </a>
-
-        <a href="https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Golf+Channel&background=random&color=fff&size=128" alt="Golf Channel" class="channel-logo">
-            <span class="channel-name">Golf Channel (1080p)</span>
-        </a>
-
-        <a href="https://streamer12.vdn.dstreamone.net/carishowtime/showtime/chunks.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=GTN+Canada&background=random&color=fff&size=128" alt="GTN Canada" class="channel-logo">
-            <span class="channel-name">GTN Canada (1080i)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e916affb29c60007211c8a.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Gunsmoke&background=random&color=fff&size=128" alt="Gunsmoke" class="channel-logo">
-            <span class="channel-name">Gunsmoke</span>
-        </a>
-
-        <a href="http://cdn12.henico.net:8080/live/gsctv/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=GurSikh+Sabha&background=random&color=fff&size=128" alt="GurSikh Sabha TV" class="channel-logo">
-            <span class="channel-name">GurSikh Sabha TV (720p)</span>
-        </a>
-
-        <a href="https://tv.hamdardtv.com/hamdard/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Hamdard+TV&background=random&color=fff&size=128" alt="Hamdard TV" class="channel-logo">
-            <span class="channel-name">Hamdard TV (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e917b5e354cf0007b97a67.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Happy+Days&background=random&color=fff&size=128" alt="Happy Days" class="channel-logo">
-            <span class="channel-name">Happy Days</span>
-        </a>
-
-        <a href="https://d3uyzhwvmemdyf.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/Hard-Knocks-DistroTV/109.m3u8?ads.vf=6pOF6kgy418" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Hard+Knocks&background=random&color=fff&size=128" alt="Hard Knocks" class="channel-logo">
-            <span class="channel-name">Hard Knocks (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63934c218ef524000757b122.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=HauntTV+CA&background=random&color=fff&size=128" alt="HauntTV CA" class="channel-logo">
-            <span class="channel-name">HauntTV CA (720p)</span>
-        </a>
-
-        <a href="http://40.160.24.53/HGTV/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Home+Network&background=random&color=fff&size=128" alt="Home Network" class="channel-logo">
-            <span class="channel-name">Home Network (720p)</span>
-        </a>
-
-        <a href="https://cdn.live247stream.com/hyder/tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Hyder+TV&background=random&color=fff&size=128" alt="Hyder TV" class="channel-logo">
-            <span class="channel-name">Hyder TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63a2f1dda0d69700078b7cba.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=I+Love+Lucy&background=random&color=fff&size=128" alt="I Love Lucy" class="channel-logo">
-            <span class="channel-name">I Love Lucy</span>
-        </a>
-
-        <a href="https://amdici.akamaized.net/hls/live/873426/ICI-Live-Stream/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ICI+Montreal&background=random&color=fff&size=128" alt="ICI Montreal" class="channel-logo">
-            <span class="channel-name">ICI Montreal (720p)</span>
-        </a>
-
-        <a href="https://rcavlive-dai.akamaized.net/hls/live/696614/cancbftprem/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Radio+Canada&background=random&color=fff&size=128" alt="Ici Radio-Canada" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada (1080p)</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704020/cancbxft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Alberta&background=random&color=fff&size=128" alt="Ici Radio-Canada Alberta" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Alberta</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704017/cancbuft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+BC&background=random&color=fff&size=128" alt="Ici Radio-Canada BC" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada BC/Yukon</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704024/cancjbr/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Est+Quebec&background=random&color=fff&size=128" alt="Ici Radio-Canada Est" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Est du Québec</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704016/cancksh/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Estrie&background=random&color=fff&size=128" alt="Ici Radio-Canada Estrie" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Estrie</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704018/cancbwft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Manitoba&background=random&color=fff&size=128" alt="Ici Radio-Canada Manitoba" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Manitoba</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704021/cancktm/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Mauricie&background=random&color=fff&size=128" alt="Ici Radio-Canada Mauricie" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Mauricie</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704022/cancblft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Ontario&background=random&color=fff&size=128" alt="Ici Radio-Canada Ontario" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Ontario</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/664046/cancboft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Ottawa&background=random&color=fff&size=128" alt="Ici Radio-Canada Ottawa" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Ottawa/Gatineau</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/664045/cancbvt/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Quebec&background=random&color=fff&size=128" alt="Ici Radio-Canada Quebec" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Québec</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704023/cancktv/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Saguenay&background=random&color=fff&size=128" alt="Ici Radio-Canada Saguenay" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Saguenay</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704019/cancbkft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+Sask&background=random&color=fff&size=128" alt="Ici Radio-Canada Sask" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Saskatchewan</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704014/cancbaft/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RC+NL&background=random&color=fff&size=128" alt="Ici Radio-Canada NL" class="channel-logo">
-            <span class="channel-name">Ici Radio-Canada Terre-Neuve</span>
-        </a>
-
-        <a href="https://rcavlive.akamaized.net/hls/live/704025/xcanrdi/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ICI+RDI&background=random&color=fff&size=128" alt="ICI RDI" class="channel-logo">
-            <span class="channel-name">ICI RDI (720p)</span>
-        </a>
-
-        <a href="https://icnet1hls.wns.live/hls/stream.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=icnet+1&background=random&color=fff&size=128" alt="icnet 1" class="channel-logo">
-            <span class="channel-name">icnet 1</span>
-        </a>
-
-        <a href="https://rpn.bozztv.com/dvrfl03/iipctv/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=IIPC+TV&background=random&color=fff&size=128" alt="IIPC TV" class="channel-logo">
-            <span class="channel-name">IIPC TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-655f2d713944b60008bc7e90.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Ink+Master&background=random&color=fff&size=128" alt="Ink Master" class="channel-logo">
-            <span class="channel-name">Ink Master</span>
-        </a>
-
-        <a href="https://amg00861-terninternation-inwild-samsunguk-w5wic.amagi.tv/playlist/amg00861-terninternation-inwild-samsunguk/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=INWILD&background=random&color=fff&size=128" alt="INWILD" class="channel-logo">
-            <span class="channel-name">INWILD (1080p)</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/afrobeats/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Afrobeats&background=random&color=fff&size=128" alt="iTV Afrobeats Music" class="channel-logo">
-            <span class="channel-name">iTV Afrobeats Music</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/arabic/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Arabic+Music&background=random&color=fff&size=128" alt="iTV Arabic Music" class="channel-logo">
-            <span class="channel-name">iTV Arabic Music</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/indian/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Indian+Music&background=random&color=fff&size=128" alt="iTV Indian Music" class="channel-logo">
-            <span class="channel-name">iTV Indian Music</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/latin/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Latin+Music&background=random&color=fff&size=128" alt="iTV Latin Music" class="channel-logo">
-            <span class="channel-name">iTV Latin Music</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/turkish/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Turkish+Music&background=random&color=fff&size=128" alt="iTV Turkish Music" class="channel-logo">
-            <span class="channel-name">iTV Turkish Music</span>
-        </a>
-
-        <a href="https://ca1.buximedia.com/itv/love2/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Urban+Music&background=random&color=fff&size=128" alt="iTV Urban Music" class="channel-logo">
-            <span class="channel-name">iTV Urban Music</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66a105f4a79dea0008aa5e0f.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=JAG&background=random&color=fff&size=128" alt="JAG" class="channel-logo">
-            <span class="channel-name">JAG</span>
-        </a>
-
-        <a href="https://amg07653-apmc-amg07653c9-samsung-us-8740.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Kidoodle.TV&background=random&color=fff&size=128" alt="Kidoodle.TV" class="channel-logo">
-            <span class="channel-name">Kidoodle.TV (1080p)</span>
-        </a>
-
-        <a href="https://d1wal6k3d7ssin.cloudfront.net/out/v1/ea91db0906c847a4931b46a9ec36e77b/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Knowledge&background=random&color=fff&size=128" alt="Knowledge Network" class="channel-logo">
-            <span class="channel-name">Knowledge Network (720p)</span>
-        </a>
-
-        <a href="https://tvalive.akamaized.net/hls/live/2014213/tvan01/tvan01.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=LCN&background=random&color=fff&size=128" alt="LCN" class="channel-logo">
-            <span class="channel-name">LCN</span>
-        </a>
-
-        <a href="https://cdn3.wowza.com/5/YldIU1hsTlljRWZF/hbs-prim-house-httpo/HouseP.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=BC+Assembly&background=random&color=fff&size=128" alt="Legislative Assembly of British Columbia" class="channel-logo">
-            <span class="channel-name">Legislative Assembly of British Columbia</span>
-        </a>
-
-        <a href="https://cdn3.wowza.com/5/YldIU1hsTlljRWZF/hbs-prim-dougfir-httpo/DougFirP.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=BC+Committee&background=random&color=fff&size=128" alt="Legislative Assembly of British Columbia Committee A" class="channel-logo">
-            <span class="channel-name">Legislative Assembly of British Columbia Committee A</span>
-        </a>
-
-        <a href="https://temp3.isilive.ca/live/_definst_/ontla/house-en/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Ontario+Assembly&background=random&color=fff&size=128" alt="Legislative Assembly of Ontario" class="channel-logo">
-            <span class="channel-name">Legislative Assembly of Ontario</span>
-        </a>
-
-        <a href="http://temp2.isilive.ca/live/nunavut/live-eng/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Nunavut+Assembly&background=random&color=fff&size=128" alt="Legislative Assembly TV Nunavut" class="channel-logo">
-            <span class="channel-name">Legislative Assembly TV Nunavut</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/6d6d0f24-8445-4b4c-bdf6-44f9e38beaa4/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Love+Nature&background=random&color=fff&size=128" alt="Love Nature" class="channel-logo">
-            <span class="channel-name">Love Nature (1080p)</span>
-        </a>
-
-        <a href="https://pb-ehs1glsha1juy.akamaized.net/Love_Nature_4K.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Love+Nature+4K&background=random&color=fff&size=128" alt="Love Nature 4K" class="channel-logo">
-            <span class="channel-name">Love Nature 4K (2160p)</span>
-        </a>
-
-        <a href="http://185.246.209.113/LOVENATUREHD/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Love+Nature+HD&background=random&color=fff&size=128" alt="Love Nature HD" class="channel-logo">
-            <span class="channel-name">Love Nature HD (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63da365f60bc8f0008a50f44.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Matlock&background=random&color=fff&size=128" alt="Matlock" class="channel-logo">
-            <span class="channel-name">Matlock</span>
-        </a>
-
-        <a href="https://mhz-samsung-linear-ca.samsung.wurl.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MHZ&background=random&color=fff&size=128" alt="MHZ" class="channel-logo">
-            <span class="channel-name">MHZ</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62ea43aa0c43540007f2db96.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Mission+Impossible&background=random&color=fff&size=128" alt="Mission Impossible" class="channel-logo">
-            <span class="channel-name">Mission Impossible</span>
-        </a>
-
-        <a href="http://live.greektv.ca/hls1/greektv.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Montreal+Greek&background=random&color=fff&size=128" alt="Montreal Greek TV" class="channel-logo">
-            <span class="channel-name">Montreal Greek TV (480p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e91c3add66e00007eeb24c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Comedy&background=random&color=fff&size=128" alt="More Pluto TV Comedy" class="channel-logo">
-            <span class="channel-name">More Pluto TV Comedy</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64a3d96f060e830008af6745.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MovieSphere&background=random&color=fff&size=128" alt="MovieSphere by Lionsgate" class="channel-logo">
-            <span class="channel-name">MovieSphere by Lionsgate</span>
-        </a>
-
-        <a href="https://amg00627-amg00627c23-samsung-au-4110.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Mr+Bean&background=random&color=fff&size=128" alt="Mr. Bean Animated" class="channel-logo">
-            <span class="channel-name">Mr. Bean Animated (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65410176770cf1000866bf31.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MTV+Pop&background=random&color=fff&size=128" alt="MTV Biggest Pop" class="channel-logo">
-            <span class="channel-name">MTV Biggest Pop (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f8a0c230ab3300084369b8.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MTV+Dating&background=random&color=fff&size=128" alt="MTV Dating" class="channel-logo">
-            <span class="channel-name">MTV Dating</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-68b9b0dbf9cf3d7cb9f56d88.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Jersey+Shore&background=random&color=fff&size=128" alt="MTV Jersey Shore" class="channel-logo">
-            <span class="channel-name">MTV Jersey Shore</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f89fcfd661bb00081ba45c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MTV+Reality&background=random&color=fff&size=128" alt="MTV Reality" class="channel-logo">
-            <span class="channel-name">MTV Reality</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f9cccf110545000837912e.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Ridiculousness&background=random&color=fff&size=128" alt="MTV Ridiculousness" class="channel-logo">
-            <span class="channel-name">MTV Ridiculousness</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6541010f770cf1000866be98.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MTV+Spankin&background=random&color=fff&size=128" alt="MTV Spankin" class="channel-logo">
-            <span class="channel-name">MTV Spankin</span>
-        </a>
-
-        <a href="http://40.160.24.53/MUCH/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Much&background=random&color=fff&size=128" alt="Much" class="channel-logo">
-            <span class="channel-name">Much (720p)</span>
-        </a>
-
-        <a href="https://stream2.pivotalelements.com/memfs/2d2e1038-9eb2-44df-a9b9-109de5752f3b_output_0.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NACTV&background=random&color=fff&size=128" alt="NACTV" class="channel-logo">
-            <span class="channel-name">NACTV</span>
-        </a>
-
-        <a href="https://amg00353-amg00353c35-xumo-us-3804.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Nash+Bridges&background=random&color=fff&size=128" alt="Nash Bridges Channel" class="channel-logo">
-            <span class="channel-name">Nash Bridges Channel (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65cf8d7428730900087c5907.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Nashville&background=random&color=fff&size=128" alt="Nashville" class="channel-logo">
-            <span class="channel-name">Nashville</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62f4f5de1c100100075665ef.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NCIS&background=random&color=fff&size=128" alt="NCIS" class="channel-logo">
-            <span class="channel-name">NCIS</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66a106c8a79dea0008aa5ef3.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NCIS+LA&background=random&color=fff&size=128" alt="NCIS: Los Angeles" class="channel-logo">
-            <span class="channel-name">NCIS: Los Angeles</span>
-        </a>
-
-        <a href="https://eu1.vectromdigital.com:1936/netvtoronto/netvtoronto/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NETV+Toronto&background=random&color=fff&size=128" alt="NETV Toronto" class="channel-logo">
-            <span class="channel-name">NETV Toronto (720p)</span>
-        </a>
-
-        <a href="https://2-fss-1.streamhoster.com/pl_122/201748-1431018-1/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Newfoundland+TV&background=random&color=fff&size=128" alt="Newfoundland Television" class="channel-logo">
-            <span class="channel-name">Newfoundland Television (480p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdb75c3afd1200079146a6.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Nick+Jr&background=random&color=fff&size=128" alt="Nick Jr. Pluto TV" class="channel-logo">
-            <span class="channel-name">Nick Jr. Pluto TV</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-654ca7f92c1d3300086b608c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NickToons&background=random&color=fff&size=128" alt="NickToons" class="channel-logo">
-            <span class="channel-name">NickToons</span>
-        </a>
-
-        <a href="https://videostream.jpbgdigital.com/NOWTV.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Now+TV&background=random&color=fff&size=128" alt="Now TV Edmonton" class="channel-logo">
-            <span class="channel-name">Now TV 102.3FM Edmonton</span>
-        </a>
-
-        <a href="https://live.ntdtv.com/mllive860/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NTD+Canada&background=random&color=fff&size=128" alt="NTD TV Canada" class="channel-logo">
-            <span class="channel-name">NTD TV Canada</span>
-        </a>
-
-        <a href="https://live.ntdtv.com/cwlive220/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NTD+Canada+West&background=random&color=fff&size=128" alt="NTD TV Canada West" class="channel-logo">
-            <span class="channel-name">NTD TV Canada West</span>
-        </a>
-
-        <a href="https://2-fss-1.streamhoster.com/pl_122/201748-1431018-1/chunklist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=NTV%2B&background=random&color=fff&size=128" alt="NTV+" class="channel-logo">
-            <span class="channel-name">NTV+</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e94ec74823db0007277a8f.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=One+Piece&background=random&color=fff&size=128" alt="One Piece" class="channel-logo">
-            <span class="channel-name">One Piece</span>
-        </a>
-
-        <a href="https://origin-http-delivery.isilive.ca/live/_definst_/ontla/house-en/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Ontario+Network&background=random&color=fff&size=128" alt="Ontario Parliamentary Network" class="channel-logo">
-            <span class="channel-name">Ontario Parliamentary Network (720p)</span>
-        </a>
-
-        <a href="https://amg00718-outdoorchannela-outdoortv-samsungau-uc7mp.amagi.tv/playlist/amg00718-outdoorchannela-outdoortv-samsungau/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Outdoor+Channel&background=random&color=fff&size=128" alt="Outdoor Channel" class="channel-logo">
-            <span class="channel-name">Outdoor Channel (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/OUTDOOR_CHANNEL/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Outdoor+HD&background=random&color=fff&size=128" alt="Outdoor Channel HD" class="channel-logo">
-            <span class="channel-name">Outdoor Channel HD (1080p)</span>
-        </a>
-
-        <a href="http://live.stream.cdn.pamirtv.com/ptv/d0dbe915091d400bd8ee7f27f0791303.sdp/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pamir+TV&background=random&color=fff&size=128" alt="Pamir TV" class="channel-logo">
-            <span class="channel-name">Pamir TV (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/PARAMOUNT_CHANNEL/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Paramount&background=random&color=fff&size=128" alt="Paramount Network" class="channel-logo">
-            <span class="channel-name">Paramount Network (720p)</span>
-        </a>
-
-        <a href="http://stream.pardesitv.online/pardesi/tracks-v1a1/mono.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pardesi+TV&background=random&color=fff&size=128" alt="Pardesi TV" class="channel-logo">
-            <span class="channel-name">Pardesi TV (720p)</span>
-        </a>
-
-        <a href="https://iptv.tapesh.tv/tapesh/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Tapesh+TV&background=random&color=fff&size=128" alt="PBC Tapesh TV" class="channel-logo">
-            <span class="channel-name">PBC Tapesh TV (720p)</span>
-        </a>
-
-        <a href="https://d3hqevbyoxtkoi.cloudfront.net/PBS_Travel.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=PBS+Travel&background=random&color=fff&size=128" alt="PBS Travel" class="channel-logo">
-            <span class="channel-name">PBS Travel (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63e20bd160bc8f0008b4c949.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Perry+Mason&background=random&color=fff&size=128" alt="Perry Mason" class="channel-logo">
-            <span class="channel-name">Perry Mason</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66dad50215d2c60008d7afbd.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Classic+Westerns&background=random&color=fff&size=128" alt="Pluto Classic Movie Westerns" class="channel-logo">
-            <span class="channel-name">Pluto Classic Movie Westerns</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66d717c6abec540008ba7eb5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=80s+Action&background=random&color=fff&size=128" alt="Pluto TV 80's Action" class="channel-logo">
-            <span class="channel-name">Pluto TV 80's Action</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62ea3c2e4823db00072788ed.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Action+Movies&background=random&color=fff&size=128" alt="Pluto TV Action Movies" class="channel-logo">
-            <span class="channel-name">Pluto TV Action Movies</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-653bdb0fbdf3cf00089cc395.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Adventure&background=random&color=fff&size=128" alt="Pluto TV Adventure" class="channel-logo">
-            <span class="channel-name">Pluto TV Adventure</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-68d25b620a0f3829b116bb6f.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Anime&background=random&color=fff&size=128" alt="Pluto TV Anime" class="channel-logo">
-            <span class="channel-name">Pluto TV Anime</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-638e11951177840007fdd6b2.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=British+Comedy&background=random&color=fff&size=128" alt="Pluto TV British Comedy" class="channel-logo">
-            <span class="channel-name">Pluto TV British Comedy</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-69c592dff0f1a7d732dc6e36.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Cars&background=random&color=fff&size=128" alt="Pluto TV Cars" class="channel-logo">
-            <span class="channel-name">Pluto TV Cars</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e91af00c43540007f2bb43.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TV+Families&background=random&color=fff&size=128" alt="Pluto TV Classic TV Families" class="channel-logo">
-            <span class="channel-name">Pluto TV Classic TV Families</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-68d25c623175a2780d051d3a.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TV+Variety&background=random&color=fff&size=128" alt="Pluto TV Classic TV Variety" class="channel-logo">
-            <span class="channel-name">Pluto TV Classic TV Variety</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e92178946c8000079a3160.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Comedy&background=random&color=fff&size=128" alt="Pluto TV Comedy" class="channel-logo">
-            <span class="channel-name">Pluto TV Comedy</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62ea3d24b8e02600071fa296.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Comedy+Movies&background=random&color=fff&size=128" alt="Pluto TV Comedy Movies" class="channel-logo">
-            <span class="channel-name">Pluto TV Comedy Movies</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e92708a7ce600007b2676a.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Crime+Drama&background=random&color=fff&size=128" alt="Pluto TV Crime Drama" class="channel-logo">
-            <span class="channel-name">Pluto TV Crime Drama</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdb0bcd707b9000739d2e5.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Drama+Movies&background=random&color=fff&size=128" alt="Pluto TV Drama Movies" class="channel-logo">
-            <span class="channel-name">Pluto TV Drama Movies</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-693adae77f21340ef9746f56.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+FBI&background=random&color=fff&size=128" alt="Pluto TV FBI" class="channel-logo">
-            <span class="channel-name">Pluto TV FBI</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62ea3f8a38acc80007072d26.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Horror&background=random&color=fff&size=128" alt="Pluto TV Horror" class="channel-logo">
-            <span class="channel-name">Pluto TV Horror</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-654100b4bdf3cf0008aa49c7.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=MTV+Classic&background=random&color=fff&size=128" alt="Pluto TV MTV Classic" class="channel-logo">
-            <span class="channel-name">Pluto TV MTV Classic (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e92a58f3e4290007290c96.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Paranormal&background=random&color=fff&size=128" alt="Pluto TV Paranormal" class="channel-logo">
-            <span class="channel-name">Pluto TV Paranormal</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-67922858b83355184c699699.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Reality&background=random&color=fff&size=128" alt="Pluto TV Reality" class="channel-logo">
-            <span class="channel-name">Pluto TV Reality</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-69a9ae4d3bd16a4ed04240d7.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Retro+Action&background=random&color=fff&size=128" alt="Pluto TV Retro Action Movies" class="channel-logo">
-            <span class="channel-name">Pluto TV Retro Action Movies</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-69aee8a1acb7eb0bb68df641.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Retro+Crime&background=random&color=fff&size=128" alt="Pluto TV Retro Crime Action" class="channel-logo">
-            <span class="channel-name">Pluto TV Retro Crime Action</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-630f1e6073bd1800082107f0.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Retro+Drama&background=random&color=fff&size=128" alt="Pluto TV Retro Crime Drama" class="channel-logo">
-            <span class="channel-name">Pluto TV Retro Crime Drama</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6408b41b83f58900081d91ad.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Retro+Kid&background=random&color=fff&size=128" alt="Pluto TV Retro Kid" class="channel-logo">
-            <span class="channel-name">Pluto TV Retro Kid</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-66166cb1307fa30008f275e7.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Sci-Fi&background=random&color=fff&size=128" alt="Pluto TV Sci-fi" class="channel-logo">
-            <span class="channel-name">Pluto TV Sci-fi</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-639b4f75d3d35c0007d37b30.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Snooker+900&background=random&color=fff&size=128" alt="Pluto TV Snooker 900" class="channel-logo">
-            <span class="channel-name">Pluto TV Snooker 900</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e9289f8d467f0007fbc701.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=True+Crime&background=random&color=fff&size=128" alt="Pluto TV True Crime" class="channel-logo">
-            <span class="channel-name">Pluto TV True Crime</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdacc96a3751000811842d.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pluto+Westerns&background=random&color=fff&size=128" alt="Pluto TV Westerns" class="channel-logo">
-            <span class="channel-name">Pluto TV Westerns</span>
-        </a>
-
-        <a href="http://primeasia.selfip.net/Samsung/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Prime+Asia&background=random&color=fff&size=128" alt="Prime Asia TV" class="channel-logo">
-            <span class="channel-name">Prime Asia TV (1080p)</span>
-        </a>
-
-        <a href="http://cdn27.live247stream.com/primecanada/247/primecanada/stream1/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Prime+Canada&background=random&color=fff&size=128" alt="Prime Canada TV" class="channel-logo">
-            <span class="channel-name">Prime Canada TV (720p)</span>
-        </a>
-
-        <a href="http://158.69.24.53:8080/probashi_tv/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Probashi+News&background=random&color=fff&size=128" alt="Probashi TV News" class="channel-logo">
-            <span class="channel-name">Probashi TV News (1080p)</span>
-        </a>
-
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/ptc-punjabi-canada/index.m3u8?ads.vf=78XheDwhNDq" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=PTC+Punjabi&background=random&color=fff&size=128" alt="PTC Punjabi Canada" class="channel-logo">
-            <span class="channel-name">PTC Punjabi Canada (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-696e61287d2afdec4ff2cb75.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Classic+Crime&background=random&color=fff&size=128" alt="Puto TV Classic TV Crime Drama" class="channel-logo">
-            <span class="channel-name">Puto TV Classic TV Crime Drama</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/qello-qello001-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Qello+Concerts&background=random&color=fff&size=128" alt="Qello Concerts by Stingray" class="channel-logo">
-            <span class="channel-name">Qello Concerts by Stingray (1080p)</span>
-        </a>
-
-        <a href="https://tgn.bozztv.com/qvtv/qvtv-web/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Quo+Vadis&background=random&color=fff&size=128" alt="Quo Vadis TV" class="channel-logo">
-            <span class="channel-name">Quo Vadis TV (720p)</span>
-        </a>
-
-        <a href="https://5790d294af2dc.streamlock.net/8124/8124/chunklist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Evangile+Sans+Limite&background=random&color=fff&size=128" alt="Radio Tele Evangile Sans Limite" class="channel-logo">
-            <span class="channel-name">Radio Tele Evangile Sans Limite</span>
-        </a>
-
-        <a href="https://d3k8wzt41aflvx.cloudfront.net/RAIP/Live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Rai+World&background=random&color=fff&size=128" alt="Rai World Premium" class="channel-logo">
-            <span class="channel-name">Rai World Premium (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65660223635c3c00086c2578.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Rawhide&background=random&color=fff&size=128" alt="Rawhide" class="channel-logo">
-            <span class="channel-name">Rawhide</span>
-        </a>
-
-        <a href="https://0b73ace69ebb45eaa249bb87837cb958.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-644-WORBUSENFAST-LG_US/644/lgtv/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Red+Bull+US&background=random&color=fff&size=128" alt="Red Bull TV US" class="channel-logo">
-            <span class="channel-name">Red Bull TV US (1080p)</span>
-        </a>
-
-        <a href="https://rt-fra.rttv.com/dvr/rtfrance/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=RT+France&background=random&color=fff&size=128" alt="RT France" class="channel-logo">
-            <span class="channel-name">RT France (1080p)</span>
-        </a>
-
-        <a href="http://158.69.124.9:1935/sardaritv/sardaritv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Sardari+TV&background=random&color=fff&size=128" alt="Sardari TV" class="channel-logo">
-            <span class="channel-name">Sardari TV (1080p)</span>
-        </a>
-
-        <a href="https://cdn12.henico.net:8443/live/ssct/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Sikh+Centre&background=random&color=fff&size=128" alt="Sikh Spiritual Centre Rexdale" class="channel-logo">
-            <span class="channel-name">Sikh Spiritual Centre Rexdale (720p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/SLICE/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Slice&background=random&color=fff&size=128" alt="Slice" class="channel-logo">
-            <span class="channel-name">Slice (720p)</span>
-        </a>
-
-        <a href="https://iptv.sohailtv.com/sohail/playlist/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Sohail+TV&background=random&color=fff&size=128" alt="Sohail TV" class="channel-logo">
-            <span class="channel-name">Sohail TV (1080p)</span>
-        </a>
-
-        <a href="https://live20.bozztv.com/giatv/giatv-Infinittyott/Infinittyott/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Sooriyan+TV&background=random&color=fff&size=128" alt="Sooriyan TV" class="channel-logo">
-            <span class="channel-name">Sooriyan TV (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdb1c5e25122000798ac79.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=South+Park&background=random&color=fff&size=128" alt="South Park" class="channel-logo">
-            <span class="channel-name">South Park</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdb919d36cbd0007e6ab8a.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=South+Park+FR&background=random&color=fff&size=128" alt="South Park En Fran ais" class="channel-logo">
-            <span class="channel-name">South Park En Fran ais</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65df4934f7f0af0008c32545.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cartman+Collection&background=random&color=fff&size=128" alt="South Park: Cartman Collection" class="channel-logo">
-            <span class="channel-name">South Park: Cartman Collection</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65df47f428730900089f83ac.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Kenny+Collection&background=random&color=fff&size=128" alt="South Park: Kenny Collection" class="channel-logo">
-            <span class="channel-name">South Park: Kenny Collection</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65df49b30d45610008172c5b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Kyle+Collection&background=random&color=fff&size=128" alt="South Park: Kyle Collection" class="channel-logo">
-            <span class="channel-name">South Park: Kyle Collection</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-65df48ba28730900089f8480.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Stan+Collection&background=random&color=fff&size=128" alt="South Park: Stan Collection" class="channel-logo">
-            <span class="channel-name">South Park: Stan Collection</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-663115d923e24f000843b49c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Welcome+to+Canada&background=random&color=fff&size=128" alt="South Park: Welcome to Canada!" class="channel-logo">
-            <span class="channel-name">South Park: Welcome to Canada!</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63f87d057533d80008ab9549.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=SpongeBob&background=random&color=fff&size=128" alt="SpongeBob SquarePants" class="channel-logo">
-            <span class="channel-name">SpongeBob SquarePants (720p)</span>
-        </a>
-
-        <a href="https://livestar.siliconweb.com/starvod/star_int/star_int.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=STAR+International&background=random&color=fff&size=128" alt="STAR International" class="channel-logo">
-            <span class="channel-name">STAR International (720p)</span>
-        </a>
-
-        <a href="https://aka-live1050.delivery.roku.com/7572d640-7373-4137-8b14-a3afff395349/t2-origin/out/v1/live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cityscapes&background=random&color=fff&size=128" alt="Stingray Cityscapes" class="channel-logo">
-            <span class="channel-name">Stingray Cityscapes (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-101ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Classic+Rock&background=random&color=fff&size=128" alt="Stingray Classic Rock" class="channel-logo">
-            <span class="channel-name">Stingray Classic Rock (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/classica-cla008-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Classica&background=random&color=fff&size=128" alt="Stingray Classica" class="channel-logo">
-            <span class="channel-name">Stingray Classica (1080p)</span>
-        </a>
-
-        <a href="https://aka-live1050.delivery.roku.com/372c813e-1fb9-41d4-a4d0-5fbd803659c5/t2-origin/out/v1/live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Cozy+Cafe&background=random&color=fff&size=128" alt="Stingray Cozy Cafe" class="channel-logo">
-            <span class="channel-name">Stingray Cozy Cafe (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/djazz-djaads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=DJAZZ&background=random&color=fff&size=128" alt="Stingray DJAZZ" class="channel-logo">
-            <span class="channel-name">Stingray DJAZZ (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-137ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Easy+Listening&background=random&color=fff&size=128" alt="Stingray Easy Listening" class="channel-logo">
-            <span class="channel-name">Stingray Easy Listening (1080p)</span>
-        </a>
-
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/stingray-xitos-del-momento/master.m3u8?ads.vf=--_m-LmFeCi" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Exitos+Momento&background=random&color=fff&size=128" alt="Stingray  xitos del Momento" class="channel-logo">
-            <span class="channel-name">Stingray  xitos del Momento (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-115ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Flashback+70s&background=random&color=fff&size=128" alt="Stingray Flashback 70s" class="channel-logo">
-            <span class="channel-name">Stingray Flashback 70s (1080p)</span>
-        </a>
-
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/stingray-greatest-hits/master.m3u8?ads.vf=7XQlh7i26u0" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Greatest+Hits&background=random&color=fff&size=128" alt="Stingray Greatest Hits" class="channel-logo">
-            <span class="channel-name">Stingray Greatest Hits (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-107ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Hit+List&background=random&color=fff&size=128" alt="Stingray Hit List" class="channel-logo">
-            <span class="channel-name">Stingray Hit List (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-155ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Holiday+Hits&background=random&color=fff&size=128" alt="Stingray Holiday Hits" class="channel-logo">
-            <span class="channel-name">Stingray Holiday Hits (1080p)</span>
-        </a>
-
-        <a href="https://d10cyxntpn0bwm.cloudfront.net/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Holidayscapes&background=random&color=fff&size=128" alt="Stingray Holidayscapes" class="channel-logo">
-            <span class="channel-name">Stingray Holidayscapes (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-108ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Hot+Country&background=random&color=fff&size=128" alt="Stingray Hot Country" class="channel-logo">
-            <span class="channel-name">Stingray Hot Country (1080p)</span>
-        </a>
-
-        <a href="https://dash4.antik.sk/live/test_stingray_iconcerts_hd_hevc50/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=iConcerts&background=random&color=fff&size=128" alt="Stingray iConcerts HD" class="channel-logo">
-            <span class="channel-name">Stingray iConcerts HD</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-021ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Jukebox+Oldies&background=random&color=fff&size=128" alt="Stingray Jukebox Oldies" class="channel-logo">
-            <span class="channel-name">Stingray Jukebox Oldies (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/karaoke-kar000-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Karaoke&background=random&color=fff&size=128" alt="Stingray Karaoke" class="channel-logo">
-            <span class="channel-name">Stingray Karaoke (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/cmusic-cme004-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Movie+Music&background=random&color=fff&size=128" alt="Stingray Movie Music" class="channel-logo">
-            <span class="channel-name">Stingray Movie Music (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/naturescape-a003-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Naturescape&background=random&color=fff&size=128" alt="Stingray Naturescape" class="channel-logo">
-            <span class="channel-name">Stingray Naturescape (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-142ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Nothin+90s&background=random&color=fff&size=128" alt="Stingray Nothin' But 90s" class="channel-logo">
-            <span class="channel-name">Stingray Nothin' But 90s (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-104ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Pop+Adult&background=random&color=fff&size=128" alt="Stingray Pop Adult" class="channel-logo">
-            <span class="channel-name">Stingray Pop Adult (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-128ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Remember+80s&background=random&color=fff&size=128" alt="Stingray Remember the 80s" class="channel-logo">
-            <span class="channel-name">Stingray Remember the 80s (1080p)</span>
-        </a>
-
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/stingray-remember-the-80s/master.m3u8?ads.vf=Fq0bVWh7hy0" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Remember+80s+2&background=random&color=fff&size=128" alt="Stingray Remember the 80s" class="channel-logo">
-            <span class="channel-name">Stingray Remember the 80s (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-102ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Rock+Alt&background=random&color=fff&size=128" alt="Stingray Rock Alternative" class="channel-logo">
-            <span class="channel-name">Stingray Rock Alternative (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-202ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Romance+Latino&background=random&color=fff&size=128" alt="Stingray Romance Latino" class="channel-logo">
-            <span class="channel-name">Stingray Romance Latino (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-140ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Smooth+Jazz&background=random&color=fff&size=128" alt="Stingray Smooth Jazz" class="channel-logo">
-            <span class="channel-name">Stingray Smooth Jazz (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-134ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Soul+Storm&background=random&color=fff&size=128" alt="Stingray Soul Storm" class="channel-logo">
-            <span class="channel-name">Stingray Soul Storm (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-122ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=The+Spa&background=random&color=fff&size=128" alt="Stingray The Spa" class="channel-logo">
-            <span class="channel-name">Stingray The Spa (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-317ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Todays+KPOP&background=random&color=fff&size=128" alt="Stingray Today's KPOP" class="channel-logo">
-            <span class="channel-name">Stingray Today's KPOP (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/ose-190ads-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Latin+Pop&background=random&color=fff&size=128" alt="Stingray Today's Latin Pop" class="channel-logo">
-            <span class="channel-name">Stingray Today's Latin Pop (1080p)</span>
-        </a>
-
-        <a href="https://lotus.stingray.com/manifest/zenlife-zen001-montreal/samsungtvplus/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ZenLIFE&background=random&color=fff&size=128" alt="Stingray ZenLIFE" class="channel-logo">
-            <span class="channel-name">Stingray ZenLIFE (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6654adb1f99922000854388c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Summer+Movies&background=random&color=fff&size=128" alt="Summer of Movies" class="channel-logo">
-            <span class="channel-name">Summer of Movies</span>
-        </a>
-
-        <a href="http://206.212.244.63/6142/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Super+Channel+Vault&background=random&color=fff&size=128" alt="CA: Super Channel Vault" class="channel-logo">
-            <span class="channel-name">CA: Super Channel Vault</span>
-        </a>
-
-        <a href="https://player.mslivestream.net/tamil/ac206e74d75b285755ee4924df87d951.sdp/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=SVBC+2&background=random&color=fff&size=128" alt="SVBC 2" class="channel-logo">
-            <span class="channel-name">SVBC 2 (1080p)</span>
-        </a>
-
-        <a href="https://player.mslivestream.net/svbc/2e628d7e1b65d31254fd7705ff7ee64d.sdp/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=SVBC+3&background=random&color=fff&size=128" alt="SVBC 3" class="channel-logo">
-            <span class="channel-name">SVBC 3 (720p)</span>
-        </a>
-
-        <a href="https://player.mslivestream.net/mslive/13a2927187b9700ae7ea82d7841d5b68.sdp/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=SVBC+4&background=random&color=fff&size=128" alt="SVBC 4" class="channel-logo">
-            <span class="channel-name">SVBC 4 (1080p)</span>
-        </a>
-
-        <a href="https://player.mslivestream.net/telugu/5d076e5c3d34cb8bb08e54a4bb7e223e.sdp/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=SVBC+Bhakti&background=random&color=fff&size=128" alt="SVBC Sri Venkateswara Bhakti Channel" class="channel-logo">
-            <span class="channel-name">SVBC Sri Venkateswara Bhakti Channel (1080p)</span>
-        </a>
-
-        <a href="http://185.246.209.113/T+E/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=T%2BE&background=random&color=fff&size=128" alt="T+E" class="channel-logo">
-            <span class="channel-name">T+E (720p)</span>
-        </a>
-
-        <a href="http://cdn11.live247stream.com/tag/tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TAG+TV&background=random&color=fff&size=128" alt="TAG TV" class="channel-logo">
-            <span class="channel-name">TAG TV (1080p)</span>
-        </a>
-
-        <a href="https://origin-de-y376549.cdn.nextologies.com:444/4c3caf7294b3/fbbd0aee3d9a8260/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Tamil+Entertainment&background=random&color=fff&size=128" alt="Tamil Entertainment Television" class="channel-logo">
-            <span class="channel-name">Tamil Entertainment Television (1080p)</span>
-        </a>
-
-        <a href="https://live.cmr24.fm/TVI/HD/chunks.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TamilVision&background=random&color=fff&size=128" alt="TamilVision-TV" class="channel-logo">
-            <span class="channel-name">TamilVision-TV (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e9145ec07f2a00070e68dc.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Andy+Griffith&background=random&color=fff&size=128" alt="The Andy Griffith Show" class="channel-logo">
-            <span class="channel-name">The Andy Griffith Show</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6565fefdc917a50008485cc6.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Beverly+Hillbillies&background=random&color=fff&size=128" alt="The Beverly Hillbillies" class="channel-logo">
-            <span class="channel-name">The Beverly Hillbillies</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64f8a22a3efb510008245df0.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=The+Challenge&background=random&color=fff&size=128" alt="The Challenge" class="channel-logo">
-            <span class="channel-name">The Challenge</span>
-        </a>
-
-        <a href="https://amg00353-amg00353c36-xumo-us-3803.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=The+Conners&background=random&color=fff&size=128" alt="The Conners" class="channel-logo">
-            <span class="channel-name">The Conners (1080p)</span>
-        </a>
-
-        <a href="https://amg00654-itv-amg00654c35-rakuten-gb-7598.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Graham+Norton&background=random&color=fff&size=128" alt="The Graham Norton Show" class="channel-logo">
-            <span class="channel-name">The Graham Norton Show (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e92e536f28870007fa9b3a.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Judge+Judy&background=random&color=fff&size=128" alt="The Judge Judy Channel" class="channel-logo">
-            <span class="channel-name">The Judge Judy Channel</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e91563ce7ce300076f917e.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Love+Boat&background=random&color=fff&size=128" alt="The Love Boat" class="channel-logo">
-            <span class="channel-name">The Love Boat</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62bdabbc5611f2000761ca30.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=New+Detectives&background=random&color=fff&size=128" alt="The New Detectives" class="channel-logo">
-            <span class="channel-name">The New Detectives</span>
-        </a>
-
-        <a href="http://name-port.to/live/Gregory123/Gregory321/2420047.ts" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=The+News+Forum&background=random&color=fff&size=128" alt="The News Forum" class="channel-logo">
-            <span class="channel-name">The News Forum (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64c2214c2a7f2200089a0c4b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Price+is+Right&background=random&color=fff&size=128" alt="The Price is Right" class="channel-logo">
-            <span class="channel-name">The Price is Right (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63da370e2e477400081cf8b6.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Weather+Network&background=random&color=fff&size=128" alt="The Weather Network" class="channel-logo">
-            <span class="channel-name">The Weather Network (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64ca723a2bc49300081a8966.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Threes+Company&background=random&color=fff&size=128" alt="Three's Company" class="channel-logo">
-            <span class="channel-name">Three's Company (720p)</span>
-        </a>
-
-        <a href="https://tscamd.akamaized.net/hls/live/503340/TSCLive/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSC&background=random&color=fff&size=128" alt="Today's Shopping Choice (TSC)" class="channel-logo">
-            <span class="channel-name">Today's Shopping Choice (TSC) (720p)</span>
-        </a>
-
-        <a href="http://cdn3.toronto360.tv:8081/toronto360/hd/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Toronto+360&background=random&color=fff&size=128" alt="Toronto 360 TV" class="channel-logo">
-            <span class="channel-name">Toronto 360 TV (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e9566e27ce19000732ec85.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Tortues+Ninja&background=random&color=fff&size=128" alt="Tortues Ninja TV" class="channel-logo">
-            <span class="channel-name">Tortues Ninja TV (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/b062c287-a170-47df-99e4-f5dcd441ee59/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Total+Crime&background=random&color=fff&size=128" alt="Total Crime" class="channel-logo">
-            <span class="channel-name">Total Crime (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62e95265c9fd030007268fb9.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Totally+Turtles&background=random&color=fff&size=128" alt="Totally Turtles" class="channel-logo">
-            <span class="channel-name">Totally Turtles (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-63da36dea995710008727d4d.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Transformers&background=random&color=fff&size=128" alt="Transformers" class="channel-logo">
-            <span class="channel-name">Transformers</span>
-        </a>
-
-        <a href="http://40.160.24.55/TSN_1/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSN1&background=random&color=fff&size=128" alt="TSN1" class="channel-logo">
-            <span class="channel-name">TSN1 (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/TSN_2/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSN2&background=random&color=fff&size=128" alt="TSN2" class="channel-logo">
-            <span class="channel-name">TSN2 (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/TSN_3/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSN3&background=random&color=fff&size=128" alt="TSN3" class="channel-logo">
-            <span class="channel-name">TSN3 (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/TSN_4/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSN4&background=random&color=fff&size=128" alt="TSN4" class="channel-logo">
-            <span class="channel-name">TSN4 (1080p)</span>
-        </a>
-
-        <a href="http://40.160.24.55/TSN_5/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TSN5&background=random&color=fff&size=128" alt="TSN5" class="channel-logo">
-            <span class="channel-name">TSN5 (1080p)</span>
-        </a>
-
-        <a href="https://d3pnbvng3bx2nj.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-rds8g35qfqrnv/TSN_The_Ocho.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=The+Ocho&background=random&color=fff&size=128" alt="TSN The Ocho" class="channel-logo">
-            <span class="channel-name">TSN The Ocho (1080p)</span>
-        </a>
-
-        <a href="http://23.133.220.149/TV5/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TV5+Quebec&background=random&color=fff&size=128" alt="TV5 Quebec Canada" class="channel-logo">
-            <span class="channel-name">TV5 Quebec Canada (1080p)</span>
-        </a>
-
-        <a href="http://rtmp.smartstream.video:1935/capco/tv29/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TV+16+Toronto&background=random&color=fff&size=128" alt="TV 16 Toronto" class="channel-logo">
-            <span class="channel-name">TV 16 Toronto (720p)</span>
-        </a>
-
-        <a href="https://932y483pdjv8-hls-live.5centscdn.com/stream/deb10bae362f810630ec3abedcae5894.sdp/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TV+Punjab&background=random&color=fff&size=128" alt="TV Punjab" class="channel-logo">
-            <span class="channel-name">TV Punjab (720p)</span>
-        </a>
-
-        <a href="https://tvalive-dai01.akamaized.net/Content/HLS/Live/channel(575b93c5-be31-ee34-6285-14620fd14048)/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TVA&background=random&color=fff&size=128" alt="TVA" class="channel-logo">
-            <span class="channel-name">TVA</span>
-        </a>
-
-        <a href="https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_ame_main_576.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TVE+America&background=random&color=fff&size=128" alt="TVE Internacional America" class="channel-logo">
-            <span class="channel-name">TVE Internacional America (576p)</span>
-        </a>
-
-        <a href="https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/tvei_ame_main_1080.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TVE+America+HD&background=random&color=fff&size=128" alt="TVE Internacional America HD" class="channel-logo">
-            <span class="channel-name">TVE Internacional America HD (1080p)</span>
-        </a>
-
-        <a href="https://fastly.live.brightcove.com/6369851620112/us-east-1/15364602001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoicGZncmlmLmVncmVzcy50N2M3emwiLCJhY2NvdW50X2lkIjoiMTUzNjQ2MDIwMDEiLCJlaG4iOiJmYXN0bHkubGl2ZS5icmlnaHRjb3ZlLmNvbSIsImlzcyI6ImJsaXZlLXBsYXliYWNrLXNvdXJjZS1hcGkiLCJzdWIiOiJwYXRobWFwdG9rZW4iLCJhdWQiOlsiMTUzNjQ2MDIwMDEiXSwianRpIjoiNjM2OTg1MTYyMDExMiJ9.zRE6fD9JwdbNLUIK5zgvlTAvXCQ3HeeE5p0yH0Pd3-Q/playlist-hls.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=TVOKids&background=random&color=fff&size=128" alt="TVOKids" class="channel-logo">
-            <span class="channel-name">TVOKids (720p)</span>
-        </a>
-
-        <a href="https://hls.uvagut.tv/hls/uvagut/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Uvagut+TV&background=random&color=fff&size=128" alt="Uvagut TV" class="channel-logo">
-            <span class="channel-name">Uvagut TV (1080p)</span>
-        </a>
-
-        <a href="https://5caf24a595d94.streamlock.net:1937/8132/8132/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Watan-e-Maa&background=random&color=fff&size=128" alt="Watan-e-Maa TV" class="channel-logo">
-            <span class="channel-name">Watan-e-Maa TV (720p)</span>
-        </a>
-
-        <a href="https://wcgtv.ca/live-10/live/stream-1/live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=WCGtv&background=random&color=fff&size=128" alt="WCGtv Public" class="channel-logo">
-            <span class="channel-name">WCGtv Public (1080p)</span>
-        </a>
-
-        <a href="https://dfhsahpa45kk2.cloudfront.net/scheduler/scheduleMaster/476.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Wild+TV&background=random&color=fff&size=128" alt="Wild TV" class="channel-logo">
-            <span class="channel-name">Wild TV (1080p)</span>
-        </a>
-
-        <a href="https://d36r8jifhgsk5j.cloudfront.net/Willow_TV.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Willow+Sports&background=random&color=fff&size=128" alt="Willow Sports" class="channel-logo">
-            <span class="channel-name">Willow Sports (1080p)</span>
-        </a>
-
-        <a href="https://d284aawtm5vi48.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-fjdfi2br1jtq7/XITE_90s_Throwback.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=XITE+90s&background=random&color=fff&size=128" alt="XITE 90's Throwback" class="channel-logo">
-            <span class="channel-name">XITE 90's Throwback (1080p)</span>
-        </a>
-
-        <a href="https://d3bsgqzbpkrvbb.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-w288eaw03izg1/XITE_Nuevo_Latino.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=XITE+Nuevo&background=random&color=fff&size=128" alt="XITE Nuevo Latino" class="channel-logo">
-            <span class="channel-name">XITE Nuevo Latino (1080p)</span>
-        </a>
-
-        <a href="https://d1xc25jm9e0l4b.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-xplkt8i7m24dc/XITE_Siempre_Latino.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=XITE+Siempre&background=random&color=fff&size=128" alt="XITE Siempre Latino" class="channel-logo">
-            <span class="channel-name">XITE Siempre Latino (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-654102ed770cf1000866c307.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Yo+MTV&background=random&color=fff&size=128" alt="Yo! MTV" class="channel-logo">
-            <span class="channel-name">Yo! MTV (1080p)</span>
-        </a>
-
-        <a href="https://origin-cae-m462953.toober.com/4c3caf7294b3/c8bf99484885/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Zee+TV+Canada&background=random&color=fff&size=128" alt="Zee TV Canada" class="channel-logo">
-            <span class="channel-name">Zee TV Canada (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-62ba60f059624e000781c436.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=00s+Replay&background=random&color=fff&size=128" alt="00s Replay" class="channel-logo">
-            <span class="channel-name">00s Replay</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/d2d_live/smil:d2d_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Dream&background=random&color=fff&size=128" alt="3ABN Dare To Dream Network" class="channel-logo">
-            <span class="channel-name">3ABN Dare To Dream Network</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/3abn_live/smil:3abn_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+English&background=random&color=fff&size=128" alt="3ABN English" class="channel-logo">
-            <span class="channel-name">3ABN English</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/Fre_live/smil:Fre_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+French&background=random&color=fff&size=128" alt="3ABN French" class="channel-logo">
-            <span class="channel-name">3ABN French</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Kids&background=random&color=fff&size=128" alt="3ABN Kids Network" class="channel-logo">
-            <span class="channel-name">3ABN Kids Network</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/Lat_live/smil:Lat_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Latino&background=random&color=fff&size=128" alt="3ABN Latino" class="channel-logo">
-            <span class="channel-name">3ABN Latino</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn1/PraiseHim/smil:PraiseHim.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Praise&background=random&color=fff&size=128" alt="3ABN Praise Him Music Network" class="channel-logo">
-            <span class="channel-name">3ABN Praise Him Music Network</span>
-        </a>
-
-        <a href="https://3abn.bozztv.com/3abn2/Pro_live/smil:Pro_live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=3ABN+Proclaim&background=random&color=fff&size=128" alt="3ABN Proclaim! Network" class="channel-logo">
-            <span class="channel-name">3ABN Proclaim! Network</span>
-        </a>
-
-        <a href="https://d1b5mlajbmvkjv.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/UDU-DistroTV/145.m3u8?ads.vf=7FhdsxqVxOi" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Free+Movies&background=random&color=fff&size=128" alt="24 Hour Free Movies" class="channel-logo">
-            <span class="channel-name">24 Hour Free Movies (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/darcizzle.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Darcizzle&background=random&color=fff&size=128" alt="30A Darcizzle Offshore" class="channel-logo">
-            <span class="channel-name">30A Darcizzle Offshore (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/gh.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Hollywood&background=random&color=fff&size=128" alt="30A Georgia Hollywood Review TV" class="channel-logo">
-            <span class="channel-name">30A Georgia Hollywood Review TV (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/vidaa/golf.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Golf&background=random&color=fff&size=128" alt="30A Golf Kingdom" class="channel-logo">
-            <span class="channel-name">30A Golf Kingdom (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/xodglobal/30atv.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Investment&background=random&color=fff&size=128" alt="30A Investment Pitch" class="channel-logo">
-            <span class="channel-name">30A Investment Pitch (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/ln.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Lionel&background=random&color=fff&size=128" alt="30A Lionel Nation TV" class="channel-logo">
-            <span class="channel-name">30A Lionel Nation TV</span>
-        </a>
-
-        <a href="https://30a-tv.com/loomer.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Loomered&background=random&color=fff&size=128" alt="30A Loomered TV" class="channel-logo">
-            <span class="channel-name">30A Loomered TV</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/vidaa/luxelife.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Luxe+Life&background=random&color=fff&size=128" alt="30A Luxe Life Discovered" class="channel-logo">
-            <span class="channel-name">30A Luxe Life Discovered (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/music.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Music&background=random&color=fff&size=128" alt="30A Music" class="channel-logo">
-            <span class="channel-name">30A Music (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/720p/63.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Ridiculous&background=random&color=fff&size=128" alt="30A Ridiculous TV" class="channel-logo">
-            <span class="channel-name">30A Ridiculous TV (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/sidewalks.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Sidewalks&background=random&color=fff&size=128" alt="30A Sidewalks" class="channel-logo">
-            <span class="channel-name">30A Sidewalks (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/masters/30atv.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+TV&background=random&color=fff&size=128" alt="30A Television Channel" class="channel-logo">
-            <span class="channel-name">30A Television Channel (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/beachy.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Beach+Show&background=random&color=fff&size=128" alt="30A The Beach Show" class="channel-logo">
-            <span class="channel-name">30A The Beach Show (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/pzaz/30atvmovies.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Classic+Movies&background=random&color=fff&size=128" alt="30A TV Classic Movies" class="channel-logo">
-            <span class="channel-name">30A TV Classic Movies (720p)</span>
-        </a>
-
-        <a href="https://30a-tv.com/feeds/vidaa/cars.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=30A+Cars&background=random&color=fff&size=128" alt="30A We Love Cars" class="channel-logo">
-            <span class="channel-name">30A We Love Cars (720p)</span>
-        </a>
-
-        <a href="https://dai.google.com/linear/hls/event/JUr94WL2QAiVpGNHY5n5dA/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=48+Hours&background=random&color=fff&size=128" alt="48 Hours" class="channel-logo">
-            <span class="channel-name">48 Hours (1080p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-68487fb3f212bedacf5a53e3.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=50+Cent+Action&background=random&color=fff&size=128" alt="50 Cent Action" class="channel-logo">
-            <span class="channel-name">50 Cent Action (720p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-5f4d878d3d19b30007d2e782.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=70s+Cinema&background=random&color=fff&size=128" alt="70s Cinema" class="channel-logo">
-            <span class="channel-name">70s Cinema</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-5ca525b650be2571e3943c63.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=80s+Rewind&background=random&color=fff&size=128" alt="80s Rewind" class="channel-logo">
-            <span class="channel-name">80s Rewind</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6452c814939a590008567a3b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=90s+Kids&background=random&color=fff&size=128" alt="90's Kids" class="channel-logo">
-            <span class="channel-name">90's Kids</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-6452c77ed3fdde00080eb3a8.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=90s+Kids+2&background=random&color=fff&size=128" alt="90s Kids TV 2" class="channel-logo">
-            <span class="channel-name">90s Kids TV 2</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-5f4d86f519358a00072b978e.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=90s+Throwback&background=random&color=fff&size=128" alt="90s Throwback" class="channel-logo">
-            <span class="channel-name">90s Throwback</span>
-        </a>
-
-        <a href="https://streamer1.connectto.com/AABC_WEB_1201/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=AABC+TV&background=random&color=fff&size=128" alt="AABC TV" class="channel-logo">
-            <span class="channel-name">AABC TV (480p)</span>
-        </a>
-
-        <a href="http://41.205.93.154/ABC/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC&background=random&color=fff&size=128" alt="ABC" class="channel-logo">
-            <span class="channel-name">ABC (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/c28d1ca8-9467-4798-81dc-09c1d6e90be1/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+2+Baltimore&background=random&color=fff&size=128" alt="ABC 2 Baltimore MD" class="channel-logo">
-            <span class="channel-name">ABC 2 Baltimore MD (WMAR) (720p)</span>
-        </a>
-
-        <a href="https://linear-710.frequency.stream/dist/stirr/710/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+2+Portland&background=random&color=fff&size=128" alt="ABC 2 Portland OR" class="channel-logo">
-            <span class="channel-name">ABC 2 Portland OR (KATU) (1080p)</span>
-        </a>
-
-        <a href="https://linear-700.frequency.stream/dist/stirr/700/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+4+Charleston&background=random&color=fff&size=128" alt="ABC 4 Charleston SC" class="channel-logo">
-            <span class="channel-name">ABC 4 Charleston SC (WCIV) (1080p)</span>
-        </a>
-
-        <a href="https://linear-709.frequency.stream/dist/stirr/709/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+4+Seattle&background=random&color=fff&size=128" alt="ABC 4 Seattle WA" class="channel-logo">
-            <span class="channel-name">ABC 4 Seattle WA (KOMO) (1080p)</span>
-        </a>
-
-        <a href="https://d3svnrf3rmq619.cloudfront.net/krgv-live/smil:krgv-live.smil/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+5&background=random&color=fff&size=128" alt="ABC 5" class="channel-logo">
-            <span class="channel-name">ABC 5</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/c2e3094d-ad56-4c5f-9655-cd80df71fbab/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+5+Boston&background=random&color=fff&size=128" alt="ABC 5 Boston MA" class="channel-logo">
-            <span class="channel-name">ABC 5 Boston MA (WCVB) (720p)</span>
-        </a>
-
-        <a href="https://amg01942-amg01942c2-stirr-us-10173.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+5+St+Paul&background=random&color=fff&size=128" alt="ABC 5 St. Paul MN" class="channel-logo">
-            <span class="channel-name">ABC 5 St. Paul MN (KSTP) (1080p)</span>
-        </a>
-
-        <a href="https://amg01942-amg01942c6-stirr-us-10178.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+6+Austin&background=random&color=fff&size=128" alt="ABC 6 Austin TX" class="channel-logo">
-            <span class="channel-name">ABC 6 Austin TX (KAAL) (1080p)</span>
-        </a>
-
-        <a href="https://linear-689.frequency.stream/dist/stirr/689/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+6+Columbus&background=random&color=fff&size=128" alt="ABC 6 Columbus OH" class="channel-logo">
-            <span class="channel-name">ABC 6 Columbus OH (WSYX) (1080p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/bc9ff1c7-4dc1-4e36-9ef0-25b28c595ada/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+6+Indy&background=random&color=fff&size=128" alt="ABC 6 Indianapolis IN" class="channel-logo">
-            <span class="channel-name">ABC 6 Indianapolis IN (WRTV) (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/2dba5dd9-4097-45e3-b169-56735cc48476/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+7+Albuquerque&background=random&color=fff&size=128" alt="ABC 7 Albuquerque NM" class="channel-logo">
-            <span class="channel-name">ABC 7 Albuquerque NM (KOAT) (720p)</span>
-        </a>
-
-        <a href="https://content.uplynk.com/channel/64ca339f04964a5e961c3207a7771bf1.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+7+Denver&background=random&color=fff&size=128" alt="ABC 7 Denver CO" class="channel-logo">
-            <span class="channel-name">ABC 7 Denver CO (KMGH) (720p)</span>
-        </a>
-
-        <a href="https://linear-681.frequency.stream/dist/stirr/681/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+7+DC&background=random&color=fff&size=128" alt="ABC 7 Washington DC" class="channel-logo">
-            <span class="channel-name">ABC 7 Washington DC (WJLA) (1080p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/b77ffe96-c5d1-43a7-8687-306ff244d725/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+9+Manchester&background=random&color=fff&size=128" alt="ABC 9 Manchester NH" class="channel-logo">
-            <span class="channel-name">ABC 9 Manchester NH (WMUR-TV) (720p)</span>
-        </a>
-
-        <a href="https://amg00327-coxmediagroup-wftvbreaking-ono-hec7b.amagi.tv/playlist/amg00327-coxmediagroup-wftvbreaking-ono/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+9+Orlando&background=random&color=fff&size=128" alt="ABC 9 Orlando FL" class="channel-logo">
-            <span class="channel-name">ABC 9 Orlando FL (WFTV) (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/a53514a7-f2aa-4d34-802e-c2b5594fc0d7/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+9+Tucson&background=random&color=fff&size=128" alt="ABC 9 Tucson AZ" class="channel-logo">
-            <span class="channel-name">ABC 9 Tucson AZ (KGUN) (720p)</span>
-        </a>
-
-        <a href="https://amg01942-amg01942c3-stirr-us-10196.playouts.now.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+10+Duluth&background=random&color=fff&size=128" alt="ABC 10 Duluth MN" class="channel-logo">
-            <span class="channel-name">ABC 10 Duluth MN (WDIO) (1080p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/1a352414-3a30-4f42-b14b-c091d02a5e45/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+10+San+Diego&background=random&color=fff&size=128" alt="ABC 10 San Diego CA" class="channel-logo">
-            <span class="channel-name">ABC 10 San Diego CA (KGTV) (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/ec903a48-3638-4d0b-ac89-813e147bca58/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+12+Milwaukee&background=random&color=fff&size=128" alt="ABC 12 Milwaukee WI" class="channel-logo">
-            <span class="channel-name">ABC 12 Milwaukee WI (WISN) (720p)</span>
-        </a>
-
-        <a href="https://linear-695.frequency.stream/dist/stirr/695/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+13+Asheville&background=random&color=fff&size=128" alt="ABC 13 Asheville NC" class="channel-logo">
-            <span class="channel-name">ABC 13 Asheville NC (WLOS) (1080p)</span>
-        </a>
-
-        <a href="https://content.uplynk.com/channel/39919d3f7a074eefa8bf579214e952f9.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+13+Vegas&background=random&color=fff&size=128" alt="ABC 13 Las Vegas NV" class="channel-logo">
-            <span class="channel-name">ABC 13 Las Vegas NV (KTNV) (720p)</span>
-        </a>
-
-        <a href="https://linear-696.frequency.stream/dist/stirr/696/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+15+Myrtle&background=random&color=fff&size=128" alt="ABC 15 Myrtle Beach FL" class="channel-logo">
-            <span class="channel-name">ABC 15 Myrtle Beach FL (WPDE) (1080p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/e923f4ce-7229-4e01-a25e-d453993dab82/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+15+Phoenix&background=random&color=fff&size=128" alt="ABC 15 Phoenix AZ" class="channel-logo">
-            <span class="channel-name">ABC 15 Phoenix AZ (KNXV) (720p)</span>
-        </a>
-
-        <a href="https://linear-690.frequency.stream/dist/stirr/690/hls/master/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+22+Dayton&background=random&color=fff&size=128" alt="ABC 22 Dayton OH" class="channel-logo">
-            <span class="channel-name">ABC 22 Dayton OH (WKEF) (1080p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/69c4e4f9-84fa-43eb-b38e-6d1f9464ca73/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+23+Bakersfield&background=random&color=fff&size=128" alt="ABC 23 Bakersfield CA" class="channel-logo">
-            <span class="channel-name">ABC 23 Bakersfield CA (KERO) (720p)</span>
-        </a>
-
-        <a href="https://content.uplynk.com/channel/9d4e02c9c3544c269d32e6b316792c8f.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+25+Texas&background=random&color=fff&size=128" alt="ABC 25 News Central Texas" class="channel-logo">
-            <span class="channel-name">ABC 25 News Central Texas (720p)</span>
-        </a>
-
-        <a href="https://aegis-cloudfront-1.tubi.video/e739361e-fa12-4cac-92f3-e0dbf332cd88/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+27+Tallahassee&background=random&color=fff&size=128" alt="ABC 27 Tallahassee FL" class="channel-logo">
-            <span class="channel-name">ABC 27 Tallahassee FL (WTXL) (720p)</span>
-        </a>
-
-        <a href="https://pubads.g.doubleclick.net/ssai/event/tQD6w9OJQVOobcyV3Dammw/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+Miami&background=random&color=fff&size=128" alt="ABC (WPLG-DT1) Miami FL" class="channel-logo">
-            <span class="channel-name">ABC (WPLG-DT1) Miami FL (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+1&background=random&color=fff&size=128" alt="ABC News Live 1" class="channel-logo">
-            <span class="channel-name">ABC News Live 1 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023561/abcnewshudson2/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+2&background=random&color=fff&size=128" alt="ABC News Live 2" class="channel-logo">
-            <span class="channel-name">ABC News Live 2 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023562/abcnewshudson3/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+3&background=random&color=fff&size=128" alt="ABC News Live 3" class="channel-logo">
-            <span class="channel-name">ABC News Live 3 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023563/abcnewshudson4/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+4&background=random&color=fff&size=128" alt="ABC News Live 4" class="channel-logo">
-            <span class="channel-name">ABC News Live 4 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023564/abcnewshudson5/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+5&background=random&color=fff&size=128" alt="ABC News Live 5" class="channel-logo">
-            <span class="channel-name">ABC News Live 5 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023565/abcnewshudson6/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+6&background=random&color=fff&size=128" alt="ABC News Live 6" class="channel-logo">
-            <span class="channel-name">ABC News Live 6 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023566/abcnewshudson7/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+7&background=random&color=fff&size=128" alt="ABC News Live 7" class="channel-logo">
-            <span class="channel-name">ABC News Live 7 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023567/abcnewshudson8/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+8&background=random&color=fff&size=128" alt="ABC News Live 8" class="channel-logo">
-            <span class="channel-name">ABC News Live 8 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023568/abcnewshudson9/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+9&background=random&color=fff&size=128" alt="ABC News Live 9" class="channel-logo">
-            <span class="channel-name">ABC News Live 9 (720p)</span>
-        </a>
-
-        <a href="https://abcnews-streams.akamaized.net/hls/live/2023569/abcnewshudson10/master.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+News+10&background=random&color=fff&size=128" alt="ABC News Live 10" class="channel-logo">
-            <span class="channel-name">ABC News Live 10 (720p)</span>
-        </a>
-
-        <a href="http://stream.cammonitorplus.net/1797/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+West&background=random&color=fff&size=128" alt="ABC West" class="channel-logo">
-            <span class="channel-name">ABC West (720p)</span>
-        </a>
-
-        <a href="https://townnews.g-mana.live/media/027a05c7-43b6-49eb-ad10-a0c0f10a0754/main.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABC+WWAY+3&background=random&color=fff&size=128" alt="ABC WWAY 3" class="channel-logo">
-            <span class="channel-name">ABC WWAY 3</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abnafghanistan.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+Afghanistan&background=random&color=fff&size=128" alt="ABN Afghanistan" class="channel-logo">
-            <span class="channel-name">ABN Afghanistan (540p)</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abnafrica.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+Africa&background=random&color=fff&size=128" alt="ABN Africa" class="channel-logo">
-            <span class="channel-name">ABN Africa (480p)</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abnbiblemovies.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+Bible+Movies&background=random&color=fff&size=128" alt="ABN Bible Movies" class="channel-logo">
-            <span class="channel-name">ABN Bible Movies (720p)</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abnchina.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+China&background=random&color=fff&size=128" alt="ABN China" class="channel-logo">
-            <span class="channel-name">ABN China (720p)</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abntvindia.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+India&background=random&color=fff&size=128" alt="ABN TV India" class="channel-logo">
-            <span class="channel-name">ABN TV India (540p)</span>
-        </a>
-
-        <a href="https://mediaserver.abnvideos.com/streams/abnurdu.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ABN+Urdu&background=random&color=fff&size=128" alt="ABN Urdu" class="channel-logo">
-            <span class="channel-name">ABN Urdu (540p)</span>
-        </a>
-
-        <a href="https://jmp2.uk/plu-64dab1f835425100080e1e7b.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Acapulco+Shore&background=random&color=fff&size=128" alt="Acapulco Shore" class="channel-logo">
-            <span class="channel-name">Acapulco Shore</span>
-        </a>
-
-        <a href="http://206.212.244.63/2486/index.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ACC+Network&background=random&color=fff&size=128" alt="ACC Network" class="channel-logo">
-            <span class="channel-name">ACC Network (720p)</span>
-        </a>
-
-        <a href="https://raycom-accdn-firetv.amagi.tv/playlist.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=ACCDN&background=random&color=fff&size=128" alt="ACCDN" class="channel-logo">
-            <span class="channel-name">ACCDN (1080p)</span>
-        </a>
-
-        <a href="https://reflect-channel18vod-springfield-il-us.cablecast.tv/live-16/live/stream-4/live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Access+4+PAC&background=random&color=fff&size=128" alt="Access 4 PAC" class="channel-logo">
-            <span class="channel-name">Access 4 PAC</span>
-        </a>
-
-        <a href="https://reflect-montgomerycommunitymedia.cablecast.tv/live-8/live/stream-3/live.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Access+19&background=random&color=fff&size=128" alt="Access 19" class="channel-logo">
-            <span class="channel-name">Access 19</span>
-        </a>
-
-        <a href="https://rtmp-live-ingest-ap-northeast-2-universe-dacast-com.akamaized.net/transmuxv1/streams/f08fcd45-1d04-9a8c-39ca-f56091820e5c.m3u8" class="channel-card" target="_blank">
-            <img src="https://ui-avatars.com/api/?name=Access+Humboldt&background=random&color=fff&size=128" alt="Access Humboldt" class="channel-logo">
-            <span class="channel-name">Access Humboldt (1080p)</span>
-        </a>
     </div>
 
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Channels</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <script>
+        const video = document.getElementById('liveStream');
+        const statusEl = document.getElementById('playerStatus');
+        let currentHls = null;
+
+        // Default stream on page load
+        const DEFAULT_URL = "https://rtmp-live-ingest-ap-northeast-2-universe-dacast-com.akamaized.net/transmuxv1/streams/f08fcd45-1d04-9a8c-39ca-f56091820e5c.m3u8";
+
+        function setStatus(text) {
+            statusEl.textContent = text;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
+
+        // Load / switch stream
+        function loadStream(url, channelName) {
+            setStatus(`Loading: ${channelName || 'stream'}...`);
+
+            // Destroy previous HLS instance
+            if (currentHls) {
+                currentHls.destroy();
+                currentHls = null;
+            }
+
+            // Clear native src if any
+            video.removeAttribute('src');
+
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true
+                });
+                currentHls = hls;
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().catch(() => {
+                        // Autoplay blocked – show controls
+                        video.muted = true;
+                        video.play().catch(() => {});
+                    });
+                    setStatus(`Now playing: ${channelName || 'live stream'}`);
+                });
+
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        setStatus('Error – stream unavailable');
+                    }
+                });
+
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support (Safari)
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play().catch(() => {});
+                    setStatus(`Now playing: ${channelName || 'live stream'}`);
+                });
+            } else {
+                setStatus('HLS is not supported in this browser');
+            }
         }
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .channel-card {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .channel-card:hover {
-            transform: translateY(-5px);
-            background-color: #2c2c2c;
-        }
-        .channel-card a {
-            text-decoration: none;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-        }
-        .channel-logo {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #ffffff;
-            padding: 5px;
-        }
-        .channel-name {
-            font-size: 14px;
-            font-weight: bold;
-            word-break: break-word;
-        }
-    </style>
-</head>
-<body>
 
-    <h1>Channels</h1>
-    <div class="channel-grid">
-
-        <!-- Whiplash Cinema -->
-        <div class="channel-card">
-            <a href="https://cdn.whiplash.cc/whiplash-cinema/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Whiplash" alt="Whiplash Cinema" class="channel-logo">
-                <span class="channel-name">Whiplash Cinema (480p)</span>
-            </a>
-        </div>
-
-        <!-- Whiplash II -->
-        <div class="channel-card">
-            <a href="https://cdn.whiplash.cc/whiplash-2/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=W2" alt="Whiplash II" class="channel-logo">
-                <span class="channel-name">Whiplash II (480p)</span>
-            </a>
-        </div>
-
-        <!-- White Plains Community Media -->
-        <div class="channel-card">
-            <a href="https://stream.swagit.com/live-edge/whiteplainsny/smil:std-4x3-1-b/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WPCM" alt="White Plains Community Media" class="channel-logo">
-                <span class="channel-name">White Plains Community Media (360p)</span>
-            </a>
-        </div>
-
-        <!-- Whittier CityTV -->
-        <div class="channel-card">
-            <a href="https://whittier.cablecast.tv/live/stream-1/live.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Whittier" alt="Whittier CityTV" class="channel-logo">
-                <span class="channel-name">Whittier CityTV (720p)</span>
-            </a>
-        </div>
-
-        <!-- WHPS Detroit -->
-        <div class="channel-card">
-            <a href="https://f-tx-edge-87.christianworldmedia.com/313watkins/mp4:313watkins/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WHPS" alt="WHPS Detroit" class="channel-logo">
-                <span class="channel-name">WHPS Detroit</span>
-            </a>
-        </div>
-
-        <!-- Wild 'N Out -->
-        <div class="channel-card">
-            <a href="https://jmp2.uk/plu-5d48678d34ceb37d3c458a55.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WildNOut" alt="Wild 'N Out" class="channel-logo">
-                <span class="channel-name">Wild 'N Out</span>
-            </a>
-        </div>
-
-        <!-- Willow -->
-        <div class="channel-card">
-            <a href="http://tvsen5.aynascope.net/willowhd/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Willow" alt="Willow" class="channel-logo">
-                <span class="channel-name">Willow (720p)</span>
-            </a>
-        </div>
-
-        <!-- Willow Sports -->
-        <div class="channel-card">
-            <a href="https://d36r8jifhgsk5j.cloudfront.net/Willow_TV.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Willow+Sports" alt="Willow Sports" class="channel-logo">
-                <span class="channel-name">Willow Sports (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Window TV -->
-        <div class="channel-card">
-            <a href="https://cdn.whiplash.cc/whiplash-windowtv/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Window" alt="Window TV" class="channel-logo">
-                <span class="channel-name">Window TV (720p)</span>
-            </a>
-        </div>
-
-        <!-- Wine Watches Whiskey -->
-        <div class="channel-card">
-            <a href="https://www-on-freecast.b-cdn.net/WWW-on-Freecast/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WWW" alt="Wine Watches Whiskey" class="channel-logo">
-                <span class="channel-name">Wine Watches Whiskey (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Winthrop Community Access TV -->
-        <div class="channel-card">
-            <a href="https://frontdoor.wcat-tv.org/live-12/live/live.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WCAT" alt="Winthrop Community Access TV" class="channel-logo">
-                <span class="channel-name">Winthrop Community Access TV (WCAT 15)</span>
-            </a>
-        </div>
-
-        <!-- Wipeout -->
-        <div class="channel-card">
-            <a href="https://jmp2.uk/plu-6909e5c3a3a4b49706b8373b.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Wipeout" alt="Wipeout" class="channel-logo">
-                <span class="channel-name">Wipeout</span>
-            </a>
-        </div>
-
-        <!-- Wipeout Xtra -->
-        <div class="channel-card">
-            <a href="https://amg00627-banijaygroup-wipeoutxtraau-samsungau-ashbl.amagi.tv/playlist/amg00627-banijaygroup-wipeoutxtraau-samsungau/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Wipeout+Xtra" alt="Wipeout Xtra" class="channel-logo">
-                <span class="channel-name">Wipeout Xtra (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Wired2Fish -->
-        <div class="channel-card">
-            <a href="https://wire2fish-klowdtv.amagi.tv/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Wired2Fish" alt="Wired2Fish" class="channel-logo">
-                <span class="channel-name">Wired2Fish (720p)</span>
-            </a>
-        </div>
-
-        <!-- WITI-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-witi-lgus/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WITI" alt="WITI-DT1" class="channel-logo">
-                <span class="channel-name">WITI-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WITN 22 -->
-        <div class="channel-card">
-            <a href="https://witn.cablecast.tv/live-4/live/live.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WITN22" alt="WITN 22" class="channel-logo">
-                <span class="channel-name">WITN 22 (Wilmington DE)</span>
-            </a>
-        </div>
-
-        <!-- WJAX-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00327-coxmediagroup-wjaxbreaking-ono/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WJAX" alt="WJAX-DT1" class="channel-logo">
-                <span class="channel-name">WJAX-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WJBK-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-fox2detroitwjbk-vizious/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WJBK" alt="WJBK-DT1" class="channel-logo">
-                <span class="channel-name">WJBK-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WJXT News4JAX -->
-        <div class="channel-card">
-            <a href="https://dai.google.com/linear/hls/event/RDmbn03GRCOLNG1eetEKhg/master.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WJXT" alt="WJXT News4JAX" class="channel-logo">
-                <span class="channel-name">WJXT News4JAX (720p)</span>
-            </a>
-        </div>
-
-        <!-- WLMB -->
-        <div class="channel-card">
-            <a href="https://rpn.bozztv.com/wlmb/wlmb/wlmb/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WLMB" alt="WLMB" class="channel-logo">
-                <span class="channel-name">WLMB (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WLNG Radio -->
-        <div class="channel-card">
-            <a href="http://wlngstudiowebcam.srfms.com:1935/wlngstudiowebcam/livestream/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WLNG" alt="WLNG Radio" class="channel-logo">
-                <span class="channel-name">WLNG Radio (410p)</span>
-            </a>
-        </div>
-
-        <!-- WLTV-DT1 -->
-        <div class="channel-card">
-            <a href="https://streaming-live-fcdn.api.prd.univisionnow.com/wltv/wltv.isml/hls/wltv.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WLTV" alt="WLTV-DT1" class="channel-logo">
-                <span class="channel-name">WLTV-DT1</span>
-            </a>
-        </div>
-
-        <!-- WMBC-DT1 -->
-        <div class="channel-card">
-            <a href="http://d029dcec.kazmazpaz.ru/iptv/GVR4V8HYAGBS5V/1098/manifest.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WMBC" alt="WMBC-DT1" class="channel-logo">
-                <span class="channel-name">WMBC-DT1 (720p)</span>
-            </a>
-        </div>
-
-        <!-- WMGT-TV News -->
-        <div class="channel-card">
-            <a href="https://townnews.g-mana.live/media/e6909128-cd42-4690-8340-4b8a49455666/main.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WMGT" alt="WMGT-TV News" class="channel-logo">
-                <span class="channel-name">WMGT-TV News (Macon GA)</span>
-            </a>
-        </div>
-
-        <!-- WMPT-DT2 (PBS Create) -->
-        <div class="channel-card">
-            <a href="https://2-fss-1.streamhoster.com/pl_122/amlst:201814-2122456/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=PBS+Create" alt="WMPT-DT2" class="channel-logo">
-                <span class="channel-name">WMPT-DT2 (PBS Create)</span>
-            </a>
-        </div>
-
-        <!-- WNBC-DT1 -->
-        <div class="channel-card">
-            <a href="https://d368vp0qqzvkid.cloudfront.net/11603/88889709/hls/master.m3u8?ads.xumo_channelId=88889709a" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WNBC" alt="WNBC-DT1" class="channel-logo">
-                <span class="channel-name">WNBC-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WNYW-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-wnyw-lgus/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WNYW" alt="WNYW-DT1" class="channel-logo">
-                <span class="channel-name">WNYW-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Wolcott Governmental TV -->
-        <div class="channel-card">
-            <a href="https://5a5c57d042315.streamlock.net/live11704001/ngrp:government_all/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Wolcott" alt="Wolcott Governmental TV" class="channel-logo">
-                <span class="channel-name">Wolcott Governmental TV (720p)</span>
-            </a>
-        </div>
-
-        <!-- Women's Sports Network -->
-        <div class="channel-card">
-            <a href="https://d39accvx65hq9o.cloudfront.net/Womens_Sports_Network.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSN" alt="Women's Sports Network" class="channel-logo">
-                <span class="channel-name">Women's Sports Network (1080p)</span>
-            </a>
-        </div>
-
-        <!-- World Channel -->
-        <div class="channel-card">
-            <a href="https://world.lls.pbs.org/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=World" alt="World Channel" class="channel-logo">
-                <span class="channel-name">World Channel (1080p)</span>
-            </a>
-        </div>
-
-        <!-- World Fishing Network -->
-        <div class="channel-card">
-            <a href="http://40.160.24.55/WORLD_FISHING_NETWORK/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WFN" alt="World Fishing Network" class="channel-logo">
-                <span class="channel-name">World Fishing Network (1080p)</span>
-            </a>
-        </div>
-
-        <!-- World Harvest TV -->
-        <div class="channel-card">
-            <a href="https://597865f6e4114.streamlock.net/live/leseaorigin.stream/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WHTV" alt="World Harvest TV" class="channel-logo">
-                <span class="channel-name">World Harvest TV (360p)</span>
-            </a>
-        </div>
-
-        <!-- World Poker Tour -->
-        <div class="channel-card">
-            <a href="https://d2e00kr7m9coe4.cloudfront.net/scheduler/scheduleMaster/406.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WPT" alt="World Poker Tour" class="channel-logo">
-                <span class="channel-name">World Poker Tour (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WPS TV -->
-        <div class="channel-card">
-            <a href="https://2-fss-2.streamhoster.com/pl_120/amlst:203530-1426406/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WPS" alt="WPS TV" class="channel-logo">
-                <span class="channel-name">WPS TV (360p)</span>
-            </a>
-        </div>
-
-        <!-- WPTV News West Palm Beach FL -->
-        <div class="channel-card">
-            <a href="https://content.uplynk.com/channel/b02350ef854c4eef8358eead1f59a5cc.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WPTV" alt="WPTV News" class="channel-logo">
-                <span class="channel-name">WPTV News West Palm Beach (720p)</span>
-            </a>
-        </div>
-
-        <!-- WPXI-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00327-coxmediagroup-wpxibreaking-ono/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WPXI" alt="WPXI-DT1" class="channel-logo">
-                <span class="channel-name">WPXI-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WRC-DT1 -->
-        <div class="channel-card">
-            <a href="https://d368vp0qqzvkid.cloudfront.net/11603/88889708/hls/master.m3u8?ads.xumo_channelId=88889708a" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WRC" alt="WRC-DT1" class="channel-logo">
-                <span class="channel-name">WRC-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WSB-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00327-coxmediagroup-wsbbreakingnews-ono/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSB" alt="WSB-DT1" class="channel-logo">
-                <span class="channel-name">WSB-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WSBS-DT1 -->
-        <div class="channel-card">
-            <a href="https://mdstrm.com/live-stream-playlist/67ed74e8af482ba71d47fd7b.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSBS" alt="WSBS-DT1" class="channel-logo">
-                <span class="channel-name">WSBS-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WSLF-LD 35.1 -->
-        <div class="channel-card">
-            <a href="https://content.uplynk.com/channel/1992858a34c3423dbdad491d07ae6f75.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSLF" alt="WSLF-LD 35.1" class="channel-logo">
-                <span class="channel-name">WSLF-LD 35.1 (720p)</span>
-            </a>
-        </div>
-
-        <!-- WSOC Now -->
-        <div class="channel-card">
-            <a href="https://amg00327-coxmediagroup-wsocbreaking-plex-t51et.amagi.tv/playlist/amg00327-coxmediagroup-wsocbreaking-plex/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSOC+Now" alt="WSOC Now" class="channel-logo">
-                <span class="channel-name">WSOC Now (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WSOC-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00327-coxmediagroup-wsocbreaking-ono/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WSOC" alt="WSOC-DT1" class="channel-logo">
-                <span class="channel-name">WSOC-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WTNH-DT1 -->
-        <div class="channel-card">
-            <a href="https://tkx.mp.lura.live/rest/v2/mcp/video/11135425.m3u8?anvack=pDKqMLyG9pVqMkSYRJHWu3XROjAlvR6z" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTNH" alt="WTNH-DT1" class="channel-logo">
-                <span class="channel-name">WTNH-DT1 (720p)</span>
-            </a>
-        </div>
-
-        <!-- WTTG-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-fox5dcwttg-vizious/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTTG" alt="WTTG-DT1" class="channel-logo">
-                <span class="channel-name">WTTG-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WTVJ-DT1 -->
-        <div class="channel-card">
-            <a href="https://nbculocallive.akamaized.net/hls/live/2037498/miami/stream1/master.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTVJ" alt="WTVJ-DT1" class="channel-logo">
-                <span class="channel-name">WTVJ-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WTVQ ABC 36 News -->
-        <div class="channel-card">
-            <a href="https://townnews.g-mana.live/media/14d1fd2c-0548-4803-80ad-6657831a7981/main.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTVQ" alt="WTVQ ABC 36 News" class="channel-logo">
-                <span class="channel-name">WTVQ ABC 36 News (Lexington KY)</span>
-            </a>
-        </div>
-
-        <!-- WTVT-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-fox13tampabaywtvt-vizious/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTVT" alt="WTVT-DT1" class="channel-logo">
-                <span class="channel-name">WTVT-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WTXF-DT1 -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-fox29philadelphiawtx-vizious/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WTXF" alt="WTXF-DT1" class="channel-logo">
-                <span class="channel-name">WTXF-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Wu Tang Collection -->
-        <div class="channel-card">
-            <a href="https://dbrb49pjoymg4.cloudfront.net/10001/99991745/hls/master.m3u8?ads.xumo_channelId=99991745" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WuTang" alt="Wu Tang Collection" class="channel-logo">
-                <span class="channel-name">Wu Tang Collection (720p)</span>
-            </a>
-        </div>
-
-        <!-- WVCU-LP Concord University Radio -->
-        <div class="channel-card">
-            <a href="https://video1.getstreamhosting.com:1936/8152/8152/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WVCU" alt="WVCU-LP" class="channel-logo">
-                <span class="channel-name">WVCU-LP Concord University Radio</span>
-            </a>
-        </div>
-
-        <!-- WVIT-DT1 -->
-        <div class="channel-card">
-            <a href="https://d368vp0qqzvkid.cloudfront.net/11603/88889707/hls/master.m3u8?ads.xumo_channelId=88889707a" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WVIT" alt="WVIT-DT1" class="channel-logo">
-                <span class="channel-name">WVIT-DT1 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- WVVH-CD 18.1 -->
-        <div class="channel-card">
-            <a href="https://2-fss-2.streamhoster.com/pl_138/amlst:207282-6094500/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WVVH" alt="WVVH-CD 18.1" class="channel-logo">
-                <span class="channel-name">WVVH-CD 18.1 (720p)</span>
-            </a>
-        </div>
-
-        <!-- WWON TV CH 48 -->
-        <div class="channel-card">
-            <a href="https://tv2.fastcast4u.com:3943/stream/play.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WWON" alt="WWON TV" class="channel-logo">
-                <span class="channel-name">WWON TV CH 48</span>
-            </a>
-        </div>
-
-        <!-- WWOR-DT1 -->
-        <div class="channel-card">
-            <a href="http://37c18028.akadatel.com/iptv/T6XNCP6L7LLKPD/1088/mpegts" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WWOR" alt="WWOR-DT1" class="channel-logo">
-                <span class="channel-name">WWOR-DT1</span>
-            </a>
-        </div>
-
-        <!-- WXTV-DT1 -->
-        <div class="channel-card">
-            <a href="https://streaming-live-fcdn.api.prd.univisionnow.com/wxtv/wxtv.isml/hls/wxtv.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WXTV" alt="WXTV-DT1" class="channel-logo">
-                <span class="channel-name">WXTV-DT1</span>
-            </a>
-        </div>
-
-        <!-- WXXV-TV News -->
-        <div class="channel-card">
-            <a href="https://townnews.g-mana.live/media/c8c354e0-672f-4368-a17d-a862ee98af4a/main.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=WXXV" alt="WXXV-TV News" class="channel-logo">
-                <span class="channel-name">WXXV-TV News (Biloxi MS)</span>
-            </a>
-        </div>
-
-        <!-- XFC TV -->
-        <div class="channel-card">
-            <a href="https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=2247" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XFC" alt="XFC TV" class="channel-logo">
-                <span class="channel-name">XFC TV (720p)</span>
-            </a>
-        </div>
-
-        <!-- XITE 90's Throwback -->
-        <div class="channel-card">
-            <a href="https://d284aawtm5vi48.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-fjdfi2br1jtq7/XITE_90s_Throwback.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+90s" alt="XITE 90's Throwback" class="channel-logo">
-                <span class="channel-name">XITE 90's Throwback (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Classic Country -->
-        <div class="channel-card">
-            <a href="https://pb-wgi5ljoabjgdm.akamaized.net/XITE_Countrys_Finest.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Country" alt="XITE Classic Country" class="channel-logo">
-                <span class="channel-name">XITE Classic Country (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Just Chill -->
-        <div class="channel-card">
-            <a href="https://dvnftgdlbnemm.cloudfront.net/XITE_Just_Chill.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Chill" alt="XITE Just Chill" class="channel-logo">
-                <span class="channel-name">XITE Just Chill (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Nuevo Latino -->
-        <div class="channel-card">
-            <a href="https://d3bsgqzbpkrvbb.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-w288eaw03izg1/XITE_Nuevo_Latino.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Latino" alt="XITE Nuevo Latino" class="channel-logo">
-                <span class="channel-name">XITE Nuevo Latino (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Reggae Vibes -->
-        <div class="channel-card">
-            <a href="https://dw2m7yrngfg8c.cloudfront.net/XITE_Reggae_Vibes.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Reggae" alt="XITE Reggae Vibes" class="channel-logo">
-                <span class="channel-name">XITE Reggae Vibes (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Rock x Metal -->
-        <div class="channel-card">
-            <a href="https://d198ro05q94rc4.cloudfront.net/XITE_Rock_On.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Rock" alt="XITE Rock x Metal" class="channel-logo">
-                <span class="channel-name">XITE Rock x Metal (1080p)</span>
-            </a>
-        </div>
-
-        <!-- XITE Siempre Latino -->
-        <div class="channel-card">
-            <a href="https://d1xc25jm9e0l4b.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-xplkt8i7m24dc/XITE_Siempre_Latino.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=XITE+Siempre" alt="XITE Siempre Latino" class="channel-logo">
-                <span class="channel-name">XITE Siempre Latino (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Xplore -->
-        <div class="channel-card">
-            <a href="https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00111-hearstmediaprod-xploreintlnl-samsungnl/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Xplore" alt="Xplore" class="channel-logo">
-                <span class="channel-name">Xplore (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Yahoo! Finance -->
-        <div class="channel-card">
-            <a href="https://d1ewctnvcwvvvu.cloudfront.net/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Yahoo" alt="Yahoo! Finance" class="channel-logo">
-                <span class="channel-name">Yahoo! Finance (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Yes Network -->
-        <div class="channel-card">
-            <a href="http://23.237.104.106:8080/USA_YES_NETWORK/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YES" alt="Yes Network" class="channel-logo">
-                <span class="channel-name">Yes Network (720p)</span>
-            </a>
-        </div>
-
-        <!-- Yo! MTV -->
-        <div class="channel-card">
-            <a href="https://jmp2.uk/plu-5d14fc31252d35decbc4080b.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YoMTV" alt="Yo! MTV" class="channel-logo">
-                <span class="channel-name">Yo! MTV (1080p)</span>
-            </a>
-        </div>
-
-        <!-- YouDotGov -->
-        <div class="channel-card">
-            <a href="https://reflect-communitytv.cablecast.tv/live-3/live/stream-1/live.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YouDotGov" alt="YouDotGov" class="channel-logo">
-                <span class="channel-name">YouDotGov</span>
-            </a>
-        </div>
-
-        <!-- Young Hollywood -->
-        <div class="channel-card">
-            <a href="https://amg00143-younghollywoodfast-amg00143c1-cineverse-us-946.playouts.now.amagi.tv/playlist/amg00143-younghollywoodfast-younghollywood-cineverseus/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YH" alt="Young Hollywood" class="channel-logo">
-                <span class="channel-name">Young Hollywood (1080p)</span>
-            </a>
-        </div>
-
-        <!-- YTA TV -->
-        <div class="channel-card">
-            <a href="https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=16767" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YTA" alt="YTA TV" class="channel-logo">
-                <span class="channel-name">YTA TV (720p)</span>
-            </a>
-        </div>
-
-        <!-- Yu-Gi-Oh! -->
-        <div class="channel-card">
-            <a href="https://amg01796-amg01796c19-rakuten-gb-7486.playouts.now.amagi.tv/playlist/amg01796-fastmediafast-yugioh2en-rakutengb/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YuGiOh" alt="Yu-Gi-Oh!" class="channel-logo">
-                <span class="channel-name">Yu-Gi-Oh! (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Yu-Gi-Oh! en espanol -->
-        <div class="channel-card">
-            <a href="https://amg01796-amg01796c18-rakuten-es-7491.playouts.now.amagi.tv/playlist/amg01796-fastmediafast-yugiohees-rakutenes/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=YuGiOh+ES" alt="Yu-Gi-Oh! en espanol" class="channel-logo">
-                <span class="channel-name">Yu-Gi-Oh! en espanol (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Yuma77 -->
-        <div class="channel-card">
-            <a href="https://securestream10.champds.com/LIVE/YumaCoAZLIVE/YumaCoAZLIVE.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Yuma77" alt="Yuma77" class="channel-logo">
-                <span class="channel-name">Yuma77</span>
-            </a>
-        </div>
-
-        <!-- Yuma AZ CH 72 -->
-        <div class="channel-card">
-            <a href="https://livestream.telvue.com/yumaaz1/f7b44cfafd5c52223d5498196c8a2e7b.sdp/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Yuma72" alt="Yuma AZ CH 72" class="channel-logo">
-                <span class="channel-name">Yuma AZ CH 72 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Yuma AZ CH 73 -->
-        <div class="channel-card">
-            <a href="https://livestream.telvue.com/yumaaz2/f7b44cfafd5c52223d5498196c8a2e7b.sdp/playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Yuma73" alt="Yuma AZ CH 73" class="channel-logo">
-                <span class="channel-name">Yuma AZ CH 73 (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Zarin TV -->
-        <div class="channel-card">
-            <a href="https://fl1002.bozztv.com/gf-zarintv/index.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Zarin" alt="Zarin TV" class="channel-logo">
-                <span class="channel-name">Zarin TV (1080p)</span>
-            </a>
-        </div>
-
-        <!-- Zoom TV Kurdish -->
-        <div class="channel-card">
-            <a href="https://live.zoomnews.info/live/Zoom_playlist.m3u8" target="_blank">
-                <img src="https://via.placeholder.com/80?text=Zoom" alt="Zoom TV Kurdish" class="channel-logo">
-                <span class="channel-name">Zoom TV Kurdish (720p)</span>
-            </a>
-        </div>
-
-    </div>
+        // Load the default stream initially
+        window.addEventListener('DOMContentLoaded', function() {
+            loadStream(DEFAULT_URL, 'Default stream');
+        });
+    </script>
 
 </body>
 </html>
