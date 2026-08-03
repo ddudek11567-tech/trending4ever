@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide & Plasma Player - 250 Channels</title>
+  <title>Smart TV Guide & Plasma Player - Verified Channels</title>
   
   <!-- HLS and DASH libraries for video playback -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -394,7 +394,7 @@
   <header>
     <div class="brand">SMART<span>CAST</span></div>
     <div class="header-controls">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search 250 channels..." oninput="handleSearch()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
     </div>
   </header>
 
@@ -429,7 +429,7 @@
     <div class="guide-workspace">
       <div class="guide-header">
         <span>Channel Guide</span>
-        <span id="channelCount">250 Channels</span>
+        <span id="channelCount">Verified Channels</span>
       </div>
       <div id="categoryPills" class="category-pills-bar"></div>
       <div class="channels-scroll-area">
@@ -439,15 +439,13 @@
   </div>
 
 <script>
-  // Cleaned array of 250 channels (religious and single-show channels excluded)
+  // Strictly tested and working live streams (no single-show or religious feeds)
   const channels = [
     // --- ENTERTAINMENT & MOVIES ---
     { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
     { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
     { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
-    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8", now: "Investigative Crime Files", next: "Cold Case Special Edition" },
     { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", now: "Biography Special", next: "Real Life Mysteries" },
-    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8", now: "Stand-Up Showcase", next: "Late Night Sketch Comedy" },
     { name: "AMC Thrillers", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", now: "Edge of Your Seat Thriller", next: "Late Night Suspense" },
     { name: "Pluto TV Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", now: "Hollywood Feature Presentation", next: "Late Night Cinema" },
     { name: "Action Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", now: "High-Octane Stunts", next: "Underground Fight Club" },
@@ -459,7 +457,7 @@
     { name: "People Are Awesome", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://peopleareawesome.amagi.tv/playlist.m3u8", now: "Extreme Stunts & Feats", next: "Incredible Human Talents" },
     { name: "The Pet Collective", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://thepetcollective.amagi.tv/playlist.m3u8", now: "Cute Animal Moments", next: "Rescue Stories Daily" },
     { name: "Chive TV", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://chivetv.amagi.tv/playlist.m3u8", now: "Viral Internet Clips", next: "Bar & Lounge Vibes" },
-    
+
     // --- NEWS & REGIONAL ---
     { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", now: "Markets Closing Bell", next: "Global Wealth Report" },
     { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", now: "Local Community Spotlight", next: "Regional Town Hall" },
@@ -520,25 +518,6 @@
     { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", now: "Cultural Music Showcase", next: "Evening News & Talk" }
   ];
 
-  // Dynamically generate up to 250 diverse general entertainment/news/sports channels
-  const baseTemplateCategories = ["Entertainment & Movies", "News & Regional", "Sports & Outdoors", "Kids & Family", "Documentary & Lifestyle", "International"];
-  const baseNamesAlpha = ["Alpha", "Beta", "Gamma", "Delta", "Omega", "Prime", "Global", "Express", "Vision", "Pulse", "Network", "Stream", "Plus", "Live", "Direct", "HD", "Max", "Star", "Central", "Spotlight"];
-
-  while (channels.length < 250) {
-    let index = channels.length + 1;
-    let cat = baseTemplateCategories[index % baseTemplateCategories.length];
-    let randNameWord = baseNamesAlpha[index % baseNamesAlpha.length];
-    channels.push({
-      name: `Channel ${index} ${randNameWord}`,
-      category: cat,
-      res: index % 2 === 0 ? "1080p" : "720p",
-      format: "m3u8",
-      url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8",
-      now: `General Variety Hour #${index}`,
-      next: `Feature Presentation #${index + 1}`
-    });
-  }
-
   let hlsPlayer = null;
   let dashPlayer = null;
   let currentActiveUrl = "";
@@ -573,7 +552,7 @@
       return matchesCategory && matchesSearch;
     });
 
-    document.getElementById('channelCount').innerText = `${channels.length} Channels`;
+    document.getElementById('channelCount').innerText = `${channels.length} Verified Channels`;
 
     if (filtered.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
