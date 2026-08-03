@@ -1,586 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide & Plasma Player - Verified Channels</title>
-  
-  <!-- HLS and DASH libraries for video playback -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-
+  <meta charset="UTF-8" />
+  <title>Trending4ever Live TV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root {
-      --bg-deep: #090a0f;
-      --card-bg: rgba(18, 22, 33, 0.65);
-      --card-hover: rgba(26, 32, 48, 0.85);
-      --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(56, 189, 248, 0.4);
-    }
-
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #05060a;
+      color: #f5f5f5;
     }
 
-    html, body {
-      height: 100vh;
-      overflow: hidden;
-      background-color: var(--bg-deep);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(14, 116, 144, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(30, 27, 75, 0.25) 0%, transparent 40%);
-      color: var(--text-main);
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.9rem 2.5rem;
-      background: rgba(9, 10, 15, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      height: 64px;
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
     }
 
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #fff;
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 24px;
     }
 
-    .brand span { 
-      color: var(--accent); 
-      font-weight: 300;
+    .category {
+      margin-bottom: 32px;
     }
 
-    .header-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
+    .category-title {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      border-left: 4px solid #3b82f6;
+      padding-left: 8px;
     }
 
-    .search-input {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      color: #fff;
-      font-size: 0.85rem;
-      outline: none;
-      width: 260px;
-      transition: all 0.25s ease;
-    }
-
-    .search-input:focus {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .app-layout {
+    .channel-grid {
       display: grid;
-      grid-template-columns: 1fr 440px;
-      height: calc(100vh - 64px);
-      overflow: hidden;
-    }
-
-    .player-workspace {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.2);
-      border-right: 1px solid var(--border);
-      position: relative;
-    }
-
-    .player-workspace::before {
-      content: '';
-      position: absolute;
-      width: 500px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      filter: blur(40px);
-    }
-
-    .player-container-inner {
-      width: 100%;
-      max-width: 850px;
-      z-index: 1;
-    }
-
-    .player-meta-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
-    }
-
-    .player-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #10b981;
-    }
-
-    .media-box {
-      width: 100%;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.1);
-      aspect-ratio: 16 / 9;
-      position: relative;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    .schedule-banner {
-      margin-top: 0.8rem;
-      background: rgba(18, 22, 33, 0.75);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(8px);
-    }
-
-    .schedule-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .schedule-label {
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-sub);
-      font-weight: 700;
-    }
-
-    .schedule-val {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .schedule-divider {
-      width: 1px;
-      height: 24px;
-      background: var(--border);
-      margin: 0 1rem;
-    }
-
-    .designer-credit {
-      position: absolute;
-      bottom: 1rem;
-      left: 2rem;
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      letter-spacing: 0.5px;
-      z-index: 2;
-      opacity: 0.7;
-    }
-
-    .designer-credit span {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .guide-workspace {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: rgba(12, 15, 23, 0.6);
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-
-    .guide-header {
-      padding: 1.2rem 1.5rem 0.8rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-sub);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    #channelCount {
-      font-size: 0.75rem;
-      color: var(--accent);
-    }
-
-    .category-pills-bar {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.8rem 1.5rem;
-      overflow-x: auto;
-      border-bottom: 1px solid var(--border);
-      background: rgba(9, 10, 15, 0.4);
-      scrollbar-width: none;
-    }
-
-    .category-pills-bar::-webkit-scrollbar { display: none; }
-
-    .pill-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      color: var(--text-sub);
-      padding: 0.35rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-
-    .pill-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-
-    .pill-btn.active {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-      font-weight: 700;
-    }
-
-    .channels-scroll-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.2rem 1.5rem;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
-    }
-
-    .channels-scroll-area::-webkit-scrollbar { width: 5px; }
-    .channels-scroll-area::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 3px;
-    }
-
-    .channels-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
     }
 
     .channel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-left: 3px solid transparent;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #0b0f19;
+      border-radius: 12px;
+      padding: 12px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 10px;
       text-decoration: none;
+      color: inherit;
+      border: 1px solid #1f2937;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
     }
 
     .channel-card:hover {
-      background: var(--card-hover);
-      border-color: var(--border-hover);
-      border-left-color: var(--accent);
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.45);
+      border-color: #3b82f6;
     }
 
-    .channel-card.active {
-      background: rgba(56, 189, 248, 0.1);
-      border-color: var(--accent);
-      border-left-color: var(--accent);
+    .channel-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #111827;
     }
 
     .channel-info {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 2px;
     }
 
     .channel-name {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: 0.3px;
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
     .channel-meta {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
+      font-size: 0.8rem;
+      color: #9ca3af;
     }
 
-    .badge-res {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-sub);
-      padding: 0.05rem 0.3rem;
-      border-radius: 3px;
-      font-size: 0.6rem;
-      font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .channel-card.active .badge-res {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-
-    .tag-format {
-      font-size: 0.6rem;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    .play-indicator {
-      font-size: 0.75rem;
-      color: var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .channel-card.active .play-indicator,
-    .channel-card:hover .play-indicator {
-      opacity: 1;
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      margin-left: 6px;
+      background: #111827;
+      color: #e5e7eb;
     }
   </style>
+
+  <script>
+    function loadStream(url, name) {
+      // Simple player: open in new tab for now
+      // You can replace this with a JS player (hls.js, video.js, etc.)
+      window.open(url, "_blank");
+    }
+  </script>
 </head>
 <body>
+  <div class="page">
+    <h1>Trending4ever Live TV</h1>
+    <p class="subtitle">Premium channels · Movies · Kids · News · International · No radio · No religious</p>
 
-  <header>
-    <div class="brand">SMART<span>CAST</span></div>
-    <div class="header-controls">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
-    </div>
-  </header>
+    <!-- MOVIES & ENTERTAINMENT -->
+    <section class="category">
+      <h2 class="category-title">Movies & Entertainment</h2>
+      <div class="channel-grid">
 
-  <div class="app-layout">
-    <!-- Left Workspace: Active Player -->
-    <div class="player-workspace">
-      <div class="player-container-inner">
-        <div class="player-meta-bar">
-          <div id="playerTitle" class="player-title">
-            <span class="live-dot"></span> Select a channel to stream
+        <a href="https://gpuserver5.tier1streams.com/SYFY/index.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'SYFY');">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='100%' height='100%' fill='%236F2DA8'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='%23FFFFFF' font-family='sans-serif' font-weight='900' font-size='32'>SYFY</text></svg>"
+               alt="SYFY" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">SYFY</span>
+            <span class="channel-meta">1080p<span class="badge">Entertainment</span></span>
           </div>
-        </div>
-        <div class="media-box">
-          <video id="videoPlayer" controls autoplay></video>
-        </div>
-        <div class="schedule-banner">
-          <div class="schedule-item">
-            <span class="schedule-label">Currently Playing</span>
-            <span id="currentShow" class="schedule-val">Live Broadcast Feed</span>
-          </div>
-          <div class="schedule-divider"></div>
-          <div class="schedule-item" style="text-align: right;">
-            <span class="schedule-label">Up Next</span>
-            <span id="nextShow" class="schedule-val">Scheduled Feature Program</span>
-          </div>
-        </div>
-      </div>
-      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
-    </div>
+        </a>
 
-    <!-- Right Workspace: Channel Guide -->
-    <div class="guide-workspace">
-      <div class="guide-header">
-        <span>Channel Guide</span>
-        <span id="channelCount">Verified Channels</span>
+        <a href="https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Discovery Turbo');">
+          <img src="https://ui-avatars.com/api/?name=Discovery+Turbo&background=0080FF&color=fff&size=128"
+               alt="Discovery Turbo" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Discovery Turbo</span>
+            <span class="channel-meta">1080p<span class="badge">Motors</span></span>
+          </div>
+        </a>
+
+        <a href="https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Hallmark Movies & More');">
+          <img src="https://ui-avatars.com/api/?name=Hallmark+Movies&background=8A1538&color=fff&size=128"
+               alt="Hallmark Movies & More" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Hallmark Movies &amp; More</span>
+            <span class="channel-meta">1080p<span class="badge">Hallmark</span></span>
+          </div>
+        </a>
+
+        <a href="https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Xumo Movies');">
+          <img src="https://ui-avatars.com/api/?name=Xumo+Movies&background=111111&color=fff&size=128"
+               alt="Xumo Movies" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Xumo Movies</span>
+            <span class="channel-meta">1080p<span class="badge">Movies</span></span>
+          </div>
+        </a>
+
+        <a href="https://gpuserver3.tier1streams.com/AE/index.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'A&E');">
+          <img src="https://ui-avatars.com/api/?name=AE&background=8E44AD&color=fff&size=128"
+               alt="A&E" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">A&amp;E</span>
+            <span class="channel-meta">1080p<span class="badge">Reality</span></span>
+          </div>
+        </a>
+
+        <a href="https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Bar Rescue');">
+          <img src="https://ui-avatars.com/api/?name=Bar+Rescue&background=E74C3C&color=fff&size=128"
+               alt="Bar Rescue" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Bar Rescue</span>
+            <span class="channel-meta">Live<span class="badge">Reality</span></span>
+          </div>
+        </a>
+
+        <a href="https://jmp2.uk/plu-6310cbee5a8ad300070fdb7c.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Best of The Drew Barrymore Show');">
+          <img src="https://ui-avatars.com/api/?name=Drew+Barrymore&background=9B59B6&color=fff&size=128"
+               alt="Best of The Drew Barrymore Show" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Best of The Drew Barrymore Show</span>
+            <span class="channel-meta">Live<span class="badge">Talk</span></span>
+          </div>
+        </a>
+
+        <a href="https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Bonanza');">
+          <img src="https://ui-avatars.com/api/?name=Bonanza&background=D35400&color=fff&size=128"
+               alt="Bonanza" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Bonanza</span>
+            <span class="channel-meta">Live<span class="badge">Classic TV</span></span>
+          </div>
+        </a>
+
+        <a href="https://jmp2.uk/plu-62e919ca865c590007ecd0bd.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Dynasty');">
+          <img src="https://ui-avatars.com/api/?name=Dynasty&background=935116&color=fff&size=128"
+               alt="Dynasty" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Dynasty</span>
+            <span class="channel-meta">Live<span class="badge">Drama</span></span>
+          </div>
+        </a>
+
       </div>
-      <div id="categoryPills" class="category-pills-bar"></div>
-      <div class="channels-scroll-area">
-        <div id="channelsContainer" class="channels-stack"></div>
+    </section>
+
+    <!-- KIDS & FAMILY -->
+    <section class="category">
+      <h2 class="category-title">Kids & Family</h2>
+      <div class="channel-grid">
+
+        <a href="https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Nick Jr.');">
+          <img src="https://ui-avatars.com/api/?name=Nick+Jr&background=00A3E0&color=fff&size=128"
+               alt="Nick Jr." class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Nick Jr.</span>
+            <span class="channel-meta">720p<span class="badge">Kids</span></span>
+          </div>
+        </a>
+
+        <a href="https://jmp2.uk/plu-66588931a3865300085ca800.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Bob l eponge');">
+          <img src="https://ui-avatars.com/api/?name=Bob+pondu&background=F1C40F&color=fff&size=128"
+               alt="Bob l'eponge" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Bob l'eponge</span>
+            <span class="channel-meta">720p<span class="badge">Kids</span></span>
+          </div>
+        </a>
+
+        <a href="https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Animation+');">
+          <img src="https://ui-avatars.com/api/?name=Animation&background=F39C12&color=fff&size=128"
+               alt="Animation+" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Animation+</span>
+            <span class="channel-meta">1080p<span class="badge">Kids</span></span>
+          </div>
+        </a>
+
       </div>
-    </div>
+    </section>
+
+    <!-- NEWS -->
+    <section class="category">
+      <h2 class="category-title">News</h2>
+      <div class="channel-grid">
+
+        <a href="https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CBC News');">
+          <img src="https://ui-avatars.com/api/?name=CBC+News&background=C0392B&color=fff&size=128"
+               alt="CBC News" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CBC News</span>
+            <span class="channel-meta">1080p<span class="badge">News</span></span>
+          </div>
+        </a>
+
+        <a href="https://trs1.aynaott.com/cp24/index.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CP24');">
+          <img src="https://ui-avatars.com/api/?name=CP24&background=C0392B&color=fff&size=128"
+               alt="CP24" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CP24</span>
+            <span class="channel-meta">576p<span class="badge">News</span></span>
+          </div>
+        </a>
+
+        <a href="https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CPAC');">
+          <img src="https://ui-avatars.com/api/?name=CPAC&background=2980B9&color=fff&size=128"
+               alt="CPAC" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CPAC</span>
+            <span class="channel-meta">720p<span class="badge">Parliament</span></span>
+          </div>
+        </a>
+
+        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Calgary');">
+          <img src="https://ui-avatars.com/api/?name=CityNews+CGY&background=C0392B&color=fff&size=128"
+               alt="CityNews Calgary" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CityNews Calgary</span>
+            <span class="channel-meta">720p<span class="badge">Local</span></span>
+          </div>
+        </a>
+
+        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Edmonton');">
+          <img src="https://ui-avatars.com/api/?name=CityNews+EDM&background=C0392B&color=fff&size=128"
+               alt="CityNews Edmonton" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CityNews Edmonton</span>
+            <span class="channel-meta">Live<span class="badge">Local</span></span>
+          </div>
+        </a>
+
+        <a href="https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Toronto');">
+          <img src="https://ui-avatars.com/api/?name=CityNews+TOR&background=C0392B&color=fff&size=128"
+               alt="CityNews Toronto" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CityNews Toronto</span>
+            <span class="channel-meta">720p<span class="badge">Local</span></span>
+          </div>
+        </a>
+
+        <a href="https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Vancouver');">
+          <img src="https://ui-avatars.com/api/?name=CityNews+VAN&background=C0392B&color=fff&size=128"
+               alt="CityNews Vancouver" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">CityNews Vancouver</span>
+            <span class="channel-meta">720p<span class="badge">Local</span></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- INTERNATIONAL / OTHER -->
+    <section class="category">
+      <h2 class="category-title">International & Other</h2>
+      <div class="channel-grid">
+
+        <a href="https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Kutonen');">
+          <img src="https://ui-avatars.com/api/?name=Kutonen&background=FF6A00&color=fff&size=128"
+               alt="Kutonen" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Kutonen</span>
+            <span class="channel-meta">720p<span class="badge">Finland</span></span>
+          </div>
+        </a>
+
+        <a href="https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'TLC Finland');">
+          <img src="https://ui-avatars.com/api/?name=TLC&background=E9004C&color=fff&size=128"
+               alt="TLC Finland" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">TLC Finland</span>
+            <span class="channel-meta">720p<span class="badge">Lifestyle</span></span>
+          </div>
+        </a>
+
+        <a href="https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Star Channel Finland');">
+          <img src="https://ui-avatars.com/api/?name=Star&background=0047AB&color=fff&size=128"
+               alt="Star Channel Finland" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Star Channel Finland</span>
+            <span class="channel-meta">720p<span class="badge">Finland</span></span>
+          </div>
+        </a>
+
+        <a href="https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'MTV Ava');">
+          <img src="https://ui-avatars.com/api/?name=Ava&background=00A859&color=fff&size=128"
+               alt="MTV Ava" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">MTV Ava</span>
+            <span class="channel-meta">720p<span class="badge">Finland</span></span>
+          </div>
+        </a>
+
+        <a href="https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Hero');">
+          <img src="https://ui-avatars.com/api/?name=Hero&background=E67E22&color=fff&size=128"
+               alt="Hero" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Hero</span>
+            <span class="channel-meta">720p<span class="badge">Finland</span></span>
+          </div>
+        </a>
+
+        <a href="http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, '5AAB TV');">
+          <img src="https://ui-avatars.com/api/?name=5AAB+TV&background=2980B9&color=fff&size=128"
+               alt="5AAB TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">5AAB TV</span>
+            <span class="channel-meta">720p<span class="badge">International</span></span>
+          </div>
+        </a>
+
+        <a href="https://live.relentlessinnovations.net:1936/afghannobel/afghannobel/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Afghan Nobel Movies');">
+          <img src="https://ui-avatars.com/api/?name=AN+Movies&background=D35400&color=fff&size=128"
+               alt="Afghan Nobel Movies" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Afghan Nobel Movies</span>
+            <span class="channel-meta">720p<span class="badge">Movies</span></span>
+          </div>
+        </a>
+
+        <a href="https://live.relentlessinnovations.net:1936/afghannobeltv/afghannobeltv/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Afghan Nobel TV');">
+          <img src="https://ui-avatars.com/api/?name=AN+TV&background=16A085&color=fff&size=128"
+               alt="Afghan Nobel TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Afghan Nobel TV</span>
+            <span class="channel-meta">720p<span class="badge">General</span></span>
+          </div>
+        </a>
+
+        <a href="https://janya-ayaztv.vgcdn.net/ptnr-WebApp/title-Ayaz_TV/v1/vglive-sk-934820/main.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Ayaz TV');">
+          <img src="https://ui-avatars.com/api/?name=Ayaz+TV&background=2C3E50&color=fff&size=128"
+               alt="Ayaz TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Ayaz TV</span>
+            <span class="channel-meta">720p<span class="badge">International</span></span>
+          </div>
+        </a>
+
+        <a href="https://live.livestreamtv.ca/azstar/amlst:azstar/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Azstar TV HD');">
+          <img src="https://ui-avatars.com/api/?name=Azstar&background=2980B9&color=fff&size=128"
+               alt="Azstar TV HD" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Azstar TV HD</span>
+            <span class="channel-meta">1080p<span class="badge">International</span></span>
+          </div>
+        </a>
+
+        <a href="https://2-fss-2.streamhoster.com/pl_120/206508-3261972-1/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'C Malayalam TV');">
+          <img src="https://ui-avatars.com/api/?name=C+Malayalam&background=8E44AD&color=fff&size=128"
+               alt="C Malayalam TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">C Malayalam TV</span>
+            <span class="channel-meta">1080p<span class="badge">Malayalam</span></span>
+          </div>
+        </a>
+
+        <a href="https://dbcanada.sonarbanglatv.com/deshebideshe/dbtv/index.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'DesheBideshe TV');">
+          <img src="https://ui-avatars.com/api/?name=DesheBideshe&background=5D6D7E&color=fff&size=128"
+               alt="DesheBideshe TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">DesheBideshe TV</span>
+            <span class="channel-meta">Live<span class="badge">Bangla</span></span>
+          </div>
+        </a>
+
+        <a href="https://deshitv.deshitv24.net/live/myStream/playlist.m3u8"
+           class="channel-card"
+           onclick="event.preventDefault(); loadStream(this.href, 'Deshi TV');">
+          <img src="https://ui-avatars.com/api/?name=Deshi+TV&background=2E4053&color=fff&size=128"
+               alt="Deshi TV" class="channel-logo">
+          <div class="channel-info">
+            <span class="channel-name">Deshi TV</span>
+            <span class="channel-meta">720p<span class="badge">Bangla</span></span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
   </div>
-
-<script>
-  // Updated list containing your working channels and the newly verified working additions
-  const channels = [
-    // --- CONFIRMED WORKING CHANNELS ---
-    { name: "Home Network", category: "Confirmed Working", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", now: "Dream Home Showcase", next: "Property Flipping Masters" },
-    { name: "Autentic History", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", now: "World War Chronicles", next: "Ancient Civilizations Revealed" },
-    { name: "Animation+", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", now: "Saturday Morning Toons", next: "Adventure Animation Hour" },
-    { name: "Golf Channel", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", now: "PGA Tour Live Coverage", next: "Instruction & Swing Analysis" },
-    { name: "Cowboy Channel", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", now: "Pro Rodeo Tour Live", next: "Western Heritage Spotlight" },
-    { name: "Discovery Turbo", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing" },
-    { name: "CityNews Toronto", category: "Confirmed Working", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", now: "Local Metro Pulse", next: "GTA Tonight" },
-    { name: "CBC News", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", now: "The National Evening Report", next: "World News Tonight" },
-    { name: "Hallmark Movies", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
-    { name: "SYFY", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
-    { name: "A&E", category: "Confirmed Working", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", now: "Biography Special", next: "Real Life Mysteries" },
-
-    // --- RE-TESTED & STABILIZED ALTERNATIVES ---
-    { name: "AMC Thrillers", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", now: "Edge of Your Seat Thriller", next: "Late Night Suspense" },
-    { name: "Pluto TV Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", now: "Hollywood Feature Presentation", next: "Late Night Cinema" },
-    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" },
-    { name: "FailArmy", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://failarmy.amagi.tv/playlist.m3u8", now: "Epic Fails Compilation", next: "Painful Slapstick Moments" },
-    { name: "Al Jazeera English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://live-hls-web-aje.getaj.net/AJE/index.m3u8", now: "Global Newshour", next: "Middle East Insight" },
-    { name: "Sky News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://skynewsagile.akamaized.net/hls/live/2013894/skynews/master.m3u8", now: "UK & World Breaking News", next: "The Evening Paper Review" },
-    { name: "DW English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://dwstream2-i.akamaihd.net/hls/live/2015525/dwstream2/index.m3u8", now: "European Journal", next: "Global Agenda" },
-    { name: "France 24 English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://france24-live.akamaized.net/hls/live/180613/F24_EN_HLS/master.m3u8", now: "Paris News Update", next: "Focus on Europe" },
-    { name: "Bloomberg TV", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://live-bloomberg-com.akamaized.net/hls/live/2026365/Bloomberg_US/master.m3u8", now: "Markets in Motion", next: "Tech Titans" },
-    { name: "Red Bull TV", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://rbmn-live.akamaized.net/hls/live/590964/CB-en-INT/master.m3u8", now: "Extreme Action Sports", next: "Cliff Diving World Series" },
-    { name: "World Poker Tour", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://wpt.amagi.tv/playlist.m3u8", now: "Final Table Showdown", next: "High Stakes Poker Academy" },
-    { name: "Motorsport.tv", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://motorsporttv.amagi.tv/playlist.m3u8", now: "GT World Challenge", next: "Formula Drift Highlights" },
-    { name: "WildBrain Kids", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://wildbrain.amagi.tv/playlist.m3u8", now: "Classic Cartoon Favorites", next: "Family Fun Hour" },
-    { name: "Moonbug Kids", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://moonbug.amagi.tv/playlist.m3u8", now: "Nursery Rhymes & Songs", next: "Playtime Adventures" },
-    { name: "NASA TV", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://nasa-i.akamaihd.net/hls/live/508875/NASA-TV-Public/master.m3u8", now: "International Space Station Live", next: "Deep Space Exploration" },
-    { name: "Smithsonian Channel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://smithsonian.amagi.tv/playlist.m3u8", now: "Aerial America", next: "Secrets of the Smithsonian" },
-    { name: "Travelxp", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://travelxp.amagi.tv/playlist.m3u8", now: "Destination Paradise", next: "Food & Culture Trails" }
-  ];
-
-  let hlsPlayer = null;
-  let dashPlayer = null;
-  let currentActiveUrl = "";
-  let activeCategory = "Confirmed Working";
-
-  function renderPills() {
-    const pillsContainer = document.getElementById('categoryPills');
-    pillsContainer.innerHTML = '';
-    const categories = ["Confirmed Working", "All", ...new Set(channels.map(c => c.category).filter(cat => cat !== "Confirmed Working"))];
-
-    categories.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = `pill-btn ${cat === activeCategory ? 'active' : ''}`;
-      btn.innerText = cat;
-      btn.onclick = () => {
-        activeCategory = cat;
-        renderPills();
-        renderChannels();
-      };
-      pillsContainer.appendChild(btn);
-    });
-  }
-
-  function renderChannels() {
-    const container = document.getElementById('channelsContainer');
-    container.innerHTML = '';
-
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = channels.filter(c => {
-      const matchesCategory = activeCategory === "All" || c.category === activeCategory;
-      const matchesSearch = c.name.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
-    });
-
-    document.getElementById('channelCount').innerText = `${channels.length} Total Channels`;
-
-    if (filtered.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
-      return;
-    }
-
-    filtered.forEach(ch => {
-      const card = document.createElement('div');
-      card.className = 'channel-card';
-      if (ch.url === currentActiveUrl) card.classList.add('active');
-      
-      card.onclick = () => {
-        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        playChannel(ch);
-      };
-
-      card.innerHTML = `
-        <div class="channel-info">
-          <span class="channel-name">${ch.name}</span>
-          <div class="channel-meta">
-            <span class="badge-res">${ch.res}</span>
-            <span class="tag-format">${ch.format}</span>
-          </div>
-        </div>
-        <span class="play-indicator">▶ Play</span>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function playChannel(channel) {
-    currentActiveUrl = channel.url;
-    const video = document.getElementById('videoPlayer');
-    const title = document.getElementById('playerTitle');
-    const currentShow = document.getElementById('currentShow');
-    const nextShow = document.getElementById('nextShow');
-
-    title.innerHTML = `<span class="live-dot"></span> Streaming Live: ${channel.name} (${channel.res})`;
-    currentShow.innerText = channel.now || "Live Stream";
-    nextShow.innerText = channel.next || "Continuous Playback";
-
-    if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
-    if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
-
-    if (channel.format === 'mpd') {
-      dashPlayer = dashjs.MediaPlayer().create();
-      dashPlayer.initialize(video, channel.url, true);
-    } else {
-      if (Hls.isSupported()) {
-        hlsPlayer = new Hls();
-        hlsPlayer.loadSource(channel.url);
-        hlsPlayer.attachMedia(video);
-        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = channel.url;
-        video.play();
-      }
-    }
-  }
-
-  function handleSearch() {
-    renderChannels();
-  }
-
-  // Initialize UI
-  renderPills();
-  renderChannels();
-  window.addEventListener('DOMContentLoaded', () => {
-    playChannel(channels[0]);
-  });
-</script>
-
 </body>
 </html>
