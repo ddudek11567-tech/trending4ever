@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide</title>
   <title>Smart TV Guide & Player</title>
   
   <!-- HLS and DASH libraries for video playback -->
@@ -76,10 +75,53 @@
       width: 340px;
     }
 
+    /* Top Active Player Section */
+    .top-player-section {
+      background: #000;
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 3rem 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .player-container {
+      width: 100%;
+      max-width: 1000px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
+      position: relative;
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .player-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      max-height: 60vh;
+      display: block;
+    }
+
     /* Featured Hero Banner */
     .hero {
       position: relative;
-      height: 420px;
+      height: 320px;
       background: linear-gradient(180deg, rgba(11,14,20,0.3) 0%, rgba(11,14,20,1) 100%), 
                   url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
       display: flex;
@@ -103,7 +145,7 @@
     }
 
     .hero h1 {
-      font-size: 2.8rem;
+      font-size: 2.3rem;
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 0.5rem;
@@ -112,14 +154,13 @@
 
     .hero p {
       color: var(--text-sub);
-      font-size: 1rem;
-      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
     }
 
     /* Content Layout */
     .content-container {
       padding: 0 3rem;
-      margin-top: -1rem;
+      margin-top: 1rem;
     }
 
     .section-title {
@@ -173,15 +214,12 @@
       justify-content: space-between;
       padding: 1rem;
       overflow: hidden;
+      text-decoration: none;
     }
 
     .channel-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.4) 100%);
       pointer-events: none;
@@ -229,480 +267,119 @@
       font-weight: 600;
       letter-spacing: 0.5px;
     }
-
-    /* Quick App Tile Strip */
-    /* Apps Row Tiles */
-    .app-card {
-      min-width: 120px;
-      height: 70px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      flex-shrink: 0;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-    }
-
-    .app-card:hover { transform: scale(1.08); }
-    .app-watchfree { background: linear-gradient(135deg, #e50914, #990000); }
-    .app-hulu { background: linear-gradient(135deg, #1ce783, #00ad56); }
-    .app-prime { background: linear-gradient(135deg, #00a8e1, #005691); }
-    .app-vudu { background: linear-gradient(135deg, #3399ff, #0044aa); }
-    .app-watchfree { background: linear-gradient(135deg, #e50914, #990000); }
-    .app-iheart { background: linear-gradient(135deg, #c60000, #660000); }
-
-    /* Video Player Modal Overlay */
-    .player-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 1000;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .player-modal.active {
-      display: flex;
-    }
-
-    .player-container {
-      width: 100%;
-      max-width: 1000px;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 50px rgba(0, 210, 255, 0.15);
-      position: relative;
-    }
-
-    video {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-      display: block;
-    }
-
-    .player-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 1000px;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-    }
-
-    .player-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .close-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #fff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .close-btn:hover {
-      background: #e50914;
-    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="brand">SMART<span>CAST</span></div>
-    <input type="text" id="searchInput" class="search-input" placeholder="Search 101 live channels..." oninput="filterChannels()">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search live channels..." oninput="filterChannels()">
   </header>
 
-  <!-- Hero Spotlight -->
-  <div class="hero">
-    <div class="hero-content">
-      <div class="hero-tag">LIVE FEATURED STREAM</div>
-      <h1>SYFY CHANNEL</h1>
-      <p>1080p Full HD • Streaming Live Now</p>
-      <p>1080p Full HD • Click any card below to launch live stream</p>
-    </div>
-  </div>
-
-  <div class="content-container">
-
-    <!-- App Launcher Row -->
-    <div class="section-title">Apps</div>
-    <div class="media-row">
-      <div class="app-card app-watchfree">WatchFree+</div>
-      <div class="app-card app-hulu">hulu</div>
-      <div class="app-card app-prime">prime video</div>
-      <div class="app-card app-vudu">VUDU</div>
-      <div class="app-card app-iheart">iHeartRADIO</div>
-    </div>
-
-    <!-- Dynamic Container for Channel Categories -->
-    <!-- Dynamic Channels Container -->
-    <div id="categoryContainer"></div>
-
-  </div>
-
-  <!-- Integrated Video Player Modal -->
-  <div id="playerModal" class="player-modal">
+  <!-- Top Persistent Video Player Section -->
+  <div class="top-player-section">
     <div class="player-header">
-      <div id="playerTitle" class="player-title">Loading Stream...</div>
-      <button class="close-btn" onclick="closePlayer()">✕ Close Player</button>
+      <div id="playerTitle" class="player-title">Select a channel to start streaming</div>
     </div>
     <div class="player-container">
       <video id="videoPlayer" controls autoplay></video>
     </div>
   </div>
 
+  <!-- Hero Spotlight -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">LIVE TV GUIDE</div>
+      <h1>Explore Live Channels</h1>
+      <p>Click any channel card below to load and play the live stream instantly in the top player.</p>
+    </div>
+  </div>
+
+  <div class="content-container">
+    <!-- Dynamic Container for Channel Categories -->
+    <div id="categoryContainer"></div>
+  </div>
+
 <script>
-  // Sample working live test streams for demo functionality
-  const TEST_HLS = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
-  const TEST_DASH = 'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
-
-  // Complete 101 Channel Dataset
+  // Complete Channel Dataset combined from base layout and added stream sources
   const channels = [
-    // Entertainment & Movies
-    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
-    { name: "Hallmark Movies & More", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
-    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
-    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
-    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Paramount Network", category: "Entertainment & Movies", res: "720p", format: "m3u8" },
-    { name: "MovieSphere by Lionsgate", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Pluto Classic Movie Westerns", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "America's Next Top Model", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Bar Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Best of The Drew Barrymore Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Bondi Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Catfish", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Diagnosis Murder", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Doc Martin", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Dynasty", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Frasier", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Gunsmoke", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Happy Days", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Ink Master", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "JAG", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Matlock", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Mission Impossible", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "MTV Dating", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "MTV Jersey Shore", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "MTV Reality", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "MTV Ridiculousness", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Nashville", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "NCIS", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "NCIS: Los Angeles", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Perry Mason", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Rawhide", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "South Park", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Andy Griffith Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Beverly Hillbillies", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Challenge", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Graham Norton Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Judge Judy Channel", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "The Love Boat", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "Three's Company", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
-    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Hallmark Movies & More", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Paramount Network", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "MovieSphere by Lionsgate", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Pluto Classic Movie Westerns", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "America's Next Top Model", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Bar Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Best of The Drew Barrymore Show", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Bondi Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Catfish", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Diagnosis Murder", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Doc Martin", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Dynasty", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Frasier", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Gunsmoke", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Happy Days", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Ink Master", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "JAG", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Matlock", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Mission Impossible", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Dating", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Jersey Shore", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Reality", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Ridiculousness", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Nashville", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "NCIS", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "NCIS: Los Angeles", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Perry Mason", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Rawhide", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "South Park", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Andy Griffith Show", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Beverly Hillbillies", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Challenge", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Graham Norton Show", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Judge Judy Channel", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "The Love Boat", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Three's Company", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: TEST_HLS },
-
-    // Kids & Family
-    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8" },
-    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8" },
-    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8" },
-    { name: "Family Jr", category: "Kids & Family", res: "576p", format: "m3u8" },
-    { name: "FilmRise Anime", category: "Kids & Family", res: "720p", format: "m3u8" },
-    { name: "Kidoodle.TV", category: "Kids & Family", res: "1080p", format: "m3u8" },
-    { name: "Mr. Bean Animated", category: "Kids & Family", res: "1080p", format: "m3u8" },
-    { name: "NickToons", category: "Kids & Family", res: "Live", format: "m3u8" },
-    { name: "One Piece", category: "Kids & Family", res: "Live", format: "m3u8" },
-    { name: "SpongeBob SquarePants", category: "Kids & Family", res: "720p", format: "m3u8" },
-    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Family Jr", category: "Kids & Family", res: "576p", format: "m3u8", url: TEST_HLS },
-    { name: "FilmRise Anime", category: "Kids & Family", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Kidoodle.TV", category: "Kids & Family", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Mr. Bean Animated", category: "Kids & Family", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "NickToons", category: "Kids & Family", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "One Piece", category: "Kids & Family", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "SpongeBob SquarePants", category: "Kids & Family", res: "720p", format: "m3u8", url: TEST_HLS },
-
-    // Sports & Outdoors
-    { name: "Discovery Turbo / MotoTrend", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "CTV Speed Channel", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
-    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "TSN1", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "TSN2", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "TSN3", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "TSN4", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "FIFA+ United States", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
-    { name: "Fight Network", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "Game+", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
-    { name: "Hard Knocks", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "Outdoor Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "Red Bull TV US", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
-    { name: "Discovery Turbo / MotoTrend", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "CTV Speed Channel", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "TSN1", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "TSN2", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "TSN3", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "TSN4", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "FIFA+ United States", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Fight Network", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Game+", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Hard Knocks", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Outdoor Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Red Bull TV US", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: TEST_HLS },
-
-    // News & Regional
-    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8" },
-    { name: "CityNews Calgary", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CityNews Edmonton", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CityNews Toronto", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CityNews Vancouver", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8" },
-    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8" },
-    { name: "ICI RDI", category: "News & Regional", res: "720p", format: "m3u8" },
-    { name: "The News Forum", category: "News & Regional", res: "1080p", format: "m3u8" },
-    { name: "The Weather Network", category: "News & Regional", res: "720p", format: "m3u8" },
-    { name: "Legislative Assembly B.C.", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "Legislative Assembly Ontario", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "Canada One", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CFTO-DT", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CHCH-DT", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "CTV 2 Atlantic", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "ICI Montreal", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "NACTV", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "Newfoundland Television", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "Now TV Edmonton", category: "News & Regional", res: "Live", format: "m3u8" },
-    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "CityNews Calgary", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CityNews Edmonton", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CityNews Toronto", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CityNews Vancouver", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: TEST_HLS },
-    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "ICI RDI", category: "News & Regional", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "The News Forum", category: "News & Regional", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "The Weather Network", category: "News & Regional", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Legislative Assembly B.C.", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Legislative Assembly Ontario", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Canada One", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CFTO-DT", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CHCH-DT", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "CTV 2 Atlantic", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "ICI Montreal", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "NACTV", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Newfoundland Television", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Now TV Edmonton", category: "News & Regional", res: "Live", format: "m3u8", url: TEST_HLS },
-
-    // Documentary & Lifestyle
-    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "Autentic Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "CTV Life Channel", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "HauntTV CA", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "Home Network / HGTV", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "INWILD", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "Love Nature", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "PBS Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "Slice", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "Total Crime", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
-    { name: "TSC (Today's Shopping Choice)", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
-    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Autentic Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "CTV Life Channel", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "HauntTV CA", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Home Network / HGTV", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "INWILD", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Love Nature", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "PBS Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Slice", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Total Crime", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "TSC (Today's Shopping Choice)", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: TEST_HLS },
-
-    // Music & Audio
-    { name: "iTV Afrobeats", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "iTV Arabic", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "iTV Indian", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "iTV Latin", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "iTV Turkish", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "iTV Urban Music", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "MTV Biggest Pop", category: "Music & Audio", res: "1080p", format: "m3u8" },
-    { name: "Much", category: "Music & Audio", res: "720p", format: "m3u8" },
-    { name: "Qello Concerts by Stingray", category: "Music & Audio", res: "1080p", format: "m3u8" },
-    { name: "Stingray Cityscapes", category: "Music & Audio", res: "Live", format: "mpd" },
-    { name: "Stingray Classic Rock", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Classica", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Cozy Cafe", category: "Music & Audio", res: "Live", format: "mpd" },
-    { name: "Stingray DJAZZ", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Easy Listening", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Exitos del Momento", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Flashback 70s", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Greatest Hits", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Hit List", category: "Music & Audio", res: "Live", format: "m3u8" },
-    { name: "Stingray Naturescape", category: "Music & Audio", res: "Live", format: "mpd" },
-    { name: "iTV Afrobeats", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "iTV Arabic", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "iTV Indian", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "iTV Latin", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "iTV Turkish", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "iTV Urban Music", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Biggest Pop", category: "Music & Audio", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Much", category: "Music & Audio", res: "720p", format: "m3u8", url: TEST_HLS },
-    { name: "Qello Concerts by Stingray", category: "Music & Audio", res: "1080p", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Cityscapes", category: "Music & Audio", res: "Live", format: "mpd", url: TEST_DASH },
-    { name: "Stingray Classic Rock", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Classica", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Cozy Cafe", category: "Music & Audio", res: "Live", format: "mpd", url: TEST_DASH },
-    { name: "Stingray DJAZZ", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Easy Listening", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Exitos del Momento", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Flashback 70s", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Greatest Hits", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Hit List", category: "Music & Audio", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Stingray Naturescape", category: "Music & Audio", res: "Live", format: "mpd", url: TEST_DASH },
-
-    // International
-    { name: "Kutonen (Finland)", category: "International", res: "Live", format: "m3u8" },
-    { name: "TLC Finland", category: "International", res: "Live", format: "m3u8" },
-    { name: "Star Channel Finland", category: "International", res: "Live", format: "m3u8" },
-    { name: "MTV Ava (Finland)", category: "International", res: "Live", format: "m3u8" },
-    { name: "Hero (Finland)", category: "International", res: "Live", format: "m3u8" },
-    { name: "5AAB TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "C Malayalam TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "DesheBideshe TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Deshi TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Doyel TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Gaunda Punjab TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "GH Canada TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Hamdard TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Hyder TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "IIPC TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Pardesi TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Prime Asia TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Probashi TV News", category: "International", res: "Live", format: "m3u8" },
-    { name: "PTC Punjabi Canada", category: "International", res: "Live", format: "m3u8" },
-    { name: "Sohail TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Sooriyan TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Tamil Entertainment Television", category: "International", res: "Live", format: "m3u8" },
-    { name: "TamilVision-TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Afghan Nobel Movies", category: "International", res: "Live", format: "m3u8" },
-    { name: "Afghan Nobel TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Ayaz TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Erfan Halgheh TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Azstar TV HD", category: "International", res: "Live", format: "m3u8" },
-    { name: "Montreal Greek TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "NTD TV Canada", category: "International", res: "Live", format: "m3u8" },
-    { name: "Quo Vadis TV", category: "International", res: "Live", format: "m3u8" },
-    { name: "Rai World Premium", category: "International", res: "Live", format: "m3u8" },
-    { name: "STAR International", category: "International", res: "Live", format: "m3u8" },
-    { name: "icnet 1", category: "International", res: "Live", format: "m3u8" },
-    { name: "FEVA TV", category: "International", res: "Live", format: "m3u8" }
-    { name: "Kutonen (Finland)", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "TLC Finland", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Star Channel Finland", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "MTV Ava (Finland)", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Hero (Finland)", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "5AAB TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "C Malayalam TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "DesheBideshe TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Deshi TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Doyel TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Gaunda Punjab TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "GH Canada TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Hamdard TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Hyder TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "IIPC TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Pardesi TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Prime Asia TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Probashi TV News", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "PTC Punjabi Canada", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Sohail TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Sooriyan TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Tamil Entertainment Television", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "TamilVision-TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Afghan Nobel Movies", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Afghan Nobel TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Ayaz TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Erfan Halgheh TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Azstar TV HD", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Montreal Greek TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "NTD TV Canada", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Quo Vadis TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "Rai World Premium", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "STAR International", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "icnet 1", category: "International", res: "Live", format: "m3u8", url: TEST_HLS },
-    { name: "FEVA TV", category: "International", res: "Live", format: "m3u8", url: TEST_HLS }
+    { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv" },
+    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
+    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8" },
+    { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8" },
+    { name: "Hallmark Movies & More", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+    { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv" },
+    { name: "Star Channel Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv" },
+    { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv" },
+    { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv" },
+    { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8" },
+    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8" },
+    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8" },
+    { name: "Afghan Nobel Movies", category: "International", res: "720p", format: "m3u8", url: "https://live.relentlessinnovations.net:1936/afghannobel/afghannobel/playlist.m3u8" },
+    { name: "Afghan Nobel TV", category: "International", res: "720p", format: "m3u8", url: "https://live.relentlessinnovations.net:1936/afghannobeltv/afghannobeltv/playlist.m3u8" },
+    { name: "America's Next Top Model", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-68679fc6bb46d0bdd38ac9a4.m3u8" },
+    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8" },
+    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8" },
+    { name: "Autentic Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://cb0c87cc605942ff9766a4e6744bbadc.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticTravel/playlist.m3u8" },
+    { name: "Ayaz TV", category: "International", res: "720p", format: "m3u8", url: "https://janya-ayaztv.vgcdn.net/ptnr-WebApp/title-Ayaz_TV/v1/vglive-sk-934820/main.m3u8" },
+    { name: "Azstar TV HD", category: "International", res: "1080p", format: "m3u8", url: "https://live.livestreamtv.ca/azstar/amlst:azstar/playlist.m3u8" },
+    { name: "Bar Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8" },
+    { name: "Best of The Drew Barrymore Show", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-6310cbee5a8ad300070fdb7c.m3u8" },
+    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd" },
+    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-66588931a3865300085ca800.m3u8" },
+    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8" },
+    { name: "Bondi Rescue", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-66166989635c7500084105a2.m3u8" },
+    { name: "C Malayalam TV", category: "International", res: "1080p", format: "m3u8", url: "https://2-fss-2.streamhoster.com/pl_120/206508-3261972-1/playlist.m3u8" },
+    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8" },
+    { name: "Canada One", category: "News & Regional", res: "720p", format: "m3u8", url: "http://cdn8.live247stream.com/canadaone/tv/playlist.m3u8" },
+    { name: "Canal Savoir", category: "Documentary & Lifestyle", res: "360p", format: "m3u8", url: "https://hls.savoir.media/live/stream.m3u8" },
+    { name: "Catfish", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a2a23a0d700008a6ed7b.m3u8" },
+    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8" },
+    { name: "CFTO-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://stream.cammonitorplus.net/1712/index.m3u8" },
+    { name: "Channel Y", category: "News & Regional", res: "720p", format: "m3u8", url: "http://cdn19.live247stream.com/channely/tv/playlist.m3u8" },
+    { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8" },
+    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8" },
+    { name: "CityNews Calgary", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8" },
+    { name: "CityNews Edmonton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8" },
+    { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8" },
+    { name: "CityNews Vancouver", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8" },
+    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8" },
+    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8" },
+    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8" },
+    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8" },
+    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8" },
+    { name: "CTV 2 Atlantic", category: "News & Regional", res: "720p", format: "m3u8", url: "http://stream.cammonitorplus.net/1731/index.m3u8" },
+    { name: "CTV Life Channel", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/ANIMALPLANETHD/index.m3u8" },
+    { name: "CTV Speed Channel", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/DISCOVERY_SCIENCE_HD/index.m3u8" },
+    { name: "DesheBideshe TV", category: "International", res: "Live", format: "m3u8", url: "https://dbcanada.sonarbanglatv.com/deshebideshe/dbtv/index.m3u8" },
+    { name: "Deshi TV", category: "International", res: "720p", format: "m3u8", url: "https://deshitv.deshitv24.net/live/myStream/playlist.m3u8" },
+    { name: "Diagnosis Murder", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-65fd548f29adfd00089c662c.m3u8" },
+    { name: "Doc Martin", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e922f6675f71000736db3b.m3u8" },
+    { name: "Doyel TV", category: "International", res: "Live", format: "m3u8", url: "https://3d46w.doyeltv.com/memfs/aa3aa6f7-ec12-41a2-8183-a891e157bbf8.m3u8" },
+    { name: "Dynasty", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e919ca865c590007ecd0bd.m3u8" },
+    { name: "Erfan Halgheh TV", category: "International", res: "720p", format: "m3u8", url: "https://hls.erfanhalgheh.live/hls/stream.m3u8" },
+    { name: "Family Jr", category: "Kids & Family", res: "576p", format: "m3u8", url: "http://tvsen5.aynascope.net/familyjr/index.m3u8" },
+    { name: "FEVA TV", category: "International", res: "1080p", format: "m3u8", url: "https://d21x3vavxu7p2x.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/DistroTV-MuxIP-FEVATV/416.m3u8" },
+    { name: "FIFA+ United States", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8" },
+    { name: "Fight Network", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://d12a2vxqkkh1bo.cloudfront.net/hls/main.m3u8" },
+    { name: "FilmRise Anime", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://dvu7aia8rjlfm.cloudfront.net/master.m3u8" },
+    { name: "Frasier", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62f4f90e39183b000769f12b.m3u8" },
+    { name: "Game+", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://a-cdn.klowdtv.com/live2/fntsy_720p/playlist.m3u8" },
+    { name: "Gaunda Punjab TV", category: "International", res: "720p", format: "m3u8", url: "http://cdn6.live247stream.com/gaundapunjab/tv/playlist.m3u8" },
+    { name: "GH Canada TV", category: "International", res: "Live", format: "m3u8", url: "https://stream.bozztv.com/tvstat-tamar/tvstat-tamar/playlist.m3u8" },
+    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8" },
+    { name: "Gunsmoke", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e916affb29c60007211c8a.m3u8" },
+    { name: "Hamdard TV", category: "International", res: "1080p", format: "m3u8", url: "https://tv.hamdardtv.com/hamdard/index.m3u8" },
+    { name: "Happy Days", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e917b5e354cf0007b97a67.m3u8" },
+    { name: "Hard Knocks", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://d3uyzhwvmemdyf.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/Hard-Knocks-DistroTV/109.m3u8" },
+    { name: "HauntTV CA", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-63934c218ef524000757b122.m3u8" },
+    { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8" },
+    { name: "Hyder TV", category: "International", res: "720p", format: "m3u8", url: "https://cdn.live247stream.com/hyder/tv/playlist.m3u8" },
+    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-63a2f1dda0d69700078b7cba.m3u8" },
+    { name: "ICI Montreal", category: "News & Regional", res: "720p", format: "m3u8", url: "https://amdici.akamaized.net/hls/live/873426/ICI-Live-Stream/master.m3u8" },
+    { name: "ICI RDI", category: "News & Regional", res: "720p", format: "m3u8", url: "https://rcavlive.akamaized.net/hls/live/704025/xcanrdi/master.m3u8" },
+    { name: "icnet 1", category: "International", res: "Live", format: "m3u8", url: "https://icnet1hls.wns.live/hls/stream.m3u8" }
   ];
 
   let hlsPlayer = null;
@@ -712,7 +389,6 @@
     const container = document.getElementById('categoryContainer');
     container.innerHTML = '';
 
-    // Extract unique categories
     const categories = [...new Set(channels.map(c => c.category))];
 
     categories.forEach(cat => {
@@ -750,12 +426,11 @@
   }
 
   function playChannel(channel) {
-    const modal = document.getElementById('playerModal');
     const video = document.getElementById('videoPlayer');
     const title = document.getElementById('playerTitle');
 
     title.innerText = `Streaming Live: ${channel.name} (${channel.res})`;
-    modal.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Reset existing engines
     if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
@@ -781,26 +456,12 @@
     }
   }
 
-  function closePlayer() {
-    const modal = document.getElementById('playerModal');
-    const video = document.getElementById('videoPlayer');
-
-    video.pause();
-    video.src = '';
-    
-    if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
-    if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
-
-    modal.classList.remove('active');
-  }
-
   function filterChannels() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const filtered = channels.filter(c => c.name.toLowerCase().includes(query));
     renderInterface(filtered);
   }
 
-  // Initial setup call
   // Initial render
   renderInterface(channels);
 </script>
@@ -808,5 +469,4 @@
 </body>
 </html>
 
-</body>
-</html>
+
