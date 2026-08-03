@@ -7,8 +7,8 @@
 
     <!-- Professional font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- HLS.js Library for M3U8 support across all modern browsers -->
+    
+    <!-- HLS.js for m3u8 stream support -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
@@ -141,6 +141,14 @@
             font-weight: 400;
         }
 
+        /* ---------- LOADING / ERROR STATUS ---------- */
+        .status-text {
+            font-size: 14px;
+            color: #ffa500;
+            padding: 4px 0;
+            text-align: center;
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 10px;
@@ -219,7 +227,7 @@
         <!-- Hallmark Movies & More -->
         <a href="https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
            class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hallmark Movies & More');">
+           onclick="event.preventDefault(); loadStream(this.href, 'Hallmark Movies &amp; More');">
             <img src="https://ui-avatars.com/api/?name=Hallmark+Movies&background=8A1538&color=fff&size=128"
                  alt="Hallmark Movies &amp; More" class="channel-logo">
             <span class="channel-name">Hallmark Movies &amp; More</span>
@@ -1808,7 +1816,7 @@
 
     </div>
 
-    <!-- JavaScript Stream Handler -->
+    <!-- JavaScript Controller -->
     <script>
         let hlsInstance = null;
 
@@ -1818,42 +1826,52 @@
 
             status.textContent = 'Loading ' + name + '...';
 
+            // Clean up previous HLS instance if it exists
             if (hlsInstance) {
                 hlsInstance.destroy();
+                hlsInstance = null;
             }
 
-            if (Hls.isSupported() && url.includes('.m3u8')) {
-                hlsInstance = new Hls();
+            // Check for DASH format (.mpd)
+            if (url.endsWith('.mpd')) {
+                status.textContent = name + ' (DASH stream requires dash.js reader)';
+                return;
+            }
+
+            // Play via HLS.js if supported
+            if (Hls.isSupported()) {
+                hlsInstance = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true
+                });
+
                 hlsInstance.loadSource(url);
                 hlsInstance.attachMedia(video);
+
                 hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(() => {});
+                    video.play().catch(e => console.log('Autoplay blocked:', e));
                     status.textContent = 'Playing: ' + name;
                 });
+
                 hlsInstance.on(Hls.Events.ERROR, function(event, data) {
                     if (data.fatal) {
-                        status.textContent = 'Error loading stream for ' + name;
+                        status.textContent = 'Error loading ' + name;
                     }
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // Native Safari / iOS HLS support
+            }
+            // Fallback for native Safari HLS support
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(() => {});
+                    video.play();
                     status.textContent = 'Playing: ' + name;
                 });
             } else {
-                // Fallback direct source for standard media or .ts streams
-                video.src = url;
-                video.play().then(() => {
-                    status.textContent = 'Playing: ' + name;
-                }).catch(() => {
-                    status.textContent = 'Playing: ' + name;
-                });
+                status.textContent = 'HLS streaming is not supported in this browser.';
             }
 
-            // Scroll player into view smoothly
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Scroll up smoothly to the player
+            document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
