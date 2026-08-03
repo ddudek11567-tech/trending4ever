@@ -29,14 +29,14 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* Clean, Professional Dark Obsidian Background with Subtle Gradient Light */
+    /* Clean Obsidian Background with Ambient Radial Glows */
     html, body {
       height: 100vh;
       overflow: hidden;
       background-color: var(--bg-deep);
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(14, 116, 144, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(30, 27, 75, 0.2) 0%, transparent 40%);
+        radial-gradient(circle at 15% 15%, rgba(14, 116, 144, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(30, 27, 75, 0.25) 0%, transparent 40%);
       color: var(--text-main);
     }
 
@@ -98,15 +98,15 @@
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
-    /* Master Layout: Side-by-Side Professional Dashboard Grid */
+    /* Master Layout: Side-by-Side Dashboard Grid */
     .app-layout {
       display: grid;
-      grid-template-columns: 1fr 420px;
+      grid-template-columns: 1fr 440px;
       height: calc(100vh - 64px);
       overflow: hidden;
     }
 
-    /* Left Pane: Immersive Active Player Workspace */
+    /* Left Pane: Immersive Active Player Workspace with Ambient Glow */
     .player-workspace {
       padding: 2rem;
       display: flex;
@@ -115,11 +115,26 @@
       align-items: center;
       background: rgba(0, 0, 0, 0.2);
       border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .player-workspace::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: blur(40px);
     }
 
     .player-container-inner {
       width: 100%;
       max-width: 850px;
+      z-index: 1;
     }
 
     .player-meta-bar {
@@ -152,7 +167,7 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.1);
       aspect-ratio: 16 / 9;
       position: relative;
     }
@@ -164,7 +179,47 @@
       display: block;
     }
 
-    /* Right Pane: Clean Scrollable Channel Guide */
+    /* Live Program Schedule Banner Overlay below Player */
+    .schedule-banner {
+      margin-top: 0.8rem;
+      background: rgba(18, 22, 33, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .schedule-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .schedule-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-sub);
+      font-weight: 700;
+    }
+
+    .schedule-val {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .schedule-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 1rem;
+    }
+
+    /* Right Pane: Scrollable Channel Guide with Category Pills */
     .guide-workspace {
       display: flex;
       flex-direction: column;
@@ -184,6 +239,45 @@
       color: var(--text-sub);
     }
 
+    /* Category Filter Pills Bar */
+    .category-pills-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 10, 15, 0.4);
+      scrollbar-width: none;
+    }
+
+    .category-pills-bar::-webkit-scrollbar { display: none; }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .pill-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      font-weight: 700;
+    }
+
     .channels-scroll-area {
       flex: 1;
       overflow-y: auto;
@@ -198,36 +292,21 @@
       border-radius: 3px;
     }
 
-    .category-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .category-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--accent);
-      margin-bottom: 0.7rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
     .channels-stack {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
 
-    /* Sleek Row-Style Channel Cards */
+    /* Sleek Row-Style Channel Cards with Hover Micro-Interactions */
     .channel-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
+      border-left: 3px solid transparent;
       border-radius: 8px;
       padding: 0.75rem 1rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -237,13 +316,15 @@
     .channel-card:hover {
       background: var(--card-hover);
       border-color: var(--border-hover);
-      transform: translateX(3px);
+      border-left-color: var(--accent);
+      transform: translateX(4px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     .channel-card.active {
       background: rgba(56, 189, 248, 0.1);
       border-color: var(--accent);
+      border-left-color: var(--accent);
     }
 
     .channel-info {
@@ -300,7 +381,7 @@
       opacity: 1;
     }
 
-    /* Responsive Design for smaller displays */
+    /* Responsive Design for smaller screens */
     @media (max-width: 1024px) {
       .app-layout {
         grid-template-columns: 1fr;
@@ -315,7 +396,7 @@
         padding: 1rem;
       }
       .guide-workspace {
-        height: 500px;
+        height: 550px;
       }
     }
   </style>
@@ -325,12 +406,12 @@
   <header>
     <div class="brand">SMART<span>CAST</span></div>
     <div class="search-container">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search channels..." oninput="filterChannels()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search channels..." oninput="handleSearch()">
     </div>
   </header>
 
   <div class="app-layout">
-    <!-- Left Workspace: Active Player Always in View -->
+    <!-- Left Workspace: Active Player with Ambient Glow & Program Schedule Banner -->
     <div class="player-workspace">
       <div class="player-container-inner">
         <div class="player-meta-bar">
@@ -341,118 +422,142 @@
         <div class="media-box">
           <video id="videoPlayer" controls autoplay></video>
         </div>
+        <div class="schedule-banner">
+          <div class="schedule-item">
+            <span class="schedule-label">Currently Playing</span>
+            <span id="currentShow" class="schedule-val">Live Broadcast Feed</span>
+          </div>
+          <div class="schedule-divider"></div>
+          <div class="schedule-item" style="text-align: right;">
+            <span class="schedule-label">Up Next</span>
+            <span id="nextShow" class="schedule-val">Scheduled Feature Program</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Right Workspace: Clean Vertical Scrollable Channel Guide -->
+    <!-- Right Workspace: Channel Guide with Interactive Filter Pills -->
     <div class="guide-workspace">
       <div class="guide-header">Channel Guide</div>
+      <div id="categoryPills" class="category-pills-bar"></div>
       <div class="channels-scroll-area">
-        <div id="categoryContainer"></div>
+        <div id="channelsContainer" class="channels-stack"></div>
       </div>
     </div>
   </div>
 
 <script>
   const channels = [
-    { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen" },
-    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy" },
-    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", brand: "nick" },
-    { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", brand: "discovery" },
-    { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "hallmark" },
-    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "xumo" },
-    { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv", brand: "tlc" },
-    { name: "Star Channel", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv", brand: "star" },
-    { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv", brand: "mtv" },
-    { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv", brand: "hero" },
-    { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", brand: "5aab" },
-    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8", brand: "cbs" },
-    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", brand: "ae" },
-    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", brand: "animation" },
-    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", brand: "autentic" },
-    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", brand: "bnn" },
-    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8", brand: "classic" },
-    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", brand: "cable14" },
-    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", brand: "cbc" },
-    { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8", brand: "chch" },
-    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8", brand: "paramount" },
-    { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", brand: "citynews" },
-    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8", brand: "comedy" },
-    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8", brand: "cottage" },
-    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", brand: "cowboy" },
-    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8", brand: "cp24" },
-    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8", brand: "cpac" },
-    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", brand: "golf" },
-    { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv" },
-    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-63a2f1dda0d69700078b7cba.m3u8", brand: "paramount" }
+    { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen", now: "Nordic Prime Time Feed", next: "Late Night Action Block" },
+    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
+    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", brand: "nick", now: "Animated Preschool Favorites", next: "Bedtime Stories & Songs" },
+    { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", brand: "discovery", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing" },
+    { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "hallmark", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
+    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "xumo", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
+    { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv", brand: "tlc", now: "Nordic Reality Showcase", next: "Home Renovation Diaries" },
+    { name: "Star Channel", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv", brand: "star", now: "Global Hit Series", next: "International Drama Hour" },
+    { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv", brand: "mtv", now: "Music & Lifestyle Wave", next: "Pop Countdown Live" },
+    { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv", brand: "hero", now: "Action Series Block", next: "Thriller Movie Night" },
+    { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", brand: "5aab", now: "Cultural Music Showcase", next: "Evening News & Talk" },
+    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8", brand: "cbs", now: "Investigative Crime Files", next: "Cold Case Special Edition" },
+    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", brand: "ae", now: "Biography Special", next: "Real Life Mysteries" },
+    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", brand: "animation", now: "Saturday Morning Toons", next: "Adventure Animation Hour" },
+    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", brand: "autentic", now: "World War Chronicles", next: "Ancient Civilizations Revealed" },
+    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", brand: "bnn", now: "Markets Closing Bell", next: "Global Wealth Report" },
+    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8", brand: "classic", now: "Western Heritage Hour", next: "Ponderosa Frontier Tales" },
+    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", brand: "cable14", now: "Local Community Spotlight", next: "Regional Town Hall" },
+    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", brand: "cbc", now: "The National Evening Report", next: "World News Tonight" },
+    { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8", brand: "chch", now: "Evening News Hour", next: "Prime Time Movie" },
+    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8", brand: "paramount", now: "Classic Sitcom Block", next: "Late Night Comedy Hour" },
+    { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", brand: "citynews", now: "Local Metro Pulse", next: "GTA Tonight" },
+    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8", brand: "comedy", now: "Stand-Up Showcase", next: "Late Night Sketch Comedy" },
+    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8", brand: "cottage", now: "Cabin Life DIY", next: "Great Canadian Waterways" },
+    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", brand: "cowboy", now: "Pro Rodeo Tour Live", next: "Western Heritage Spotlight" },
+    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8", brand: "cp24", now: "Toronto Live Breaking News", next: "Traffic & Weather Center" },
+    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8", brand: "cpac", now: "Parliamentary Proceedings", next: "Public Policy Forum" },
+    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", brand: "golf", now: "PGA Tour Live Coverage", next: "Instruction & Swing Analysis" },
+    { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters" },
+    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-63a2f1dda0d69700078b7cba.m3u8", brand: "paramount", now: "Classic TV Marathon", next: "Vintage Comedy Hour" }
   ];
 
   let hlsPlayer = null;
   let dashPlayer = null;
   let currentActiveUrl = channels[0].url;
+  let activeCategory = "All";
 
-  function renderInterface(filteredChannels) {
-    const container = document.getElementById('categoryContainer');
-    container.innerHTML = '';
+  function renderPills() {
+    const pillsContainer = document.getElementById('categoryPills');
+    pillsContainer.innerHTML = '';
 
-    const categories = [...new Set(channels.map(c => c.category))];
+    const categories = ["All", ...new Set(channels.map(c => c.category))];
 
     categories.forEach(cat => {
-      const catChannels = filteredChannels.filter(c => c.category === cat);
-      if (catChannels.length === 0) return;
+      const btn = document.createElement('button');
+      btn.className = `pill-btn ${cat === activeCategory ? 'active' : ''}`;
+      btn.innerText = cat;
+      btn.onclick = () => {
+        activeCategory = cat;
+        renderPills();
+        renderChannels();
+      };
+      pillsContainer.appendChild(btn);
+    });
+  }
 
-      const groupDiv = document.createElement('div');
-      groupDiv.className = 'category-group';
+  function renderChannels() {
+    const container = document.getElementById('channelsContainer');
+    container.innerHTML = '';
 
-      const sectionTitle = document.createElement('div');
-      sectionTitle.className = 'category-title';
-      sectionTitle.innerText = cat;
-      groupDiv.appendChild(sectionTitle);
-
-      const stackDiv = document.createElement('div');
-      stackDiv.className = 'channels-stack';
-
-      catChannels.forEach(ch => {
-        const card = document.createElement('div');
-        card.className = 'channel-card';
-        if (ch.url === currentActiveUrl) {
-          card.classList.add('active');
-        }
-        
-        card.onclick = () => {
-          document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-          card.classList.add('active');
-          playChannel(ch);
-        };
-
-        card.innerHTML = `
-          <div class="channel-info">
-            <span class="channel-name">${ch.name}</span>
-            <div class="channel-meta">
-              <span class="badge-res">${ch.res}</span>
-              <span class="tag-format">${ch.format}</span>
-            </div>
-          </div>
-          <span class="play-indicator">▶ Play</span>
-        `;
-        stackDiv.appendChild(card);
-      });
-
-      groupDiv.appendChild(stackDiv);
-      container.appendChild(groupDiv);
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    
+    const filtered = channels.filter(c => {
+      const matchesCategory = activeCategory === "All" || c.category === activeCategory;
+      const matchesSearch = c.name.toLowerCase().includes(query);
+      return matchesCategory && matchesSearch;
     });
 
-    if (container.children.length === 0) {
+    if (filtered.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
+      return;
     }
+
+    filtered.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'channel-card';
+      if (ch.url === currentActiveUrl) {
+        card.classList.add('active');
+      }
+      
+      card.onclick = () => {
+        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        playChannel(ch);
+      };
+
+      card.innerHTML = `
+        <div class="channel-info">
+          <span class="channel-name">${ch.name}</span>
+          <div class="channel-meta">
+            <span class="badge-res">${ch.res}</span>
+            <span class="tag-format">${ch.format}</span>
+          </div>
+        </div>
+        <span class="play-indicator">▶ Play</span>
+      `;
+      container.appendChild(card);
+    });
   }
 
   function playChannel(channel) {
     currentActiveUrl = channel.url;
     const video = document.getElementById('videoPlayer');
     const title = document.getElementById('playerTitle');
+    const currentShow = document.getElementById('currentShow');
+    const nextShow = document.getElementById('nextShow');
 
     title.innerHTML = `<span class="live-dot"></span> Streaming Live: ${channel.name} (${channel.res})`;
+    currentShow.innerText = channel.now;
+    nextShow.innerText = channel.next;
 
     if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
     if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
@@ -476,13 +581,13 @@
     }
   }
 
-  function filterChannels() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = channels.filter(c => c.name.toLowerCase().includes(query));
-    renderInterface(filtered);
+  function handleSearch() {
+    renderChannels();
   }
 
-  renderInterface(channels);
+  // Initialize UI
+  renderPills();
+  renderChannels();
 
   window.addEventListener('DOMContentLoaded', () => {
     playChannel(channels[0]);
