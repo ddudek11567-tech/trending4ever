@@ -219,6 +219,23 @@
       margin: 0 1rem;
     }
 
+    /* Footer Design Credit in Lower Left */
+    .designer-credit {
+      position: absolute;
+      bottom: 1rem;
+      left: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      letter-spacing: 0.5px;
+      z-index: 2;
+      opacity: 0.7;
+    }
+
+    .designer-credit span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
     /* Right Pane: Scrollable Channel Guide with Category Pills */
     .guide-workspace {
       display: flex;
@@ -398,6 +415,11 @@
       .guide-workspace {
         height: 550px;
       }
+      .designer-credit {
+        position: static;
+        text-align: center;
+        padding: 0.5rem 0;
+      }
     }
   </style>
 </head>
@@ -434,6 +456,7 @@
           </div>
         </div>
       </div>
+      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
     </div>
 
     <!-- Right Workspace: Channel Guide with Interactive Filter Pills -->
