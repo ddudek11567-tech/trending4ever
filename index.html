@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide & Plasma Player - Verified Channels</title>
+  <title>Smart TV Guide & Plasma Player - Custom Channels</title>
   
   <!-- HLS and DASH libraries for video playback -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -394,7 +394,7 @@
   <header>
     <div class="brand">SMART<span>CAST</span></div>
     <div class="header-controls">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search custom channels..." oninput="handleSearch()">
     </div>
   </header>
 
@@ -413,12 +413,12 @@
         <div class="schedule-banner">
           <div class="schedule-item">
             <span class="schedule-label">Currently Playing</span>
-            <span id="currentShow" class="schedule-val">Live Broadcast Feed</span>
+            <span id="currentShow" class="schedule-val">Live Stream Feed</span>
           </div>
           <div class="schedule-divider"></div>
           <div class="schedule-item" style="text-align: right;">
             <span class="schedule-label">Up Next</span>
-            <span id="nextShow" class="schedule-val">Scheduled Feature Program</span>
+            <span id="nextShow" class="schedule-val">Continuous Playback</span>
           </div>
         </div>
       </div>
@@ -429,7 +429,7 @@
     <div class="guide-workspace">
       <div class="guide-header">
         <span>Channel Guide</span>
-        <span id="channelCount">Verified Channels</span>
+        <span id="channelCount">Custom Channels</span>
       </div>
       <div id="categoryPills" class="category-pills-bar"></div>
       <div class="channels-scroll-area">
@@ -439,88 +439,22 @@
   </div>
 
 <script>
-  // Strictly tested and working live streams (no single-show or religious feeds)
+  // Cleaned list using only the explicit active links provided
   const channels = [
-    // --- ENTERTAINMENT & MOVIES ---
-    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
-    { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
-    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
-    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", now: "Biography Special", next: "Real Life Mysteries" },
-    { name: "AMC Thrillers", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", now: "Edge of Your Seat Thriller", next: "Late Night Suspense" },
-    { name: "Bar Rescue", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8", now: "Failing Bars Overhaul", next: "Taffer's Tough Love" },
-    { name: "Pluto TV Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", now: "Hollywood Feature Presentation", next: "Late Night Cinema" },
-    { name: "Action Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", now: "High-Octane Stunts", next: "Underground Fight Club" },
-    { name: "Comedy Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", now: "Laugh Out Loud Comedies", next: "Slapstick Saturday" },
-    { name: "Drama Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-drama-1-eu.rakuten.tv/v1/master/779c4a52efbf8b09d2a0c4983f4d603a/master.m3u8", now: "Compelling Human Stories", next: "Award Winning Drama" },
-    { name: "Family Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-family-1-eu.rakuten.tv/v1/master/5c83d98be39ef742ef84a92384a2b918/master.m3u8", now: "Wholesome Adventures", next: "Animated Movie Night" },
-    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" },
-    { name: "FailArmy", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://failarmy.amagi.tv/playlist.m3u8", now: "Epic Fails Compilation", next: "Painful Slapstick Moments" },
-    { name: "People Are Awesome", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://peopleareawesome.amagi.tv/playlist.m3u8", now: "Extreme Stunts & Feats", next: "Incredible Human Talents" },
-    { name: "The Pet Collective", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://thepetcollective.amagi.tv/playlist.m3u8", now: "Cute Animal Moments", next: "Rescue Stories Daily" },
-    { name: "Chive TV", category: "Entertainment & Movies", res: "720p", format: "m3u8", url: "https://chivetv.amagi.tv/playlist.m3u8", now: "Viral Internet Clips", next: "Bar & Lounge Vibes" },
-
-    // --- NEWS & REGIONAL ---
-    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", now: "Markets Closing Bell", next: "Global Wealth Report" },
-    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", now: "Local Community Spotlight", next: "Regional Town Hall" },
-    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", now: "The National Evening Report", next: "World News Tonight" },
-    { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8", now: "Evening News Hour", next: "Prime Time Movie" },
-    { name: "CityNews Calgary", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8", now: "Calgary Pulse", next: "Alberta Tonight" },
-    { name: "CityNews Edmonton", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8", now: "Edmonton News Feed", next: "Northern Report" },
-    { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", now: "Local Metro Pulse", next: "GTA Tonight" },
-    { name: "CityNews Vancouver", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8", now: "Vancouver Metro Pulse", next: "Pacific Rim Tonight" },
-    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8", now: "Toronto Live Breaking News", next: "Traffic & Weather Center" },
-    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8", now: "Parliamentary Proceedings", next: "Public Policy Forum" },
-    { name: "Al Jazeera English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://live-hls-web-aje.getaj.net/AJE/index.m3u8", now: "Global Newshour", next: "Middle East Insight" },
-    { name: "Sky News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://skynewsagile.akamaized.net/hls/live/2013894/skynews/master.m3u8", now: "UK & World Breaking News", next: "The Evening Paper Review" },
-    { name: "DW English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://dwstream2-i.akamaihd.net/hls/live/2015525/dwstream2/index.m3u8", now: "European Journal", next: "Global Agenda" },
-    { name: "France 24 English", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://france24-live.akamaized.net/hls/live/180613/F24_EN_HLS/master.m3u8", now: "Paris News Update", next: "Focus on Europe" },
-    { name: "Bloomberg TV", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://live-bloomberg-com.akamaized.net/hls/live/2026365/Bloomberg_US/master.m3u8", now: "Markets in Motion", next: "Tech Titans" },
-    { name: "CNA International", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://cna-live-hls.akamaized.net/hls/live/2042857/cna_en/master.m3u8", now: "Asia Prime", next: "Global Business Report" },
-    { name: "ABC News Live", category: "News & Regional", res: "720p", format: "m3u8", url: "https://abclive.akamaized.net/hls/live/2033486/abc_news_all_access/master.m3u8", now: "US National Coverage", next: "Prime Time Report" },
-    { name: "CBS News", category: "News & Regional", res: "720p", format: "m3u8", url: "https://cbsn-us.cbsnstream.cbsnews.com/out/v1/55a8648e9f3d4ffab9d9efa932f1397d/master.m3u8", now: "The Stream Live", next: "Evening Headlines" },
-    { name: "NBC News NOW", category: "News & Regional", res: "720p", format: "m3u8", url: "https://nbcnews.amagi.tv/playlist.m3u8", now: "Top Stories Today", next: "Nightly News Focus" },
-    { name: "Fox News Radio", category: "News & Regional", res: "720p", format: "m3u8", url: "https://live.amagi.tv/playlist/amg-foxnews-foxnews-samsungus/playlist.m3u8", now: "Political Pulse", next: "The Evening Briefing" },
-    { name: "LiveNOW from FOX", category: "News & Regional", res: "720p", format: "m3u8", url: "https://livenowfox.amagi.tv/playlist.m3u8", now: "Unfiltered Breaking News", next: "Live Event Coverage" },
-    { name: "USA Today News", category: "News & Regional", res: "720p", format: "m3u8", url: "https://usatoday.amagi.tv/playlist.m3u8", now: "National Headlines", next: "Trending Topics" },
-    { name: "The Hill", category: "News & Regional", res: "720p", format: "m3u8", url: "https://thehill.amagi.tv/playlist.m3u8", now: "Capitol Hill Report", next: "Political Debate Hour" },
-
-    // --- SPORTS & OUTDOORS ---
-    { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing" },
-    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", now: "Pro Rodeo Tour Live", next: "Western Heritage Spotlight" },
-    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", now: "PGA Tour Live Coverage", next: "Instruction & Swing Analysis" },
-    { name: "Red Bull TV", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://rbmn-live.akamaized.net/hls/live/590964/CB-en-INT/master.m3u8", now: "Extreme Action Sports", next: "Cliff Diving World Series" },
-    { name: "World Poker Tour", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://wpt.amagi.tv/playlist.m3u8", now: "Final Table Showdown", next: "High Stakes Poker Academy" },
-    { name: "Motorsport.tv", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://motorsporttv.amagi.tv/playlist.m3u8", now: "GT World Challenge", next: "Formula Drift Highlights" },
-    { name: "Outdoor America", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://outdooramerica.amagi.tv/playlist.m3u8", now: "Hunting & Fishing Journal", next: "Wilderness Survival" },
-    { name: "Strongman Champions", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://strongman.amagi.tv/playlist.m3u8", now: "World's Strongest Man", next: "Powerlifting Showdown" },
-    { name: "MAVTV Select", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://mavtv.amagi.tv/playlist.m3u8", now: "Short Course Off-Road", next: "Engine Masters Garage" },
-    { name: "Surf TV", category: "Sports & Outdoors", res: "720p", format: "m3u8", url: "https://surftv.amagi.tv/playlist.m3u8", now: "Big Wave Pipeline Sessions", next: "Global Surf Discovery" },
-
-    // --- KIDS & FAMILY ---
-    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", now: "Animated Preschool Favorites", next: "Bedtime Stories & Songs" },
-    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", now: "Saturday Morning Toons", next: "Adventure Animation Hour" },
-    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-66588931a3865300085ca800.m3u8", now: "Bob l'éponge en Français", next: "Aventures Sous-marines" },
-    { name: "WildBrain Kids", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://wildbrain.amagi.tv/playlist.m3u8", now: "Classic Cartoon Favorites", next: "Family Fun Hour" },
-    { name: "Moonbug Kids", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://moonbug.amagi.tv/playlist.m3u8", now: "Nursery Rhymes & Songs", next: "Playtime Adventures" },
-    { name: "Telemundo Kids", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://telemundo.amagi.tv/playlist.m3u8", now: "Dibujos Animados", next: "Aventuras Infantiles" },
-
-    // --- DOCUMENTARY & LIFESTYLE ---
-    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", now: "World War Chronicles", next: "Ancient Civilizations Revealed" },
-    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8", now: "Cabin Life DIY", next: "Great Canadian Waterways" },
-    { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", now: "Dream Home Showcase", next: "Property Flipping Masters" },
-    { name: "Documentary TV", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://documentary.amagi.tv/playlist.m3u8", now: "Deep Dive Into Science", next: "Nature's Wonders" },
-    { name: "NASA TV", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://nasa-i.akamaihd.net/hls/live/508875/NASA-TV-Public/master.m3u8", now: "International Space Station Live", next: "Deep Space Exploration" },
-    { name: "Smithsonian Channel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://smithsonian.amagi.tv/playlist.m3u8", now: "Aerial America", next: "Secrets of the Smithsonian" },
-    { name: "Travelxp", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://travelxp.amagi.tv/playlist.m3u8", now: "Destination Paradise", next: "Food & Culture Trails" },
-    { name: "Real Vision", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://realvision.amagi.tv/playlist.m3u8", now: "Macro Economic Outlook", next: "Financial Market Insights" },
-
-    // --- INTERNATIONAL ---
-    { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", now: "Nordic Prime Time Feed", next: "Late Night Action Block" },
-    { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv", now: "Nordic Reality Showcase", next: "Home Renovation Diaries" },
-    { name: "Star Channel", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv", now: "Global Hit Series", next: "International Drama Hour" },
-    { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv", now: "Music & Lifestyle Wave", next: "Pop Countdown Live" },
-    { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv", now: "Action Series Block", next: "Thriller Movie Night" },
-    { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", now: "Cultural Music Showcase", next: "Evening News & Talk" }
+    { name: "Bar Rescue", category: "Entertainment", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8" },
+    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8" },
+    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-66588931a3865300085ca800.m3u8" },
+    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8" },
+    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8" },
+    { name: "CityNews Calgary", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8" },
+    { name: "CityNews Edmonton", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8" },
+    { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8" },
+    { name: "CityNews Vancouver", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8" },
+    { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv" },
+    { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv" },
+    { name: "Star Channel Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv" },
+    { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv" },
+    { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv" }
   ];
 
   let hlsPlayer = null;
@@ -557,7 +491,7 @@
       return matchesCategory && matchesSearch;
     });
 
-    document.getElementById('channelCount').innerText = `${channels.length} Verified Channels`;
+    document.getElementById('channelCount').innerText = `${channels.length} Channels`;
 
     if (filtered.length === 0) {
       container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
@@ -597,8 +531,8 @@
     const nextShow = document.getElementById('nextShow');
 
     title.innerHTML = `<span class="live-dot"></span> Streaming Live: ${channel.name} (${channel.res})`;
-    currentShow.innerText = channel.now || "Live Stream";
-    nextShow.innerText = channel.next || "Continuous Playback";
+    currentShow.innerText = "Live Stream Feed";
+    nextShow.innerText = "Continuous Playback";
 
     if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
     if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
