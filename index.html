@@ -1,1878 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Channels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live TV Channel Guide</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #3b82f6;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #334155;
+    }
 
-    <!-- Professional font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- HLS.js for m3u8 stream support -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 2rem;
+    }
 
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            background: #0f0f13;
-            color: #e8e8e8;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-        h1 {
-            text-align: center;
-            font-weight: 700;
-            font-size: 2rem;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
 
-        .subtitle {
-            text-align: center;
-            color: #888888;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-        }
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
 
-        /* ---------- VIDEO PLAYER ---------- */
-        .player-section {
-            max-width: 1000px;
-            margin: 0 auto 30px;
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-            position: relative;
-        }
+    header p {
+      color: var(--text-sub);
+    }
 
-        .player-section video {
-            display: block;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            border: none;
-        }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-        .player-status {
-            position: absolute;
-            bottom: 10px;
-            left: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            pointer-events: none;
-            z-index: 2;
-        }
+    .search-bar {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+    }
 
-        /* ---------- CHANNEL GRID ---------- */
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 16px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+    .search-bar:focus {
+      border-color: var(--accent);
+    }
 
-        .channel-card {
-            background: #1c1c22;
-            border-radius: 14px;
-            padding: 20px 12px;
-            text-align: center;
-            text-decoration: none;
-            color: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    .category-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
 
-        .channel-card:hover {
-            transform: translateY(-5px);
-            background: #282830;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
 
-        .channel-card:active {
-            transform: translateY(-2px);
-        }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
 
-        .channel-logo {
-            width: 72px;
-            height: 72px;
-            object-fit: contain;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background: #fff;
-            padding: 6px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-        }
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
 
-        .channel-card:hover .channel-logo {
-            transform: scale(1.05);
-        }
+    .channel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s;
+    }
 
-        .channel-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            line-height: 1.3;
-            word-break: break-word;
-            color: #f0f0f0;
-        }
+    .channel-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
 
-        .channel-quality {
-            font-size: 0.7rem;
-            color: #7a7a85;
-            margin-top: 4px;
-            font-weight: 400;
-        }
+    .channel-info h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
 
-        /* ---------- LOADING / ERROR STATUS ---------- */
-        .status-text {
-            font-size: 14px;
-            color: #ffa500;
-            padding: 4px 0;
-            text-align: center;
-        }
+    .channel-category {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 0.8rem;
+    }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+    }
 
-            h1 {
-                font-size: 1.5rem;
-            }
+    .badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--accent);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+    }
 
-            .channel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-                gap: 10px;
-            }
-
-            .channel-logo {
-                width: 56px;
-                height: 56px;
-            }
-        }
-    </style>
+    .format-tag {
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>📺 Live Channels</h1>
-    <p class="subtitle">Click a channel logo to start watching</p>
+<div class="container">
+  <header>
+    <h1>Channel Guide</h1>
+    <p>Browsing 101 Available Streams</p>
+  </header>
 
-    <!-- Video Player -->
-    <div class="player-section">
-        <video id="liveStream" controls autoplay muted></video>
-        <div class="player-status" id="playerStatus">Select a channel to play</div>
+  <div class="controls">
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search channels by name..." oninput="filterChannels()">
+    
+    <div class="category-tabs" id="categoryTabs">
+      <button class="tab-btn active" onclick="setCategory('All')">All</button>
+      <button class="tab-btn" onclick="setCategory('Entertainment & Movies')">Entertainment & Movies</button>
+      <button class="tab-btn" onclick="setCategory('Kids & Family')">Kids & Family</button>
+      <button class="tab-btn" onclick="setCategory('Sports & Outdoors')">Sports & Outdoors</button>
+      <button class="tab-btn" onclick="setCategory('News & Regional')">News & Regional</button>
+      <button class="tab-btn" onclick="setCategory('Documentary & Lifestyle')">Documentary & Lifestyle</button>
+      <button class="tab-btn" onclick="setCategory('Music & Audio')">Music & Audio</button>
+      <button class="tab-btn" onclick="setCategory('International')">International</button>
     </div>
+  </div>
+
+  <div class="channel-grid" id="channelGrid"></div>
+</div>
+
+<script>
+  const channels = [
+    // Entertainment & Movies
+    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
+    { name: "Hallmark Movies & More", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
+    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
+    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8" },
+    { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Paramount Network", category: "Entertainment & Movies", res: "720p", format: "m3u8" },
+    { name: "MovieSphere by Lionsgate", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Pluto Classic Movie Westerns", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "America's Next Top Model", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Bar Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Best of The Drew Barrymore Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Bondi Rescue", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Catfish", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Diagnosis Murder", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Doc Martin", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Dynasty", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Frasier", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Gunsmoke", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Happy Days", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "I Love Lucy", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Ink Master", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "JAG", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Matlock", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Mission Impossible", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "MTV Dating", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "MTV Jersey Shore", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "MTV Reality", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "MTV Ridiculousness", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Nashville", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "NCIS", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "NCIS: Los Angeles", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Perry Mason", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Rawhide", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "South Park", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Andy Griffith Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Beverly Hillbillies", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Challenge", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Graham Norton Show", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Judge Judy Channel", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "The Love Boat", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+    { name: "Three's Company", category: "Entertainment & Movies", res: "Live", format: "m3u8" },
+
+    // Kids & Family
+    { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8" },
+    { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8" },
+    { name: "Bob l'eponge", category: "Kids & Family", res: "720p", format: "m3u8" },
+    { name: "Family Jr", category: "Kids & Family", res: "576p", format: "m3u8" },
+    { name: "FilmRise Anime", category: "Kids & Family", res: "720p", format: "m3u8" },
+    { name: "Kidoodle.TV", category: "Kids & Family", res: "1080p", format: "m3u8" },
+    { name: "Mr. Bean Animated", category: "Kids & Family", res: "1080p", format: "m3u8" },
+    { name: "NickToons", category: "Kids & Family", res: "Live", format: "m3u8" },
+    { name: "One Piece", category: "Kids & Family", res: "Live", format: "m3u8" },
+    { name: "SpongeBob SquarePants", category: "Kids & Family", res: "720p", format: "m3u8" },
+
+    // Sports & Outdoors
+    { name: "Discovery Turbo / MotoTrend", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "CTV Speed Channel", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
+    { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "TSN1", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "TSN2", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "TSN3", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "TSN4", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "FIFA+ United States", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
+    { name: "Fight Network", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "Game+", category: "Sports & Outdoors", res: "720p", format: "m3u8" },
+    { name: "Hard Knocks", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "Outdoor Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "Red Bull TV US", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+    { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8" },
+
+    // News & Regional
+    { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8" },
+    { name: "CityNews Calgary", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CityNews Edmonton", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CityNews Toronto", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CityNews Vancouver", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8" },
+    { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8" },
+    { name: "ICI RDI", category: "News & Regional", res: "720p", format: "m3u8" },
+    { name: "The News Forum", category: "News & Regional", res: "1080p", format: "m3u8" },
+    { name: "The Weather Network", category: "News & Regional", res: "720p", format: "m3u8" },
+    { name: "Legislative Assembly B.C.", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "Legislative Assembly Ontario", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "Canada One", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CFTO-DT", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CHCH-DT", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "CTV 2 Atlantic", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "ICI Montreal", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "NACTV", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "Newfoundland Television", category: "News & Regional", res: "Live", format: "m3u8" },
+    { name: "Now TV Edmonton", category: "News & Regional", res: "Live", format: "m3u8" },
+
+    // Documentary & Lifestyle
+    { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "Autentic Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+    { name: "CTV Life Channel", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+    { name: "HauntTV CA", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+    { name: "Home Network / HGTV", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+    { name: "INWILD", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "Love Nature", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "PBS Travel", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "Slice", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+    { name: "Total Crime", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8" },
+    { name: "TSC (Today's Shopping Choice)", category: "Documentary & Lifestyle", res: "720p", format: "m3u8" },
+
+    // Music & Audio
+    { name: "iTV Afrobeats", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "iTV Arabic", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "iTV Indian", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "iTV Latin", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "iTV Turkish", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "iTV Urban Music", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "MTV Biggest Pop", category: "Music & Audio", res: "1080p", format: "m3u8" },
+    { name: "Much", category: "Music & Audio", res: "720p", format: "m3u8" },
+    { name: "Qello Concerts by Stingray", category: "Music & Audio", res: "1080p", format: "m3u8" },
+    { name: "Stingray Cityscapes", category: "Music & Audio", res: "Live", format: "mpd" },
+    { name: "Stingray Classic Rock", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Classica", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Cozy Cafe", category: "Music & Audio", res: "Live", format: "mpd" },
+    { name: "Stingray DJAZZ", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Easy Listening", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Exitos del Momento", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Flashback 70s", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Greatest Hits", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Hit List", category: "Music & Audio", res: "Live", format: "m3u8" },
+    { name: "Stingray Naturescape", category: "Music & Audio", res: "Live", format: "mpd" },
+
+    // International
+    { name: "Kutonen (Finland)", category: "International", res: "Live", format: "m3u8" },
+    { name: "TLC Finland", category: "International", res: "Live", format: "m3u8" },
+    { name: "Star Channel Finland", category: "International", res: "Live", format: "m3u8" },
+    { name: "MTV Ava (Finland)", category: "International", res: "Live", format: "m3u8" },
+    { name: "Hero (Finland)", category: "International", res: "Live", format: "m3u8" },
+    { name: "5AAB TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "C Malayalam TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "DesheBideshe TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Deshi TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Doyel TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Gaunda Punjab TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "GH Canada TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Hamdard TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Hyder TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "IIPC TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Pardesi TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Prime Asia TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Probashi TV News", category: "International", res: "Live", format: "m3u8" },
+    { name: "PTC Punjabi Canada", category: "International", res: "Live", format: "m3u8" },
+    { name: "Sohail TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Sooriyan TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Tamil Entertainment Television", category: "International", res: "Live", format: "m3u8" },
+    { name: "TamilVision-TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Afghan Nobel Movies", category: "International", res: "Live", format: "m3u8" },
+    { name: "Afghan Nobel TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Ayaz TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Erfan Halgheh TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Azstar TV HD", category: "International", res: "Live", format: "m3u8" },
+    { name: "Montreal Greek TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "NTD TV Canada", category: "International", res: "Live", format: "m3u8" },
+    { name: "Quo Vadis TV", category: "International", res: "Live", format: "m3u8" },
+    { name: "Rai World Premium", category: "International", res: "Live", format: "m3u8" },
+    { name: "STAR International", category: "International", res: "Live", format: "m3u8" },
+    { name: "icnet 1", category: "International", res: "Live", format: "m3u8" },
+    { name: "FEVA TV", category: "International", res: "Live", format: "m3u8" }
+  ];
+
+  let currentCategory = 'All';
+
+  function renderChannels(data) {
+    const grid = document.getElementById('channelGrid');
+    grid.innerHTML = '';
+    
+    if(data.length === 0) {
+      grid.innerHTML = `<p style="color: var(--text-sub); grid-column: 1/-1; text-align: center; padding: 2rem;">No channels match your search.</p>`;
+      return;
+    }
+
+    data.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'channel-card';
+      card.innerHTML = `
+        <div class="channel-info">
+          <h3>${ch.name}</h3>
+          <div class="channel-category">${ch.category}</div>
+        </div>
+        <div class="card-footer">
+          <span class="badge">${ch.res}</span>
+          <span class="format-tag">${ch.format}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function setCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText === cat);
+    });
+    filterChannels();
+  }
+
+  function filterChannels() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = channels.filter(ch => {
+      const matchesCategory = currentCategory === 'All' || ch.category === currentCategory;
+      const matchesSearch = ch.name.toLowerCase().includes(query);
+      return matchesCategory && matchesSearch;
+    });
+    renderChannels(filtered);
+  }
+
+  // Initial render
+  renderChannels(channels);
+</script>
 
-    <!-- Channel Grid -->
-    <div class="channel-grid">
-
-        <!-- Kutonen -->
-        <a href="https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Kutonen');">
-            <img src="https://ui-avatars.com/api/?name=Kutonen&background=FF6A00&color=fff&size=128"
-                 alt="Kutonen" class="channel-logo">
-            <span class="channel-name">Kutonen</span>
-            <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- SYFY -->
-        <a href="https://gpuserver5.tier1streams.com/SYFY/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'SYFY');">
-            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='100%' height='100%' fill='%236F2DA8'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' fill='%23FFFFFF' font-family='sans-serif' font-weight='900' font-size='32'>SYFY</text></svg>"
-                 alt="SYFY" class="channel-logo">
-            <span class="channel-name">SYFY</span>
-            <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Nick Jr. -->
-        <a href="https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Nick Jr.');">
-            <img src="https://ui-avatars.com/api/?name=Nick+Jr&background=00A3E0&color=fff&size=128"
-                 alt="Nick Jr." class="channel-logo">
-            <span class="channel-name">Nick Jr.</span>
-            <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Discovery Turbo -->
-        <a href="https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Discovery Turbo');">
-            <img src="https://ui-avatars.com/api/?name=Discovery+Turbo&background=0080FF&color=fff&size=128"
-                 alt="Discovery Turbo" class="channel-logo">
-            <span class="channel-name">Discovery Turbo</span>
-            <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Hallmark Movies & More -->
-        <a href="https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hallmark Movies &amp; More');">
-            <img src="https://ui-avatars.com/api/?name=Hallmark+Movies&background=8A1538&color=fff&size=128"
-                 alt="Hallmark Movies &amp; More" class="channel-logo">
-            <span class="channel-name">Hallmark Movies &amp; More</span>
-            <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Xumo Action Movies -->
-        <a href="https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Xumo Movies');">
-            <img src="https://ui-avatars.com/api/?name=Xumo+Movies&background=111111&color=fff&size=128"
-                 alt="Xumo Movies" class="channel-logo">
-            <span class="channel-name">Xumo Movies</span>
-            <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TLC Finland -->
-        <a href="https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TLC Finland');">
-            <img src="https://ui-avatars.com/api/?name=TLC&background=E9004C&color=fff&size=128"
-                 alt="TLC Finland" class="channel-logo">
-            <span class="channel-name">TLC Finland</span>
-            <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Star Channel Finland -->
-        <a href="https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Star Channel Finland');">
-             <img src="https://ui-avatars.com/api/?name=Star&background=0047AB&color=fff&size=128"
-                  alt="Star Channel Finland" class="channel-logo">
-             <span class="channel-name">Star Channel Finland</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- MTV Ava -->
-        <a href="https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Ava');">
-             <img src="https://ui-avatars.com/api/?name=Ava&background=00A859&color=fff&size=128"
-                  alt="MTV Ava" class="channel-logo">
-             <span class="channel-name">MTV Ava</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Hero -->
-        <a href="https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hero');">
-             <img src="https://ui-avatars.com/api/?name=Hero&background=E67E22&color=fff&size=128"
-                  alt="Hero" class="channel-logo">
-             <span class="channel-name">Hero</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- 5AAB TV -->
-        <a href="http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, '5AAB TV');">
-             <img src="https://ui-avatars.com/api/?name=5AAB+TV&background=2980B9&color=fff&size=128"
-                  alt="5AAB TV" class="channel-logo">
-             <span class="channel-name">5AAB TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- 48 Hours -->
-        <a href="https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, '48 Hours');">
-             <img src="https://ui-avatars.com/api/?name=48+Hours&background=34495E&color=fff&size=128"
-                  alt="48 Hours" class="channel-logo">
-             <span class="channel-name">48 Hours</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- A&E -->
-        <a href="https://gpuserver3.tier1streams.com/AE/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'A&E');">
-             <img src="https://ui-avatars.com/api/?name=AE&background=8E44AD&color=fff&size=128"
-                  alt="A&E" class="channel-logo">
-             <span class="channel-name">A&E</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Afghan Nobel Movies -->
-        <a href="https://live.relentlessinnovations.net:1936/afghannobel/afghannobel/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Afghan Nobel Movies');">
-             <img src="https://ui-avatars.com/api/?name=AN+Movies&background=D35400&color=fff&size=128"
-                  alt="Afghan Nobel Movies" class="channel-logo">
-             <span class="channel-name">Afghan Nobel Movies</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Afghan Nobel TV -->
-        <a href="https://live.relentlessinnovations.net:1936/afghannobeltv/afghannobeltv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Afghan Nobel TV');">
-             <img src="https://ui-avatars.com/api/?name=AN+TV&background=16A085&color=fff&size=128"
-                  alt="Afghan Nobel TV" class="channel-logo">
-             <span class="channel-name">Afghan Nobel TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- America's Next Top Model -->
-        <a href="https://jmp2.uk/plu-68679fc6bb46d0bdd38ac9a4.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Americas Next Top Model');">
-             <img src="https://ui-avatars.com/api/?name=ANTM&background=C0392B&color=fff&size=128"
-                  alt="America's Next Top Model" class="channel-logo">
-             <span class="channel-name">America's Next Top Model</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Animation+ -->
-        <a href="https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Animation+');">
-             <img src="https://ui-avatars.com/api/?name=Animation&background=F39C12&color=fff&size=128"
-                  alt="Animation+" class="channel-logo">
-             <span class="channel-name">Animation+</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Autentic History -->
-        <a href="https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Autentic History');">
-             <img src="https://ui-avatars.com/api/?name=Autentic+History&background=7F8C8D&color=fff&size=128"
-                  alt="Autentic History" class="channel-logo">
-             <span class="channel-name">Autentic History</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Autentic Travel -->
-        <a href="https://cb0c87cc605942ff9766a4e6744bbadc.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticTravel/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Autentic Travel');">
-             <img src="https://ui-avatars.com/api/?name=Autentic+Travel&background=27AE60&color=fff&size=128"
-                  alt="Autentic Travel" class="channel-logo">
-             <span class="channel-name">Autentic Travel</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Ayaz TV -->
-        <a href="https://janya-ayaztv.vgcdn.net/ptnr-WebApp/title-Ayaz_TV/v1/vglive-sk-934820/main.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Ayaz TV');">
-             <img src="https://ui-avatars.com/api/?name=Ayaz+TV&background=2C3E50&color=fff&size=128"
-                  alt="Ayaz TV" class="channel-logo">
-             <span class="channel-name">Ayaz TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Azstar TV HD -->
-        <a href="https://live.livestreamtv.ca/azstar/amlst:azstar/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Azstar TV HD');">
-             <img src="https://ui-avatars.com/api/?name=Azstar&background=2980B9&color=fff&size=128"
-                  alt="Azstar TV HD" class="channel-logo">
-             <span class="channel-name">Azstar TV HD</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Bar Rescue -->
-        <a href="https://jmp2.uk/plu-655f2ee6c0fc88000877d26c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Bar Rescue');">
-             <img src="https://ui-avatars.com/api/?name=Bar+Rescue&background=E74C3C&color=fff&size=128"
-                  alt="Bar Rescue" class="channel-logo">
-             <span class="channel-name">Bar Rescue</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Best of The Drew Barrymore Show -->
-        <a href="https://jmp2.uk/plu-6310cbee5a8ad300070fdb7c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Best of The Drew Barrymore Show');">
-             <img src="https://ui-avatars.com/api/?name=Drew+Barrymore&background=9B59B6&color=fff&size=128"
-                  alt="Best of The Drew Barrymore Show" class="channel-logo">
-             <span class="channel-name">Best of The Drew Barrymore Show</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- BNN Bloomberg -->
-        <a href="https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'BNN Bloomberg');">
-             <img src="https://ui-avatars.com/api/?name=BNN&background=1ABC9C&color=fff&size=128"
-                  alt="BNN Bloomberg" class="channel-logo">
-             <span class="channel-name">BNN Bloomberg</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Bob l'eponge -->
-        <a href="https://jmp2.uk/plu-66588931a3865300085ca800.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Bob l eponge');">
-             <img src="https://ui-avatars.com/api/?name=Bob+pondu&background=F1C40F&color=fff&size=128"
-                  alt="Bob l'eponge" class="channel-logo">
-             <span class="channel-name">Bob l'eponge</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Bonanza -->
-        <a href="https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Bonanza');">
-             <img src="https://ui-avatars.com/api/?name=Bonanza&background=D35400&color=fff&size=128"
-                  alt="Bonanza" class="channel-logo">
-             <span class="channel-name">Bonanza</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Bondi Rescue -->
-        <a href="https://jmp2.uk/plu-66166989635c7500084105a2.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Bondi Rescue');">
-             <img src="https://ui-avatars.com/api/?name=Bondi+Rescue&background=3498DB&color=fff&size=128"
-                  alt="Bondi Rescue" class="channel-logo">
-             <span class="channel-name">Bondi Rescue</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- C Malayalam TV -->
-        <a href="https://2-fss-2.streamhoster.com/pl_120/206508-3261972-1/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'C Malayalam TV');">
-             <img src="https://ui-avatars.com/api/?name=C+Malayalam&background=8E44AD&color=fff&size=128"
-                  alt="C Malayalam TV" class="channel-logo">
-             <span class="channel-name">C Malayalam TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Cable 14 Hamilton -->
-        <a href="https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Cable 14 Hamilton');">
-             <img src="https://ui-avatars.com/api/?name=Cable+14&background=2C3E50&color=fff&size=128"
-                  alt="Cable 14 Hamilton" class="channel-logo">
-             <span class="channel-name">Cable 14 Hamilton</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Canada One -->
-        <a href="http://cdn8.live247stream.com/canadaone/tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Canada One');">
-             <img src="https://ui-avatars.com/api/?name=Canada+One&background=C0392B&color=fff&size=128"
-                  alt="Canada One" class="channel-logo">
-             <span class="channel-name">Canada One</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Canal Savoir -->
-        <a href="https://hls.savoir.media/live/stream.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Canal Savoir');">
-             <img src="https://ui-avatars.com/api/?name=Savoir&background=16A085&color=fff&size=128"
-                  alt="Canal Savoir" class="channel-logo">
-             <span class="channel-name">Canal Savoir</span>
-             <span class="channel-quality">360p</span>
-        </a>
-
-        <!-- Catfish -->
-        <a href="https://jmp2.uk/plu-64f8a2a23a0d700008a6ed7b.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Catfish');">
-             <img src="https://ui-avatars.com/api/?name=Catfish&background=2980B9&color=fff&size=128"
-                  alt="Catfish" class="channel-logo">
-             <span class="channel-name">Catfish</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- CBC News -->
-        <a href="https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CBC News');">
-             <img src="https://ui-avatars.com/api/?name=CBC+News&background=C0392B&color=fff&size=128"
-                  alt="CBC News" class="channel-logo">
-             <span class="channel-name">CBC News</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- CFTO-DT -->
-        <a href="http://stream.cammonitorplus.net/1712/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CFTO-DT');">
-             <img src="https://ui-avatars.com/api/?name=CFTO&background=27AE60&color=fff&size=128"
-                  alt="CFTO-DT" class="channel-logo">
-             <span class="channel-name">CFTO-DT</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Channel Y -->
-        <a href="http://cdn19.live247stream.com/channely/tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Channel Y');">
-             <img src="https://ui-avatars.com/api/?name=Channel+Y&background=8E44AD&color=fff&size=128"
-                  alt="Channel Y" class="channel-logo">
-             <span class="channel-name">Channel Y</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CHCH-DT -->
-        <a href="http://185.246.209.113/CHCHHD/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CHCH-DT');">
-             <img src="https://ui-avatars.com/api/?name=CHCH&background=D35400&color=fff&size=128"
-                  alt="CHCH-DT" class="channel-logo">
-             <span class="channel-name">CHCH-DT</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Cheers -->
-        <a href="https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Cheers');">
-             <img src="https://ui-avatars.com/api/?name=Cheers&background=D4AC0D&color=fff&size=128"
-                  alt="Cheers" class="channel-logo">
-             <span class="channel-name">Cheers</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- CityNews Calgary -->
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Calgary');">
-             <img src="https://ui-avatars.com/api/?name=CityNews+CGY&background=C0392B&color=fff&size=128"
-                  alt="CityNews Calgary" class="channel-logo">
-             <span class="channel-name">CityNews Calgary</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CityNews Edmonton -->
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024053/Regional_Live_8/Video-2Mbps.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Edmonton');">
-             <img src="https://ui-avatars.com/api/?name=CityNews+EDM&background=C0392B&color=fff&size=128"
-                  alt="CityNews Edmonton" class="channel-logo">
-             <span class="channel-name">CityNews Edmonton</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- CityNews Toronto -->
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Toronto');">
-             <img src="https://ui-avatars.com/api/?name=CityNews+TOR&background=C0392B&color=fff&size=128"
-                  alt="CityNews Toronto" class="channel-logo">
-             <span class="channel-name">CityNews Toronto</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CityNews Vancouver -->
-        <a href="https://citynewsregional.akamaized.net/hls/live/1024054/Regional_Live_9/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CityNews Vancouver');">
-             <img src="https://ui-avatars.com/api/?name=CityNews+VAN&background=C0392B&color=fff&size=128"
-                  alt="CityNews Vancouver" class="channel-logo">
-             <span class="channel-name">CityNews Vancouver</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Comedy Central -->
-        <a href="https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Comedy Central');">
-             <img src="https://ui-avatars.com/api/?name=Comedy+Central&background=2C3E50&color=fff&size=128"
-                  alt="Comedy Central" class="channel-logo">
-             <span class="channel-name">Comedy Central</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Cottage Life -->
-        <a href="http://185.246.209.113/CottageLife/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Cottage Life');">
-             <img src="https://ui-avatars.com/api/?name=Cottage+Life&background=27AE60&color=fff&size=128"
-                  alt="Cottage Life" class="channel-logo">
-             <span class="channel-name">Cottage Life</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Cowboy Channel -->
-        <a href="https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Cowboy Channel');">
-             <img src="https://ui-avatars.com/api/?name=Cowboy&background=78281F&color=fff&size=128"
-                  alt="Cowboy Channel" class="channel-logo">
-             <span class="channel-name">Cowboy Channel</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- CP24 -->
-        <a href="https://trs1.aynaott.com/cp24/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CP24');">
-             <img src="https://ui-avatars.com/api/?name=CP24&background=C0392B&color=fff&size=128"
-                  alt="CP24" class="channel-logo">
-             <span class="channel-name">CP24</span>
-             <span class="channel-quality">576p</span>
-        </a>
-
-        <!-- CPAC -->
-        <a href="https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CPAC');">
-             <img src="https://ui-avatars.com/api/?name=CPAC&background=2980B9&color=fff&size=128"
-                  alt="CPAC" class="channel-logo">
-             <span class="channel-name">CPAC</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CTV 2 Atlantic -->
-        <a href="http://stream.cammonitorplus.net/1731/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CTV 2 Atlantic');">
-             <img src="https://ui-avatars.com/api/?name=CTV2+Atlantic&background=1F618D&color=fff&size=128"
-                  alt="CTV 2 Atlantic" class="channel-logo">
-             <span class="channel-name">CTV 2 Atlantic</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CTV Life Channel -->
-        <a href="http://185.246.209.113/ANIMALPLANETHD/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CTV Life Channel');">
-             <img src="https://ui-avatars.com/api/?name=CTV+Life&background=117A65&color=fff&size=128"
-                  alt="CTV Life Channel" class="channel-logo">
-             <span class="channel-name">CTV Life Channel</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- CTV Speed Channel -->
-        <a href="https://gpuserver3.tier1streams.com/DISCOVERY_SCIENCE_HD/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'CTV Speed Channel');">
-             <img src="https://ui-avatars.com/api/?name=CTV+Speed&background=B9770E&color=fff&size=128"
-                  alt="CTV Speed Channel" class="channel-logo">
-             <span class="channel-name">CTV Speed Channel</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- DesheBideshe TV -->
-        <a href="https://dbcanada.sonarbanglatv.com/deshebideshe/dbtv/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'DesheBideshe TV');">
-             <img src="https://ui-avatars.com/api/?name=DesheBideshe&background=5D6D7E&color=fff&size=128"
-                  alt="DesheBideshe TV" class="channel-logo">
-             <span class="channel-name">DesheBideshe TV</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Deshi TV -->
-        <a href="https://deshitv.deshitv24.net/live/myStream/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Deshi TV');">
-             <img src="https://ui-avatars.com/api/?name=Deshi+TV&background=2E4053&color=fff&size=128"
-                  alt="Deshi TV" class="channel-logo">
-             <span class="channel-name">Deshi TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Diagnosis Murder -->
-        <a href="https://jmp2.uk/plu-65fd548f29adfd00089c662c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Diagnosis Murder');">
-             <img src="https://ui-avatars.com/api/?name=Diagnosis+Murder&background=8E44AD&color=fff&size=128"
-                  alt="Diagnosis Murder" class="channel-logo">
-             <span class="channel-name">Diagnosis Murder</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Doc Martin -->
-        <a href="https://jmp2.uk/plu-62e922f6675f71000736db3b.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Doc Martin');">
-             <img src="https://ui-avatars.com/api/?name=Doc+Martin&background=1F618D&color=fff&size=128"
-                  alt="Doc Martin" class="channel-logo">
-             <span class="channel-name">Doc Martin</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Service -->
-        <a href="https://jmp2.uk/plu-62e951258a26d40007b3034c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Service');">
-             <img src="https://ui-avatars.com/api/?name=Service&background=512E5F&color=fff&size=128"
-                  alt="Service" class="channel-logo">
-             <span class="channel-name">Service</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Doyel TV -->
-        <a href="https://3d46w.doyeltv.com/memfs/aa3aa6f7-ec12-41a2-8183-a891e157bbf8.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Doyel TV');">
-             <img src="https://ui-avatars.com/api/?name=Doyel+TV&background=117A65&color=fff&size=128"
-                  alt="Doyel TV" class="channel-logo">
-             <span class="channel-name">Doyel TV</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Dynasty -->
-        <a href="https://jmp2.uk/plu-62e919ca865c590007ecd0bd.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Dynasty');">
-             <img src="https://ui-avatars.com/api/?name=Dynasty&background=935116&color=fff&size=128"
-                  alt="Dynasty" class="channel-logo">
-             <span class="channel-name">Dynasty</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Erfan Halgheh TV -->
-        <a href="https://hls.erfanhalgheh.live/hls/stream.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Erfan Halgheh TV');">
-             <img src="https://ui-avatars.com/api/?name=Erfan+Halgheh&background=1B4F72&color=fff&size=128"
-                  alt="Erfan Halgheh TV" class="channel-logo">
-             <span class="channel-name">Erfan Halgheh TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Family Jr -->
-        <a href="http://tvsen5.aynascope.net/familyjr/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Family Jr');">
-             <img src="https://ui-avatars.com/api/?name=Family+Jr&background=F39C12&color=fff&size=128"
-                  alt="Family Jr" class="channel-logo">
-             <span class="channel-name">Family Jr</span>
-             <span class="channel-quality">576p</span>
-        </a>
-
-        <!-- FEVA TV -->
-        <a href="https://d21x3vavxu7p2x.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/DistroTV-MuxIP-FEVATV/416.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'FEVA TV');">
-             <img src="https://ui-avatars.com/api/?name=FEVA+TV&background=884EA0&color=fff&size=128"
-                  alt="FEVA TV" class="channel-logo">
-             <span class="channel-name">FEVA TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- FIFA+ United States -->
-        <a href="https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'FIFA+ United States');">
-             <img src="https://ui-avatars.com/api/?name=FIFA+US&background=27AE60&color=fff&size=128"
-                  alt="FIFA+ United States" class="channel-logo">
-             <span class="channel-name">FIFA+ United States</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Fight Network -->
-        <a href="https://d12a2vxqkkh1bo.cloudfront.net/hls/main.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Fight Network');">
-             <img src="https://ui-avatars.com/api/?name=Fight+Network&background=C0392B&color=fff&size=128"
-                  alt="Fight Network" class="channel-logo">
-             <span class="channel-name">Fight Network</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- FilmRise Anime -->
-        <a href="https://dvu7aia8rjlfm.cloudfront.net/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'FilmRise Anime');">
-             <img src="https://ui-avatars.com/api/?name=FilmRise+Anime&background=D35400&color=fff&size=128"
-                  alt="FilmRise Anime" class="channel-logo">
-             <span class="channel-name">FilmRise Anime</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Frasier -->
-        <a href="https://jmp2.uk/plu-62f4f90e39183b000769f12b.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Frasier');">
-             <img src="https://ui-avatars.com/api/?name=Frasier&background=2980B9&color=fff&size=128"
-                  alt="Frasier" class="channel-logo">
-             <span class="channel-name">Frasier</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Game+ -->
-        <a href="https://a-cdn.klowdtv.com/live2/fntsy_720p/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Game+');">
-             <img src="https://ui-avatars.com/api/?name=Game+Plus&background=1B4F72&color=fff&size=128"
-                  alt="Game+" class="channel-logo">
-             <span class="channel-name">Game+</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Gaunda Punjab TV -->
-        <a href="http://cdn6.live247stream.com/gaundapunjab/tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Gaunda Punjab TV');">
-             <img src="https://ui-avatars.com/api/?name=Gaunda+Punjab&background=D4AC0D&color=fff&size=128"
-                  alt="Gaunda Punjab TV" class="channel-logo">
-             <span class="channel-name">Gaunda Punjab TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- GH Canada TV -->
-        <a href="https://stream.bozztv.com/tvstat-tamar/tvstat-tamar/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'GH Canada TV');">
-             <img src="https://ui-avatars.com/api/?name=GH+Canada&background=27AE60&color=fff&size=128"
-                  alt="GH Canada TV" class="channel-logo">
-             <span class="channel-name">GH Canada TV</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Golf Channel -->
-        <a href="https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Golf Channel');">
-             <img src="https://ui-avatars.com/api/?name=Golf+Channel&background=1E8449&color=fff&size=128"
-                  alt="Golf Channel" class="channel-logo">
-             <span class="channel-name">Golf Channel</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Gunsmoke -->
-        <a href="https://jmp2.uk/plu-62e916affb29c60007211c8a.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Gunsmoke');">
-             <img src="https://ui-avatars.com/api/?name=Gunsmoke&background=78281F&color=fff&size=128"
-                  alt="Gunsmoke" class="channel-logo">
-             <span class="channel-name">Gunsmoke</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Hamdard TV -->
-        <a href="https://tv.hamdardtv.com/hamdard/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hamdard TV');">
-             <img src="https://ui-avatars.com/api/?name=Hamdard+TV&background=2E4053&color=fff&size=128"
-                  alt="Hamdard TV" class="channel-logo">
-             <span class="channel-name">Hamdard TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Happy Days -->
-        <a href="https://jmp2.uk/plu-62e917b5e354cf0007b97a67.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Happy Days');">
-             <img src="https://ui-avatars.com/api/?name=Happy+Days&background=F39C12&color=fff&size=128"
-                  alt="Happy Days" class="channel-logo">
-             <span class="channel-name">Happy Days</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Hard Knocks -->
-        <a href="https://d3uyzhwvmemdyf.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/Hard-Knocks-DistroTV/109.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hard Knocks');">
-             <img src="https://ui-avatars.com/api/?name=Hard+Knocks&background=212F3D&color=fff&size=128"
-                  alt="Hard Knocks" class="channel-logo">
-             <span class="channel-name">Hard Knocks</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- HauntTV CA -->
-        <a href="https://jmp2.uk/plu-63934c218ef524000757b122.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'HauntTV CA');">
-             <img src="https://ui-avatars.com/api/?name=HauntTV&background=4A235A&color=fff&size=128"
-                  alt="HauntTV CA" class="channel-logo">
-             <span class="channel-name">HauntTV CA</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Home Network -->
-        <a href="http://40.160.24.53/HGTV/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Home Network');">
-             <img src="https://ui-avatars.com/api/?name=Home+Network&background=D35400&color=fff&size=128"
-                  alt="Home Network" class="channel-logo">
-             <span class="channel-name">Home Network</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Hyder TV -->
-        <a href="https://cdn.live247stream.com/hyder/tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Hyder TV');">
-             <img src="https://ui-avatars.com/api/?name=Hyder+TV&background=16A085&color=fff&size=128"
-                  alt="Hyder TV" class="channel-logo">
-             <span class="channel-name">Hyder TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- I Love Lucy -->
-        <a href="https://jmp2.uk/plu-63a2f1dda0d69700078b7cba.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'I Love Lucy');">
-             <img src="https://ui-avatars.com/api/?name=I+Love+Lucy&background=E74C3C&color=fff&size=128"
-                  alt="I Love Lucy" class="channel-logo">
-             <span class="channel-name">I Love Lucy</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- ICI Montreal -->
-        <a href="https://amdici.akamaized.net/hls/live/873426/ICI-Live-Stream/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'ICI Montreal');">
-             <img src="https://ui-avatars.com/api/?name=ICI+Montreal&background=2980B9&color=fff&size=128"
-                  alt="ICI Montreal" class="channel-logo">
-             <span class="channel-name">ICI Montreal</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- ICI RDI -->
-        <a href="https://rcavlive.akamaized.net/hls/live/704025/xcanrdi/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'ICI RDI');">
-             <img src="https://ui-avatars.com/api/?name=ICI+RDI&background=8E44AD&color=fff&size=128"
-                  alt="ICI RDI" class="channel-logo">
-             <span class="channel-name">ICI RDI</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- icnet 1 -->
-        <a href="https://icnet1hls.wns.live/hls/stream.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'icnet 1');">
-             <img src="https://ui-avatars.com/api/?name=icnet+1&background=34495E&color=fff&size=128"
-                  alt="icnet 1" class="channel-logo">
-             <span class="channel-name">icnet 1</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- IIPC TV -->
-        <a href="https://rpn.bozztv.com/dvrfl03/iipctv/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'IIPC TV');">
-             <img src="https://ui-avatars.com/api/?name=IIPC+TV&background=117A65&color=fff&size=128"
-                  alt="IIPC TV" class="channel-logo">
-             <span class="channel-name">IIPC TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Ink Master -->
-        <a href="https://jmp2.uk/plu-655f2d713944b60008bc7e90.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Ink Master');">
-             <img src="https://ui-avatars.com/api/?name=Ink+Master&background=2C3E50&color=fff&size=128"
-                  alt="Ink Master" class="channel-logo">
-             <span class="channel-name">Ink Master</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- INWILD -->
-        <a href="https://amg00861-terninternation-inwild-samsunguk-w5wic.amagi.tv/playlist/amg00861-terninternation-inwild-samsunguk/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'INWILD');">
-             <img src="https://ui-avatars.com/api/?name=INWILD&background=1E8449&color=fff&size=128"
-                  alt="INWILD" class="channel-logo">
-             <span class="channel-name">INWILD</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- iTV Afrobeats Music -->
-        <a href="https://ca1.buximedia.com/itv/afrobeats/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Afrobeats Music');">
-             <img src="https://ui-avatars.com/api/?name=Afrobeats&background=D35400&color=fff&size=128"
-                  alt="iTV Afrobeats Music" class="channel-logo">
-             <span class="channel-name">iTV Afrobeats Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- iTV Arabic Music -->
-        <a href="https://ca1.buximedia.com/itv/arabic/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Arabic Music');">
-             <img src="https://ui-avatars.com/api/?name=Arabic+Music&background=B7950B&color=fff&size=128"
-                  alt="iTV Arabic Music" class="channel-logo">
-             <span class="channel-name">iTV Arabic Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- iTV Indian Music -->
-        <a href="https://ca1.buximedia.com/itv/indian/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Indian Music');">
-             <img src="https://ui-avatars.com/api/?name=Indian+Music&background=C0392B&color=fff&size=128"
-                  alt="iTV Indian Music" class="channel-logo">
-             <span class="channel-name">iTV Indian Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- iTV Latin Music -->
-        <a href="https://ca1.buximedia.com/itv/latin/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Latin Music');">
-             <img src="https://ui-avatars.com/api/?name=Latin+Music&background=8E44AD&color=fff&size=128"
-                  alt="iTV Latin Music" class="channel-logo">
-             <span class="channel-name">iTV Latin Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- iTV Turkish Music -->
-        <a href="https://ca1.buximedia.com/itv/turkish/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Turkish Music');">
-             <img src="https://ui-avatars.com/api/?name=Turkish+Music&background=2980B9&color=fff&size=128"
-                  alt="iTV Turkish Music" class="channel-logo">
-             <span class="channel-name">iTV Turkish Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- iTV Urban Music -->
-        <a href="https://ca1.buximedia.com/itv/love2/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'iTV Urban Music');">
-             <img src="https://ui-avatars.com/api/?name=Urban+Music&background=16A085&color=fff&size=128"
-                  alt="iTV Urban Music" class="channel-logo">
-             <span class="channel-name">iTV Urban Music</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- JAG -->
-        <a href="https://jmp2.uk/plu-66a105f4a79dea0008aa5e0f.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'JAG');">
-             <img src="https://ui-avatars.com/api/?name=JAG&background=2E4053&color=fff&size=128"
-                  alt="JAG" class="channel-logo">
-             <span class="channel-name">JAG</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Kidoodle.TV -->
-        <a href="https://amg07653-apmc-amg07653c9-samsung-us-8740.playouts.now.amagi.tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Kidoodle.TV');">
-             <img src="https://ui-avatars.com/api/?name=Kidoodle&background=F39C12&color=fff&size=128"
-                  alt="Kidoodle.TV" class="channel-logo">
-             <span class="channel-name">Kidoodle.TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Legislative Assembly of British Columbia -->
-        <a href="https://cdn3.wowza.com/5/YldIU1hsTlljRWZF/hbs-prim-house-httpo/HouseP.smil/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Legislative Assembly BC');">
-             <img src="https://ui-avatars.com/api/?name=BC+Assembly&background=2980B9&color=fff&size=128"
-                  alt="Legislative Assembly of British Columbia" class="channel-logo">
-             <span class="channel-name">Legislative Assembly BC</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Legislative Assembly of Ontario -->
-        <a href="https://temp3.isilive.ca/live/_definst_/ontla/house-en/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Legislative Assembly Ontario');">
-             <img src="https://ui-avatars.com/api/?name=ON+Assembly&background=27AE60&color=fff&size=128"
-                  alt="Legislative Assembly of Ontario" class="channel-logo">
-             <span class="channel-name">Legislative Assembly Ontario</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Love Nature -->
-        <a href="https://aegis-cloudfront-1.tubi.video/6d6d0f24-8445-4b4c-bdf6-44f9e38beaa4/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Love Nature');">
-             <img src="https://ui-avatars.com/api/?name=Love+Nature&background=229954&color=fff&size=128"
-                  alt="Love Nature" class="channel-logo">
-             <span class="channel-name">Love Nature</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Matlock -->
-        <a href="https://jmp2.uk/plu-63da365f60bc8f0008a50f44.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Matlock');">
-             <img src="https://ui-avatars.com/api/?name=Matlock&background=512E5F&color=fff&size=128"
-                  alt="Matlock" class="channel-logo">
-             <span class="channel-name">Matlock</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- MHZ -->
-        <a href="https://mhz-samsung-linear-ca.samsung.wurl.tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MHZ');">
-             <img src="https://ui-avatars.com/api/?name=MHZ&background=283747&color=fff&size=128"
-                  alt="MHZ" class="channel-logo">
-             <span class="channel-name">MHZ</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Mission Impossible -->
-        <a href="https://jmp2.uk/plu-62ea43aa0c43540007f2db96.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Mission Impossible');">
-             <img src="https://ui-avatars.com/api/?name=Mission+Impossible&background=C0392B&color=fff&size=128"
-                  alt="Mission Impossible" class="channel-logo">
-             <span class="channel-name">Mission Impossible</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Montreal Greek TV -->
-        <a href="http://live.greektv.ca/hls1/greektv.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Montreal Greek TV');">
-             <img src="https://ui-avatars.com/api/?name=Greek+TV&background=1B4F72&color=fff&size=128"
-                  alt="Montreal Greek TV" class="channel-logo">
-             <span class="channel-name">Montreal Greek TV</span>
-             <span class="channel-quality">480p</span>
-        </a>
-
-        <!-- MovieSphere by Lionsgate -->
-        <a href="https://jmp2.uk/plu-64a3d96f060e830008af6745.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MovieSphere');">
-             <img src="https://ui-avatars.com/api/?name=MovieSphere&background=D4AC0D&color=fff&size=128"
-                  alt="MovieSphere by Lionsgate" class="channel-logo">
-             <span class="channel-name">MovieSphere</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Mr. Bean Animated -->
-        <a href="https://amg00627-amg00627c23-samsung-au-4110.playouts.now.amagi.tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Mr. Bean Animated');">
-             <img src="https://ui-avatars.com/api/?name=Mr+Bean&background=D35400&color=fff&size=128"
-                  alt="Mr. Bean Animated" class="channel-logo">
-             <span class="channel-name">Mr. Bean Animated</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- MTV Biggest Pop -->
-        <a href="https://jmp2.uk/plu-65410176770cf1000866bf31.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Biggest Pop');">
-             <img src="https://ui-avatars.com/api/?name=MTV+Pop&background=E74C3C&color=fff&size=128"
-                  alt="MTV Biggest Pop" class="channel-logo">
-             <span class="channel-name">MTV Biggest Pop</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- MTV Dating -->
-        <a href="https://jmp2.uk/plu-64f8a0c230ab3300084369b8.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Dating');">
-             <img src="https://ui-avatars.com/api/?name=MTV+Dating&background=8E44AD&color=fff&size=128"
-                  alt="MTV Dating" class="channel-logo">
-             <span class="channel-name">MTV Dating</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- MTV Jersey Shore -->
-        <a href="https://jmp2.uk/plu-68b9b0dbf9cf3d7cb9f56d88.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Jersey Shore');">
-             <img src="https://ui-avatars.com/api/?name=Jersey+Shore&background=2980B9&color=fff&size=128"
-                  alt="MTV Jersey Shore" class="channel-logo">
-             <span class="channel-name">MTV Jersey Shore</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- MTV Reality -->
-        <a href="https://jmp2.uk/plu-64f89fcfd661bb00081ba45c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Reality');">
-             <img src="https://ui-avatars.com/api/?name=MTV+Reality&background=16A085&color=fff&size=128"
-                  alt="MTV Reality" class="channel-logo">
-             <span class="channel-name">MTV Reality</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- MTV Ridiculousness -->
-        <a href="https://jmp2.uk/plu-64f9cccf110545000837912e.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'MTV Ridiculousness');">
-             <img src="https://ui-avatars.com/api/?name=Ridiculousness&background=D35400&color=fff&size=128"
-                  alt="MTV Ridiculousness" class="channel-logo">
-             <span class="channel-name">MTV Ridiculousness</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Much -->
-        <a href="http://40.160.24.53/MUCH/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Much');">
-             <img src="https://ui-avatars.com/api/?name=Much&background=27AE60&color=fff&size=128"
-                  alt="Much" class="channel-logo">
-             <span class="channel-name">Much</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- NACTV -->
-        <a href="https://stream2.pivotalelements.com/memfs/2d2e1038-9eb2-44df-a9b9-109de5752f3b_output_0.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NACTV');">
-             <img src="https://ui-avatars.com/api/?name=NACTV&background=2C3E50&color=fff&size=128"
-                  alt="NACTV" class="channel-logo">
-             <span class="channel-name">NACTV</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Nashville -->
-        <a href="https://jmp2.uk/plu-65cf8d7428730900087c5907.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Nashville');">
-             <img src="https://ui-avatars.com/api/?name=Nashville&background=78281F&color=fff&size=128"
-                  alt="Nashville" class="channel-logo">
-             <span class="channel-name">Nashville</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- NCIS -->
-        <a href="https://jmp2.uk/plu-62f4f5de1c100100075665ef.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NCIS');">
-             <img src="https://ui-avatars.com/api/?name=NCIS&background=1B4F72&color=fff&size=128"
-                  alt="NCIS" class="channel-logo">
-             <span class="channel-name">NCIS</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- NCIS: Los Angeles -->
-        <a href="https://jmp2.uk/plu-66a106c8a79dea0008aa5ef3.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NCIS LA');">
-             <img src="https://ui-avatars.com/api/?name=NCIS+LA&background=1F618D&color=fff&size=128"
-                  alt="NCIS: Los Angeles" class="channel-logo">
-             <span class="channel-name">NCIS LA</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- NETV Toronto -->
-        <a href="https://eu1.vectromdigital.com:1936/netvtoronto/netvtoronto/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NETV Toronto');">
-             <img src="https://ui-avatars.com/api/?name=NETV+Toronto&background=8E44AD&color=fff&size=128"
-                  alt="NETV Toronto" class="channel-logo">
-             <span class="channel-name">NETV Toronto</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Newfoundland Television -->
-        <a href="https://2-fss-1.streamhoster.com/pl_122/201748-1431018-1/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Newfoundland TV');">
-             <img src="https://ui-avatars.com/api/?name=NFLD+TV&background=2980B9&color=fff&size=128"
-                  alt="Newfoundland Television" class="channel-logo">
-             <span class="channel-name">Newfoundland TV</span>
-             <span class="channel-quality">480p</span>
-        </a>
-
-        <!-- NickToons -->
-        <a href="https://jmp2.uk/plu-654ca7f92c1d3300086b608c.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NickToons');">
-             <img src="https://ui-avatars.com/api/?name=NickToons&background=F1C40F&color=fff&size=128"
-                  alt="NickToons" class="channel-logo">
-             <span class="channel-name">NickToons</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Now TV 102.3FM Edmonton -->
-        <a href="https://videostream.jpbgdigital.com/NOWTV.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Now TV Edmonton');">
-             <img src="https://ui-avatars.com/api/?name=Now+TV&background=E67E22&color=fff&size=128"
-                  alt="Now TV 102.3FM Edmonton" class="channel-logo">
-             <span class="channel-name">Now TV Edmonton</span>
-             <span class="channel-quality">616p</span>
-        </a>
-
-        <!-- NTD TV Canada -->
-        <a href="https://live.ntdtv.com/mllive860/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'NTD TV Canada');">
-             <img src="https://ui-avatars.com/api/?name=NTD+Canada&background=2C3E50&color=fff&size=128"
-                  alt="NTD TV Canada" class="channel-logo">
-             <span class="channel-name">NTD TV Canada</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- One Piece -->
-        <a href="https://jmp2.uk/plu-62e94ec74823db0007277a8f.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'One Piece');">
-             <img src="https://ui-avatars.com/api/?name=One+Piece&background=E74C3C&color=fff&size=128"
-                  alt="One Piece" class="channel-logo">
-             <span class="channel-name">One Piece</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Outdoor Channel -->
-        <a href="https://amg00718-outdoorchannela-outdoortv-samsungau-uc7mp.amagi.tv/playlist/amg00718-outdoorchannela-outdoortv-samsungau/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Outdoor Channel');">
-             <img src="https://ui-avatars.com/api/?name=Outdoor&background=1E8449&color=fff&size=128"
-                  alt="Outdoor Channel" class="channel-logo">
-             <span class="channel-name">Outdoor Channel</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Paramount Network -->
-        <a href="http://40.160.24.55/PARAMOUNT_CHANNEL/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Paramount Network');">
-             <img src="https://ui-avatars.com/api/?name=Paramount&background=2980B9&color=fff&size=128"
-                  alt="Paramount Network" class="channel-logo">
-             <span class="channel-name">Paramount Network</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Pardesi TV -->
-        <a href="http://stream.pardesitv.online/pardesi/tracks-v1a1/mono.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Pardesi TV');">
-             <img src="https://ui-avatars.com/api/?name=Pardesi+TV&background=D35400&color=fff&size=128"
-                  alt="Pardesi TV" class="channel-logo">
-             <span class="channel-name">Pardesi TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- PBS Travel -->
-        <a href="https://d3hqevbyoxtkoi.cloudfront.net/PBS_Travel.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'PBS Travel');">
-             <img src="https://ui-avatars.com/api/?name=PBS+Travel&background=2E4053&color=fff&size=128"
-                  alt="PBS Travel" class="channel-logo">
-             <span class="channel-name">PBS Travel</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Perry Mason -->
-        <a href="https://jmp2.uk/plu-63e20bd160bc8f0008b4c949.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Perry Mason');">
-             <img src="https://ui-avatars.com/api/?name=Perry+Mason&background=512E5F&color=fff&size=128"
-                  alt="Perry Mason" class="channel-logo">
-             <span class="channel-name">Perry Mason</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Pluto Classic Movie Westerns -->
-        <a href="https://jmp2.uk/plu-66dad50215d2c60008d7afbd.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Pluto Westerns Movie');">
-             <img src="https://ui-avatars.com/api/?name=Pluto+Westerns&background=78281F&color=fff&size=128"
-                  alt="Pluto Classic Movie Westerns" class="channel-logo">
-             <span class="channel-name">Pluto Westerns Movie</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Prime Asia TV -->
-        <a href="http://primeasia.selfip.net/Samsung/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Prime Asia TV');">
-             <img src="https://ui-avatars.com/api/?name=Prime+Asia&background=C0392B&color=fff&size=128"
-                  alt="Prime Asia TV" class="channel-logo">
-             <span class="channel-name">Prime Asia TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Probashi TV News -->
-        <a href="http://158.69.24.53:8080/probashi_tv/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Probashi TV News');">
-             <img src="https://ui-avatars.com/api/?name=Probashi+News&background=16A085&color=fff&size=128"
-                  alt="Probashi TV News" class="channel-logo">
-             <span class="channel-name">Probashi TV News</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- PTC Punjabi Canada -->
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/ptc-punjabi-canada/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'PTC Punjabi Canada');">
-             <img src="https://ui-avatars.com/api/?name=PTC+Punjabi&background=D35400&color=fff&size=128"
-                  alt="PTC Punjabi Canada" class="channel-logo">
-             <span class="channel-name">PTC Punjabi Canada</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Qello Concerts by Stingray -->
-        <a href="https://lotus.stingray.com/manifest/qello-qello001-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Qello Concerts');">
-             <img src="https://ui-avatars.com/api/?name=Qello+Concerts&background=8E44AD&color=fff&size=128"
-                  alt="Qello Concerts by Stingray" class="channel-logo">
-             <span class="channel-name">Qello Concerts</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Quo Vadis TV -->
-        <a href="https://tgn.bozztv.com/qvtv/qvtv-web/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Quo Vadis TV');">
-             <img src="https://ui-avatars.com/api/?name=Quo+Vadis&background=2C3E50&color=fff&size=128"
-                  alt="Quo Vadis TV" class="channel-logo">
-             <span class="channel-name">Quo Vadis TV</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Rai World Premium -->
-        <a href="https://d3k8wzt41aflvx.cloudfront.net/RAIP/Live.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Rai World Premium');">
-             <img src="https://ui-avatars.com/api/?name=Rai+Premium&background=2980B9&color=fff&size=128"
-                  alt="Rai World Premium" class="channel-logo">
-             <span class="channel-name">Rai World Premium</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Rawhide -->
-        <a href="https://jmp2.uk/plu-65660223635c3c00086c2578.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Rawhide');">
-             <img src="https://ui-avatars.com/api/?name=Rawhide&background=78281F&color=fff&size=128"
-                  alt="Rawhide" class="channel-logo">
-             <span class="channel-name">Rawhide</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- Red Bull TV US -->
-        <a href="https://0b73ace69ebb45eaa249bb87837cb958.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-644-WORBUSENFAST-LG_US/644/lgtv/hls/master/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Red Bull TV');">
-             <img src="https://ui-avatars.com/api/?name=Red+Bull&background=C0392B&color=fff&size=128"
-                  alt="Red Bull TV US" class="channel-logo">
-             <span class="channel-name">Red Bull TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Slice -->
-        <a href="http://40.160.24.55/SLICE/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Slice');">
-             <img src="https://ui-avatars.com/api/?name=Slice&background=D35400&color=fff&size=128"
-                  alt="Slice" class="channel-logo">
-             <span class="channel-name">Slice</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Sohail TV -->
-        <a href="https://iptv.sohailtv.com/sohail/playlist/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Sohail TV');">
-             <img src="https://ui-avatars.com/api/?name=Sohail+TV&background=1B4F72&color=fff&size=128"
-                  alt="Sohail TV" class="channel-logo">
-             <span class="channel-name">Sohail TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Sooriyan TV -->
-        <a href="https://live20.bozztv.com/giatv/giatv-Infinittyott/Infinittyott/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Sooriyan TV');">
-             <img src="https://ui-avatars.com/api/?name=Sooriyan+TV&background=27AE60&color=fff&size=128"
-                  alt="Sooriyan TV" class="channel-logo">
-             <span class="channel-name">Sooriyan TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- South Park -->
-        <a href="https://jmp2.uk/plu-62bdb1c5e25122000798ac79.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'South Park');">
-             <img src="https://ui-avatars.com/api/?name=South+Park&background=2C3E50&color=fff&size=128"
-                  alt="South Park" class="channel-logo">
-             <span class="channel-name">South Park</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- SpongeBob SquarePants -->
-        <a href="https://jmp2.uk/plu-63f87d057533d80008ab9549.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'SpongeBob SquarePants');">
-             <img src="https://ui-avatars.com/api/?name=SpongeBob&background=F1C40F&color=fff&size=128"
-                  alt="SpongeBob SquarePants" class="channel-logo">
-             <span class="channel-name">SpongeBob SquarePants</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- STAR International -->
-        <a href="https://livestar.siliconweb.com/starvod/star_int/star_int.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'STAR International');">
-             <img src="https://ui-avatars.com/api/?name=STAR+Int&background=2980B9&color=fff&size=128"
-                  alt="STAR International" class="channel-logo">
-             <span class="channel-name">STAR International</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Stingray Cityscapes -->
-        <a href="https://aka-live1050.delivery.roku.com/7572d640-7373-4137-8b14-a3afff395349/t2-origin/out/v1/live.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Cityscapes');">
-             <img src="https://ui-avatars.com/api/?name=Cityscapes&background=117A65&color=fff&size=128"
-                  alt="Stingray Cityscapes" class="channel-logo">
-             <span class="channel-name">Stingray Cityscapes</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Classic Rock -->
-        <a href="https://lotus.stingray.com/manifest/ose-101ads-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Classic Rock');">
-             <img src="https://ui-avatars.com/api/?name=Classic+Rock&background=C0392B&color=fff&size=128"
-                  alt="Stingray Classic Rock" class="channel-logo">
-             <span class="channel-name">Stingray Classic Rock</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Classica -->
-        <a href="https://lotus.stingray.com/manifest/classica-cla008-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Classica');">
-             <img src="https://ui-avatars.com/api/?name=Classica&background=78281F&color=fff&size=128"
-                  alt="Stingray Classica" class="channel-logo">
-             <span class="channel-name">Stingray Classica</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Cozy Cafe -->
-        <a href="https://aka-live1050.delivery.roku.com/372c813e-1fb9-41d4-a4d0-5fbd803659c5/t2-origin/out/v1/live.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Cozy Cafe');">
-             <img src="https://ui-avatars.com/api/?name=Cozy+Cafe&background=D35400&color=fff&size=128"
-                  alt="Stingray Cozy Cafe" class="channel-logo">
-             <span class="channel-name">Stingray Cozy Cafe</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray DJAZZ -->
-        <a href="https://lotus.stingray.com/manifest/djazz-djaads-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray DJAZZ');">
-             <img src="https://ui-avatars.com/api/?name=DJAZZ&background=8E44AD&color=fff&size=128"
-                  alt="Stingray DJAZZ" class="channel-logo">
-             <span class="channel-name">Stingray DJAZZ</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Easy Listening -->
-        <a href="https://lotus.stingray.com/manifest/ose-137ads-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Easy Listening');">
-             <img src="https://ui-avatars.com/api/?name=Easy+Listening&background=2980B9&color=fff&size=128"
-                  alt="Stingray Easy Listening" class="channel-logo">
-             <span class="channel-name">Stingray Easy Listening</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Exitos del Momento -->
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/stingray-xitos-del-momento/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Exitos');">
-             <img src="https://ui-avatars.com/api/?name=Exitos&background=F39C12&color=fff&size=128"
-                  alt="Stingray Exitos del Momento" class="channel-logo">
-             <span class="channel-name">Stingray Exitos</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Flashback 70s -->
-        <a href="https://lotus.stingray.com/manifest/ose-115ads-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Flashback 70s');">
-             <img src="https://ui-avatars.com/api/?name=Flashback+70s&background=27AE60&color=fff&size=128"
-                  alt="Stingray Flashback 70s" class="channel-logo">
-             <span class="channel-name">Stingray Flashback 70s</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Greatest Hits -->
-        <a href="https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/stingray-greatest-hits/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Greatest Hits');">
-             <img src="https://ui-avatars.com/api/?name=Greatest+Hits&background=16A085&color=fff&size=128"
-                  alt="Stingray Greatest Hits" class="channel-logo">
-             <span class="channel-name">Stingray Greatest Hits</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Hit List -->
-        <a href="https://lotus.stingray.com/manifest/ose-107ads-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Hit List');">
-             <img src="https://ui-avatars.com/api/?name=Hit+List&background=2E4053&color=fff&size=128"
-                  alt="Stingray Hit List" class="channel-logo">
-             <span class="channel-name">Stingray Hit List</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- Stingray Naturescape -->
-        <a href="https://lotus.stingray.com/manifest/naturescape-a003-montreal/samsungtvplus/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Stingray Naturescape');">
-             <img src="https://ui-avatars.com/api/?name=Naturescape&background=1E8449&color=fff&size=128"
-                  alt="Stingray Naturescape" class="channel-logo">
-             <span class="channel-name">Stingray Naturescape</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- T+E -->
-        <a href="http://185.246.209.113/T+E/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'T+E');">
-             <img src="https://ui-avatars.com/api/?name=T+E&background=8E44AD&color=fff&size=128"
-                  alt="T+E" class="channel-logo">
-             <span class="channel-name">T+E</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Tamil Entertainment Television -->
-        <a href="https://origin-de-y376549.cdn.nextologies.com:444/4c3caf7294b3/fbbd0aee3d9a8260/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Tamil Entertainment');">
-             <img src="https://ui-avatars.com/api/?name=Tamil+ET&background=C0392B&color=fff&size=128"
-                  alt="Tamil Entertainment Television" class="channel-logo">
-             <span class="channel-name">Tamil Entertainment</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TamilVision-TV -->
-        <a href="https://live.cmr24.fm/TVI/HD/chunks.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TamilVision-TV');">
-             <img src="https://ui-avatars.com/api/?name=TamilVision&background=2980B9&color=fff&size=128"
-                  alt="TamilVision-TV" class="channel-logo">
-             <span class="channel-name">TamilVision-TV</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- The Andy Griffith Show -->
-        <a href="https://jmp2.uk/plu-62e9145ec07f2a00070e68dc.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Andy Griffith');">
-             <img src="https://ui-avatars.com/api/?name=Andy+Griffith&background=512E5F&color=fff&size=128"
-                  alt="The Andy Griffith Show" class="channel-logo">
-             <span class="channel-name">Andy Griffith</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- The Beverly Hillbillies -->
-        <a href="https://jmp2.uk/plu-6565fefdc917a50008485cc6.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Beverly Hillbillies');">
-             <img src="https://ui-avatars.com/api/?name=Hillbillies&background=78281F&color=fff&size=128"
-                  alt="The Beverly Hillbillies" class="channel-logo">
-             <span class="channel-name">Beverly Hillbillies</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- The Challenge -->
-        <a href="https://jmp2.uk/plu-64f8a22a3efb510008245df0.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'The Challenge');">
-             <img src="https://ui-avatars.com/api/?name=The+Challenge&background=D35400&color=fff&size=128"
-                  alt="The Challenge" class="channel-logo">
-             <span class="channel-name">The Challenge</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- The Graham Norton Show -->
-        <a href="https://amg00654-itv-amg00654c35-rakuten-gb-7598.playouts.now.amagi.tv/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Graham Norton Show');">
-             <img src="https://ui-avatars.com/api/?name=Graham+Norton&background=2C3E50&color=fff&size=128"
-                  alt="The Graham Norton Show" class="channel-logo">
-             <span class="channel-name">Graham Norton Show</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- The Judge Judy Channel -->
-        <a href="https://jmp2.uk/plu-62e92e536f28870007fa9b3a.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Judge Judy Channel');">
-             <img src="https://ui-avatars.com/api/?name=Judge+Judy&background=1B4F72&color=fff&size=128"
-                  alt="The Judge Judy Channel" class="channel-logo">
-             <span class="channel-name">Judge Judy Channel</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- The Love Boat -->
-        <a href="https://jmp2.uk/plu-62e91563ce7ce300076f917e.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'The Love Boat');">
-             <img src="https://ui-avatars.com/api/?name=Love+Boat&background=2980B9&color=fff&size=128"
-                  alt="The Love Boat" class="channel-logo">
-             <span class="channel-name">The Love Boat</span>
-             <span class="channel-quality">Live</span>
-        </a>
-
-        <!-- The News Forum -->
-        <a href="http://name-port.to/live/Gregory123/Gregory321/2420047.ts"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'The News Forum');">
-             <img src="https://ui-avatars.com/api/?name=News+Forum&background=C0392B&color=fff&size=128"
-                  alt="The News Forum" class="channel-logo">
-             <span class="channel-name">The News Forum</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- The Weather Network -->
-        <a href="https://jmp2.uk/plu-63da370e2e477400081cf8b6.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'The Weather Network');">
-             <img src="https://ui-avatars.com/api/?name=Weather+Network&background=27AE60&color=fff&size=128"
-                  alt="The Weather Network" class="channel-logo">
-             <span class="channel-name">The Weather Network</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Three's Company -->
-        <a href="https://jmp2.uk/plu-64ca723a2bc49300081a8966.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Threes Company');">
-             <img src="https://ui-avatars.com/api/?name=Threes+Company&background=F39C12&color=fff&size=128"
-                  alt="Three's Company" class="channel-logo">
-             <span class="channel-name">Three's Company</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Today's Shopping Choice (TSC) -->
-        <a href="https://tscamd.akamaized.net/hls/live/503340/TSCLive/master.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TSC');">
-             <img src="https://ui-avatars.com/api/?name=TSC&background=D35400&color=fff&size=128"
-                  alt="Today's Shopping Choice (TSC)" class="channel-logo">
-             <span class="channel-name">TSC Shopping</span>
-             <span class="channel-quality">720p</span>
-        </a>
-
-        <!-- Total Crime -->
-        <a href="https://aegis-cloudfront-1.tubi.video/b062c287-a170-47df-99e4-f5dcd441ee59/playlist.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'Total Crime');">
-             <img src="https://ui-avatars.com/api/?name=Total+Crime&background=4A235A&color=fff&size=128"
-                  alt="Total Crime" class="channel-logo">
-             <span class="channel-name">Total Crime</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TSN1 -->
-        <a href="http://40.160.24.55/TSN_1/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TSN1');">
-             <img src="https://ui-avatars.com/api/?name=TSN1&background=1B4F72&color=fff&size=128"
-                  alt="TSN1" class="channel-logo">
-             <span class="channel-name">TSN1</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TSN2 -->
-        <a href="http://40.160.24.55/TSN_2/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TSN2');">
-             <img src="https://ui-avatars.com/api/?name=TSN2&background=1B4F72&color=fff&size=128"
-                  alt="TSN2" class="channel-logo">
-             <span class="channel-name">TSN2</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TSN3 -->
-        <a href="http://40.160.24.55/TSN_3/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TSN3');">
-             <img src="https://ui-avatars.com/api/?name=TSN3&background=1B4F72&color=fff&size=128"
-                  alt="TSN3" class="channel-logo">
-             <span class="channel-name">TSN3</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-        <!-- TSN4 -->
-        <a href="http://40.160.24.55/TSN_4/index.m3u8"
-           class="channel-card"
-           onclick="event.preventDefault(); loadStream(this.href, 'TSN4');">
-             <img src="https://ui-avatars.com/api/?name=TSN4&background=1B4F72&color=fff&size=128"
-                  alt="TSN4" class="channel-logo">
-             <span class="channel-name">TSN4</span>
-             <span class="channel-quality">1080p</span>
-        </a>
-
-    </div>
-
-    <!-- JavaScript Controller -->
-    <script>
-        let hlsInstance = null;
-
-        function loadStream(url, name) {
-            const video = document.getElementById('liveStream');
-            const status = document.getElementById('playerStatus');
-
-            status.textContent = 'Loading ' + name + '...';
-
-            // Clean up previous HLS instance if it exists
-            if (hlsInstance) {
-                hlsInstance.destroy();
-                hlsInstance = null;
-            }
-
-            // Check for DASH format (.mpd)
-            if (url.endsWith('.mpd')) {
-                status.textContent = name + ' (DASH stream requires dash.js reader)';
-                return;
-            }
-
-            // Play via HLS.js if supported
-            if (Hls.isSupported()) {
-                hlsInstance = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true
-                });
-
-                hlsInstance.loadSource(url);
-                hlsInstance.attachMedia(video);
-
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log('Autoplay blocked:', e));
-                    status.textContent = 'Playing: ' + name;
-                });
-
-                hlsInstance.on(Hls.Events.ERROR, function(event, data) {
-                    if (data.fatal) {
-                        status.textContent = 'Error loading ' + name;
-                    }
-                });
-            }
-            // Fallback for native Safari HLS support
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function() {
-                    video.play();
-                    status.textContent = 'Playing: ' + name;
-                });
-            } else {
-                status.textContent = 'HLS streaming is not supported in this browser.';
-            }
-
-            // Scroll up smoothly to the player
-            document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
 </body>
 </html>
