@@ -31,7 +31,6 @@
       color: var(--text-main);
       overflow-x: hidden;
       padding-bottom: 3rem;
-      /* Background extends completely to the top of the page */
       background-image: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 60%);
     }
 
@@ -40,8 +39,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.5rem 3rem;
-      background: rgba(5, 7, 10, 0.6);
+      padding: 1.2rem 3rem;
+      background: rgba(5, 7, 10, 0.8);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       position: sticky;
@@ -50,7 +49,7 @@
     }
 
     .brand {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 800;
       letter-spacing: 1px;
       color: #fff;
@@ -62,10 +61,10 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 20px;
-      padding: 0.6rem 1.2rem;
+      padding: 0.5rem 1.2rem;
       color: #fff;
       font-size: 0.9rem;
-      width: 280px;
+      width: 260px;
       outline: none;
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
@@ -74,13 +73,13 @@
     .search-input:focus {
       background: rgba(255, 255, 255, 0.1);
       border-color: var(--accent);
-      width: 340px;
+      width: 320px;
       box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
 
-    /* Active Player Section - High-Tech Plasma TV Style */
+    /* Active Player Section - Fixed Layout preventing resize/minimizing on channel change */
     .top-player-section {
-      padding: 3rem 3rem 1.5rem 3rem;
+      padding: 1.5rem 3rem 1rem 3rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -90,14 +89,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 0.8rem;
+      padding-bottom: 0.6rem;
       width: 100%;
       max-width: 1100px;
     }
 
     .player-title {
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       color: #fff;
       display: flex;
       align-items: center;
@@ -114,13 +113,13 @@
       box-shadow: 0 0 8px #00ff66;
     }
 
-    /* Plasma TV Frame Look */
+    /* Plasma TV Frame Look with locked dimensions */
     .plasma-tv-frame {
       width: 100%;
       max-width: 1100px;
       background: #000;
       border-radius: 16px;
-      padding: 14px;
+      padding: 12px;
       border: 2px solid #263248;
       box-shadow: 
         0 25px 60px rgba(0, 0, 0, 0.8),
@@ -129,7 +128,6 @@
       position: relative;
     }
 
-    /* Inner screen bezel with subtle gloss */
     .screen-container {
       position: relative;
       width: 100%;
@@ -141,20 +139,20 @@
 
     video {
       width: 100%;
-      height: auto;
-      max-height: 65vh;
+      height: 520px; /* Fixed height locks player frame size consistently across channel switches */
+      object-fit: cover;
       display: block;
       background: #000;
     }
 
     /* TV Stand Base Simulation */
     .tv-stand {
-      width: 160px;
-      height: 12px;
+      width: 140px;
+      height: 10px;
       background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
       margin: 0 auto;
       border-radius: 0 0 6px 6px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
       position: relative;
     }
     
@@ -169,17 +167,17 @@
       box-shadow: 0 0 6px var(--accent);
     }
 
-    /* Featured Hero Banner */
+    /* Compact Hero Banner to keep player fully visible on load */
     .hero {
       position: relative;
-      height: 260px;
+      height: 180px;
       background: linear-gradient(180deg, rgba(5,7,10,0) 0%, rgba(5,7,10,0.9) 100%), 
                   url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop') center/cover no-repeat;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 2rem 3rem;
-      margin-top: 1rem;
+      padding: 1.5rem 3rem;
+      margin-top: 0.5rem;
     }
 
     .hero-content {
@@ -188,36 +186,36 @@
     }
 
     .hero-tag {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       letter-spacing: 2px;
       color: var(--accent);
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .hero h1 {
-      font-size: 2rem;
+      font-size: 1.6rem;
       font-weight: 800;
       line-height: 1.1;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .hero p {
       color: var(--text-sub);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     /* Content Layout */
     .content-container {
       padding: 0 3rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
 
     .section-title {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin: 2rem 0 1rem 0;
+      margin: 1.5rem 0 0.8rem 0;
       color: #f1f5f9;
       display: flex;
       align-items: center;
@@ -228,7 +226,7 @@
       content: '';
       display: inline-block;
       width: 4px;
-      height: 16px;
+      height: 15px;
       background: var(--accent);
       border-radius: 2px;
     }
@@ -238,7 +236,7 @@
       display: flex;
       gap: 1.2rem;
       overflow-x: auto;
-      padding: 0.5rem 0 1.2rem 0;
+      padding: 0.5rem 0 1rem 0;
       scrollbar-width: thin;
       scrollbar-color: #334155 transparent;
     }
@@ -251,8 +249,8 @@
 
     /* Channel Poster Cards */
     .channel-card {
-      min-width: 210px;
-      height: 130px;
+      min-width: 200px;
+      height: 120px;
       background: var(--card-bg);
       border-radius: 10px;
       border: 1px solid var(--border);
@@ -283,7 +281,7 @@
     }
 
     .card-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
       z-index: 1;
@@ -327,14 +325,14 @@
     <input type="text" id="searchInput" class="search-input" placeholder="Search live channels..." oninput="filterChannels()">
   </header>
 
-  <!-- High-Tech Plasma TV Active Player Section (Pre-loaded with first default channel so it's not minimized/empty) -->
+  <!-- High-Tech Plasma TV Active Player Section (Positioned high so it stays in full view on load) -->
   <div class="top-player-section">
     <div class="player-header">
       <div id="playerTitle" class="player-title">Streaming Live: Kutonen (720p)</div>
     </div>
     <div class="plasma-tv-frame" id="plasmaTvFrame">
       <div class="screen-container">
-        <!-- Native video controls include a full-screen toggle button by default -->
+        <!-- Native video controls include a full-screen toggle button -->
         <video id="videoPlayer" controls autoplay></video>
       </div>
     </div>
@@ -346,12 +344,11 @@
     <div class="hero-content">
       <div class="hero-tag">LIVE TV GUIDE</div>
       <h1>Explore Live Channels</h1>
-      <p>Select any channel card below to load and stream instantly on your plasma display.</p>
+      <p>Select any channel card below to switch streams instantly while keeping your display size fixed.</p>
     </div>
   </div>
 
   <div class="content-container">
-    <!-- Dynamic Container for Channel Categories -->
     <div id="categoryContainer"></div>
   </div>
 
@@ -484,7 +481,7 @@
     const title = document.getElementById('playerTitle');
 
     title.innerText = `Streaming Live: ${channel.name} (${channel.res})`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Keeps window locked in place (prevents jumping or forced auto-scrolling away from player)
 
     if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
     if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
@@ -517,7 +514,7 @@
   // Initial render of guide cards
   renderInterface(channels);
 
-  // Auto-play the first channel immediately on page load so it is not minimized/empty
+  // Auto-play the first channel immediately on page load
   window.addEventListener('DOMContentLoaded', () => {
     playChannel(channels[0]);
   });
@@ -525,4 +522,3 @@
 
 </body>
 </html>
-
