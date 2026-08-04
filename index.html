@@ -1,407 +1,231 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide & Movie Center - All-in-One</title>
-  
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
-
-  <style>
-    :root {
-      --bg-deep: #090a0f;
-      --card-bg: rgba(18, 22, 33, 0.65);
-      --card-hover: rgba(26, 32, 48, 0.85);
-      --accent: #38bdf8;
-      --accent-glow: rgba(56, 189, 248, 0.25);
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(56, 189, 248, 0.4);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-    html, body {
-      height: 100vh;
-      overflow: hidden;
-      background-color: var(--bg-deep);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(14, 116, 144, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 85%, rgba(30, 27, 75, 0.25) 0%, transparent 40%);
-      color: var(--text-main);
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.9rem 2.5rem;
-      background: rgba(9, 10, 15, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      height: 64px;
-    }
-
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #fff;
-    }
-
-    .brand span { color: var(--accent); font-weight: 300; }
-
-    .header-controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    .nav-tab-btn {
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid var(--border-hover);
-      color: var(--accent);
-      padding: 0.45rem 1rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.25s ease;
-    }
-
-    .nav-tab-btn:hover, .nav-tab-btn.active {
-      background: var(--accent);
-      color: #000;
-      box-shadow: 0 0 12px var(--accent-glow);
-    }
-
-    .search-input {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      color: #fff;
-      font-size: 0.85rem;
-      outline: none;
-      width: 260px;
-      transition: all 0.25s ease;
-    }
-
-    .search-input:focus {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    /* Views container */
-    .view-section {
-      display: none;
-      height: calc(100vh - 64px);
-    }
-
-    .view-section.active {
-      display: grid;
-    }
-
-    /* TV Guide Layout */
-    #tvView {
-      grid-template-columns: 1fr 440px;
-    }
-
-    /* Movies Hub Layout */
-    #moviesView {
-      grid-template-columns: 380px 1fr;
-    }
-
-    .workspace-pane {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.2);
-      border-right: 1px solid var(--border);
-      position: relative;
-      overflow-y: auto;
-    }
-
-    .media-box {
-      width: 100%;
-      max-width: 850px;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-      aspect-ratio: 16 / 9;
-      position: relative;
-    }
-
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    .sidebar-pane {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: rgba(12, 15, 23, 0.6);
-      backdrop-filter: blur(10px);
-      overflow: hidden;
-    }
-
-    .sidebar-header {
-      padding: 1.2rem 1.5rem 0.8rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-sub);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .scroll-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.2rem 1.5rem;
-    }
-
-    .items-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .card-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-left: 3px solid transparent;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-item:hover {
-      background: var(--card-hover);
-      border-color: var(--border-hover);
-      border-left-color: var(--accent);
-      transform: translateX(4px);
-    }
-
-    .card-item.active {
-      background: rgba(56, 189, 248, 0.1);
-      border-color: var(--accent);
-      border-left-color: var(--accent);
-    }
-
-    .card-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .card-meta {
-      font-size: 0.7rem;
-      color: var(--text-sub);
-    }
-
-    .designer-credit {
-      position: absolute;
-      bottom: 1rem;
-      left: 2rem;
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      opacity: 0.7;
-    }
-    .designer-credit span { color: var(--accent); font-weight: 600; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TV - IPTV & Cinema Suite</title>
+    <!-- Tailwind CSS v4 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HLS.js for m3u8 stream playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        /* Custom scrollbar for channel/movie lists */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 1);
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-red-600 selection:text-white">
 
-  <header>
-    <div class="brand">SMART<span>CAST</span></div>
-    <div class="header-controls">
-      <button class="nav-tab-btn active" id="btnTvTab" onclick="switchView('tv')">📺 Live TV Guide</button>
-      <button class="nav-tab-btn" id="btnMoviesTab" onclick="switchView('movies')">🎬 Movie Library</button>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search channels or movies..." oninput="handleSearch()">
-    </div>
-  </header>
-
-  <!-- VIEW 1: LIVE TV GUIDE -->
-  <div id="tvView" class="view-section active">
-    <div class="workspace-pane">
-      <div style="width:100%; max-width:850px;">
-        <div id="tvPlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a live channel</div>
-        <div class="media-box">
-          <video id="tvVideo" controls autoplay></video>
+    <!-- Top Header -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="bg-red-600 text-white font-black px-3 py-1 rounded tracking-wider text-lg shadow-lg shadow-red-600/30">
+                NEXUS TV
+            </div>
+            <span class="text-xs text-slate-400 font-medium uppercase tracking-widest hidden sm:inline">
+                IPTV & Cinema Suite
+            </span>
         </div>
-      </div>
-      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
-    </div>
-    <div class="sidebar-pane">
-      <div class="sidebar-header">
-        <span>Channel Guide</span>
-        <span id="tvCount" style="color:var(--accent); font-size:0.75rem;"></span>
-      </div>
-      <div class="scroll-area">
-        <div id="tvContainer" class="items-stack"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- VIEW 2: MOVIE LIBRARY & PLAYER -->
-  <div id="moviesView" class="view-section">
-    <div class="sidebar-pane" style="border-right: 1px solid var(--border);">
-      <div class="sidebar-header">
-        <span>Movie Archive</span>
-        <span style="color:var(--accent); font-size:0.75rem;">Featured</span>
-      </div>
-      <div class="scroll-area">
-        <div id="moviesContainer" class="items-stack"></div>
-      </div>
-    </div>
-    <div class="workspace-pane">
-      <div style="width:100%; max-width:850px;">
-        <div id="moviePlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a movie to watch</div>
-        <div class="media-box">
-          <video id="movieVideo" controls autoplay></video>
+        <div class="text-xs text-slate-400 font-semibold tracking-wide">
+            Webpage Designed by: Daniel Dudek
         </div>
-      </div>
-      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
-    </div>
-  </div>
+    </header>
 
-<script>
-  // Live Channels Dataset (Restored complete list)
-  const channels = [
-    { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
-    { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
-    { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
-    { name: "A&E", category: "Entertainment", res: "1080p", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8" },
-    { name: "AMC Thrillers", category: "Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8" },
-    { name: "Pluto TV Movies", category: "Movies", res: "1080p", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8" },
-    { name: "Action Movies", category: "Movies", res: "1080p", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8" },
-    { name: "Comedy Movies", category: "Movies", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8" },
-    { name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8" },
-    { name: "Fox Sports 1", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8" },
-    { name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8" },
-    { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8" }
-  ];
+    <!-- Main Content Dashboard -->
+    <main class="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto p-4 gap-6 my-auto">
+        
+        <!-- Left: Video Player Section -->
+        <div class="flex-1 flex flex-col">
+            <div class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-slate-800">
+                <video
+                    id="videoPlayer"
+                    controls
+                    autoplay
+                    playsinline
+                    class="w-full h-full object-contain"
+                ></video>
+            </div>
+            <div class="mt-3 px-1 flex items-center justify-between">
+                <div>
+                    <h2 id="currentTitleDisplay" class="text-xl font-bold text-white tracking-tight">SYFY</h2>
+                    <p class="text-xs text-emerald-400 font-medium mt-0.5">● Live Stream Active</p>
+                </div>
+            </div>
+        </div>
 
-  // Movies Archive Dataset
-  const movies = [
-    { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
-    { title: "Sintel (Fantasy Epic)", year: "2010", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
-    { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
-  ];
+        <!-- Right: Channel & Movie Selector Sidebar -->
+        <div class="w-full lg:w-96 flex flex-col bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+            <!-- Tabs -->
+            <div class="flex border-b border-slate-800 bg-slate-900">
+                <button
+                    onclick="switchTab('channels')"
+                    id="tabChannels"
+                    class="flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500"
+                >
+                    Live Channels (<span id="channelCount">0</span>)
+                </button>
+                <button
+                    onclick="switchTab('movies')"
+                    id="tabMovies"
+                    class="flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200"
+                >
+                    Movies Archive (<span id="movieCount">0</span>)
+                </button>
+            </div>
 
-  let currentHls = null;
+            <!-- List Items -->
+            <div id="mediaList" class="p-3 overflow-y-auto max-h-[420px] space-y-2 custom-scrollbar">
+                <!-- Populated dynamically via script -->
+            </div>
+        </div>
+    </main>
 
-  function switchView(viewName) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+    <!-- Footer -->
+    <footer class="mt-auto py-6 border-t border-slate-900 text-center text-xs text-slate-500">
+        NEXUS TV Engine &bull; Webpage Designed by: Daniel Dudek
+    </footer>
 
-    if (viewName === 'tv') {
-      document.getElementById('tvView').classList.add('active');
-      document.getElementById('btnTvTab').classList.add('active');
-    } else {
-      document.getElementById('moviesView').classList.add('active');
-      document.getElementById('btnMoviesTab').classList.add('active');
-    }
-  }
+    <!-- Application Script -->
+    <script>
+        // Live Channels Dataset
+        const channels = [
+            { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
+            { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+            { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+            { name: "A&E", category: "Entertainment", res: "1080p", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8" },
+            { name: "AMC Thrillers", category: "Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8" },
+            { name: "Pluto TV Movies", category: "Movies", res: "1080p", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8" },
+            { name: "Action Movies", category: "Movies", res: "1080p", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8" },
+            { name: "Comedy Movies", category: "Movies", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8" },
+            { name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8" },
+            { name: "Fox Sports 1", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8" },
+            { name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8" },
+            { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8" }
+        ];
 
-  function renderLists() {
-    // Render TV
-    const tvCont = document.getElementById('tvContainer');
-    tvCont.innerHTML = '';
-    document.getElementById('tvCount').innerText = `${channels.length} Channels`;
-    channels.forEach(ch => {
-      const card = document.createElement('div');
-      card.className = 'card-item';
-      card.innerHTML = `<div><div class="card-title">${ch.name}</div><div class="card-meta">${ch.category} • ${ch.res}</div></div><span>▶</span>`;
-      card.onclick = () => {
-        document.querySelectorAll('#tvContainer .card-item').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        playMedia('tv', ch);
-      };
-      tvCont.appendChild(card);
-    });
+        // Movies Archive Dataset
+        const movies = [
+            { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+            { title: "Sintel (Fantasy Epic)", year: "2010", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
+            { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
+        ];
 
-    // Render Movies
-    const movCont = document.getElementById('moviesContainer');
-    movCont.innerHTML = '';
-    movies.forEach(mov => {
-      const card = document.createElement('div');
-      card.className = 'card-item';
-      card.innerHTML = `<div><div class="card-title">${mov.title}</div><div class="card-meta">${mov.year}</div></div><span>▶</span>`;
-      card.onclick = () => {
-        document.querySelectorAll('#moviesContainer .card-item').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        playMedia('movie', mov);
-      };
-      movCont.appendChild(card);
-    });
-  }
+        let currentTab = 'channels';
+        let currentStream = channels[0].url;
+        let currentTitle = channels[0].name;
+        let hlsInstance = null;
 
-  function playMedia(type, item) {
-    const videoId = type === 'tv' ? 'tvVideo' : 'movieVideo';
-    const titleId = type === 'tv' ? 'tvPlayerTitle' : 'moviePlayerTitle';
-    const video = document.getElementById(videoId);
-    const title = document.getElementById(titleId);
+        const videoElement = document.getElementById('videoPlayer');
+        const titleDisplay = document.getElementById('currentTitleDisplay');
+        const mediaListContainer = document.getElementById('mediaList');
 
-    title.innerText = `Now Playing: ${item.name || item.title}`;
+        document.getElementById('channelCount').innerText = channels.length;
+        document.getElementById('movieCount').innerText = movies.length;
 
-    if (currentHls) {
-      currentHls.destroy();
-      currentHls = null;
-    }
+        function switchTab(tab) {
+            currentTab = tab;
+            const tabChannels = document.getElementById('tabChannels');
+            const tabMovies = document.getElementById('tabMovies');
 
-    if (item.url.endsWith('.mp4')) {
-      video.src = item.url;
-      video.play();
-    } else if (Hls.isSupported()) {
-      currentHls = new Hls();
-      currentHls.loadSource(item.url);
-      currentHls.attachMedia(video);
-      currentHls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-    } else {
-      video.src = item.url;
-      video.play();
-    }
-  }
+            if (tab === 'channels') {
+                tabChannels.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500";
+                tabMovies.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200";
+            } else {
+                tabMovies.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500";
+                tabChannels.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200";
+            }
+            renderList();
+        }
 
-  function handleSearch() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    // Simple filter hook can go here if expanding search across both lists
-  }
+        function renderList() {
+            mediaListContainer.innerHTML = '';
+            const dataset = currentTab === 'channels' ? channels : movies;
 
-  renderLists();
-  // Auto-play first channel on load
-  window.addEventListener('DOMContentLoaded', () => {
-    playMedia('tv', channels[0]);
-    document.querySelector('#tvContainer .card-item').classList.add('active');
-  });
-</script>
+            dataset.forEach((item) => {
+                const name = item.name || item.title;
+                const isSelected = currentTitle === name;
+                
+                const btn = document.createElement('button');
+                btn.onclick = () => selectMedia(item);
+                btn.className = `w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between ${
+                    isSelected
+                        ? 'bg-red-600/20 border-red-500 text-white shadow-md'
+                        : 'bg-slate-800/40 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+                }`;
 
+                if (currentTab === 'channels') {
+                    btn.innerHTML = `
+                        <div>
+                            <div class="font-semibold text-sm">${item.name}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">${item.category}</div>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                            ${item.res}
+                        </span>
+                    `;
+                } else {
+                    btn.innerHTML = `
+                        <div>
+                            <div class="font-semibold text-sm">${item.title}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">Release Year: ${item.year}</div>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
+                            VOD
+                        </span>
+                    `;
+                }
+                mediaListContainer.appendChild(btn);
+            });
+        }
+
+        function selectMedia(item) {
+            currentStream = item.url;
+            currentTitle = item.name || item.title;
+            titleDisplay.innerText = currentTitle;
+            renderList();
+            loadStream();
+        }
+
+        function loadStream() {
+            if (hlsInstance) {
+                hlsInstance.destroy();
+                hlsInstance = null;
+            }
+
+            if (currentStream.includes('.m3u8')) {
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls();
+                    hlsInstance.loadSource(currentStream);
+                    hlsInstance.attachMedia(videoElement);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        videoElement.play().catch(() => {});
+                    });
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = currentStream;
+                    videoElement.addEventListener('loadedmetadata', () => {
+                        videoElement.play().catch(() => {});
+                    });
+                }
+            } else {
+                videoElement.src = currentStream;
+                videoElement.play().catch(() => {});
+            }
+        }
+
+        // Initialize application on load
+        renderList();
+        loadStream();
+    </script>
 </body>
-</html>
