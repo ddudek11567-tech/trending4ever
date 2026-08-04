@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>Movie List - Sorted by Genre</title>
+    <style>
+        body {
+            background-color: #808080;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #f0f0f0;
+        }
+        ul {
+            list-style-type: square;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        a {
+            color: #d1e7dd;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart TV Guide & Plasma Player - Verified Channels</title>
   <title>Smart TV Guide & Movie Center - All-in-One</title>
-
-  <!-- HLS and DASH libraries for video playback -->
   
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
 
-@@ -46,7 +45,6 @@
   <style>
     :root {
       --bg-deep: #090a0f;
@@ -49,11 +71,9 @@
       padding: 0.9rem 2.5rem;
       background: rgba(9, 10, 15, 0.85);
       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       height: 64px;
     }
-@@ -58,33 +56,30 @@
 
     .brand {
       font-size: 1.25rem;
@@ -62,10 +82,6 @@
       color: #fff;
     }
 
-    .brand span { 
-      color: var(--accent); 
-      font-weight: 300;
-    }
     .brand span { color: var(--accent); font-weight: 300; }
 
     .header-controls {
@@ -74,7 +90,6 @@
       align-items: center;
     }
 
-    .nav-link-btn {
     .nav-tab-btn {
       background: rgba(56, 189, 248, 0.1);
       border: 1px solid var(--border-hover);
@@ -83,7 +98,6 @@
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 600;
-      text-decoration: none;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -91,12 +105,10 @@
       transition: all 0.25s ease;
     }
 
-    .nav-link-btn:hover {
     .nav-tab-btn:hover, .nav-tab-btn.active {
       background: var(--accent);
       color: #000;
       box-shadow: 0 0 12px var(--accent-glow);
-@@ -108,14 +103,27 @@
     }
 
     .search-input {
@@ -117,7 +129,6 @@
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
-    .app-layout {
     /* Views container */
     .view-section {
       display: none;
@@ -131,11 +142,8 @@
     /* TV Guide Layout */
     #tvView {
       grid-template-columns: 1fr 440px;
-      height: calc(100vh - 64px);
-      overflow: hidden;
     }
 
-    .player-workspace {
     /* Movies Hub Layout */
     #moviesView {
       grid-template-columns: 380px 1fr;
@@ -145,55 +153,11 @@
       padding: 2rem;
       display: flex;
       flex-direction: column;
-@@ -124,58 +132,17 @@
       justify-content: center;
       align-items: center;
       background: rgba(0, 0, 0, 0.2);
       border-right: 1px solid var(--border);
       position: relative;
-    }
-
-    .player-workspace::before {
-      content: '';
-      position: absolute;
-      width: 500px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      filter: blur(40px);
-    }
-
-    .player-container-inner {
-      width: 100%;
-      max-width: 850px;
-      z-index: 1;
-    }
-
-    .player-meta-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.8rem;
-    }
-
-    .player-title {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #10b981;
       overflow-y: auto;
     }
 
@@ -204,68 +168,11 @@
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.1);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
       aspect-ratio: 16 / 9;
       position: relative;
     }
-@@ -187,62 +154,7 @@
-      display: block;
-    }
 
-    .schedule-banner {
-      margin-top: 0.8rem;
-      background: rgba(18, 22, 33, 0.75);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(8px);
-    }
-
-    .schedule-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .schedule-label {
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-sub);
-      font-weight: 700;
-    }
-
-    .schedule-val {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .schedule-divider {
-      width: 1px;
-      height: 24px;
-      background: var(--border);
-      margin: 0 1rem;
-    }
-
-    .designer-credit {
-      position: absolute;
-      bottom: 1rem;
-      left: 2rem;
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      letter-spacing: 0.5px;
-      z-index: 2;
-      opacity: 0.7;
-    }
-
-    .designer-credit span {
-      color: var(--accent);
-      font-weight: 600;
     video {
       width: 100%;
       height: 100%;
@@ -273,66 +180,19 @@
       display: block;
     }
 
-    .guide-workspace {
     .sidebar-pane {
       display: flex;
       flex-direction: column;
       height: 100%;
-@@ -251,7 +163,7 @@
       background: rgba(12, 15, 23, 0.6);
       backdrop-filter: blur(10px);
       overflow: hidden;
     }
 
-    .guide-header {
     .sidebar-header {
       padding: 1.2rem 1.5rem 0.8rem 1.5rem;
       border-bottom: 1px solid var(--border);
       font-size: 0.9rem;
-@@ -264,334 +176,230 @@
-      align-items: center;
-    }
-
-    #channelCount {
-      font-size: 0.75rem;
-      color: var(--accent);
-    }
-
-    .category-pills-bar {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.8rem 1.5rem;
-      overflow-x: auto;
-      border-bottom: 1px solid var(--border);
-      background: rgba(9, 10, 15, 0.4);
-      scrollbar-width: none;
-    }
-
-    .category-pills-bar::-webkit-scrollbar { display: none; }
-
-    .pill-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      color: var(--text-sub);
-      padding: 0.35rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-
-    .pill-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-
-    .pill-btn.active {
-      background: var(--accent);
-      color: #000;
-      border-color: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -342,29 +202,18 @@
       align-items: center;
     }
 
-    .channels-scroll-area {
     .scroll-area {
       flex: 1;
       overflow-y: auto;
       padding: 1.2rem 1.5rem;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
     }
 
-    .channels-scroll-area::-webkit-scrollbar { width: 5px; }
-    .channels-scroll-area::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 3px;
-    }
-
-    .channels-stack {
     .items-stack {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
 
-    .channel-card {
     .card-item {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -372,89 +221,41 @@
       border-radius: 8px;
       padding: 0.75rem 1rem;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      text-decoration: none;
     }
 
-    .channel-card:hover {
     .card-item:hover {
       background: var(--card-hover);
       border-color: var(--border-hover);
       border-left-color: var(--accent);
       transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    .channel-card.active {
     .card-item.active {
       background: rgba(56, 189, 248, 0.1);
       border-color: var(--accent);
       border-left-color: var(--accent);
     }
 
-    .channel-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    .channel-name {
     .card-title {
       font-size: 0.88rem;
       font-weight: 700;
       color: var(--text-main);
-      letter-spacing: 0.3px;
     }
 
-    .channel-meta {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .badge-res {
-      background: rgba(255, 255, 255, 0.06);
     .card-meta {
       font-size: 0.7rem;
       color: var(--text-sub);
-      padding: 0.05rem 0.3rem;
-      border-radius: 3px;
-      font-size: 0.6rem;
-      font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .channel-card.active .badge-res {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-
-    .tag-format {
-      font-size: 0.6rem;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    .play-indicator {
     .designer-credit {
       position: absolute;
       bottom: 1rem;
       left: 2rem;
       font-size: 0.75rem;
-      color: var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .channel-card.active .play-indicator,
-    .channel-card:hover .play-indicator {
-      opacity: 1;
       color: var(--text-sub);
       opacity: 0.7;
     }
@@ -463,65 +264,524 @@
 </head>
 <body>
 
+<h1>Movie List</h1>
+
+<h2>Action / Martial Arts / Adventure</h2>
+<ul>
+    <li><a href="https://archive.org/details/Return_of_the_Kung_Fu_Dragon">Return of the Kung Fu Dragon (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ConcreteCowboys">Concrete Cowboys (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HighRisk">High Risk (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BlackFist">Black Fist (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Apache_Blood">Apache Blood (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Reign_of_the_Fallen">Reign of the Fallen (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Mastertouch">Master Touch (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Gods_Gun">Gods Gun KVCD-001 (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheProudAndTheDamned-1972">The Proud And The Damned (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CCandCompany">C.C. and Company (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DeathRage">Death Rage (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Hollywood_Man">Hollywood Man (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheSwap">The Swap (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/AgainstACrookedSky">Against a Crooked Sky (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/KarateKidsUSA">Karate Kids USA (aka The Little Dragons) (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ProjectKill">Project: Kill (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheTreasureOfJamaicaReef">The Treasure of Jamaica Reef (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/big-trouble-little-china">Big Trouble In Little China (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lady-snowblood">Lady Snowblood (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/EvelKnievel">Evel Knievel (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/NinjaDeathTrilogy">Ninja Death Trilogy (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/mad.-max.-1979.1080p.-blu-ray.x-265-rarbg">Mad Max (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ItCanBeDoneAmigo">It Can Be Done Amigo (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/FamilyEnforcer">Family Enforcer (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/OrumcekturkishSpiderman">Orumcek (Turkish Spiderman) (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/01EastSideKids">01 East Side Kids (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the_klansman_1974">The Klansman (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ImageofBruceLee">Image of Bruce Lee (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/T.n.t.Jackson">T.N.T. Jackson (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/GodsMustBeCrazy3CrazySafari">The Gods Must Be Crazy 3 - Crazy Safari (1991)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BlackCobra_133">Black Cobra (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Gods_Gun.avi">God's Gun (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/robocop-1987_202311">The Complete Robocop Four Film Collection (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/02BoysOfTheCity">02 Boys Of The City (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/05FlyingWild">05 Flying Wild (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/06BoweryBlitzkrieg">06 Bowery Blitzkrieg (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/flesh-gordon-1974">Flesh Gordon (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/flesh-gordon_202309">Flesh Gordon (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/04PrideOfTheBowery">04 Pride Of The Bowery (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-1-sword-of-vengeance">Lone Wolf and Cub: 1 - Sword Of Vengeance (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/fleshpot.-on.-42nd.-street.-1973.1080p.-blu-ray.-h-264.-aac-rarbg">Fleshpot On 42nd Street (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/08Mr.WiseGuy">08 Mr. Wise Guy (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DeathMachines">Death Machines (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/FuneralforanAssassin">Funeral for an Assassin (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/star_wars_revelations_vose">star wars revelations (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/03ThatGangOfMine">03 That Gang Of Mine (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ninja.-iii.-the.-domination.-1984.1080p.-blu-ray.-h-264.-aac-rarbg">Ninja III: The Domination (1984)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/enter.-the.-ninja.-1981.1080p.-blu-ray.-h-264.-aac-rarbg">Enter The Ninja (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/kill_20230911">Police Magnum (Kill) (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-4-baby-cart-in-peril">Lone Wolf And Cub: 4 - Baby Cart In Peril (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-5-baby-cart-in-the-land-of-demons">Lone Wolf And Cub: 5 - Baby Cart In The Land Of Demons (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/09LetsGetTough">09 Let's Get Tough (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-2-baby-cart-at-the-river-styx">Lone Wolf And Cub: 2 - Baby Cart At The River Styx (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-3-baby-cart-To-Hades">Lone Wolf And Cub: 3 - Baby Cart To Hades (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/revenge.of.the.-ninja.-1983.1080p.-blu-ray.-h-264.-aac-rarbg">Revenge Of The Ninja (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/22-zatoichi-meets-the-one-armed-swordsman">22 - Zatoichi Meets the One-Armed Swordsman (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/23-zatoichi-at-large">23 - Zatoichi At Large (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/acapulco.-gold.-1976.1080p.-blu-ray.-h-264.-aac-rarbg">Acapulco Gold (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lone-wolf-and-cub-6-white-heaven-in-hell">Lone Wolf And Cub: 6 White Heaven In Hell (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CodeNameZebra">Code Name Zebra (1976)</a>[cite: 4]</li>
+</ul>
+
+<h2>Animation / Family / Children</h2>
+<ul>
+    <li><a href="https://archive.org/details/Sita_Sings_the_Blues">Sita Sings the Blues (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/StarWreckInThePirkining">Star Wreck: In the Pirkining (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/fantastic-planet__1973">Fantastic Planet (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SantaandtheThreeBears">Santa and the Three Bears (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Felix_The_Cat_The_Movie_(1988)_1080p_UPSCALE">Felix The Cat The Movie (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Star_Wreck_In_the_Pirkinning_VOScastellano">Star Wreck: In the Pirkinning [VOScastellano] (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/popeye-colorized-collection">Popeye Colorized Collection (incomplete) (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Tarzoon1975">Tarzoon, Shame Of The Jungle [1975] (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheThreeStoogesColorCraziness">The Three Stooges - Color Craziness! (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-peanuts-movie-2015_202202">The Peanuts Movie (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/tekkonkinkreet-2006-blu-ray-1080p">Tekkon Kinkreet (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Sita_Sings_the_Blues_Files">Sita Sings the Blues Files (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sonic-the-hedgehog-the-movie-1999-ova-full-and-1080p-hd">Sonic The Hedgehog (Full 1996 OVA) English dub (1996)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-worst-witch-1986_202304">The Worst Witch (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Sita_Sings_the_Blues_1080p_dirac_vorbis.ogg">Sita_Sings_the_Blues (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/astro-boy-2009_202202">Astro Boy (2009)</a>[cite: 4]</li>
+</ul>
+
+<h2>Comedy</h2>
+<ul>
+    <li><a href="https://archive.org/details/ItSeemedLikeaGoodIdeaattheTimeMPEG2">It Seemed Like a Good Idea at the Time (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-how-to-lose-your-wife-and-find-a-lover-1978-starring-barbara-bouchet">How To Lose A Wife And Find A Lover (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/monty-python__the-meaning-of-life__1983">The Meaning of Life (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-joysticks-1983-uyz-zf-0h-0uk-m-720p-1628909960099">Joysticks (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/amazon-women-on-the-moon-extended-version-1987">Amazon Women on the Moon (1987) - Extended Version</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/folks-title-1-segment-1">Folks! (1992) Tom Selleck, Don Ameche</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/young-frankenstein-colorized-1974-720p">Young Frankenstein (Colorized, 1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/carry-on-behind">Carry On Behind (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/carry-on-at-your-convenience">Carry On at Your Convenience (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/spaghetti-a-mezzanotte-1981-barbara-bouchet-lino-banfi-alida-chelli-teo-teocil-u">Spaghetti A Mezzanotte (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/thethreeagesbusterkeaton">The Three Ages - Buster Keaton (2006)</a>[cite: 4]</li>
+</ul>
+
+<h2>Documentary / Educational / Non-Fiction</h2>
+<ul>
+    <li><a href="https://archive.org/details/Panorama_Ephemera2004">Panorama Ephemera (2004)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Grundeinkommen">Grundeinkommen (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Breaking_With_Old_Ideas">Breaking with Old Ideas (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HOME_English">HOME (2009)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DiaryOfANudistwidescreen">Diary Of A Nudist (widescreen) (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/The_Corporation_">The Corporation - Filmmakers Official Download Edition (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/zeitgeist_movie">Zeitgeist - The Movie (2007)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/StealThisFilmII">Steal This Film 2 (2007)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Crossroads_french_documentary_on_Robert_Johnson">Crossroads Blues (2010)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Zeitgeist.Addendum">Zeitgeist: Addendum (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/43TheRichardPettyStory_201301">43: The Richard Petty Story (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/STEAL_THIS_FILM">STEAL THIS FILM (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/PERIODICO">1996 El Periodo Especial (Cuba 1993, Fidel Castro) (1996)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Mommartz_Anziehen_1985">1985 Anziehen (To dress) (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/insecurity">Insecurity (2007)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/warriors_of_net">Warriors of The Net (2002)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheAmericanWestofJohnFord">The American West of John Ford (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HitchcockTrailers">Alfred Hitchcock Trailer Collection (2009)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lostinthewash">Lost in the Wash (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/goodbyeamerica2006">Goodbye, America (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TriumphOfTheWillHQ">Triumph Of The Will HQ (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Route_66_-_an_American_badDream">Route 66 - an American (bad) Dream (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/The.Yes.Men.Fix.The.World.P2P.Edition.2010.Xvid">The Yes Men Fix The World P2P Edition (2010)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ZEITGEIST_DVD">ZEITGEIST (2007)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ZEITGEIST-REMASTERED">ZEITGEIST THE MOVIE REMASTERED (2007)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Route66">Route 66 - ein amerikanischer albTraum (2004)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/grey-gardens-1975_202110">Grey Gardens (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/f-for-fake">F For Fake (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lessons-of-darkness-1992">Lessons of Darkness (1992)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/forbidden-love-the-unashamed-stories-of-lesbian-lives-1992">Forbidden Love: The Unashamed Stories Of Lesbian Lives (1992)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the.-killing.of.-america.-1981.1080p.-blu-ray.-h-264.-aac-rarbg">The Killing Of America (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/uso_battleship_potemkin">Battleship Potemkin (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DigitalDrive-In101ABeastForEverySeason">The Digital Drive-In - 101 A Beast For Every Season (2013)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ben-10-feature-films-pop-up-trivia-edition">Ben 10 Secret of the Omnitrix + Race Against Time Pop Up Trivia Edition (2010)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Ondas_Yaiza_(videoteca)">Ondas_Yaiza_(videoteca) (2013)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Mommartz_DER_GARTEN_EDEN_2_1977">1977 Der Garten Eden (the garden Eden) (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/OCEANIA-an-independent-film-from-the-San-Francisco-Bay-Area">Oceania (2008)</a>[cite: 4]</li>
+</ul>
+
+<h2>Drama</h2>
+<ul>
+    <li><a href="https://archive.org/details/Escape_From_Sobibor.avi">Escape From Sobibor (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Ad_Vasfiye_Turkish_Movie">Adı Vasfiye, Turkish Movie (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BorntoWin">Born to Win (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheOver-the-HillGangRidesAgain">The Over-the-Hill Gang Rides Again (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/AChristmasWithoutSnow">A Christmas Without Snow (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ArchOfTriumph">Arch Of Triumph (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the.-panic.in.-needle.-park.-1971">The Panic in Needle Park (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/aanum-pennum-2021-malayalam-1080p-z-flix-co">2021 (2022)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MaybeIllComeHomeintheSpring">Maybe I'll Come Home in the Spring (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Sobaka">Sobaka (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheLazarusSyndrome">The Lazarus Syndrome (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/83-2021-1080p-z-flix-co">2021 (2022)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/haider-2014_202202">Haider (2014)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/JaneEyre70">Jane Eyre (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Honey-final">Honey (2004)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/scenes.-from.-a.-marriage.-1974">Scenes From A Marriage (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/90-ml-2019-telugu-true-web-dl-1080p-z-flix-co_202203">2019 (2022)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/F.ScottFitzgeraldAndtheLastOfTheBelles">F. Scott Fitzgerald and 'The Last of the Belles' (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nayakan-1987">Nayakan (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/there-will-be-blood-2007-daniel-day-lewis-paul-dano-based-on-oil-by-upton-sinclair">DANIEL DAY-LEWIS STARRING MOVIES (2021)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/goodbyeamerica2006">Goodbye, America (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/King_Lear">King Lear (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/2-the-art-of-sweeping-things-under-the-rug">2.The Art Of Sweeping Things Under The Rug - Scenes from a Marriage (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/la-dentelliere">La Dentellière (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the.-killing.-of.-a.-chinese.-bookie.-1976.720p">The Killing Of A Chinese Bookie (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-dios-los-cri-a-vicente-ferna-ndez-2un-nusz-24-qy-480p-1639113956059">Dios Los Cría (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ganja.and.-hess.-1973.1080p.-blu-ray.-h-264.-aac-rarbg">Ganja and Hess (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/yt-1s.com-ali-fear-eats-the-soul-angst-essen-seele-auf-1974-full-movie-brigitte-">Ali Fear Eats The Soul (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lola_20210820">Lola (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-marriage-of-maria-braun-1979">The Marriage Of Maria Braun (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DivorceHis-DivorceHers">Divorce His - Divorce Hers (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/kagemusha_202012">Kagemusha (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/come.-and.-see.-1985">Come and See (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/EagleInACage">Eagle in a Cage (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/touki-bouki">Touki bouki (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/GolpeDeEstadio">Golpe De Estadio (1998)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the.-merchant.-of.-four.-seasons.-1972">The Merchant Of Four Seasons (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/videoplayback_20180211">Twinky (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-makioka-sisters">The Makioka Sisters (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/martha-1973-rainer-werner-fassbinder-360p">Martha (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/bro-daddy-2022">South Indian Bangla Dubbed (2022)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/point_in_time">A Point in Time (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nora-helmer-1974">Nora Helmer (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/joey-breaker-24fps">Joey Breaker (1993) - Richard Edson Film</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sharmilee">Sharmilee (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is">Hazal (1979)</a>[cite: 4]</li>
+</ul>
+
+<h2>Experimental / Avant-Garde / Short / Other</h2>
+<ul>
+    <li><a href="https://archive.org/details/Mommartz_Altersporno_1970">1970 Altersporno (Old Age Porn) (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/RandallPullenTheDaysofLimbo">The Days of Limbo (2004)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ChiaroscuroBaby">Chiaroscuro, Baby (2009)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/FLUEGELSCHLAGEN">1975 Flügelschlagen (wing flapping) (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Farbstreifen_Bedienungsanleitung">1970 Farbstreifen / Bedienungsanleitung (Manual) (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/1971DerSchneSigmar.movStefanKeineZeilenNeuSkaliert2243">1971 Der Schöne Sigmar (The beautiful Sigmar) (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Lesnouveaudieux">Les Nouveaux Dieux (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BetwHurr">Between Hurricanes (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/1989Essen2232636FilmklasseSelbstndig">1989 Essen 223 (Community film) (1989)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Tango_Short_Version">1980 Tango durch Deutschland (tango through Germany) (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/1976ImGlashausDerIllusionen3622RundeS8EckenFilmklasseSelbstndig">1976 Im Glashaus der Illusionen (inside the glasshouse of the illusions) (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/WholesaleSoulsInc">Wholesale Souls, Inc. (2006)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MEHR_ALS_ZWEI">1978 Mehr als zwei (More than Two) (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TRANSIT_NACH_BERLIN">1983 Transit nach Berlin (Transit to Berlin) (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TAENZERIN">1992 Die Tänzerin (The Dancer) (1992)</a>[cite: 4]</li>
+</ul>
+
+<h2>Horror / Suspense / Thriller</h2>
+<ul>
+    <li><a href="https://archive.org/details/Grave_of_the_Vampire_movie">Grave of the Vampire (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Horror_Express">Horror Express (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/horror_express_ipod">Horror Express (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/NakedMassacre1976">Naked Massacre (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DeepRed1975">Deep Red (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DrillerKillerUncut1979">Driller Killer-Uncut (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HowAwfulAboutAllan">How Awful About Allan (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/hellhole.-1985.1080p.-blu-ray.-h-264.-aac-rarbg">Hellhole (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/virgin.-witch.-1972.1080p.-blu-ray.-h-264.-aac-rarbg">Virgin Witch (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nekromantik-hard-sub">Nekromantik (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SilentNightBloodyNight">Silent Night, Bloody Night (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/embryo_RockHudson">Embryo (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Decay2012-TheLhcZombieFilmfullFilm">Decay (2012) - The LHC Zombie Film [full film]</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/der.-todesking.-1990.-german.-1080p.-blu-ray.-h-264.-aac-vxt">Der Todesking (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/born-innocent">Born Innocent (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SilentNightBloodyNight1972">Silent Night, Bloody Night (WideScreen/Uncut) (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Horror_Express_WebM">Horror Express (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/werewolf_washington">Werewolf of Washington (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/AlltheKindStrangers">All the Kind Strangers (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HorrorExpresswithSpanishSubtitles">Horror Express (with spanish subtitles) (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/GraveOfTheVampire">Grave of the Vampire (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/dead_people_ipod">Dead People (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ThePyx">The Pyx (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nightmares-come-at-night-les-cauchemars-naissent-la-nuit-1972-diana-lorys-colett">Nightmares Come At Night, Les Cauchemars Naissent La Nuit (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BloodyWednesday">Bloody Wednesday (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Dominique_638">Dominique (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ScreamBloodyMurder">Scream Bloody Murder (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/manhunter.-1986-255910939230">Manhunter (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MessiahofEvil_avi">Messiah of Evil (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-little-girl-who-lives-down-the-lane__jodie-foster-1976">The Little Girl Who Lives Down the Lane (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MoonoftheWolf_">Moon of the Wolf (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DontLookintheBasementAKATheForgotten">Don't Look in the Basement (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HorrorExpress_201303">Horror Express (HD) (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Monstroid">Monstroid (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Rituals_1977">Rituals (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/jennifer-1978-1080p">Jennifer (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SatansHarvest">Satan's Harvest (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SlashedDreams_658">Slashed Dreams (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Werewolf_of_Washington">Werewolf of Washington (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-i-eat-your-skin-full-movie-b-w-horror-suspense-voodoo-zombies-1964-7">I Eat Your Skin (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/zombie-nation.-2004.-dvd-rip.-xvid-1337x-noir">Zombie Nation (2004)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheDrillerKillerMPEG2">The Driller Killer (MPEG2) (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ShadowFilmsTheDeadCreeper">The Dead Creeper (2009)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/slumber.-party.-massacre.-iii.-1990.-unrated.-720p.-blu-ray.-x264-sadpanda">Slumber.Party.Massacre.III (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/touch-of-satan-1971">Touch Of Satan (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/InvisibleGhostVers4">Invisible Ghost (2016)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-zaat-1971-hollywood-movie-k-8o-6-smgu-1-xu-720p-1629089739223">Zaat (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-butcher-baker-nightmare-maker-1981-full-movie.-ot-1-xle-dzv-8-720p-1629307862194">Butcher, Baker, Nightmare Maker (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ChildrenoftheNight">Children of the Night (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/captain-kronos-vampire-hunter">Captain Kronos Vampire Hunter (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/salems-lot-1979_202411">Salems Lot (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/vampire-ecstasy-1973">Vampire Ecstasy (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-madman-1981-full-movie.-ythtsed-y-8-uy-720p-1629086770196">Madman (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/men-behind-the-sun-1988-hd-english-dubbed">Men Behind The Sun (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-the-majorettes-1987-full-movie.-r-an-xifrhy-wu-720p-1628491555737">The Majorettes (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SwampWomen">Swamp Women (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/hitch.-hike.-1977.-italian.-1080p.-blu-ray.-h-264.-aac-vxt">Autostop rosso sangue (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/frogs.-1972.1080p.-blu-ray.-h-264.-aac-rarbg">Frogs (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/EternalEvil">Eternal Evil (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nekromantik.-1987.1080p.-blu-ray.-h-264-yts.-lt">Nekromantik (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BattleOfBloodIslandSmaller">Battle Of Blood Island (HQ) (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheDisappearanceOfFlight412_MPEG">The Disappearance Of Flight 412 (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/black.-devil.-doll.-from.-hell.-extended.-1984.-dvdrip.-bagger-inc">Black Devil Doll From Hell (1984)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/she.-killed.-in.-ecstasy.-sie.-totete.-in.-ekstase.-1971.-soledad-miranda-fred-williams-h">She Killed In Ecstasy (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/KeepMyGraveOpen_1976">Keep My Grave Open (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-house-on-the-edge-of-the-park-1980">The House On The Edge Of The Park (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/grizzley-flats-aka-shadow-people-2012">Shadow People (2011)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/daughters-of-darkness-1971">Daughters Of Darkness (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sisters.-1972.720p.-blu-ray.-x-264-838479055489">Sisters (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/desert-of-blood-dvdrip">Desert Of Blood (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SilentNightBloodyNight_753">Silent Night, Bloody Night (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/The_Devils_Feast">The Devils Feast (1999)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/she.-devils.-of.-the.-ss.-1973.">She Devils of the SS (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/house_20210324">House (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheDemon_201609">The Demon (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/BloodThirst1971">BLOOD THIRST (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-psyched-out-by-the-4-d-witch-1972-full-movie-lsd-pychic-freakout-fro">Psyched By The 4-D Witch (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/KingdomOfSpiders">Kingdom of the Spiders (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-silence-of-the-lambs-1991_202405">The Silence Of The Lambs (1991)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/grapes-of-death-the-les-raisins-de-la-mort-w-extras-1978-brigitte-lahaie-marie-g">Grapes Of Death (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lust-for-a-vampire-1971_202405">Lust for a Vampire (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/man-behind-the-sun-1988-unit-731-hd-version-english-subtitles">Man Behind The Sun (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CurseOfBigfoot_MPEG">Curse Of Bigfoot (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/AtomAgeVampireSmaller">Atom Age Vampire (HQ) (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Dead_People_movie">Dead People (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/UnknownWorld_201503">Unknown World (1951)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/HorrorExpress1972">Horror Express (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DevilTimesFive_977">Devil Times Five (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/astralfactorrr">Invisible Strangler (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheHangedMan">The Hanged Man (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/scanners-1981-1080p">Scanners (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CurseOfBigfoot">Curse of Bigfoot (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the.-candy.-snatchers.-1973.1080p.-blu-ray.-h-264.-aac-rarbg">The Candy Snatchers (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/man-bites-dog">Man Bites Dog (1992)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/mil-gritos-tiene-la-noche-19820">Mil Gritos Tiene La Noche (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/darkman-trilogy-1990">Darkman Trilogy (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/AttackOfTheGiantLeeches_201711">Attack Of The Giant Leeches (2017)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/WhiteZombieHQ">White Zombie HQ (2016)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/stigma-1972">Stigma (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-fury-1978-kirk-douglas-john-cassavetes-384756681456">The Fury (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SavageWeekend">Savage Weekend (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/rebel-highway-complete-series-of-films">Rebel Highway complete series of films (1994)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/DeadManDrinking">Dead Man Drinking (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MurderOnFlight502">Murder on Flight 502 (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheDisappearanceofFlight41274DVDcosmo3">The Disappearance of Flight 412 (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TrackoftheMoonBeast">Track of the Moon Beast (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SnakePeople">Snake People (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/my.-bloody.-valentine.-1981.-dc.-remastered.-1080p.-blu-ray.x-265-rarbg">My Bloody Valentine (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ova-1986-1990">Violence Jack ALL OVA'S (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/murder-on-the-orient-express-1974">Murder on the Orient Express (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-last-slumber-party-riff">The Last Slumber Party (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-abominable-dr.-phibes">The Abominable Dr. Phibes (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/creatures-the-world-forgot">Creatures The World Forgot (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-the-night-stalker-1972-3g-fy-2-ugby-xu-720p-1628475318113">The Night Stalker (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/alligator-1980">Alligator (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/IEatYourSkinMpeg">I Eat Your Skin MPEG (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/scars-of-dracula_202107">Scars of Dracula (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sweet-home-the-mamiya-house-1988">Sweet Home (The Mamiya House) (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-vampire-happening">The Vampire Happening (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/MurderOnceRemoved1971ThrillerJohnForsytheBarbaraBain">Murder Once Removed (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Vance_Capley_Spook_Show_ep14">Spook Show ep 14 (2011)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-stagefright-1987-full-movie.-cw-jff-wtx-u-8-m-720p-1628488874807">Stage Fright (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/flowers-in-the-attic-1987_202510">Flowers In The Attic (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/byleth-the-demon-of-incest-1972-claudia-gravy-silvana-pompilli-marzia-damon-carl">Byleth, The Demon Of Incest (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-maniac-1980-blab-pc-0i-oz-a-720p-1629087076705">Maniac (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/OneBodyTooManyJackHaleyBelaLugosiAppleTV2ndGen..mp4">One Body Too Many (2016)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/bad-taste-1987-full-movie">Bad Taste (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/rolling.-vengeance.-1987.1080p.-blu-ray.-h-264.-aac-rarbg">Rolling Vengeance (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/another_202112">Another (2012)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/dead-girls-1990_202408">Dead Girls (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/man-behind-the-sun-4-ur-kg-qoj-vl-yg-480p-1630473410159">Men Behind The Sun 4 (1995)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/man-behind-the-sun-2-laboratory-of-the-devil-fo-6-gfwo-mvj">Man Behind The Sun 2 Laboratory Of The Devil (1992)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/SpookShowEpisode9KingOfTheNon-alcoholicZombies">SPOOK SHOW episode 9 King of the Non-Alcoholic Zombies (2011)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/cruel-jaws-a-bruno-mattei-film">Cruel Jaws (1995)</a>[cite: 4]</li>
+</ul>
+
+<h2>Sci-Fi / Fantasy</h2>
+<ul>
+    <li><a href="https://archive.org/details/Cosmos_War_of_the_Planets">Cosmos: War of the Planets (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/cco_virus">['Virus (Fukkatsu no hi )', 'Virus'] (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/VirusFukkatsuNoHi1980">Virus (Fukkatsu no hi 復活の日) (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Virus_Fukkatsu_no_hi">Virus (復活の日, Fukkatsu no hi) (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Snowbeast_436">Snowbeast (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ToKnowAJedi-Movie">To Know a Jedi - Movie (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CozzillaRestoredGenoCuddy">Luigi Cozzi's Godzilla (Cozzilla, 1977) (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TeenagersInTheUniverseotrokiVoVselennoj">Teenagers in the Universe (Otroki vo vselennoj) (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ABoyAndHisDog1975FullHD">A Boy And His Dog (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/The_Other_Dragon">The Other Dragon (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/CosmosWarofthePlanets">Cosmos: War of the Planets (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/godzilla-1954-colorization-2020">Godzilla 1954 Official Toho Colorization (2020)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/FromMoscowToCassiopeiamoskva-kassiopeya">From Moscow To Cassiopeia (Moskva-Kassiopeya) (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/aelita_queen_of_mars_musical">Aelita, Queen of Mars Musical (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/thecatfromouterspace">The Cat From Outer Space (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/world-on-a-wire-1973-welt-am-draht-original-title-crime-mystery-sci-fi-r-w-fassbinder-360p">World On A Wire (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/angel-cop-episode-6-1080p-eng-sub-best-quality">Angel Cop all OVA's (1989)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/violence-jack-all-ovas">VIOLENCE JACK ALL OVAs (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/mad-bull-34-full-movie-all-4-ova">Mad Bull 34 Full Movie (All 4 OVA's) (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sinistercinema_phantom10kleagues">Phantom from 10,000 leagues [videorecording] (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/The_Lucifer_Complex">The Lucifer Complex (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/pulse.-2001">Pulse (Kairo) (2001)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/snakes-and-earrings-2008-1080p-blu-ray">Snakes and Earrings (2008)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/slipstream">Slipstream (1989)</a>[cite: 4]</li>
+</ul>
+
+<h2>Sploitation / Adult / Erotic / Cult</h2>
+<ul>
+    <li><a href="https://archive.org/details/in-the-realm-of-the-senses">In The Realm Of The Senses (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/virgin.-witch.-1972.1080p.-blu-ray.-h-264.-aac-rarbg">Virgin Witch (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/les-novices-libertines">Les Novices libertines (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/girl.-camp.-2003.-chained.-vengeance.-2003.-dvdrip.-xvi-d-spri-nter">Girl Camp: Chained Vengeance (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lavare-1980">L'avare (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-naughty-cheerleader.-1970.-tvrip.x-264-cg">The Naughty Cheerleader (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-satans-cheerleaders-1977-stwnpjg-io-pq-1080p-1637125171901">Satan's Cheerleaders (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/beyond.-the.-valley.-of.-the.-dolls.-1970.1080p.-blu-ray.x-264-yts.-ag">Beyond The Valley Of The Dolls (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lanneedesmeduses">L'Année des méduses (1984)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/hot-love-1985-hd-jorg-buttgereit-1">Hot Love (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-the-beach-girls-1982-9b-hq-sq-rq-ne-e-1080p-1628903809315">The Beach Girls (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Fuck_Toute">Fuck Toute (Pourquoi travailler ?) (2005)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-how-to-lose-your-wife-and-find-a-lover-1978-starring-barbara-bouchet">How To Lose A Wife And Find A Lover (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/red.-blooded.-american.-girl.-1990.-dvdrip.x-264-handjob">Red.Blooded.American.Girl (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/spider-babe.-2003_202509">SpiderBabe (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/virgin.-witch.-1972">Virgin Witch (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-big-bad-mama-1974-6z-na-1z-6-ta-94-720p-1629087198052">Big Bad Mama (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-goodbye-uncle-tom-1971-american-version-inquest-into-slavery-ldc-dq-">Goodbye, Uncle Tom (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/happy-high-school-las-colegialas">Happy High School, Las Colegialas (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/my-body-burns-dossier-erotique-dun-notaire-1973-evelyne-scott-angela-hansen-gild">My Body Burns, Dossier Erotique D'un Notaire (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/felicia-les-mille-et-une-perversions-de-felicia-1975-john-roche-batrice-harnois-">Felicia, Les Mille Et Une Perversions De Felicia (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/triangle-of-venus-die-insel-der-tausend-freuden-1978-olivia-pascal-philippe-garn">Triangle Of Venus, Die Insel Der Tausend Freuden (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/le-notti-porno-nel-mondo-emmanualle-sinnlickeit-1977">Le Notti Porno Nel Mondo, Emmanualle Sinnlickeit (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/lady-emanuelle-tradita-a-morte-longer-1989-malu-micaela-gianni-macchia-antonio-z">Lady Emanuelle, Tradita A Morte (1989)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/beichte-einer-liebestollen-sabena-hay-country-swingers">Beichte Einer Liebestollen, Sabena, Hay Country Swingers (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/i-prosseneti-panderers-1976-alain-cuny-juliette-mayniel-stefani-casini-silvia-di">I Prosseneti, Panderers (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/intimate-games-1976-george-baker-monika-ringwald-anna-bergman-maria-st-clare-hea">Intimate Games (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/caligulas-hot-nights-1977">Caligula's Hot Nights (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/long-swift-sword-of-siegfried-the-the-lustful-barbarian-english-1971">Long Swift Sword Of Siegfried, The, The Lustful Barbarian (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/erotic-and-wacky-tunnel-of-time-1983">Erotic And Wacky Tunnel Of Time (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/Nobody_Needs_To_Know">Nobody Needs To Know (2003)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/horny-working-girl-onna-shinnyu-shain">Horny Working Girl, Onna Shinnyu Shain (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/good-girl-bad-girl-1994">Good Girl Bad Girl - Tammy Stones (1994)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/devil-in-miss-jonas-the-der-teufel-in-miss-jonas-1976">Devil In Miss Jonas, The, Der Teufel In Miss Jonas (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/tender-flesh-carne-fresca-1997-monique-parent-amber-newman-lina-romay-aldo-sambr">Tender Flesh, Carne Fresca (1997)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/wide-open-marriage-hausfrauen-report-4-1973">Wide Open Marriage, Hausfrauen Report 4 (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sueca-bisexual-necesita-semental-1982-marina-hedman-helene-shirley-jordi-batalla">Sueca Bisexual Necesita Semental (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/popcorn-and-ice-cream-popcorn-und-himbeereis-1978-benny-schnier-olivia-pascal-za">Popcorn And Ice Cream, Popcorn Und Himbeereis (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/boob-tube-the-1975-colleen-brennan-john-alderman-lyllah-torena-elana-casey-jon-r">The Boob Tube (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/nurse.-sherri.-1978.720p.-blu-ray.x264-X0r">Nurse Sherri (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/joy-and-joan-joy-et-joan-1985-brigitte-lahaie-isabelle-solar-pierre-londiche-jea">Joy And Joan, Joy Et Joan (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/bitches-the-les-chiennes-1973">Bitches, The, Les Chiennes (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ultimate.-desire.-1993">Ultimate Desire (1993)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/super-girls-supergirls-for-love-1983-olinka-hardiman-peter-bond-ivonne-monaco-li">Super Girls, Supergirls For Love (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/la-bella-antonia-naughty-nun-1972-edwige-fenech-piero-focaccia-riccardo-garrone-">La Bella Antonia, Naughty Nun (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/italian-sex-sesso-in-testa-1974">Italian Sex, Sesso In Testa (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ubalda-all-naked-and-warm-quel-gran-pezzo-dell-ubalda-tutta-nuda-e-tutta-calda-1">Ubalda, All Naked And Warm (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/hard-time-1995">Hard Time - Meilani Paul, Jacqueline Lovell (1995)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/hurra-die-schwedinnen-sind-da-1978-scarlett-gunden-bea-fiedler-corinne-brodbeck-">Hurra Die Schwedinnen Sind Da (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sensuous-nurse-the-linfermiera-1975">Sensuous Nurse, The, L'infermiera (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/fruit-is-ripe-the-griechische-feigen-1977-olivia-pascal-betty-verges-jessica-dub">The Fruit Is Ripe, Griechische Feigen (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/inhibitions-inibizione-1976">Inhibitions, Inibizione (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/the-fashioned-in-les-branches-a-saint-tropez-1983-olivia-dutron-xavier-deluc-yve">The Fashioned In, Les Branches A Saint Tropez (1983)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/ladies-doctor-il-ginecologo-della-mutua-1977-renzo-montagnani-paola-senatore-mas">Ladies Doctor, Il Ginecologo Della Mutua (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/policewoman-on-the-porno-squad-la-poliziotta-della-squadra-del-buon-costume-1979">Policewoman On The Porno Squad (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sexboat-1981">Sexboat - Roxanne Potts, Jeanette James, Kris Munroe (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/click-the-calendar-girl-killer-1990-dona-speir-tracy-dali-diana-karanikas-hoke-h">Click, The Calendar Girl Killer (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/dr-jekyll-likes-them-hot">Dr Jekyll Likes Them Hot (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/love-swedish-style-1972-karen-ciral-ted-roter-woody-lee-jane-tsentas-rachel-engl">Love Swedish Style (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/sex.-with.-the.-stars.-1981.720p.-blu-ray.-x-264.-aac-yts.-mx">Sex with the Stars (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/erotic-ghost-story-1990">Erotic Ghost Story (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/some-prefer-cake">Some Prefer Cake (1997) - Desi del Valle Film</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/paradis-pour-tous-1982-patrick-dewaaere-jacques-dutronc-fanny-cottencon-stephane">Paradis Pour Tous (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/at-last-at-last-la-moglie-vergine-the-virgin-wife-1975">At Last, At Last, La Moglie Vergine, The Virgin Wife (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/teenage-catgirls-in-heat-1994-helen-griffths-dorothy-layne-carrie-vanston-meliss">Teenage Catgirls In Heat (1994)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/la-bonne-1986">La Bonne (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/victim-of-desire-1994">Victim Of Desire - Julie Strain, Shannon Tweed (1994)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/holiday-report-urlaubsreport-woruber-reiseleiter-nicht-sprechen-durfen-1971">Holiday Report, Urlaubsreport (1971)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/killer-sex-queens-from-cyberspace-1998-lorissa-mc-comas-danni-ashe-glori-anne-gi">Killer Sex Queens From Cyberspace (1998)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/erotiko-pathos-1981">Erotiko Pathos (1981)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/bikini-summer-3-1997-dvdrip">Bikini Summer III: South Beach Heat (1997)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/threesome-wild-sapore-di-donna-1993">Threesome Wild, Sapore Di Donna (1993)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/wager-of-love-1990">Wager Of Love - Shelly Johnson, Linda Richardson (1990)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/cave-girl-island-1994">Cave Girl Island - Sarah Bellomo, Tina Hollimon, Stephanie Hudson (1994)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-im-skillful-in-love-and-pure-art-film-by-konstantin-seliverstov-6-pu">I’m Skillful In Love And Pure Art (1999)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/foxy-lady-spiando-marina-the-smile-of-the-fox-1994">Foxy Lady, Spiando Marina, The Smile Of The Fox (1992)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/me-eu-1987">Me, Eu (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/games-girls-play-the-bunny-caper-1974-christina-hart-eunice-black-harry-towb-bob">Games Girls Play, The Bunny Caper (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/dicktator.-the-1974-paul-daniels-yolanda-beckham-linda-york-ann-perry-vickie-cri">The Dicktator (1974)</a>[cite: 4]</li>
+</ul>
+
+<h2>Western</h2>
+<ul>
+    <li><a href="https://archive.org/details/The-Gun-and-the-Pulpit">The Gun and the Pulpit (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/GonewiththeWest">Gone with the West (1975)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/TheProudAndTheDamned-1972">The Proud And The Damned (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/FightingCaravans-Gary-Cooper">Fighting Caravans (Gary Cooper) (2015)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/rio-lobo-1970-john-wayne-western-civil-war">Rio Lobo (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/el-arracadas">El Arracadas (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/el-arracadas_202206">El Arracadas (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/2954-el-tahur-1979-dvdrip-lat-mx-v.mkv">El Tahur (1979)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-pelicula-entre-monjas-anda-el-diablo-hf-8e-py-apymc-480p-1639444135763">Entre Monjas Anda El Diablo (1973)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-pelicula-fantoche-con-joaquin-cordero-y-lilia-michel.-cine-mexicano-">Fantoche (1977)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/2960-picardia-mexicana-tvrip-1978-lat-mx-v.mkv">Picardia Mexicana (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/la-banda-del-carro-rojo-1978-fullscreen">La Banda Del Carro Rojo (1978)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/el-diablo-el-santo-y-el-tonto-1987-widescreen-version">El Diablo, El Santo Y El Tonto (1987)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/videoplayback_20211216_2303">La Ley Del Monte (1976)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/yt-1s.com-el-hijo-del-pueblo-1974-widescreen-version-720p">El Hijo Del Pueblo (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/me-cai-de-la-nube-1974-1080p">Me Caí De La Nube (1974)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/2961-picardia-mexicana-2-1980-tvrip-lat-mx-v.mkv">Picardia Mexicana 2 (1980)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/video-4058-masacre-en-el-rio-tula-1985-dvdrip-lat-v.mkv">Masacre En El Rio Tula (1985)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/atraccion-peculiar-1988">Atraccion Peculiar (1988)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/2953-tacos-al-carbon-1972-dvdrip-lat-v.mkv">Tacos Al Carbón (1972)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/narcosatanicos-asesinos-1989">Narcosatanicos Asesinos - Alfonso Zayas, Lina Santos, Tun Tun (1989)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/l-4s-pobres-ilegales-1982-1080p">Las Pobres Ilegales (1982)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/y-2-mate.is-quando-le-donne-avevano-la-coda-wqub-l-0-gplmc-480p-1646022347652">Quando Le Donne Avevano La Coda (1970)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/arabian-nights-1974">ARABIAN NIGHTS TALES BASED MOVIES (2021)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/las-minas-de-salomon-rey-1986">Las Minas De Salomon Rey (1986)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/mujeres-salvajes-1984-1080p">Mujeres Salvajes (1984)</a>[cite: 4]</li>
+    <li><a href="https://archive.org/details/1091-mujeres-salvajes-1984-tvrip-lat-mx-v.mkv">Mujeres Salvajes (1984)</a>[cite: 4]</li>
+</ul>
   <header>
     <div class="brand">SMART<span>CAST</span></div>
     <div class="header-controls">
-      <a href="movies.html" class="nav-link-btn">🎬 Browse Movies</a>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
       <button class="nav-tab-btn active" id="btnTvTab" onclick="switchView('tv')">📺 Live TV Guide</button>
       <button class="nav-tab-btn" id="btnMoviesTab" onclick="switchView('movies')">🎬 Movie Library</button>
       <input type="text" id="searchInput" class="search-input" placeholder="Search channels or movies..." oninput="handleSearch()">
     </div>
   </header>
 
-  <div class="app-layout">
-    <!-- Left Workspace: Active Player -->
-    <div class="player-workspace">
-      <div class="player-container-inner">
-        <div class="player-meta-bar">
-          <div id="playerTitle" class="player-title">
-            <span class="live-dot"></span> Select a channel to stream
-          </div>
-        </div>
   <!-- VIEW 1: LIVE TV GUIDE -->
   <div id="tvView" class="view-section active">
     <div class="workspace-pane">
       <div style="width:100%; max-width:850px;">
         <div id="tvPlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a live channel</div>
         <div class="media-box">
-          <video id="videoPlayer" controls autoplay></video>
-        </div>
-        <div class="schedule-banner">
-          <div class="schedule-item">
-            <span class="schedule-label">Currently Playing</span>
-            <span id="currentShow" class="schedule-val">Live Broadcast Feed</span>
-          </div>
-          <div class="schedule-divider"></div>
-          <div class="schedule-item" style="text-align: right;">
-            <span class="schedule-label">Up Next</span>
-            <span id="nextShow" class="schedule-val">Scheduled Feature Program</span>
-          </div>
           <video id="tvVideo" controls autoplay></video>
         </div>
       </div>
       <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
     </div>
-
-    <!-- Right Workspace: Channel Guide -->
-    <div class="guide-workspace">
-      <div class="guide-header">
     <div class="sidebar-pane">
       <div class="sidebar-header">
         <span>Channel Guide</span>
-        <span id="channelCount">Verified Channels</span>
         <span id="tvCount" style="color:var(--accent); font-size:0.75rem;"></span>
       </div>
       <div class="scroll-area">
         <div id="tvContainer" class="items-stack"></div>
       </div>
-      <div id="categoryPills" class="category-pills-bar"></div>
-      <div class="channels-scroll-area">
-        <div id="channelsContainer" class="channels-stack"></div>
     </div>
   </div>
 
@@ -550,30 +810,6 @@
 <script>
   // Live Channels Dataset (Restored complete list)
   const channels = [
-    // Entertainment & Movies
-    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
-    { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
-    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
-    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", now: "Biography Special", next: "Real Life Mysteries" },
-    { name: "AMC Thrillers", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", now: "Edge of Your Seat Thriller", next: "Late Night Suspense" },
-    { name: "Pluto TV Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", now: "Hollywood Feature Presentation", next: "Late Night Cinema" },
-    { name: "Action Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", now: "High-Octane Stunts", next: "Underground Fight Club" },
-    { name: "Comedy Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", now: "Laugh Out Loud Comedies", next: "Slapstick Saturday" },
-    { name: "Drama Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-drama-1-eu.rakuten.tv/v1/master/779c4a52efbf8b09d2a0c4983f4d603a/master.m3u8", now: "Compelling Human Stories", next: "Award Winning Drama" },
-    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" },
-
-    // Sports & Action
-    { name: "ESPN", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8", now: "SportsCenter Live", next: "Live Collegiate Matchup" },
-    { name: "Fox Sports 1", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8", now: "NASCAR Hub", next: "Live Racing Coverage" },
-    { name: "Red Bull TV", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbull-app-3/master.m3u8", now: "Extreme Sports Showcase", next: "Mountain Bike World Series" },
-    { name: "WPT World Poker Tour", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://wpt.amagi.tv/playlist.m3u8", now: "High Stakes Final Table", next: "Pro Poker Tournaments" },
-
-    // News & Documentaries
-    { name: "Fox News", category: "News & Documentaries", res: "720p", format: "m3u8", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8", now: "Special Report", next: "The Five" },
-    { name: "ABC News Live", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://abc-iview-live.akamaized.net/hls/live/612251/livestream3/master.m3u8", now: "World News Now", next: "Prime Global Updates" },
-    { name: "Bloomberg TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://live-bloomberg-dash.akamaized.net/dash/live/601140/bloomberg-hb/manifest.mpd", formatAlt: "mpd", now: "Global Financial Markets", next: "TechWatch" },
-    { name: "NASA TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8", now: "Space Station Live Feed", next: "Earth Science Documentaries" },
-    { name: "Documentary+", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://documentaryplus.amagi.tv/playlist.m3u8", now: "In-Depth Historical Feature", next: "Environmental Spotlight" }
     { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
     { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
     { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
@@ -588,32 +824,6 @@
     { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8" }
   ];
 
-  let hlsPlayer = null;
-  let dashPlayer = null;
-  let currentActiveUrl = "";
-  let activeCategory = "All";
-
-  function renderPills() {
-    const pillsContainer = document.getElementById('categoryPills');
-    pillsContainer.innerHTML = '';
-    const categories = ["All", ...new Set(channels.map(c => c.category))];
-
-    categories.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = `pill-btn ${cat === activeCategory ? 'active' : ''}`;
-      btn.innerText = cat;
-      btn.onclick = () => {
-        activeCategory = cat;
-        renderPills();
-        renderChannels();
-      };
-      pillsContainer.appendChild(btn);
-    });
-  }
-
-  function renderChannels() {
-    const container = document.getElementById('channelsContainer');
-    container.innerHTML = '';
   // Movies Archive Dataset
   const movies = [
     { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
@@ -621,22 +831,12 @@
     { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
   ];
 
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = channels.filter(c => {
-      const matchesCategory = activeCategory === "All" || c.category === activeCategory;
-      const matchesSearch = c.name.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
-    });
   let currentHls = null;
 
-    document.getElementById('channelCount').innerText = `${channels.length} Verified Channels`;
   function switchView(viewName) {
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
 
-    if (filtered.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
-      return;
     if (viewName === 'tv') {
       document.getElementById('tvView').classList.add('active');
       document.getElementById('btnTvTab').classList.add('active');
@@ -646,7 +846,6 @@
     }
   }
 
-    filtered.forEach(ch => {
   function renderLists() {
     // Render TV
     const tvCont = document.getElementById('tvContainer');
@@ -654,32 +853,16 @@
     document.getElementById('tvCount').innerText = `${channels.length} Channels`;
     channels.forEach(ch => {
       const card = document.createElement('div');
-      card.className = 'channel-card';
-      if (ch.url === currentActiveUrl) card.classList.add('active');
-      
       card.className = 'card-item';
       card.innerHTML = `<div><div class="card-title">${ch.name}</div><div class="card-meta">${ch.category} • ${ch.res}</div></div><span>▶</span>`;
       card.onclick = () => {
-        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('#tvContainer .card-item').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
-        playChannel(ch);
         playMedia('tv', ch);
       };
       tvCont.appendChild(card);
     });
 
-      card.innerHTML = `
-        <div class="channel-info">
-          <span class="channel-name">${ch.name}</span>
-          <div class="channel-meta">
-            <span class="badge-res">${ch.res}</span>
-            <span class="tag-format">${ch.format}</span>
-          </div>
-        </div>
-        <span class="play-indicator">▶ Play</span>
-      `;
-      container.appendChild(card);
     // Render Movies
     const movCont = document.getElementById('moviesContainer');
     movCont.innerHTML = '';
@@ -696,33 +879,19 @@
     });
   }
 
-  function playChannel(channel) {
-    currentActiveUrl = channel.url;
-    const video = document.getElementById('videoPlayer');
-    const title = document.getElementById('playerTitle');
-    const currentShow = document.getElementById('currentShow');
-    const nextShow = document.getElementById('nextShow');
   function playMedia(type, item) {
     const videoId = type === 'tv' ? 'tvVideo' : 'movieVideo';
     const titleId = type === 'tv' ? 'tvPlayerTitle' : 'moviePlayerTitle';
     const video = document.getElementById(videoId);
     const title = document.getElementById(titleId);
 
-    title.innerHTML = `<span class="live-dot"></span> Streaming Live: ${channel.name} (${channel.res})`;
-    currentShow.innerText = channel.now || "Live Stream";
-    nextShow.innerText = channel.next || "Continuous Playback";
     title.innerText = `Now Playing: ${item.name || item.title}`;
 
-    if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
-    if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
     if (currentHls) {
       currentHls.destroy();
       currentHls = null;
     }
 
-    if (channel.format === 'mpd') {
-      dashPlayer = dashjs.MediaPlayer().create();
-      dashPlayer.initialize(video, channel.url, true);
     if (item.url.endsWith('.mp4')) {
       video.src = item.url;
       video.play();
@@ -732,36 +901,26 @@
       currentHls.attachMedia(video);
       currentHls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
     } else {
-      if (Hls.isSupported()) {
-        hlsPlayer = new Hls();
-        hlsPlayer.loadSource(channel.url);
-        hlsPlayer.attachMedia(video);
-        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = channel.url;
-        video.play();
-      }
       video.src = item.url;
       video.play();
     }
   }
 
   function handleSearch() {
-    renderChannels();
     const query = document.getElementById('searchInput').value.toLowerCase();
     // Simple filter hook can go here if expanding search across both lists
   }
 
-  renderPills();
-  renderChannels();
   renderLists();
   // Auto-play first channel on load
   window.addEventListener('DOMContentLoaded', () => {
-    playChannel(channels[0]);
     playMedia('tv', channels[0]);
     document.querySelector('#tvContainer .card-item').classList.add('active');
   });
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
