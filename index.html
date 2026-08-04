@@ -415,7 +415,6 @@
   <header>
     <div class="brand">SMART<span>CAST</span></div>
     <div class="header-controls">
-      <!-- Professional Link matching the layout styling -->
       <a href="movies.html" class="nav-link-btn">🎬 Browse Movies</a>
       <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
     </div>
@@ -463,6 +462,7 @@
 
 <script>
   const channels = [
+    // Entertainment & Movies
     { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
     { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
     { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
@@ -472,7 +472,20 @@
     { name: "Action Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", now: "High-Octane Stunts", next: "Underground Fight Club" },
     { name: "Comedy Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", now: "Laugh Out Loud Comedies", next: "Slapstick Saturday" },
     { name: "Drama Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-drama-1-eu.rakuten.tv/v1/master/779c4a52efbf8b09d2a0c4983f4d603a/master.m3u8", now: "Compelling Human Stories", next: "Award Winning Drama" },
-    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" }
+    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" },
+
+    // Sports & Action
+    { name: "ESPN", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8", now: "SportsCenter Live", next: "Live Collegiate Matchup" },
+    { name: "Fox Sports 1", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8", now: "NASCAR Hub", next: "Live Racing Coverage" },
+    { name: "Red Bull TV", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbull-app-3/master.m3u8", now: "Extreme Sports Showcase", next: "Mountain Bike World Series" },
+    { name: "WPT World Poker Tour", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://wpt.amagi.tv/playlist.m3u8", now: "High Stakes Final Table", next: "Pro Poker Tournaments" },
+
+    // News & Documentaries
+    { name: "Fox News", category: "News & Documentaries", res: "720p", format: "m3u8", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8", now: "Special Report", next: "The Five" },
+    { name: "ABC News Live", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://abc-iview-live.akamaized.net/hls/live/612251/livestream3/master.m3u8", now: "World News Now", next: "Prime Global Updates" },
+    { name: "Bloomberg TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://live-bloomberg-dash.akamaized.net/dash/live/601140/bloomberg-hb/manifest.mpd", formatAlt: "mpd", now: "Global Financial Markets", next: "TechWatch" },
+    { name: "NASA TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8", now: "Space Station Live Feed", next: "Earth Science Documentaries" },
+    { name: "Documentary+", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://documentaryplus.amagi.tv/playlist.m3u8", now: "In-Depth Historical Feature", next: "Environmental Spotlight" }
   ];
 
   let hlsPlayer = null;
@@ -584,4 +597,3 @@
 
 </body>
 </html>
-
