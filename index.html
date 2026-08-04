@@ -1,231 +1,520 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV - IPTV & Cinema Suite</title>
+    <title>NEXUS TV v4.0 - Quantum</title>
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HLS.js for m3u8 stream playback -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        /* Custom scrollbar for channel/movie lists */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.4);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(51, 65, 85, 0.8);
+            background: rgba(51, 65, 85, 0.6);
             border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 1);
+            background: rgba(71, 85, 105, 0.9);
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-red-600 selection:text-white">
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-    <!-- Top Header -->
-    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="bg-red-600 text-white font-black px-3 py-1 rounded tracking-wider text-lg shadow-lg shadow-red-600/30">
-                NEXUS TV
-            </div>
-            <span class="text-xs text-slate-400 font-medium uppercase tracking-widest hidden sm:inline">
-                IPTV & Cinema Suite
-            </span>
-        </div>
-        <div class="text-xs text-slate-400 font-semibold tracking-wide">
-            Webpage Designed by: Daniel Dudek
-        </div>
-    </header>
-
-    <!-- Main Content Dashboard -->
-    <main class="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto p-4 gap-6 my-auto">
-        
-        <!-- Left: Video Player Section -->
-        <div class="flex-1 flex flex-col">
-            <div class="relative aspect-video bg-black rounded-xl overflow-hidden shadow-2xl border border-slate-800">
-                <video
-                    id="videoPlayer"
-                    controls
-                    autoplay
-                    playsinline
-                    class="w-full h-full object-contain"
-                ></video>
-            </div>
-            <div class="mt-3 px-1 flex items-center justify-between">
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
                 <div>
-                    <h2 id="currentTitleDisplay" class="text-xl font-bold text-white tracking-tight">SYFY</h2>
-                    <p class="text-xs text-emerald-400 font-medium mt-0.5">● Live Stream Active</p>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.0 &bull; QUANTUM</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-600 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">LIVE</span>
+                </button>
+
+                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </button>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <button onclick="switchPage('search')" id="navSearch" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </button>
+
+                <button onclick="switchPage('mylist')" id="navMyList" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </button>
+
+                <button onclick="switchPage('guide')" id="navGuide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3">
+            <button onclick="switchPage('settings')" id="navSettings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </button>
+            
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Dynamic Viewport Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+        
+        <!-- PAGE 1: LIVE IPTV VIEW (Image 2 style) -->
+        <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
+                    <p class="text-xs text-slate-400 mt-1">Stream curated channels in high definition • Zero latency engine</p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels or shows..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                    <button class="w-10 h-10 rounded-xl bg-[#11182d] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                        🔔
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Grid (Player + EPG) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px]">
+                <!-- Video Stream Section -->
+                <div class="lg:col-span-2 flex flex-col">
+                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
+                        <video
+                            id="videoPlayer"
+                            controls
+                            autoplay
+                            playsinline
+                            class="w-full h-full object-contain absolute inset-0"
+                        ></video>
+                    </div>
+
+                    <!-- Active Stream Info Bar -->
+                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
+                                📺
+                            </div>
+                            <div>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">SYFY</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Live Broadcast Stream</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-6">
+                            <div class="text-right hidden sm:block">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 2.4M watching
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">📈 #3 trending category</div>
+                            </div>
+                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
+                                <span>🤍</span>
+                                <span>Favorite</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Program Guide (EPG Sidebar) -->
+                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">📅</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
+                        </div>
+                        <button class="text-[11px] font-bold text-pink-500 hover:underline">Full EPG</button>
+                    </div>
+
+                    <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-800/60">
+                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
+                            <span>💡</span>
+                            <span>Tip: Record any upcoming show with one click to your cloud DVR.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Selector Strip -->
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Click any channel to switch instantly</div>
+                </div>
+                <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
 
-        <!-- Right: Channel & Movie Selector Sidebar -->
-        <div class="w-full lg:w-96 flex flex-col bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-            <!-- Tabs -->
-            <div class="flex border-b border-slate-800 bg-slate-900">
-                <button
-                    onclick="switchTab('channels')"
-                    id="tabChannels"
-                    class="flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500"
-                >
-                    Live Channels (<span id="channelCount">0</span>)
-                </button>
-                <button
-                    onclick="switchTab('movies')"
-                    id="tabMovies"
-                    class="flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200"
-                >
-                    Movies Archive (<span id="movieCount">0</span>)
-                </button>
+        <!-- PAGE 2: LATEST MOVIES VIEW (Image 1 style) -->
+        <div id="pageMovies" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 CINEMA 2026</span>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Blockbusters</h2>
+                    <p class="text-xs text-slate-400 mt-1">Curated releases updated daily • 4K Dolby Vision</p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search movies..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-64 transition-all">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                    <button class="flex items-center space-x-2 px-4 py-2 bg-[#11182d] border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all">
+                        <span>⚙️</span>
+                        <span>Filters</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- List Items -->
-            <div id="mediaList" class="p-3 overflow-y-auto max-h-[420px] space-y-2 custom-scrollbar">
-                <!-- Populated dynamically via script -->
+            <!-- Featured Banner Card -->
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950 p-8 sm:p-12 mb-8 flex flex-col justify-end min-h-[340px]">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#060913] via-transparent to-transparent opacity-90"></div>
+                
+                <!-- Badge Details -->
+                <div class="relative z-10 flex items-center space-x-3 mb-3">
+                    <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span>✨</span> FEATURED THIS WEEK
+                    </span>
+                    <span class="bg-pink-600/20 text-pink-300 border border-pink-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span>🔥</span> Trending #1
+                    </span>
+                </div>
+
+                <!-- Title & Meta -->
+                <div class="relative z-10">
+                    <h1 class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2">Neon Horizon</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300 mb-4">
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1">⭐ 8.9/10</span>
+                        <span>📅 2026</span>
+                        <span>⏱️ 2h 18m</span>
+                        <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Sci-Fi</span>
+                        <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Thriller</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-6">
+                        In a neon-drenched megacity, a rogue AI hunter discovers a conspiracy that threatens the boundary between human and machine.
+                    </p>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button onclick="playMovieSample('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', 'Neon Horizon (Featured)')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                            <span>▶</span>
+                            <span>Watch Now</span>
+                        </button>
+                        <button class="px-5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white font-semibold text-xs hover:bg-slate-700 transition-all flex items-center space-x-2">
+                            <span>+</span>
+                            <span>My List</span>
+                        </button>
+                        <button class="px-5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white font-semibold text-xs hover:bg-slate-700 transition-all flex items-center space-x-2">
+                            <span>ℹ️</span>
+                            <span>More Info</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending Now Grid -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-lg font-bold text-white">Trending Now</h3>
+                        <span class="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded font-bold">HOT</span>
+                    </div>
+                    <button class="text-xs font-bold text-pink-500 hover:underline">See all &gt;</button>
+                </div>
+
+                <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Populated dynamically -->
+                </div>
             </div>
         </div>
+
+        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS (Placeholder views) -->
+        <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
+            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
+                ✨
+            </div>
+            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
+            <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
+            <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
+                Return to Live IPTV
+            </button>
+        </div>
+
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
+            NEXUS TV v4.0 Engine &bull; Webpage Designed by: Daniel Dudek
+        </footer>
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-auto py-6 border-t border-slate-900 text-center text-xs text-slate-500">
-        NEXUS TV Engine &bull; Webpage Designed by: Daniel Dudek
-    </footer>
-
-    <!-- Application Script -->
+    <!-- Application Script Engine -->
     <script>
-        // Live Channels Dataset
+        // Complete Data Datasets
         const channels = [
-            { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
-            { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
-            { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
-            { name: "A&E", category: "Entertainment", res: "1080p", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8" },
-            { name: "AMC Thrillers", category: "Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8" },
-            { name: "Pluto TV Movies", category: "Movies", res: "1080p", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8" },
-            { name: "Action Movies", category: "Movies", res: "1080p", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8" },
-            { name: "Comedy Movies", category: "Movies", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8" },
-            { name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8" },
-            { name: "Fox Sports 1", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8" },
-            { name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8" },
-            { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8" }
+            { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", icon: "🌌" },
+            { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "❤️" },
+            { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "🍿" },
+            { name: "A&E", category: "Entertainment", res: "1080p", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", icon: "🕵️" },
+            { name: "AMC Thrillers", category: "Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", icon: "🔪" },
+            { name: "Pluto TV Movies", category: "Movies", res: "1080p", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", icon: "🎬" },
+            { name: "Action Movies", category: "Movies", res: "1080p", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", icon: "🔥" },
+            { name: "Comedy Movies", category: "Movies", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "😂" },
+            { name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8", icon: "⚽" },
+            { name: "Fox Sports 1", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8", icon: "🏈" },
+            { name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8", icon: "📰" },
+            { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8", icon: "🚀" }
         ];
 
-        // Movies Archive Dataset
         const movies = [
-            { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
-            { title: "Sintel (Fantasy Epic)", year: "2010", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
-            { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
+            { title: "Big Buck Bunny", year: "2008", genre: "Animation", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-purple-900 to-indigo-950" },
+            { title: "Sintel Epic", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" },
+            { title: "Tears of Steel", year: "2012", genre: "Sci-Fi", rating: "9.1", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", bg: "from-violet-950 to-purple-900" },
+            { title: "Quantum Genesis", year: "2026", genre: "Action", rating: "8.6", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-red-950 to-orange-950" },
+            { title: "Cyber Odyssey", year: "2025", genre: "Thriller", rating: "8.7", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-teal-950 to-cyan-950" }
         ];
 
-        let currentTab = 'channels';
-        let currentStream = channels[0].url;
-        let currentTitle = channels[0].name;
+        const epgSchedule = [
+            { time: "19:00", show: "UEFA Champions League: Final", live: true },
+            { time: "21:00", show: "Post-Match Analysis & Breakdown", live: false },
+            { time: "23:00", show: "Late Night Sports Highlights", live: false },
+            { time: "01:30", show: "Re-run: Classic Championship Moments", live: false }
+        ];
+
+        let currentStreamUrl = channels[0].url;
+        let currentChannelName = channels[0].name;
         let hlsInstance = null;
 
         const videoElement = document.getElementById('videoPlayer');
-        const titleDisplay = document.getElementById('currentTitleDisplay');
-        const mediaListContainer = document.getElementById('mediaList');
 
+        // Initialization
         document.getElementById('channelCount').innerText = channels.length;
-        document.getElementById('movieCount').innerText = movies.length;
+        renderChannels(channels);
+        renderMovies();
+        renderEpg();
+        loadActiveStream();
 
-        function switchTab(tab) {
-            currentTab = tab;
-            const tabChannels = document.getElementById('tabChannels');
-            const tabMovies = document.getElementById('tabMovies');
+        function switchPage(page) {
+            // Hide all pages
+            document.getElementById('pageIptv').classList.add('hidden');
+            document.getElementById('pageMovies').classList.add('hidden');
+            document.getElementById('pageGeneric').classList.add('hidden');
 
-            if (tab === 'channels') {
-                tabChannels.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500";
-                tabMovies.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200";
+            // Reset navigation styles
+            ['navIptv', 'navMovies', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
+            });
+
+            if (page === 'iptv') {
+                document.getElementById('pageIptv').classList.remove('hidden');
+                document.getElementById('navIptv').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40";
+            } else if (page === 'movies') {
+                document.getElementById('pageMovies').classList.remove('hidden');
+                document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
             } else {
-                tabMovies.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors bg-red-600/10 text-red-500 border-b-2 border-red-500";
-                tabChannels.className = "flex-1 py-3 text-sm font-semibold tracking-wide transition-colors text-slate-400 hover:text-slate-200";
+                document.getElementById('pageGeneric').classList.remove('hidden');
+                const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
+                document.getElementById('genericTitle').innerText = titles[page] || "Module View";
+                
+                const activeNav = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+                if(activeNav) {
+                    activeNav.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-800 text-white border border-slate-700";
+                }
             }
-            renderList();
         }
 
-        function renderList() {
-            mediaListContainer.innerHTML = '';
-            const dataset = currentTab === 'channels' ? channels : movies;
-
-            dataset.forEach((item) => {
-                const name = item.name || item.title;
-                const isSelected = currentTitle === name;
-                
-                const btn = document.createElement('button');
-                btn.onclick = () => selectMedia(item);
-                btn.className = `w-full text-left p-3 rounded-lg border transition-all flex items-center justify-between ${
-                    isSelected
-                        ? 'bg-red-600/20 border-red-500 text-white shadow-md'
-                        : 'bg-slate-800/40 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700'
+        function renderChannels(list) {
+            const grid = document.getElementById('channelsGrid');
+            grid.innerHTML = '';
+            
+            list.forEach(ch => {
+                const isSelected = currentChannelName === ch.name;
+                const card = document.createElement('div');
+                card.onclick = () => selectChannel(ch);
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 ${
+                    isSelected 
+                        ? 'bg-pink-600/20 border-pink-500 shadow-lg shadow-pink-950/50 text-white' 
+                        : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
                 }`;
-
-                if (currentTab === 'channels') {
-                    btn.innerHTML = `
-                        <div>
-                            <div class="font-semibold text-sm">${item.name}</div>
-                            <div class="text-xs text-slate-400 mt-0.5">${item.category}</div>
-                        </div>
-                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                            ${item.res}
-                        </span>
-                    `;
-                } else {
-                    btn.innerHTML = `
-                        <div>
-                            <div class="font-semibold text-sm">${item.title}</div>
-                            <div class="text-xs text-slate-400 mt-0.5">Release Year: ${item.year}</div>
-                        </div>
-                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800">
-                            VOD
-                        </span>
-                    `;
-                }
-                mediaListContainer.appendChild(btn);
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl">${ch.icon || '📺'}</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${ch.res}</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold truncate">${ch.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
 
-        function selectMedia(item) {
-            currentStream = item.url;
-            currentTitle = item.name || item.title;
-            titleDisplay.innerText = currentTitle;
-            renderList();
-            loadStream();
+        function renderMovies() {
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '';
+
+            movies.forEach(m => {
+                const card = document.createElement('div');
+                card.onclick = () => playMovieSample(m.url, m.title);
+                card.className = `group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 cursor-pointer shadow-xl bg-gradient-to-br ${m.bg} flex flex-col justify-between p-4 hover:border-pink-500 transition-all`;
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between z-10">
+                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30">NEW</span>
+                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-amber-400 border border-amber-500/30 flex items-center gap-1">★ ${m.rating}</span>
+                    </div>
+                    <div class="z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent -mx-4 -mb-4 p-4 pt-8">
+                        <div class="text-xs font-bold text-white group-hover:text-pink-400 transition-colors">${m.title}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">${m.genre} &bull; ${m.year}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
-        function loadStream() {
+        function renderEpg() {
+            const list = document.getElementById('epgList');
+            list.innerHTML = '';
+
+            epgSchedule.forEach(slot => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border text-xs transition-all ${
+                    slot.live 
+                        ? 'bg-pink-950/30 border-pink-500/40 text-white shadow' 
+                        : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300 hover:border-slate-700'
+                }`;
+                item.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono font-bold ${slot.live ? 'text-pink-400' : 'text-slate-400'}">${slot.time}</span>
+                        ${slot.live ? '<span class="bg-pink-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE</span>' : ''}
+                    </div>
+                    <div class="font-semibold text-slate-200">${slot.show}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function filterChannels(query) {
+            const filtered = channels.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.category.toLowerCase().includes(query.toLowerCase()));
+            renderChannels(filtered);
+        }
+
+        function selectChannel(ch) {
+            currentStreamUrl = ch.url;
+            currentChannelName = ch.name;
+            document.getElementById('currentChannelName').innerText = ch.name;
+            document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
+            document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
+            renderChannels(channels);
+            loadActiveStream();
+        }
+
+        function playMovieSample(url, title) {
+            switchPage('iptv');
+            currentStreamUrl = url;
+            currentChannelName = title;
+            document.getElementById('currentChannelName').innerText = title;
+            document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Stream";
+            document.getElementById('activeChannelIcon').innerText = '🍿';
+            loadActiveStream();
+        }
+
+        function loadActiveStream() {
             if (hlsInstance) {
                 hlsInstance.destroy();
                 hlsInstance = null;
             }
 
-            if (currentStream.includes('.m3u8')) {
+            if (currentStreamUrl.includes('.m3u8')) {
                 if (Hls.isSupported()) {
                     hlsInstance = new Hls();
-                    hlsInstance.loadSource(currentStream);
+                    hlsInstance.loadSource(currentStreamUrl);
                     hlsInstance.attachMedia(videoElement);
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
                         videoElement.play().catch(() => {});
                     });
                 } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoElement.src = currentStream;
+                    videoElement.src = currentStreamUrl;
                     videoElement.addEventListener('loadedmetadata', () => {
                         videoElement.play().catch(() => {});
                     });
                 }
             } else {
-                videoElement.src = currentStream;
+                videoElement.src = currentStreamUrl;
                 videoElement.play().catch(() => {});
             }
         }
 
-        // Initialize application on load
-        renderList();
-        loadStream();
+        function toggleFavorite() {
+            const btn = document.getElementById('favBtn');
+            if (btn.classList.contains('text-pink-400')) {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all";
+                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
+            } else {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-pink-600/20 border border-pink-500 text-pink-400 text-xs font-semibold transition-all shadow-lg";
+                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
+            }
+        }
     </script>
 </body>
+</html>
