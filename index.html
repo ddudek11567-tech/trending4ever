@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,49 +248,37 @@
     </div>
   </header>
 
-  <!-- VIEW 1: LIVE TV GUIDE -->
-  <div id="tvView" class="view-section active">
-    <div class="workspace-pane">
-      <div style="width:100%; max-width:850px;">
-        <div id="tvPlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a live channel</div>
-        <div class="media-box">
-          <video id="tvVideo" controls autoplay></video>
-        </div>
-      </div>
-      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
+ <!-- VIEW 2: MOVIE LIBRARY & PLAYER -->
+<div id="moviesView" class="view-section">
+  <div class="sidebar-pane" style="border-right: 1px solid var(--border);">
+    <div class="sidebar-header">
+      <span>Movie Archive</span>
+      <span style="color:var(--accent); font-size:0.75rem;">Featured</span>
     </div>
-    <div class="sidebar-pane">
-      <div class="sidebar-header">
-        <span>Channel Guide</span>
-        <span id="tvCount" style="color:var(--accent); font-size:0.75rem;"></span>
-      </div>
-      <div class="scroll-area">
-        <div id="tvContainer" class="items-stack"></div>
-      </div>
+
+    <!-- MOVIE LIST SCROLL AREA -->
+    <div class="scroll-area">
+      <div id="moviesContainer" class="items-stack"></div>
     </div>
   </div>
 
-  <!-- VIEW 2: MOVIE LIBRARY & PLAYER -->
-  <div id="moviesView" class="view-section">
-    <div class="sidebar-pane" style="border-right: 1px solid var(--border);">
-      <div class="sidebar-header">
-        <span>Movie Archive</span>
-        <span style="color:var(--accent); font-size:0.75rem;">Featured</span>
+  <div class="workspace-pane">
+    <div style="width:100%; max-width:850px;">
+      <div id="moviePlayerTitle"
+           style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">
+        Select a movie to watch
       </div>
-      <div class="scroll-area">
-        <div id="moviesContainer" class="items-stack"></div>
+
+      <div class="media-box">
+        <video id="movieVideo" controls autoplay></video>
       </div>
     </div>
-    <div class="workspace-pane">
-      <div style="width:100%; max-width:850px;">
-        <div id="moviePlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a movie to watch</div>
-        <div class="media-box">
-          <video id="movieVideo" controls autoplay></video>
-        </div>
-      </div>
-      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
+
+    <div class="designer-credit">
+      Webpage designed by: <span>Daniel Dudek</span>
     </div>
   </div>
+</div>
 
 <script>
   // Live Channels Dataset (Restored complete list)
@@ -310,7 +299,8 @@
 
   // Movies Archive Dataset
   const movies = [
-    { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://archive.org/download/Return_of_the_Kung_Fu_Dragon/Return_of_the_Kung_Fu_Dragon.mp4
+" },
     { title: "Sintel (Fantasy Epic)", year: "2010", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
     { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
   ];
