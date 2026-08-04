@@ -1,8 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart TV Guide & Plasma Player - Verified Channels</title>
+  <title>Smart TV Guide & Movie Center - All-in-One</title>
 
-</body>
-</html>
+  <!-- HLS and DASH libraries for video playback -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
+@@ -46,7 +45,6 @@
+      padding: 0.9rem 2.5rem;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+    }
+@@ -58,33 +56,30 @@
+      color: #fff;
+    }
+
+    .brand span { 
+      color: var(--accent); 
+      font-weight: 300;
+    }
+    .brand span { color: var(--accent); font-weight: 300; }
+
+    .header-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-link-btn {
+    .nav-tab-btn {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--border-hover);
+      color: var(--accent);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.25s ease;
+    }
+
+    .nav-link-btn:hover {
+    .nav-tab-btn:hover, .nav-tab-btn.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 12px var(--accent-glow);
+@@ -108,14 +103,27 @@
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .app-layout {
+    /* Views container */
+    .view-section {
+      display: none;
+      height: calc(100vh - 64px);
+    }
+
+    .view-section.active {
+      display: grid;
+    }
+
+    /* TV Guide Layout */
+    #tvView {
+      grid-template-columns: 1fr 440px;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    .player-workspace {
+    /* Movies Hub Layout */
+    #moviesView {
+      grid-template-columns: 380px 1fr;
+    }
+
+    .workspace-pane {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+@@ -124,58 +132,17 @@
+      background: rgba(0, 0, 0, 0.2);
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .player-workspace::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+
+    .player-container-inner {
+      width: 100%;
+      max-width: 850px;
+      z-index: 1;
+    }
+
+    .player-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .player-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      overflow-y: auto;
+    }
+
+    .media-box {
+      width: 100%;
+      max-width: 850px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+@@ -187,62 +154,7 @@
+      display: block;
+    }
+
+    .schedule-banner {
+      margin-top: 0.8rem;
+      background: rgba(18, 22, 33, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .schedule-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .schedule-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-sub);
+      font-weight: 700;
+    }
+
+    .schedule-val {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .schedule-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 1rem;
+    }
+
+    .designer-credit {
+      position: absolute;
+      bottom: 1rem;
+      left: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      letter-spacing: 0.5px;
+      z-index: 2;
+      opacity: 0.7;
+    }
+
+    .designer-credit span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .guide-workspace {
+    .sidebar-pane {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+@@ -251,7 +163,7 @@
+      overflow: hidden;
+    }
+
+    .guide-header {
+    .sidebar-header {
+      padding: 1.2rem 1.5rem 0.8rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+@@ -264,334 +176,230 @@
+      align-items: center;
+    }
+
+    #channelCount {
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .category-pills-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 10, 15, 0.4);
+      scrollbar-width: none;
+    }
+
+    .category-pills-bar::-webkit-scrollbar { display: none; }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .pill-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      font-weight: 700;
+    }
+
+    .channels-scroll-area {
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
+
+    .channels-scroll-area::-webkit-scrollbar { width: 5px; }
+    .channels-scroll-area::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    .channels-stack {
+    .items-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .channel-card {
+    .card-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+    }
+
+    .channel-card:hover {
+    .card-item:hover {
+      background: var(--card-hover);
+      border-color: var(--border-hover);
+      border-left-color: var(--accent);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .channel-card.active {
+    .card-item.active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    .channel-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .channel-name {
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.3px;
+    }
+
+    .channel-meta {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .badge-res {
+      background: rgba(255, 255, 255, 0.06);
+    .card-meta {
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      padding: 0.05rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .channel-card.active .badge-res {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .tag-format {
+      font-size: 0.6rem;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .play-indicator {
+    .designer-credit {
+      position: absolute;
+      bottom: 1rem;
+      left: 2rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .channel-card.active .play-indicator,
+    .channel-card:hover .play-indicator {
+      opacity: 1;
+      color: var(--text-sub);
+      opacity: 0.7;
+    }
+    .designer-credit span { color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">SMART<span>CAST</span></div>
+    <div class="header-controls">
+      <a href="movies.html" class="nav-link-btn">🎬 Browse Movies</a>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search verified channels..." oninput="handleSearch()">
+      <button class="nav-tab-btn active" id="btnTvTab" onclick="switchView('tv')">📺 Live TV Guide</button>
+      <button class="nav-tab-btn" id="btnMoviesTab" onclick="switchView('movies')">🎬 Movie Library</button>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search channels or movies..." oninput="handleSearch()">
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Left Workspace: Active Player -->
+    <div class="player-workspace">
+      <div class="player-container-inner">
+        <div class="player-meta-bar">
+          <div id="playerTitle" class="player-title">
+            <span class="live-dot"></span> Select a channel to stream
+          </div>
+        </div>
+  <!-- VIEW 1: LIVE TV GUIDE -->
+  <div id="tvView" class="view-section active">
+    <div class="workspace-pane">
+      <div style="width:100%; max-width:850px;">
+        <div id="tvPlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a live channel</div>
+        <div class="media-box">
+          <video id="videoPlayer" controls autoplay></video>
+        </div>
+        <div class="schedule-banner">
+          <div class="schedule-item">
+            <span class="schedule-label">Currently Playing</span>
+            <span id="currentShow" class="schedule-val">Live Broadcast Feed</span>
+          </div>
+          <div class="schedule-divider"></div>
+          <div class="schedule-item" style="text-align: right;">
+            <span class="schedule-label">Up Next</span>
+            <span id="nextShow" class="schedule-val">Scheduled Feature Program</span>
+          </div>
+          <video id="tvVideo" controls autoplay></video>
+        </div>
+      </div>
+      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
+    </div>
+
+    <!-- Right Workspace: Channel Guide -->
+    <div class="guide-workspace">
+      <div class="guide-header">
+    <div class="sidebar-pane">
+      <div class="sidebar-header">
+        <span>Channel Guide</span>
+        <span id="channelCount">Verified Channels</span>
+        <span id="tvCount" style="color:var(--accent); font-size:0.75rem;"></span>
+      </div>
+      <div class="scroll-area">
+        <div id="tvContainer" class="items-stack"></div>
+      </div>
+      <div id="categoryPills" class="category-pills-bar"></div>
+      <div class="channels-scroll-area">
+        <div id="channelsContainer" class="channels-stack"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: MOVIE LIBRARY & PLAYER -->
+  <div id="moviesView" class="view-section">
+    <div class="sidebar-pane" style="border-right: 1px solid var(--border);">
+      <div class="sidebar-header">
+        <span>Movie Archive</span>
+        <span style="color:var(--accent); font-size:0.75rem;">Featured</span>
+      </div>
+      <div class="scroll-area">
+        <div id="moviesContainer" class="items-stack"></div>
+      </div>
+    </div>
+    <div class="workspace-pane">
+      <div style="width:100%; max-width:850px;">
+        <div id="moviePlayerTitle" style="font-weight:600; margin-bottom:0.8rem; font-size:0.95rem;">Select a movie to watch</div>
+        <div class="media-box">
+          <video id="movieVideo" controls autoplay></video>
+        </div>
+      </div>
+      <div class="designer-credit">Webpage designed by: <span>Daniel Dudek</span></div>
+    </div>
+  </div>
+
+<script>
+  // Live Channels Dataset (Restored complete list)
+  const channels = [
+    // Entertainment & Movies
+    { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics" },
+    { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Romantic Evening Feature", next: "Weekend Getaway Romance" },
+    { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight" },
+    { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", now: "Biography Special", next: "Real Life Mysteries" },
+    { name: "AMC Thrillers", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", now: "Edge of Your Seat Thriller", next: "Late Night Suspense" },
+    { name: "Pluto TV Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8", now: "Hollywood Feature Presentation", next: "Late Night Cinema" },
+    { name: "Action Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8", now: "High-Octane Stunts", next: "Underground Fight Club" },
+    { name: "Comedy Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", now: "Laugh Out Loud Comedies", next: "Slapstick Saturday" },
+    { name: "Drama Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rakuten-drama-1-eu.rakuten.tv/v1/master/779c4a52efbf8b09d2a0c4983f4d603a/master.m3u8", now: "Compelling Human Stories", next: "Award Winning Drama" },
+    { name: "Rotten Tomatoes", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://rottentomatoes.amagi.tv/playlist.m3u8", now: "Certified Fresh Showcase", next: "Critics Choice Retrospective" },
+
+    // Sports & Action
+    { name: "ESPN", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8", now: "SportsCenter Live", next: "Live Collegiate Matchup" },
+    { name: "Fox Sports 1", category: "Sports & Action", res: "720p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8", now: "NASCAR Hub", next: "Live Racing Coverage" },
+    { name: "Red Bull TV", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbull-app-3/master.m3u8", now: "Extreme Sports Showcase", next: "Mountain Bike World Series" },
+    { name: "WPT World Poker Tour", category: "Sports & Action", res: "1080p", format: "m3u8", url: "https://wpt.amagi.tv/playlist.m3u8", now: "High Stakes Final Table", next: "Pro Poker Tournaments" },
+
+    // News & Documentaries
+    { name: "Fox News", category: "News & Documentaries", res: "720p", format: "m3u8", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8", now: "Special Report", next: "The Five" },
+    { name: "ABC News Live", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://abc-iview-live.akamaized.net/hls/live/612251/livestream3/master.m3u8", now: "World News Now", next: "Prime Global Updates" },
+    { name: "Bloomberg TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://live-bloomberg-dash.akamaized.net/dash/live/601140/bloomberg-hb/manifest.mpd", formatAlt: "mpd", now: "Global Financial Markets", next: "TechWatch" },
+    { name: "NASA TV", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8", now: "Space Station Live Feed", next: "Earth Science Documentaries" },
+    { name: "Documentary+", category: "News & Documentaries", res: "1080p", format: "m3u8", url: "https://documentaryplus.amagi.tv/playlist.m3u8", now: "In-Depth Historical Feature", next: "Environmental Spotlight" }
+    { name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" },
+    { name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+    { name: "Xumo Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709" },
+    { name: "A&E", category: "Entertainment", res: "1080p", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8" },
+    { name: "AMC Thrillers", category: "Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8" },
+    { name: "Pluto TV Movies", category: "Movies", res: "1080p", url: "https://jmp2.uk/plu-5c8e31bfa82e873998f86f78.m3u8" },
+    { name: "Action Movies", category: "Movies", res: "1080p", url: "https://rakuten-action-1-eu.rakuten.tv/v1/master/01509938b813b194fb8479e39f37c4d5/master.m3u8" },
+    { name: "Comedy Movies", category: "Movies", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8" },
+    { name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8" },
+    { name: "Fox Sports 1", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/FS1/index.m3u8" },
+    { name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8" },
+    { name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8" }
+  ];
+
+  let hlsPlayer = null;
+  let dashPlayer = null;
+  let currentActiveUrl = "";
+  let activeCategory = "All";
+
+  function renderPills() {
+    const pillsContainer = document.getElementById('categoryPills');
+    pillsContainer.innerHTML = '';
+    const categories = ["All", ...new Set(channels.map(c => c.category))];
+
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = `pill-btn ${cat === activeCategory ? 'active' : ''}`;
+      btn.innerText = cat;
+      btn.onclick = () => {
+        activeCategory = cat;
+        renderPills();
+        renderChannels();
+      };
+      pillsContainer.appendChild(btn);
+    });
+  }
+
+  function renderChannels() {
+    const container = document.getElementById('channelsContainer');
+    container.innerHTML = '';
+  // Movies Archive Dataset
+  const movies = [
+    { title: "Big Buck Bunny (Animation)", year: "2008", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" },
+    { title: "Sintel (Fantasy Epic)", year: "2010", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
+    { title: "Tears of Steel (Sci-Fi)", year: "2012", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8" }
+  ];
+
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = channels.filter(c => {
+      const matchesCategory = activeCategory === "All" || c.category === activeCategory;
+      const matchesSearch = c.name.toLowerCase().includes(query);
+      return matchesCategory && matchesSearch;
+    });
+  let currentHls = null;
+
+    document.getElementById('channelCount').innerText = `${channels.length} Verified Channels`;
+  function switchView(viewName) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-sub); font-size: 0.85rem;">No channels found.</div>`;
+      return;
+    if (viewName === 'tv') {
+      document.getElementById('tvView').classList.add('active');
+      document.getElementById('btnTvTab').classList.add('active');
+    } else {
+      document.getElementById('moviesView').classList.add('active');
+      document.getElementById('btnMoviesTab').classList.add('active');
+    }
+  }
+
+    filtered.forEach(ch => {
+  function renderLists() {
+    // Render TV
+    const tvCont = document.getElementById('tvContainer');
+    tvCont.innerHTML = '';
+    document.getElementById('tvCount').innerText = `${channels.length} Channels`;
+    channels.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'channel-card';
+      if (ch.url === currentActiveUrl) card.classList.add('active');
+      
+      card.className = 'card-item';
+      card.innerHTML = `<div><div class="card-title">${ch.name}</div><div class="card-meta">${ch.category} • ${ch.res}</div></div><span>▶</span>`;
+      card.onclick = () => {
+        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('#tvContainer .card-item').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        playChannel(ch);
+        playMedia('tv', ch);
+      };
+      tvCont.appendChild(card);
+    });
+
+      card.innerHTML = `
+        <div class="channel-info">
+          <span class="channel-name">${ch.name}</span>
+          <div class="channel-meta">
+            <span class="badge-res">${ch.res}</span>
+            <span class="tag-format">${ch.format}</span>
+          </div>
+        </div>
+        <span class="play-indicator">▶ Play</span>
+      `;
+      container.appendChild(card);
+    // Render Movies
+    const movCont = document.getElementById('moviesContainer');
+    movCont.innerHTML = '';
+    movies.forEach(mov => {
+      const card = document.createElement('div');
+      card.className = 'card-item';
+      card.innerHTML = `<div><div class="card-title">${mov.title}</div><div class="card-meta">${mov.year}</div></div><span>▶</span>`;
+      card.onclick = () => {
+        document.querySelectorAll('#moviesContainer .card-item').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        playMedia('movie', mov);
+      };
+      movCont.appendChild(card);
+    });
+  }
+
+  function playChannel(channel) {
+    currentActiveUrl = channel.url;
+    const video = document.getElementById('videoPlayer');
+    const title = document.getElementById('playerTitle');
+    const currentShow = document.getElementById('currentShow');
+    const nextShow = document.getElementById('nextShow');
+  function playMedia(type, item) {
+    const videoId = type === 'tv' ? 'tvVideo' : 'movieVideo';
+    const titleId = type === 'tv' ? 'tvPlayerTitle' : 'moviePlayerTitle';
+    const video = document.getElementById(videoId);
+    const title = document.getElementById(titleId);
+
+    title.innerHTML = `<span class="live-dot"></span> Streaming Live: ${channel.name} (${channel.res})`;
+    currentShow.innerText = channel.now || "Live Stream";
+    nextShow.innerText = channel.next || "Continuous Playback";
+    title.innerText = `Now Playing: ${item.name || item.title}`;
+
+    if (hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
+    if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
+    if (currentHls) {
+      currentHls.destroy();
+      currentHls = null;
+    }
+
+    if (channel.format === 'mpd') {
+      dashPlayer = dashjs.MediaPlayer().create();
+      dashPlayer.initialize(video, channel.url, true);
+    if (item.url.endsWith('.mp4')) {
+      video.src = item.url;
+      video.play();
+    } else if (Hls.isSupported()) {
+      currentHls = new Hls();
+      currentHls.loadSource(item.url);
+      currentHls.attachMedia(video);
+      currentHls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+    } else {
+      if (Hls.isSupported()) {
+        hlsPlayer = new Hls();
+        hlsPlayer.loadSource(channel.url);
+        hlsPlayer.attachMedia(video);
+        hlsPlayer.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = channel.url;
+        video.play();
+      }
+      video.src = item.url;
+      video.play();
+    }
+  }
+
+  function handleSearch() {
+    renderChannels();
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    // Simple filter hook can go here if expanding search across both lists
+  }
+
+  renderPills();
+  renderChannels();
+  renderLists();
+  // Auto-play first channel on load
+  window.addEventListener('DOMContentLoaded', () => {
+    playChannel(channels[0]);
+    playMedia('tv', channels[0]);
+    document.querySelector('#tvContainer .card-item').classList.add('active');
+  });
+</script>
