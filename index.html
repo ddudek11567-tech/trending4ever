@@ -1,181 +1,590 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Movie Library</title>
+    <title>NEXUS TV v4.0 - Quantum</title>
+    <!-- Tailwind CSS v4 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HLS.js for m3u8 stream playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Dash.js for mpd stream playback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0b0b0b;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        header h1 {
-            text-align: center;
-            margin-bottom: 30px;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.4);
         }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.6);
+            border-radius: 3px;
         }
-        .movie-card {
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 0.9);
+        }
+        .player-wrapper {
             position: relative;
-            height: 160px;
-            border-radius: 10px;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background-color: #000;
+            border-radius: 12px;
             overflow: hidden;
-            cursor: pointer;
-            background-color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #222;
-            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .movie-card:hover {
-            transform: scale(1.03);
-            border-color: #444;
-        }
-        .movie-card .backdrop {
+        .player-wrapper iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            opacity: 0.4;
-        }
-        .movie-card .logo {
-            position: relative;
-            max-width: 75%;
-            max-height: 60px;
-            object-fit: contain;
-            z-index: 2;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.9));
-        }
-        .movie-card .fallback-title {
-            position: relative;
-            z-index: 2;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            padding: 0 15px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-        }
-        
-        /* Modal Player - Fixed visibility rules */
-        #player-modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.95);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        #player-modal.active {
-            display: flex; /* Shown when active class is added */
-        }
-        #player-modal button {
-            margin-bottom: 15px;
-            padding: 10px 20px;
-            background-color: #e50914;
-            color: white;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .iframe-container {
-            width: 85%;
-            max-width: 1000px;
-            height: 550px;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 6px;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-    <header>
-        <h1>My Movie Library</h1>
-    </header>
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.0 &bull; QUANTUM</span>
+                </div>
+            </div>
 
-    <main id="movie-grid" class="grid-container"></main>
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-600 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">LIVE</span>
+                </button>
 
-    <!-- Player Modal View -->
-    <div id="player-modal">
-        <button onclick="closePlayer()">Close Player</button>
-        <div class="iframe-container">
-            <iframe id="embed-frame" src="" allowfullscreen></iframe>
+                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </button>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <button onclick="switchPage('search')" id="navSearch" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </button>
+
+                <button onclick="switchPage('mylist')" id="navMyList" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </button>
+
+                <button onclick="switchPage('guide')" id="navGuide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </button>
+            </nav>
         </div>
-    </div>
 
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3">
+            <button onclick="switchPage('settings')" id="navSettings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </button>
+
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Dynamic Viewport Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+
+        <!-- PAGE 1: LIVE IPTV VIEW -->
+        <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
+                    <p class="text-xs text-slate-400 mt-1">Expanded international, sports, news, and entertainment channel lineup</p>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels or shows..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                    <button class="w-10 h-10 rounded-xl bg-[#11182d] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                        🔔
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Grid (Player + EPG) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px]">
+                <!-- Video Stream Section -->
+                <div class="lg:col-span-2 flex flex-col">
+                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
+                        <video
+                            id="videoPlayer"
+                            controls
+                            autoplay
+                            playsinline
+                            class="w-full h-full object-contain absolute inset-0"
+                        ></video>
+                    </div>
+
+                    <!-- Active Stream Info Bar -->
+                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
+                                🌟
+                            </div>
+                            <div>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">Kutonen</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Nordic Prime Time Feed</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-6">
+                            <div class="text-right hidden sm:block">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 4.2M watching
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">📈 #1 Trending Stream</div>
+                            </div>
+                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
+                                <span>🤍</span>
+                                <span>Favorite</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Program Guide (EPG Sidebar) -->
+                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">📅</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
+                        </div>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">KUTONEN</span>
+                    </div>
+
+                    <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-800/60">
+                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
+                            <span>💡</span>
+                            <span>Tip: Click any channel below to switch streams instantly.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Selector Strip -->
+            <div class="mt-6">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Select international, sports, news, or entertainment feeds</div>
+                </div>
+                <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: LATEST MOVIES VIEW -->
+        <div id="pageMovies" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 BLOCKBUSTERS & STAR WARS SAGA</span>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Classics</h2>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream VOD playback integration for all titles</p>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search movies..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-64 transition-all">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                    <button class="flex items-center space-x-2 px-4 py-2 bg-[#11182d] border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-all">
+                        <span>⚙️</span>
+                        <span>Filters</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Featured Banner Card -->
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 p-8 sm:p-12 mb-8 flex flex-col justify-end min-h-[340px]">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#060913] via-transparent to-transparent opacity-90"></div>
+
+                <div class="relative z-10 flex items-center space-x-3 mb-3">
+                    <span class="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span>✨</span> LEGENDARY MASTERPIECE
+                    </span>
+                    <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span>⭐</span> 9.7/10 IMDb
+                    </span>
+                </div>
+
+                <div class="relative z-10">
+                    <h1 class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2">Star Wars: Episode V - The Empire Strikes Back</h1>
+                    <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300 mb-4">
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1">⭐ 9.7/10</span>
+                        <span>📅 1980</span>
+                        <span>⏱️ 2h 4m</span>
+                        <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Sci-Fi</span>
+                        <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Space Opera</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-6">
+                        After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued across the galaxy.
+                    </p>
+
+                    <div class="flex items-center space-x-4">
+                        <button onclick="playMovieSample('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                        <button onclick="playMovieSample('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                            <span>▶</span>
+                            <span>Watch Now</span>
+                        </button>
+                        <button class="px-5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white font-semibold text-xs hover:bg-slate-700 transition-all flex items-center space-x-2">
+                            <span>+</span>
+                            <span>My List</span>
+                        </button>
+                        <button class="px-5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white font-semibold text-xs hover:bg-slate-700 transition-all flex items-center space-x-2">
+                            <span>ℹ️</span>
+                            <span>More Info</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOD Movies Grid -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-lg font-bold text-white">Movie Vault & Star Wars Classics</h3>
+                        <span class="text-xs bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold">DIRECT VOD</span>
+                    </div>
+                    <button class="text-xs font-bold text-pink-500 hover:underline">See all &gt;</button>
+                </div>
+
+                <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS -->
+        <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
+            <div id="dynamicEmbedContainer" class="w-full max-w-4xl flex flex-col items-center"></div>
+            <div id="genericDefaultView" class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
+                    ✨
+                </div>
+                <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
+                <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
+                <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
+                    Return to Live IPTV
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
+            NEXUS TV v4.0 Engine &bull; Webpage Designed by: Daniel Dudek
+        </footer>
+    </main>
+
+    <!-- Application Script Engine -->
     <script>
-        // ADD YOUR MOVIES HERE MANUALLY
-        const myMovies = [
-            {
-                title: "Star Wars: The Force Awakens",
-                id: 140607,
-                backdrop: "https://image.tmdb.org/t/p/w780/nvus08WspfndnjgICrQ1LhWvjhw.jpg",
-                logo: "https://image.tmdb.org/t/p/w500/6FsGeIpPWKcxphzmgTPv881K8o4.png"
-            },
-            {
-                title: "Inception",
-                id: 27205,
-                backdrop: "https://image.tmdb.org/t/p/w780/s3TBrRGB1ij7gFOCJDRK9D8pkvL.jpg",
-                logo: "https://image.tmdb.org/t/p/w500/oIkQkEkwfgbG7IGTseWpGvPkVZH.png"
-            }
+        const channels = [
+            { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
+            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
+            { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", brand: "nick", now: "Animated Preschool Favorites", next: "Bedtime Stories & Songs", icon: "🧸" },
+            { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", brand: "discovery", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing", icon: "🏎️" },
+            { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "hallmark", now: "Romantic Evening Feature", next: "Weekend Getaway Romance", icon: "💝" },
+            { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "xumo", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight", icon: "🎥" },
+            { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv", brand: "tlc", now: "Nordic Reality Showcase", next: "Home Renovation Diaries", icon: "🏠" },
+            { name: "Star Channel", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv", brand: "star", now: "Global Hit Series", next: "International Drama Hour", icon: "🌟" },
+            { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv", brand: "mtv", now: "Music & Lifestyle Wave", next: "Pop Countdown Live", icon: "🎵" },
+            { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv", brand: "hero", now: "Action Series Block", next: "Thriller Movie Night", icon: "⚡" },
+            { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", brand: "5aab", now: "Cultural Music Showcase", next: "Evening News & Talk", icon: "🎶" },
+            { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8", brand: "cbs", now: "Investigative Crime Files", next: "Cold Case Special Edition", icon: "🔍" },
+            { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", brand: "ae", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
+            { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", brand: "animation", now: "Saturday Morning Toons", next: "Adventure Animation Hour", icon: "🎨" },
+            { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", brand: "autentic", now: "World War Chronicles", next: "Ancient Civilizations Revealed", icon: "📜" },
+            { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", brand: "bnn", now: "Markets Closing Bell", next: "Global Wealth Report", icon: "📈" },
+            { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8", brand: "classic", now: "Western Heritage Hour", next: "Ponderosa Frontier Tales", icon: "🤠" },
+            { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", brand: "cable14", now: "Local Community Spotlight", next: "Regional Town Hall", icon: "🏙️" },
+            { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", brand: "cbc", now: "The National Evening Report", next: "World News Tonight", icon: "📰" },
+            { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8", brand: "chch", now: "Evening News Hour", next: "Prime Time Movie", icon: "📡" },
+            { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8", brand: "paramount", now: "Classic Sitcom Block", next: "Late Night Comedy Hour", icon: "🍻" },
+            { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", brand: "citynews", now: "Local Metro Pulse", next: "GTA Tonight", icon: "🏙️" },
+            { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8", brand: "comedy", now: "Stand-Up Showcase", next: "Late Night Sketch Comedy", icon: "🎤" },
+            { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8", brand: "cottage", now: "Cabin Life DIY", next: "Great Canadian Waterways", icon: "🌲" },
+            { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", brand: "cowboy", now: "Pro Rodeo Tour Live", next: "Western Heritage Spotlight", icon: "🐎" },
+            { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8", brand: "cp24", now: "Toronto Live Breaking News", next: "Traffic & Weather Center", icon: "🚨" },
+            { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8", brand: "cpac", now: "Parliamentary Proceedings", next: "Public Policy Forum", icon: "🏛️" },
+            { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", brand: "golf", now: "PGA Tour Live Coverage", next: "Instruction & Swing Analysis", icon: "⛳" },
+            { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        const gridContainer = document.getElementById('movie-grid');
-        const modal = document.getElementById('player-modal');
-        const embedFrame = document.getElementById('embed-frame');
+        // VOD Movies Dataset - Configured with real operational HLS test streams
+        // VOD Movies Dataset - Configured with distinct test/sample stream variations
+        const movies = [
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-indigo-950" },
+            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-purple-950 to-slate-950" },
+            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-pink-950 to-purple-950" },
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950" },
+            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-slate-900 to-blue-950" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-purple-950 to-slate-950" },
+            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950" },
+            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-slate-950" },
+            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-violet-950 to-purple-900" }
+            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://content.jwplatform.com/manifests/vM7nH0Kl.m3u8", bg: "from-violet-950 to-purple-900" }
+        ];
 
-        function initLibrary() {
-            gridContainer.innerHTML = '';
+        let currentStreamUrl = channels[0].url;
+        let currentStreamFormat = channels[0].format;
+        let currentChannelName = channels[0].name;
+        let hlsInstance = null;
+        let dashInstance = null;
 
-            myMovies.forEach(movie => {
-                const card = document.createElement('div');
-                card.classList.add('movie-card');
+        const videoElement = document.getElementById('videoPlayer');
 
-                let innerContent = `<img class="backdrop" src="${movie.backdrop}" alt="${movie.title}">`;
-                if (movie.logo) {
-                    innerContent += `<img class="logo" src="${movie.logo}" alt="${movie.title}">`;
-                } else {
-                    innerContent += `<span class="fallback-title">${movie.title}</span>`;
+        document.getElementById('channelCount').innerText = channels.length;
+        renderChannels(channels);
+        renderMovies();
+        renderEpg(channels[0]);
+        loadActiveStream();
+
+        function switchPage(page) {
+            document.getElementById('pageIptv').classList.add('hidden');
+            document.getElementById('pageMovies').classList.add('hidden');
+            document.getElementById('pageGeneric').classList.add('hidden');
+
+            ['navIptv', 'navMovies', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
+            });
+
+            if (page === 'iptv') {
+                document.getElementById('pageIptv').classList.remove('hidden');
+                document.getElementById('navIptv').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40";
+            } else if (page === 'movies') {
+                document.getElementById('pageMovies').classList.remove('hidden');
+                document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
+            } else {
+                document.getElementById('pageGeneric').classList.remove('hidden');
+                document.getElementById('genericDefaultView').classList.remove('hidden');
+                document.getElementById('dynamicEmbedContainer').innerHTML = '';
+
+                const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
+                document.getElementById('genericTitle').innerText = titles[page] || "Module View";
+
+                const activeNav = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
+                if(activeNav) {
+                    activeNav.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-800 text-white border border-slate-700";
                 }
-                card.innerHTML = innerContent;
+            }
+        }
 
-                // When clicked, assign source and trigger active class
-                card.addEventListener('click', () => {
-                    embedFrame.src = `https://player.vidplus.to/embed/movie/${movie.id}`;
-                    modal.classList.add('active');
-                });
+        function renderChannels(list) {
+            const grid = document.getElementById('channelsGrid');
+            grid.innerHTML = '';
 
-                gridContainer.appendChild(card);
+            list.forEach(ch => {
+                const isSelected = currentChannelName === ch.name;
+                const card = document.createElement('div');
+                card.onclick = () => selectChannel(ch);
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 ${
+                    isSelected 
+                        ? 'bg-pink-600/20 border-pink-500 shadow-lg shadow-pink-950/50 text-white' 
+                        : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl">${ch.icon || '📺'}</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${ch.res}</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold truncate">${ch.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
             });
         }
 
-        function closePlayer() {
-            embedFrame.src = ''; // Stops playback instantly
-            modal.classList.remove('active');
+        function renderMovies() {
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '';
+
+            movies.forEach(m => {
+                const card = document.createElement('div');
+                card.onclick = () => playMovieSample(m.url, m.title);
+                card.className = `group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 cursor-pointer shadow-xl bg-gradient-to-br ${m.bg} flex flex-col justify-between p-4 hover:border-pink-500 transition-all`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between z-10">
+                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30">VOD</span>
+                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-amber-400 border border-amber-500/30 flex items-center gap-1">★ ${m.rating}</span>
+                    </div>
+                    <div class="z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent -mx-4 -mb-4 p-4 pt-8">
+                        <div class="text-xs font-bold text-white group-hover:text-pink-400 transition-colors">${m.title}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">${m.genre} &bull; ${m.year}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
-        initLibrary();
+        function renderEpg(channel) {
+            const list = document.getElementById('epgList');
+            list.innerHTML = '';
+            document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
+
+            const schedule = [
+                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
+                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false },
+                { time: "22:00", show: "Late Night Primetime Special", live: false }
+            ];
+
+            schedule.forEach(slot => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border text-xs transition-all ${
+                    slot.live 
+                        ? 'bg-pink-950/30 border-pink-500/40 text-white shadow' 
+                        : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300 hover:border-slate-700'
+                }`;
+                item.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono font-bold ${slot.live ? 'text-pink-400' : 'text-slate-400'}">${slot.time}</span>
+                        ${slot.live ? '<span class="bg-pink-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : '<span class="text-[9px] text-slate-500 uppercase font-semibold">Upcoming</span>'}
+                    </div>
+                    <div class="font-semibold text-slate-200">${slot.show}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function filterChannels(query) {
+            const filtered = channels.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.category.toLowerCase().includes(query.toLowerCase()));
+            renderChannels(filtered);
+        }
+
+        function selectChannel(ch) {
+            currentStreamUrl = ch.url;
+            currentStreamFormat = ch.format || 'm3u8';
+            currentChannelName = ch.name;
+            document.getElementById('currentChannelName').innerText = ch.name;
+            document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
+            document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
+
+            renderChannels(channels);
+            renderEpg(ch);
+            loadActiveStream();
+        }
+
+        function playMovieSample(url, title) {
+            switchPage('iptv');
+            currentStreamUrl = url;
+            currentStreamFormat = 'm3u8';
+            currentChannelName = title;
+            document.getElementById('currentChannelName').innerText = title;
+            document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
+            document.getElementById('activeChannelIcon').innerText = '🎬';
+
+            const customVodChannel = {
+                name: title,
+                now: title + " (Full Feature)",
+                next: "Recommended Trailers & Coming Soon"
+            };
+            renderEpg(customVodChannel);
+            loadActiveStream();
+        }
+
+        function loadActiveStream() {
+            if (hlsInstance) {
+                hlsInstance.destroy();
+                hlsInstance = null;
+            }
+            if (dashInstance) {
+                dashInstance.reset();
+                dashInstance = null;
+            }
+
+            if (currentStreamFormat === 'mpd' || currentStreamUrl.includes('.mpd')) {
+                if (typeof dashjs !== 'undefined') {
+                    dashInstance = dashjs.MediaPlayer().create();
+                    dashInstance.initialize(videoElement, currentStreamUrl, true);
+                } else {
+                    videoElement.src = currentStreamUrl;
+                    videoElement.play().catch(() => {});
+                }
+            } else if (currentStreamUrl.includes('.m3u8') || currentStreamFormat === 'm3u8') {
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls();
+                    hlsInstance.loadSource(currentStreamUrl);
+                    hlsInstance.attachMedia(videoElement);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        videoElement.play().catch(() => {});
+                    });
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = currentStreamUrl;
+                    videoElement.addEventListener('loadedmetadata', () => {
+                        videoElement.play().catch(() => {});
+                    });
+                }
+            } else {
+                videoElement.src = currentStreamUrl;
+                videoElement.play().catch(() => {});
+            }
+        }
+
+        function toggleFavorite() {
+            const btn = document.getElementById('favBtn');
+            if (btn.classList.contains('text-pink-400')) {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all";
+                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
+            } else {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-pink-600/20 border border-pink-500 text-pink-400 text-xs font-semibold transition-all shadow-lg";
+                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
+            }
+        }
     </script>
 </body>
 </html>
