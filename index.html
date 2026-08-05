@@ -25,6 +25,23 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(71, 85, 105, 0.9);
         }
+        .player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background-color: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .player-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
@@ -287,16 +304,20 @@
             </div>
         </div>
 
-        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS -->
+        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS / AUTO-EMBED VIEWER -->
         <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
-            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
-                ✨
+            <!-- Dynamic Auto-Embed Player container injected via JavaScript URL parameter -->
+            <div id="dynamicEmbedContainer" class="w-full max-w-4xl flex flex-col items-center"></div>
+            <div id="genericDefaultView" class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
+                    ✨
+                </div>
+                <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
+                <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
+                <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
+                    Return to Live IPTV
+                </button>
             </div>
-            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-            <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
-            <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
-                Return to Live IPTV
-            </button>
         </div>
 
         <!-- Footer Signature -->
@@ -358,6 +379,10 @@
 
         const videoElement = document.getElementById('videoPlayer');
 
+        // Check if an URL parameter `?id=` exists for auto-embed loading
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieIdParam = urlParams.get('id');
+
         // Initialization
         document.getElementById('channelCount').innerText = channels.length;
         renderChannels(channels);
@@ -365,7 +390,12 @@
         renderEpg(channels[0]);
         loadActiveStream();
 
-        function switchPage(page) {
+        // If an ID is passed in URL, automatically open the dynamic viewer page view
+        if (movieIdParam) {
+            switchPage('genericViewer', movieIdParam);
+        }
+
+        function switchPage(page, customParam = null) {
             document.getElementById('pageIptv').classList.add('hidden');
             document.getElementById('pageMovies').classList.add('hidden');
             document.getElementById('pageGeneric').classList.add('hidden');
@@ -381,8 +411,26 @@
             } else if (page === 'movies') {
                 document.getElementById('pageMovies').classList.remove('hidden');
                 document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
+            } else if (page === 'genericViewer' && customParam) {
+                document.getElementById('pageGeneric').classList.remove('hidden');
+                document.getElementById('genericDefaultView').classList.add('hidden');
+                
+                // Inject the auto-embed player dynamically via URL parameter ID
+                const embedContainer = document.getElementById('dynamicEmbedContainer');
+                embedContainer.innerHTML = `
+                    <div class="player-wrapper mb-4">
+                        <iframe src="https://vidsrc.xyz/embed/movie/${customParam}" allowfullscreen></iframe>
+                    </div>
+                    <div class="bg-[#181a20] border border-slate-800 p-4 rounded-2xl w-full text-left">
+                        <h3 class="font-bold text-white text-base">Now Streaming via Auto-Embed ID</h3>
+                        <p class="text-xs text-slate-400 mt-1">Requested Identifier: <strong class="text-pink-400">${customParam}</strong></p>
+                    </div>
+                `;
             } else {
                 document.getElementById('pageGeneric').classList.remove('hidden');
+                document.getElementById('genericDefaultView').classList.remove('hidden');
+                document.getElementById('dynamicEmbedContainer').innerHTML = '';
+                
                 const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
                 document.getElementById('genericTitle').innerText = titles[page] || "Module View";
                 
