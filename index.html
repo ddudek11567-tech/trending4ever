@@ -119,7 +119,7 @@
         .dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
         .dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
         .dot.active{background:var(--accent);width:44px}
-        
+
         .collection{position:relative;z-index:2;padding:7vh 0 4vh}
         .row{position:relative;margin-bottom:48px}
         .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
@@ -127,7 +127,7 @@
         .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none}
         .row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
         .row-track::-webkit-scrollbar{display:none}
-        
+
         .card{flex:0 0 auto;width:clamp(230px,25vw,355px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}
         .card-img{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.02);transition:transform .7s ease;filter:saturate(.9) contrast(1.05) brightness(.85)}
         .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.5) 68%,rgba(6,6,8,.94) 100%)}
@@ -177,15 +177,14 @@
 
             <!-- Navigation Links -->
             <nav class="p-4 space-y-1.5">
-                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">📡</span>
                         <span>Live IPTV</span>
                     </div>
-                    <span class="text-[10px] bg-pink-600 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">LIVE</span>
                 </button>
 
-                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
                         <span>Latest Movies</span>
@@ -237,7 +236,7 @@
     <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
 
         <!-- PAGE 1: LIVE IPTV VIEW -->
-        <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
+        <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
             <!-- Top Bar -->
             <div class="flex items-center justify-between mb-6">
                 <div>
@@ -246,7 +245,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration[cite: 3]</p>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration[cite: 1]</p>
                 </div>
 
                 <div class="flex items-center space-x-4">
@@ -340,7 +339,7 @@
         </div>
 
         <!-- PAGE 2: NEW AETHER PRIVATE CINEMA (MOVIES) -->
-        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden relative aether-cinema-root">
+        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar relative aether-cinema-root">
             <div class="vignette"></div>
             <div class="grain"></div>
 
@@ -363,14 +362,14 @@
                 ✨
             </div>
             <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-            <button onclick="switchPage('iptv')" class="mt-4 px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg hover:bg-pink-500 transition-all">
-                Return to Live IPTV
+            <button onclick="switchPage('movies')" class="mt-4 px-5 py-2.5 rounded-xl bg-cyan-600 text-white text-xs font-bold shadow-lg hover:bg-cyan-500 transition-all">
+                Return to Latest Movies
             </button>
         </div>
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek[cite: 3]
         </footer>
     </main>
 
@@ -422,62 +421,7 @@
     <script>
         const channels = [
             { name: "A&E", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
-            { name: "ABC", category: "News & Networks", res: "720p", format: "m3u8", url: "http://41.205.93.154/ABC/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "National News Broadcast", next: "Prime Time Lineup", icon: "📡" },
-            { name: "ABC News Live", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://pb-0n3n2ej0w8pl9.akamaized.net/ABCNewsLive_Disney.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Global Breaking News", next: "The Rundown", icon: "📰" },
-            { name: "ACC Network", category: "Sports", res: "720p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/ACC_NETWORK/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "ACC Live Game Coverage", next: "Conference Analysis", icon: "🏈" },
-            { name: "AMC", category: "Movies", res: "1080p", format: "m3u8", url: "https://amchls.wns.live/hls/stream.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blockbuster Feature Film", next: "Late Night Movie Showcase", icon: "🎬" },
-            { name: "AMC Alt", category: "Movies", res: "720p", format: "m3u8", url: "http://23.239.31.26:8989/amc/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic Cinema Hour", next: "Drama Feature", icon: "🎥" },
-            { name: "AXN", category: "Entertainment", res: "720p", format: "m3u8", url: "http://45.190.28.50/AXN_HD/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Action Series Block", next: "Thriller Feature", icon: "⚡" },
-            { name: "BBC America", category: "Entertainment", res: "720p", format: "m3u8", url: "http://23.239.31.26:8989/bbcamerica/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "British Drama Showcase", next: "Sci-Fi Classics", icon: "🇬🇧" },
-            { name: "BBC News", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://pb-iiczlgfysam0q.akamaized.net/v1/amcnetworks_bbcnews_1/samsungheadend_us/latest/main/hls/playlist.m3u8", fallbackUrl: "https://xemzi.short.gy/1000015", now: "World News Hour", next: "The Context", icon: "🌍" },
-            { name: "Bravo", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/BRAVO/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Reality TV Hour", next: "Talk Show Special", icon: "🌟" },
-            { name: "CBS", category: "News & Networks", res: "1080p", format: "m3u8", url: "http://stream.cammonitorplus.net/1783/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "CBS Evening News", next: "Prime Time Lineup", icon: "👁️" },
-            { name: "CBS News", category: "News & Networks", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-62310f66d5888f0007534342.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Live Streaming Desk", next: "Hourly Report", icon: "📰" },
-            { name: "CMT", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/CMT/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Country Music Videos", next: "Music Countdown", icon: "🎸" },
-            { name: "CNBC", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/CNBC/index.m3u8", fallbackUrl: "https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8", now: "Squawk Box / Markets", next: "Mad Money", icon: "📈" },
-            { name: "Comedy Central", category: "Entertainment", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-61c0989431084d0007eab12d.m3u8", fallbackUrl: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", now: "Stand-Up Showcase", next: "Comedy Series Blocks", icon: "🎤" },
-            { name: "CW", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/cw-usa/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Prime Time Drama", next: "Late Night Series", icon: "📺" },
-            { name: "Disney Channel", category: "Kids & Family", res: "1080p", format: "m3u8", url: "http://151.80.18.177:86/Disney_Channel_HD/index.m3u8", fallbackUrl: "http://190.14.10.19:16000/play/a06z/index.m3u8", now: "Animated Series Marathon", next: "Family Movie Night", icon: "✨" },
-            { name: "Disney Junior", category: "Kids & Family", res: "576p", format: "m3u8", url: "http://185.102.171.218/DisneyJunior/index.m3u8", fallbackUrl: "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8", now: "Preschool Favorites", next: "Bedtime Songs", icon: "🧸" },
-            { name: "Disney XD", category: "Kids & Family", res: "720p", format: "m3u8", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Action Animation Block", next: "Gaming Hour", icon: "🚀" },
-            { name: "E! Entertainment", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_E/index.m3u8", fallbackUrl: "http://185.102.171.218/Entertainment/index.m3u8", now: "Pop Culture Daily", next: "Celebrity News", icon: "💎" },
-            { name: "ESPN", category: "Sports", res: "1080p", format: "m3u8", url: "http://181.78.197.59:8000/play/a07z/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "SportsCenter Live", next: "Live Event Coverage", icon: "🏆" },
-            { name: "Fox", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/fox-usa/playlist.m3u8", fallbackUrl: "http://stream.mcquack.net/182/index.m3u8", now: "Fox Network Feed", next: "Prime Time Block", icon: "🦊" },
-            { name: "Fox Sports 1", category: "Sports", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/fox-sports-1/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "FS1 Live Studio Analysis", next: "Live Sports Broadcast", icon: "⚽" },
-            { name: "Fox Sports 2", category: "Sports", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/fox-sports-2/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "FS2 Action Sports", next: "Motorsports Review", icon: "🏎️" },
-            { name: "Freeform", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://40.160.24.52/FREEFORM/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Teen & Family Series", next: "Evening Movie Feature", icon: "🎯" },
-            { name: "FX", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_FX/index.m3u8", fallbackUrl: "http://185.102.171.218/FOX/index.m3u8", now: "Critically Acclaimed Drama", next: "Late Night Movie", icon: "🔥" },
-            { name: "FXX", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_FXX/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Comedy Block", next: "Animated Series Marathon", icon: "🤪" },
-            { name: "Hallmark Channel", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_HALLMARK/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Romantic Movie Feature", next: "Family Series Hour", icon: "💝" },
-            { name: "HGTV", category: "Lifestyle", res: "1080p", format: "m3u8", url: "https://i.mjh.nz/.r/sky-hgtv.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Home Renovation Hour", next: "Property Hunters", icon: "🏡" },
-            { name: "History Channel", category: "Documentary", res: "720p", format: "m3u8", url: "http://45.190.28.50/HISTORY_HD/index.m3u8", fallbackUrl: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", now: "Historical Documentaries", next: "Ancient Mysteries", icon: "📜" },
-            { name: "IFC", category: "Movies", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_IFC/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Independent Film Showcase", next: "Cult Classic Night", icon: "🎟️" },
-            { name: "Lifetime", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.53/LIFETIME/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Lifetime Original Movie", next: "Drama Series", icon: "💖" },
-            { name: "Lifetime Movies", category: "Movies", res: "1080p", format: "m3u8", url: "https://amg00276-amg00276c21-samsung-gb-5270.playouts.now.amagi.tv/playlist.m3u8", fallbackUrl: "http://23.237.104.106:8080/USA_LMN/index.m3u8", now: "Suspense Thriller Feature", next: "Late Night Drama", icon: "📽️" },
-            { name: "MLB Network", category: "Sports", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MLB_Network/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Baseball Tonight Live", next: "Classic Game Replay", icon: "⚾" },
-            { name: "MTV", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://103.72.101.252:8080/live/248.m3u8", fallbackUrl: "http://40.160.24.53/MTV/index.m3u8", now: "Music Videos & Reality", next: "Top Hits Countdown", icon: "🎵" },
-            { name: "NBA TV", category: "Sports", res: "1080p", format: "m3u8", url: "https://cdn1.ayitistream.com/NBATV/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Basketball Action Live", next: "Game Time Highlights", icon: "🏀" },
-            { name: "NBC", category: "News & Networks", res: "1080p", format: "m3u8", url: "http://stream.cammonitorplus.net/1785/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "NBC Nightly News", next: "Prime Time Lineup", icon: "🦚" },
-            { name: "NBC News NOW", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://d1si3n1st4nkgb.cloudfront.net/10502/88896001/hls/master.m3u8?ads.xumo_channelId=88896001", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Live Streaming News Desk", next: "Documentary Hour", icon: "📰" },
-            { name: "NFL Network", category: "Sports", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/nflnetwork-usa/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "NFL Total Access Live", next: "Game Analysis", icon: "🏈" },
-            { name: "Nick Jr.", category: "Kids & Family", res: "1080p", format: "m3u8", url: "http://40.160.24.55/NICK_JR/index.m3u8", fallbackUrl: "https://stream8.cinerama.uz/1501/playlist.m3u8", now: "Animated Preschool Favorites", next: "Bedtime Stories & Songs", icon: "🧸" },
-            { name: "Nickelodeon", category: "Kids & Family", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_NICKELODEON/index.m3u8", fallbackUrl: "https://ma.anixa.tv/clips/stream/nickelodeon/playlist.php", now: "Classic Cartoons & Shows", next: "Family Comedy Hour", icon: "🎨" },
-            { name: "Nicktoons", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/nicktoons-usa/playlist.m3u8", fallbackUrl: "https://jmp2.uk/plu-654ca7f92c1d3300086b608c.m3u8", now: "Animated Series Marathon", next: "Late Night Toons", icon: "👾" },
-            { name: "Oxygen", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.55/OXYGEN/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "True Crime Investigations", next: "Mystery Files", icon: "🔍" },
-            { name: "Paramount Network", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.55/PARAMOUNT_CHANNEL/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blockbuster Series Block", next: "Movie Feature", icon: "⛰️" },
-            { name: "Pop", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://amg01753-narrativeentert-popkids-lggb-xyy5k.amagi.tv/ts-eu-w1-n2/playlist/amg01753-narrativeentert-popkids-lggb/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Pop Culture Hits", next: "Classic Sitcoms", icon: "⭐" },
-            { name: "Showtime", category: "Movies", res: "720p", format: "m3u8", url: "http://40.160.24.55/SHOWTIME/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Showtime Original Series", next: "Feature Film", icon: "🎭" },
-            { name: "Showtime 2", category: "Movies", res: "1080p", format: "m3u8", url: "http://40.160.24.55/SHOWTIME_2/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Movie Showcase", next: "Late Night Feature", icon: "🎟️" },
-            { name: "Smithsonian Channel", category: "Documentary", res: "1080p", format: "m3u8", url: "http://40.160.24.55/SMITHSONIAN/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Nature & Science Documentaries", next: "Air & Space Specials", icon: "🦅" },
-            { name: "Sportsman Channel", category: "Sports", res: "720p", format: "m3u8", url: "http://40.160.24.55/Sportsman_Channel/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Outdoor Adventures", next: "Hunting & Fishing Showcase", icon: "🌲" },
-            { name: "Starz", category: "Movies", res: "1080p", format: "m3u8", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Starz Premiere Feature", next: "Hit Series Marathon", icon: "✨" },
-            { name: "Starz Encore", category: "Movies", res: "1080p", format: "m3u8", url: "http://40.160.24.55/STARZ_ENCORE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic Hits & Movies", next: "90s Cinema Block", icon: "💫" },
-            { name: "Sundance TV", category: "Movies", res: "720p", format: "m3u8", url: "http://40.160.24.55/SUNDANCE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Independent Cinema", next: "Art House Special", icon: "🌄" },
-            { name: "SYFY", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Sci-Fi Original Feature", next: "Twilight Zone Classics", icon: "🌌" },
-            { name: "TNT", category: "Entertainment", res: "576p", format: "m3u8", url: "http://94.230.129.31:8080/THT/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Action Block & Sports", next: "Drama Feature", icon: "💥" },
-            { name: "TV Land", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.55/TV_LAND/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic Sitcom Marathons", next: "Retro Favorites", icon: "📺" },
-            { name: "USA Network", category: "Entertainment", res: "1080p", format: "m3u8", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Character Programming Block", next: "Prime Time Drama", icon: "🇺🇸" },
-            { name: "VH1", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.55/VH1/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Music Videos & Pop Culture", next: "Throwback Playlist", icon: "🎵" }
+            { name: "ABC", category: "News & Networks", res: "720p", format: "m3u8", url: "http://41.205.93.154/ABC/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "National News Broadcast", next: "Prime Time Lineup", icon: "📡" }
         ];
 
         let currentChannel = channels[0];
@@ -519,6 +463,7 @@
 
         function renderChannels(list) {
             const grid = document.getElementById('channelsGrid');
+            if(!grid) return;
             grid.innerHTML = '';
 
             list.forEach(ch => {
@@ -637,6 +582,7 @@
 
         function renderEpg(channel) {
             const list = document.getElementById('epgList');
+            if(!list) return;
             list.innerHTML = '';
             document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
 
@@ -673,20 +619,18 @@
         /* ==================== AETHER CINEMA ENGINE ==================== */
         function initAetherCinema() {
             const FILMS=[
-                {id:1,title:"The Silent Horizon",year:2021,rating:8.4,match:97,duration:"2h 07m",genres:["Mystery","Drama"],accent:"#c8a86b",rgb:"200,168,107",seed:"horizon-9",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"4K HDR",progress:0.42,cats:["continue","trending","acclaimed"],synopsis:"A retired cartographer returns to the coast where her sister vanished — only to find the maps no longer match the shore."},
-                {id:2,title:"Crimson Veil",year:2023,rating:7.9,match:91,duration:"1h 58m",genres:["Thriller","Crime"],accent:"#b8423f",rgb:"184,66,63",seed:"veil-3",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",quality:"4K",progress:0.15,cats:["trending","new"],synopsis:"A detective with a failing memory hunts a killer who only ever strikes during thunderstorms."},
-                {id:3,title:"Echoes of Dust",year:2022,rating:8.1,match:95,duration:"2h 22m",genres:["Science Fiction"],accent:"#6f8fd6",rgb:"111,143,214",seed:"dust-7",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",quality:"4K HDR",progress:0.63,cats:["continue","trending","acclaimed"],synopsis:"On a silent colony world, a lone archivist begins to hear a voice in the static — one that was never meant to exist."},
-                {id:4,title:"Midnight Cartographer",year:2020,rating:7.6,match:88,duration:"2h 01m",genres:["Adventure"],accent:"#c98a3c",rgb:"201,138,60",seed:"carto-2",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",quality:"4K",cats:["new"],synopsis:"Two strangers race a cartel down an unmapped river, chasing a dawn that may never come."},
-                {id:5,title:"The Last Lighthouse",year:2019,rating:8.6,match:99,duration:"1h 49m",genres:["Drama"],accent:"#4f7d8a",rgb:"79,125,138",seed:"lighthouse-4",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K HDR",progress:0.78,cats:["continue","acclaimed"],synopsis:"A keeper speaks to the sea every night. One night, after forty years, the sea finally speaks back."},
-                {id:6,title:"Glass Empire",year:2024,rating:7.4,match:84,duration:"2h 11m",genres:["Crime","Drama"],accent:"#8a7bb8",rgb:"138,123,184",seed:"empire-1",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",quality:"4K",cats:["new","trending"],synopsis:"Three siblings inherit a glittering skyline — and the buried secret that paid for every floor."},
-                {id:7,title:"Frostbound",year:2022,rating:7.8,match:90,duration:"1h 52m",genres:["Thriller"],accent:"#6fa0b0",rgb:"111,160,176",seed:"frost-6",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",quality:"4K",cats:["trending"],synopsis:"Stranded on a peak as a whiteout closes in, the climbers realize the storm around them is not natural."},
-                {id:8,title:"Velvet Static",year:2021,rating:8.0,match:93,duration:"2h 03m",genres:["Neo-Noir"],accent:"#c46aa0",rgb:"196,106,160",seed:"static-5",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",quality:"4K HDR",cats:["acclaimed","new"],synopsis:"A late-night radio host takes a call describing a murder in perfect detail — a murder that has not happened yet."},
-                {id:9,title:"The Hollow Tide",year:2023,rating:7.2,match:81,duration:"1h 44m",genres:["Horror"],accent:"#7a5fa0",rgb:"122,95,160",seed:"tide-8",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",quality:"4K",cats:["new"],synopsis:"The village empties at low tide. When the water returns, it brings back something that was never drowned."},
-                {id:10,title:"Paper Cathedrals",year:2018,rating:8.8,match:98,duration:"2h 16m",genres:["Drama"],accent:"#c0a060",rgb:"192,160,96",seed:"cathedrals-0",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",quality:"4K HDR",progress:0.33,cats:["continue","acclaimed"],synopsis:"A novelist builds a world she cannot leave — and a reader who would rather die than put the book down."},
-                {id:11,title:"Neon Requiem",year:2025,rating:7.7,match:89,duration:"2h 09m",genres:["Sci-Fi","Action"],accent:"#5fb0a8",rgb:"95,176,168",seed:"requiem-11",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",quality:"4K HDR",cats:["trending","new"],synopsis:"In a city that never sleeps, sleep itself has just been outlawed — and the waking are starting to see things."},
-                {id:12,title:"Ash & Honey",year:2020,rating:7.5,match:86,duration:"1h 51m",genres:["Romance","Drama"],accent:"#c07a5f",rgb:"192,122,95",seed:"honey-12",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",quality:"4K",cats:["acclaimed"],synopsis:"Two beekeepers meet at the edge of the wildfire season and decide whether to save the hive or run."},
-                {id:13,title:"The Long Dark",year:2024,rating:8.2,match:92,duration:"2h 00m",genres:["Survival","Thriller"],accent:"#6b8aa6",rgb:"107,138,166",seed:"longdark-13",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",quality:"4K HDR",progress:0.2,cats:["new","trending"],synopsis:"Sixty days of polar night. One failing generator. And the slow, patient sound of something scratching at the door."},
-                {id:14,title:"Sapphire Run",year:2023,rating:7.9,match:90,duration:"1h 57m",genres:["Heist","Crime"],accent:"#4f9d8a",rgb:"79,157,138",seed:"sapphire-14",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K",cats:["new"],synopsis:"A thief who steals colors plans her final, impossible job: to steal the blue from a dying sky."}
+                {id:1,title:"A Knight's Tale",year:2001,rating:7.0,match:96,duration:"2h 27m",genres:["Action","Adventure","Romance"],accent:"#d4af37",rgb:"212,175,55",backdrop:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/A%20Knight's%20Tale%20(2001)%20Extended%20Cut%20(2160p%20UHD%20x265%20DV%20HDR%20DDP%207.1%20English%20-%20DiscoD%20HONE).mkv",quality:"2160p UHD",cats:["new","trending"],synopsis:"A peasant squire, sharing a passion for jousting with his peers, creates a new life of nobility and romance."},
+                {id:2,title:"Blade Runner 2049",year:2017,rating:8.0,match:99,duration:"2h 44m",genres:["Sci-Fi","Drama","Mystery"],accent:"#f59e0b",rgb:"245,158,11",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Blade.Runner.2049.2017.Open.Matte.RUS.SDR.2160p.mkv",quality:"2160p Open Matte",cats:["trending","acclaimed"],synopsis:"Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard."},
+                {id:3,title:"Flow",year:2024,rating:8.1,match:95,duration:"1h 24m",genres:["Animation","Adventure","Fantasy"],accent:"#38bdf8",rgb:"56,189,248",backdrop:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Flow%202024%201080p%20WEB-DL%20HEVC%20x265%20BONE.mkv",quality:"1080p WEB-DL",cats:["new","acclaimed"],synopsis:"A solitary cat, displaced by a great flood, finds refuge on a boat with various species and must navigate a transformed world."},
+                {id:4,title:"Guardians of the Galaxy Vol. 3",year:2023,rating:7.9,match:94,duration:"2h 30m",genres:["Action","Sci-Fi","Adventure"],accent:"#a855f7",rgb:"168,85,247",backdrop:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Guardians.of.the.Galaxy.Vol.3.2023.1080p.WEB-DL.DDP5.1.Atmos.H.264-CMRG.mkv",quality:"1080p Atmos",cats:["trending","new"],synopsis:"Still reeling from the loss of Gamora, Peter Quill rallies his team to defend the universe and protect one of their own."},
+                {id:5,title:"Hercules",year:1997,rating:7.3,match:92,duration:"1h 33m",genres:["Animation","Family","Fantasy"],accent:"#eab308",rgb:"234,179,8",backdrop:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Hercules.1997.1080p.BluRay.x265.mp4",quality:"1080p BluRay",cats:["acclaimed"],synopsis:"The son of Zeus and Hera is stripped of his immortality as an infant and must become a true hero in order to reclaim it."},
+                {id:6,title:"Street Fighter II: The Animated Movie",year:1994,rating:7.5,match:88,duration:"1h 41m",genres:["Animation","Action","Martial Arts"],accent:"#ef4444",rgb:"239,68,68",backdrop:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Street.Fighter.II.The.Animated.Movie.1994.Unrated.UHD.BluRay.2160p.FLAC.2.0.HEVC.REMUX-FraMeSToR.mkv",quality:"2160p Remux",cats:["acclaimed","trending"],synopsis:"Interpol agent Chun-Li and U.S. Air Force Colonel Guile track down the sinister international crime lord M. Bison."},
+                {id:7,title:"Toy Story 5",year:2026,rating:8.0,match:97,duration:"1h 45m",genres:["Animation","Family","Comedy"],accent:"#3b82f6",rgb:"59,130,246",backdrop:"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Toy.Story.5.2026.1080p.DCPRIP.MULTi.x264-DKS.mkv",quality:"1080p DCPRIP",cats:["new","trending"],synopsis:"Woody, Buzz, and the rest of the toy gang return for an all-new high-stakes adventure confronting the modern digital age."},
+                {id:8,title:"The Silent Horizon",year:2021,rating:8.4,match:97,duration:"2h 07m",genres:["Mystery","Drama"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"4K HDR",progress:0.42,cats:["continue","trending","acclaimed"],synopsis:"A retired cartographer returns to the coast where her sister vanished — only to find the maps no longer match the shore."},
+                {id:9,title:"Crimson Veil",year:2023,rating:7.9,match:91,duration:"1h 58m",genres:["Thriller","Crime"],accent:"#b8423f",rgb:"184,66,63",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",quality:"4K",progress:0.15,cats:["trending","new"],synopsis:"A detective with a failing memory hunts a killer who only ever strikes during thunderstorms."},
+                {id:10,title:"Echoes of Dust",year:2022,rating:8.1,match:95,duration:"2h 22m",genres:["Science Fiction"],accent:"#6f8fd6",rgb:"111,143,214",backdrop:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",quality:"4K HDR",progress:0.63,cats:["continue","trending","acclaimed"],synopsis:"On a silent colony world, a lone archivist begins to hear a voice in the static — one that was never meant to exist."},
+                {id:11,title:"Midnight Cartographer",year:2020,rating:7.6,match:88,duration:"2h 01m",genres:["Adventure"],accent:"#c98a3c",rgb:"201,138,60",backdrop:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",quality:"4K",cats:["new"],synopsis:"Two strangers race a cartel down an unmapped river, chasing a dawn that may never come."},
+                {id:12,title:"The Last Lighthouse",year:2019,rating:8.6,match:99,duration:"1h 49m",genres:["Drama"],accent:"#4f7d8a",rgb:"79,125,138",backdrop:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K HDR",progress:0.78,cats:["continue","acclaimed"],synopsis:"A keeper speaks to the sea every night. One night, after forty years, the sea finally speaks back."}
             ];
 
             const ROWS=[
@@ -695,11 +639,10 @@
                 {key:"new",label:"New in Your Collection"},
                 {key:"acclaimed",label:"Critically Acclaimed"}
             ];
-            const SPOTLIGHT_IDS=[1,3,5,11];
+            const SPOTLIGHT_IDS=[1,2,3,7];
 
             let saved=new Set(JSON.parse(localStorage.getItem("aether_saved")||"[]"));
             let activeIdx=0,rotTimer=null;
-            const img=(seed,w,h)=>`https://picsum.photos/seed/${seed}/${w}/${h}`;
 
             const backdropsEl=document.getElementById('backdrops');
             const heroContentEl=document.getElementById('heroContent');
@@ -713,7 +656,7 @@
                     const f=FILMS.find(x=>x.id===id);
                     const bd=document.createElement('div');
                     bd.className=`bd ${i===0?'active':''}`;
-                    bd.style.backgroundImage=`url('${img(f.seed,1920,1080)}')`;
+                    bd.style.backgroundImage=`url('${f.backdrop}')`;
                     backdropsEl.appendChild(bd);
 
                     const dot=document.createElement('button');
@@ -835,7 +778,7 @@
 
                         const isSaved=saved.has(f.id);
                         card.innerHTML=`
-                            <div class="card-img" style="background-image:url('${img(f.seed,600,340)}')"></div>
+                            <div class="card-img" style="background-image:url('${f.poster}')"></div>
                             <div class="card-scrim"></div>
                             <div class="card-top">
                                 <span class="badge rating">★ ${f.rating}</span>
@@ -872,90 +815,108 @@
             const durTimeEl=document.getElementById('durTime');
             const ppBtn=document.getElementById('ppBtn');
             const ppIcon=document.getElementById('ppIcon');
+            const backBtn=document.getElementById('backBtn');
+            const fwdBtn=document.getElementById('fwdBtn');
             const muteBtn=document.getElementById('muteBtn');
+            const volIcon=document.getElementById('volIcon');
             const volEl=document.getElementById('vol');
             const fsBtn=document.getElementById('fsBtn');
-            let hideTimer=null;
+            const closeBtn=document.getElementById('closeBtn');
+            const pTitle=document.getElementById('pTitle');
+            const pMeta=document.getElementById('pMeta');
 
-            function openPlayer(f){
-                playerEl.classList.add('open');
-                document.getElementById('pTitle').innerText=f.title;
-                document.getElementById('pMeta').innerText=`${f.genres.join(' · ')} · ${f.year} · ${f.quality}`;
+            let hideTimeout=null;
+
+            function formatTime(s){
+                if(isNaN(s)) return "0:00";
+                const m=Math.floor(s/60);
+                const sec=Math.floor(s%60);
+                return `${m}:${sec<10?'0':''}${sec}`;
+            }
+
+            window.openPlayer=function(f){
+                playerEl.style.display="flex";
+                setTimeout(()=>playerEl.style.opacity="1",10);
+                pTitle.textContent=f.title;
+                pMeta.textContent=`${f.year} · ${f.genres.join(', ')} · ${f.quality}`;
                 videoEl.src=f.video;
                 videoEl.play().catch(()=>{});
-                setupUI();
+                updatePlayState();
             }
 
             function closePlayer(){
                 videoEl.pause();
                 videoEl.src="";
-                playerEl.classList.remove('open');
-                if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+                playerEl.style.opacity="0";
+                setTimeout(()=>playerEl.style.display="none",300);
             }
 
-            document.getElementById('closeBtn').onclick=closePlayer;
+            closeBtn.onclick=closePlayer;
 
-            function setupUI(){
-                videoEl.onwaiting=()=>loaderEl.classList.add('show');
-                videoEl.onplaying=()=>loaderEl.classList.remove('show');
-                videoEl.ontimeupdate=()=>{
-                    if(!videoEl.duration)return;
-                    const p=(videoEl.currentTime/videoEl.duration)*1000;
-                    seekEl.value=p;
-                    seekEl.style.setProperty('--p',`${(videoEl.currentTime/videoEl.duration)*100}%`);
-                    curTimeEl.innerText=fmtTime(videoEl.currentTime);
-                    durTimeEl.innerText=fmtTime(videoEl.duration);
-                };
-                videoEl.onplay=()=>ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                videoEl.onpause=()=>ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+            function updatePlayState(){
+                if(videoEl.paused){
+                    ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+                }else{
+                    ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                }
             }
-
-            function fmtTime(s){
-                if(!isFinite(s))return"0:00";
-                s=Math.floor(s);
-                const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
-                return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;
-            }
-
-            seekEl.oninput=(e)=>{
-                if(!videoEl.duration)return;
-                videoEl.currentTime=(e.target.value/1000)*videoEl.duration;
-            };
 
             ppBtn.onclick=()=>{
                 if(videoEl.paused) videoEl.play(); else videoEl.pause();
             };
 
+            videoEl.onplay=updatePlayState;
+            videoEl.onpause=updatePlayState;
+
+            videoEl.ontimeupdate=()=>{
+                if(!videoEl.duration) return;
+                const pct=(videoEl.currentTime/videoEl.duration)*1000;
+                seekEl.value=pct;
+                seekEl.style.setProperty('--p',`${(videoEl.currentTime/videoEl.duration)*100}%`);
+                curTimeEl.textContent=formatTime(videoEl.currentTime);
+                durTimeEl.textContent=formatTime(videoEl.duration);
+            };
+
+            seekEl.oninput=()=>{
+                if(!videoEl.duration) return;
+                videoEl.currentTime=(seekEl.value/1000)*videoEl.duration;
+            };
+
+            backBtn.onclick=()=>videoEl.currentTime=Math.max(0,videoEl.currentTime-10);
+            fwdBtn.onclick=()=>videoEl.currentTime=Math.min(videoEl.duration||0,videoEl.currentTime+10);
+
+            volEl.oninput=()=>{
+                videoEl.volume=volEl.value/100;
+                videoEl.muted=false;
+                updateVolumeState();
+            };
+
             muteBtn.onclick=()=>{
                 videoEl.muted=!videoEl.muted;
-                volEl.value=videoEl.muted?0:(videoEl.volume*100);
+                updateVolumeState();
             };
 
-            volEl.oninput=(e)=>{
-                const v=e.target.value/100;
-                videoEl.volume=v;
-                videoEl.muted=(v===0);
-                volEl.style.setProperty('--vp',`${e.target.value}%`);
-            };
+            function updateVolumeState(){
+                if(videoEl.muted || videoEl.volume===0){
+                    volIcon.innerHTML='<path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+                    volEl.style.setProperty('--vp','0%');
+                }else{
+                    volIcon.innerHTML='<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+                    volEl.style.setProperty('--vp',`${videoEl.volume*100}%`);
+                    volEl.value=videoEl.volume*100;
+                }
+            }
 
             fsBtn.onclick=()=>{
-                if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
-                else document.exitFullscreen().catch(()=>{});
+                if(!document.fullscreenElement){
+                    stageEl.requestFullscreen().catch(()=>{});
+                }else{
+                    document.exitFullscreen();
+                }
             };
 
-            stageEl.onmousemove=()=>{
-                stageEl.classList.add('show-ui');
-                clearTimeout(hideTimer);
-                hideTimer=setTimeout(()=>stageEl.classList.remove('show-ui'),2500);
-            };
-
-            document.addEventListener('keydown',(e)=>{
-                if(!playerEl.classList.contains('open'))return;
-                if(e.code==='Space'||e.code==='KeyK'){e.preventDefault();if(videoEl.paused)videoEl.play();else videoEl.pause();}
-                if(e.code==='KeyF'){e.preventDefault();fsBtn.click();}
-                if(e.code==='KeyM'){e.preventDefault();muteBtn.click();}
-                if(e.code==='Escape'){closePlayer();}
-            });
+            videoEl.onloadstart=()=>loaderEl.style.display="flex";
+            videoEl.oncanplay=()=>loaderEl.style.display="none";
         }
     </script>
 </body>
