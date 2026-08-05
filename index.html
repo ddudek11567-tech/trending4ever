@@ -145,9 +145,8 @@
 
     <!-- Application Script Logic -->
     <script>
-        // Full Channel List with Syfy, Nick Jr, and filtered favorites (no duplicate entries)
+        // Restored Full List including Syfy, Nick Jr, and all filtered working channels without duplicates
         const channels = [
-            // Favorites & Entertainment
             {
                 name: "Syfy HD",
                 category: "Entertainment",
@@ -165,11 +164,115 @@
                 color: "bg-orange-500/10 text-orange-400 border-orange-500/20"
             },
             {
+                name: "60 Days In by A&E",
+                category: "A&E",
+                resolution: "720p",
+                url: "https://d2b8jic9gadlvy.cloudfront.net/v1/aenetworks_60daysin_1/samsungheadend_us/latest/main/hls/playlist.m3u8",
+                icon: "fa-masks-theater",
+                color: "bg-red-500/10 text-red-400 border-red-500/20"
+            },
+            {
+                name: "A&E Network",
+                category: "A&E",
+                resolution: "1080p",
+                url: "https://gpuserver3.tier1streams.com/AE/index.m3u8",
+                icon: "fa-tv",
+                color: "bg-red-500/10 text-red-400 border-red-500/20"
+            },
+            {
+                name: "A&E Crime 360",
+                category: "A&E",
+                resolution: "720p",
+                url: "https://jmp2.uk/plu-6000a5a9e767980007b497ca.m3u8",
+                icon: "fa-user-secret",
+                color: "bg-red-500/10 text-red-400 border-red-500/20"
+            },
+            {
+                name: "A&E Latin America",
+                category: "A&E",
+                resolution: "1080p",
+                url: "http://138.121.15.230:9002/A&E/index.m3u8",
+                icon: "fa-globe",
+                color: "bg-red-500/10 text-red-400 border-red-500/20"
+            },
+            {
+                name: "ABC National Feed",
+                category: "ABC",
+                resolution: "720p",
+                url: "http://41.205.93.154/ABC/index.m3u8",
+                icon: "fa-broadcast-tower",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ABC 2 Baltimore MD (WMAR)",
+                category: "ABC",
+                resolution: "720p",
+                url: "https://aegis-cloudfront-1.tubi.video/c28d1ca8-9467-4798-81dc-09c1d6e90be1/playlist.m3u8",
+                icon: "fa-location-dot",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ABC 2 Portland OR (KATU)",
+                category: "ABC",
+                resolution: "1080p",
+                url: "https://linear-710.frequency.stream/dist/stirr/710/hls/master/playlist.m3u8",
+                icon: "fa-location-dot",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ABC 5 Boston MA (WCVB)",
+                category: "ABC",
+                resolution: "720p",
+                url: "https://aegis-cloudfront-1.tubi.video/c2e3094d-ad56-4c5f-9655-cd80df71fbab/playlist.m3u8",
+                icon: "fa-location-dot",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ABC 7 Denver CO (KMGH)",
+                category: "ABC",
+                resolution: "720p",
+                url: "https://content.uplynk.com/channel/64ca339f04964a5e961c3207a7771bf1.m3u8",
+                icon: "fa-location-dot",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ABC News Live",
+                category: "News",
+                resolution: "1080p",
+                url: "https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8",
+                icon: "fa-newspaper",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
+                name: "ACC Network",
+                category: "ABC",
+                resolution: "720p",
+                url: "https://gpuserver3.tier1streams.com/ACC_NETWORK/index.m3u8",
+                icon: "fa-football",
+                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            },
+            {
                 name: "AMC Network",
                 category: "Movies",
                 resolution: "1080p",
                 url: "https://amchls.wns.live/hls/stream.m3u8",
                 icon: "fa-film",
+                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+            },
+            {
+                name: "AMC Absolute Reality",
+                category: "Movies",
+                resolution: "720p",
+                url: "https://amc-absolutereality-1-us.plex.wurl.tv/playlist.m3u8",
+                icon: "fa-video",
+                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+            },
+            {
+                name: "AMC Reality",
+                category: "Movies",
+                resolution: "1080p",
+                url: "https://c9672376.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BTUNSZWFsaXR5X0hMUw/playlist.m3u8",
+                icon: "fa-clapperboard",
                 color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
             },
             {
@@ -189,44 +292,28 @@
                 color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
             },
             {
-                name: "A&E Network",
-                category: "A&E",
+                name: "AXN Asia Taiwan",
+                category: "Movies",
+                resolution: "720p",
+                url: "https://play.wenxiang.cn/live/1a88465f153e1dd2108fd791bf4f25f7.flv",
+                icon: "fa-earth-asia",
+                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
+            },
+            {
+                name: "AXN Latin America",
+                category: "Movies",
                 resolution: "1080p",
-                url: "https://gpuserver3.tier1streams.com/AE/index.m3u8",
-                icon: "fa-tv",
-                color: "bg-red-500/10 text-red-400 border-red-500/20"
+                url: "http://138.121.15.230:9002/AXN/index.m3u8",
+                icon: "fa-globe-americas",
+                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
             },
             {
-                name: "60 Days In by A&E",
-                category: "A&E",
+                name: "BBC America East",
+                category: "Entertainment",
                 resolution: "720p",
-                url: "https://d2b8jic9gadlvy.cloudfront.net/v1/aenetworks_60daysin_1/samsungheadend_us/latest/main/hls/playlist.m3u8",
-                icon: "fa-masks-theater",
-                color: "bg-red-500/10 text-red-400 border-red-500/20"
-            },
-            {
-                name: "A&E Crime 360",
-                category: "A&E",
-                resolution: "720p",
-                url: "https://jmp2.uk/plu-6000a5a9e767980007b497ca.m3u8",
-                icon: "fa-user-secret",
-                color: "bg-red-500/10 text-red-400 border-red-500/20"
-            },
-            {
-                name: "ABC National Feed",
-                category: "ABC",
-                resolution: "720p",
-                url: "http://41.205.93.154/ABC/index.m3u8",
-                icon: "fa-broadcast-tower",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            {
-                name: "ABC News Live",
-                category: "News",
-                resolution: "1080p",
-                url: "https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8",
-                icon: "fa-newspaper",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                url: "https://gpuserver3.tier1streams.com/BBC_AMERICA/index.m3u8",
+                icon: "fa-landmark",
+                color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
             },
             {
                 name: "BBC News North America",
@@ -257,7 +344,7 @@
             });
         });
 
-        // Render channel cards with professional logos/icons
+        // Render channel cards with professional logos and icons
         function renderChannels(list) {
             const container = document.getElementById('channelListContainer');
             container.innerHTML = '';
