@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV // Live & Cinema Suite</title>
+    <title>NEXUS TV // Live Stream Suite & Media Center</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -26,7 +26,7 @@
     </script>
     <!-- HLS.js for streaming support -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- FontAwesome for professional icons/logos -->
+    <!-- FontAwesome for professional logos and icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -63,7 +63,7 @@
         <div class="flex-1 max-w-md mx-8">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-                <input type="text" id="channelSearch" placeholder="Search filtered channels or categories..." 
+                <input type="text" id="channelSearch" placeholder="Search channels or categories..." 
                     class="w-full bg-gray-950 border border-gray-800 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-brand-500 transition-colors">
             </div>
         </div>
@@ -86,13 +86,13 @@
                 <!-- Video Element -->
                 <video id="videoPlayer" class="w-full h-full object-contain" controls autoplay playsinline></video>
                 
-                <!-- Player Overlay / Placeholder (Shown initially) -->
+                <!-- Player Overlay Placeholder -->
                 <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-900/90 text-center p-6 transition-opacity duration-300">
                     <div class="w-16 h-16 rounded-full bg-brand-600/20 border border-brand-500/40 flex items-center justify-center text-brand-400 mb-4 text-2xl shadow-inner">
                         <i class="fa-solid fa-play ml-1"></i>
                     </div>
                     <h3 class="text-lg font-bold text-white mb-1">Select a Channel to Start Playing</h3>
-                    <p class="text-sm text-gray-400 max-w-sm">Choose any stream from the filtered playlist selector on the right.</p>
+                    <p class="text-sm text-gray-400 max-w-sm">Choose any stream from the channel directory on the right.</p>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@
             </div>
         </div>
 
-        <!-- Right Column: Filtered Channel Directory & Playlist Selector -->
+        <!-- Right Column: Channel Directory & Playlist Selector -->
         <div class="w-96 bg-gray-900 flex flex-col shrink-0 border-l border-gray-800">
             <!-- Category Tabs -->
             <div class="p-4 border-b border-gray-800 bg-gray-900/80 backdrop-blur">
@@ -126,11 +126,12 @@
                 </h2>
                 <div class="flex space-x-1.5 overflow-x-auto pb-1 custom-scrollbar">
                     <button onclick="filterCategory('all')" class="cat-btn active px-3 py-1.5 rounded-md text-xs font-semibold bg-brand-600 text-white shrink-0 transition-all">All</button>
+                    <button onclick="filterCategory('Entertainment')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">Entertainment</button>
+                    <button onclick="filterCategory('Movies')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">Movies</button>
+                    <button onclick="filterCategory('Kids')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">Kids</button>
+                    <button onclick="filterCategory('News')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">News</button>
                     <button onclick="filterCategory('A&E')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">A&E</button>
                     <button onclick="filterCategory('ABC')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">ABC</button>
-                    <button onclick="filterCategory('AMC')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">AMC</button>
-                    <button onclick="filterCategory('AXN')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">AXN</button>
-                    <button onclick="filterCategory('BBC')" class="cat-btn px-3 py-1.5 rounded-md text-xs font-semibold bg-gray-800 text-gray-400 hover:text-white shrink-0 transition-all">BBC</button>
                 </div>
             </div>
 
@@ -144,25 +145,48 @@
 
     <!-- Application Script Logic -->
     <script>
-        // Comprehensive Filtered Channel Master List (Merging previous channels & filtered output, preventing duplicates)
+        // Full Channel List with Syfy, Nick Jr, and filtered favorites (no duplicate entries)
         const channels = [
-            // Nick Jr (Ensured functional playback link as requested)
+            // Favorites & Entertainment
             {
-                name: "Nick Jr (1080p)",
+                name: "Syfy HD",
+                category: "Entertainment",
+                resolution: "1080p",
+                url: "https://vcl.bozztv.com/ssh/syfy/index.m3u8",
+                icon: "fa-wand-magic-sparkles",
+                color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+            },
+            {
+                name: "Nick Jr",
                 category: "Kids",
                 resolution: "1080p",
                 url: "http://40.160.24.55/NICK_JR/index.m3u8",
                 icon: "fa-child-reaching",
                 color: "bg-orange-500/10 text-orange-400 border-orange-500/20"
             },
-            // A&E Channels
             {
-                name: "60 Days In by A&E",
-                category: "A&E",
+                name: "AMC Network",
+                category: "Movies",
+                resolution: "1080p",
+                url: "https://amchls.wns.live/hls/stream.m3u8",
+                icon: "fa-film",
+                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+            },
+            {
+                name: "AMC Plus",
+                category: "Movies",
                 resolution: "720p",
-                url: "https://d2b8jic9gadlvy.cloudfront.net/v1/aenetworks_60daysin_1/samsungheadend_us/latest/main/hls/playlist.m3u8",
-                icon: "fa-masks-theater",
-                color: "bg-red-500/10 text-red-400 border-red-500/20"
+                url: "https://gpuserver3.tier1streams.com/AMC_PLUS/index.m3u8",
+                icon: "fa-star",
+                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+            },
+            {
+                name: "AXN HD",
+                category: "Movies",
+                resolution: "720p",
+                url: "http://45.190.28.50/AXN_HD/index.m3u8",
+                icon: "fa-ticket",
+                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
             },
             {
                 name: "A&E Network",
@@ -170,6 +194,14 @@
                 resolution: "1080p",
                 url: "https://gpuserver3.tier1streams.com/AE/index.m3u8",
                 icon: "fa-tv",
+                color: "bg-red-500/10 text-red-400 border-red-500/20"
+            },
+            {
+                name: "60 Days In by A&E",
+                category: "A&E",
+                resolution: "720p",
+                url: "https://d2b8jic9gadlvy.cloudfront.net/v1/aenetworks_60daysin_1/samsungheadend_us/latest/main/hls/playlist.m3u8",
+                icon: "fa-masks-theater",
                 color: "bg-red-500/10 text-red-400 border-red-500/20"
             },
             {
@@ -181,15 +213,6 @@
                 color: "bg-red-500/10 text-red-400 border-red-500/20"
             },
             {
-                name: "A&E Latin America",
-                category: "A&E",
-                resolution: "1080p",
-                url: "http://138.121.15.230:9002/A&E/index.m3u8",
-                icon: "fa-globe",
-                color: "bg-red-500/10 text-red-400 border-red-500/20"
-            },
-            // ABC Channels
-            {
                 name: "ABC National Feed",
                 category: "ABC",
                 resolution: "720p",
@@ -198,123 +221,16 @@
                 color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
             },
             {
-                name: "ABC 2 Baltimore MD (WMAR)",
-                category: "ABC",
-                resolution: "720p",
-                url: "https://aegis-cloudfront-1.tubi.video/c28d1ca8-9467-4798-81dc-09c1d6e90be1/playlist.m3u8",
-                icon: "fa-location-dot",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            {
-                name: "ABC 2 Portland OR (KATU)",
-                category: "ABC",
-                resolution: "1080p",
-                url: "https://linear-710.frequency.stream/dist/stirr/710/hls/master/playlist.m3u8",
-                icon: "fa-location-dot",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            {
-                name: "ABC 5 Boston MA (WCVB)",
-                category: "ABC",
-                resolution: "720p",
-                url: "https://aegis-cloudfront-1.tubi.video/c2e3094d-ad56-4c5f-9655-cd80df71fbab/playlist.m3u8",
-                icon: "fa-location-dot",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            {
-                name: "ABC 7 Denver CO (KMGH)",
-                category: "ABC",
-                resolution: "720p",
-                url: "https://content.uplynk.com/channel/64ca339f04964a5e961c3207a7771bf1.m3u8",
-                icon: "fa-location-dot",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            {
                 name: "ABC News Live",
-                category: "ABC",
+                category: "News",
                 resolution: "1080p",
                 url: "https://abcnews-streams.akamaized.net/hls/live/2023560/abcnewshudson1/master.m3u8",
                 icon: "fa-newspaper",
                 color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
             },
             {
-                name: "ACC Network",
-                category: "ABC",
-                resolution: "720p",
-                url: "https://gpuserver3.tier1streams.com/ACC_NETWORK/index.m3u8",
-                icon: "fa-football",
-                color: "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            },
-            // AMC Channels
-            {
-                name: "AMC Network",
-                category: "AMC",
-                resolution: "1080p",
-                url: "https://amchls.wns.live/hls/stream.m3u8",
-                icon: "fa-film",
-                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
-            },
-            {
-                name: "AMC Absolute Reality",
-                category: "AMC",
-                resolution: "720p",
-                url: "https://amc-absolutereality-1-us.plex.wurl.tv/playlist.m3u8",
-                icon: "fa-video",
-                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
-            },
-            {
-                name: "AMC Reality",
-                category: "AMC",
-                resolution: "1080p",
-                url: "https://c9672376.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9BTUNSZWFsaXR5X0hMUw/playlist.m3u8",
-                icon: "fa-clapperboard",
-                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
-            },
-            {
-                name: "AMC Plus",
-                category: "AMC",
-                resolution: "720p",
-                url: "https://gpuserver3.tier1streams.com/AMC_PLUS/index.m3u8",
-                icon: "fa-star",
-                color: "bg-purple-500/10 text-purple-400 border-purple-500/20"
-            },
-            // AXN Channels
-            {
-                name: "AXN HD",
-                category: "AXN",
-                resolution: "720p",
-                url: "http://45.190.28.50/AXN_HD/index.m3u8",
-                icon: "fa-ticket",
-                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
-            },
-            {
-                name: "AXN Asia Taiwan",
-                category: "AXN",
-                resolution: "720p",
-                url: "https://play.wenxiang.cn/live/1a88465f153e1dd2108fd791bf4f25f7.flv",
-                icon: "fa-earth-asia",
-                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
-            },
-            {
-                name: "AXN Latin America",
-                category: "AXN",
-                resolution: "1080p",
-                url: "http://138.121.15.230:9002/AXN/index.m3u8",
-                icon: "fa-globe-americas",
-                color: "bg-amber-500/10 text-amber-400 border-amber-500/20"
-            },
-            // BBC Channels
-            {
-                name: "BBC America East",
-                category: "BBC",
-                resolution: "720p",
-                url: "https://gpuserver3.tier1streams.com/BBC_AMERICA/index.m3u8",
-                icon: "fa-landmark",
-                color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-            },
-            {
                 name: "BBC News North America",
-                category: "BBC",
+                category: "News",
                 resolution: "1080p",
                 url: "https://gpuserver3.tier1streams.com/BBC_WORLD_NEWS/index.m3u8",
                 icon: "fa-globe",
@@ -341,7 +257,7 @@
             });
         });
 
-        // Render channel cards with professional logos and icons
+        // Render channel cards with professional logos/icons
         function renderChannels(list) {
             const container = document.getElementById('channelListContainer');
             container.innerHTML = '';
@@ -351,7 +267,7 @@
                 return;
             }
 
-            list.forEach((ch, idx) => {
+            list.forEach((ch) => {
                 const card = document.createElement('div');
                 card.className = `group flex items-center justify-between p-3 rounded-xl bg-gray-950/40 border border-gray-800/80 hover:border-brand-500/50 hover:bg-gray-900 cursor-pointer transition-all`;
                 card.onclick = () => playStream(ch);
@@ -413,7 +329,6 @@
                 });
                 currentHls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
-                        console.warn("HLS fatal error encountered, trying recovery...", data);
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
                                 currentHls.startLoad();
@@ -452,7 +367,6 @@
         function filterCategory(cat) {
             activeCategory = cat;
             
-            // Update active styling on buttons
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.remove('bg-brand-600', 'text-white');
                 btn.classList.add('bg-gray-800', 'text-gray-400');
