@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV v4.1 - Quantum Engine</title>
+    <title>NEXUS TV v4.2 - Quantum Engine</title>
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HLS.js for m3u8 stream playback -->
@@ -41,7 +41,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.1 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.2 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Advanced stream handler with automatic error recovery and fallback routing</p>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and direct Nick Jr. integration</p>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -153,17 +153,17 @@
                                 🌟
                             </div>
                             <div>
-                                <h3 id="currentChannelName" class="text-base font-bold text-white">Kutonen</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Nordic Prime Time Feed</p>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">Nick Jr.</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Animated Preschool Favorites</p>
                             </div>
                         </div>
 
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Stable Link
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Direct Feed Active
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Auto-Recovery Active</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Auto-Recovery Ready</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -180,7 +180,7 @@
                             <span class="text-sm">📅</span>
                             <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">KUTONEN</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">NICK JR.</span>
                     </div>
 
                     <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
@@ -190,7 +190,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
                             <span>💡</span>
-                            <span>Protected streams automatically route through backup manifests if connection fails.</span>
+                            <span>Direct stream link updated for Nick Jr. with robust error handling.</span>
                         </div>
                     </div>
                 </div>
@@ -234,26 +234,26 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.1 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.2 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
-    <!-- Application Script Engine with Fallback Handlers -->
+    <!-- Application Script Engine with Updated Direct Nick Jr. Stream -->
     <script>
         const channels = [
-            { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
-            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", fallbackUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
             { 
                 name: "Nick Jr.", 
                 category: "Kids & Family", 
                 res: "720p", 
                 format: "m3u8", 
-                url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", 
-                fallbackUrl: "https://animation-plus.amagi.tv/playlist/playlist.m3u8", // Reliable alternative kids feed
+                url: "http://40.160.24.55/NICK_JR/index.m3u8", 
+                fallbackUrl: "https://animation-plus.amagi.tv/playlist/playlist.m3u8", 
                 now: "Animated Preschool Favorites", 
                 next: "Bedtime Stories & Songs", 
                 icon: "🧸" 
             },
+            { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
+            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", fallbackUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
             { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing", icon: "🏎️" },
             { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Romantic Evening Feature", next: "Weekend Getaway Romance", icon: "💝" },
             { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", fallbackUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight", icon: "🎥" },
@@ -453,7 +453,7 @@
                                 case Hls.ErrorTypes.NETWORK_ERROR:
                                     console.warn("Network error encountered, attempting recovery or fallback...");
                                     if (!useFallback && ch.fallbackUrl) {
-                                        loadActiveStream(ch, true); // Retry with backup link
+                                        loadActiveStream(ch, true);
                                     } else {
                                         hlsInstance.startLoad();
                                     }
