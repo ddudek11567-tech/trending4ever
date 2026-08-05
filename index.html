@@ -221,7 +221,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 BLOCKBUSTERS & STAR WARS SAGA</span>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Classics</h2>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Saga</h2>
                     <p class="text-xs text-slate-400 mt-1">Direct stream VOD playback integration for all titles</p>
                 </div>
                 
@@ -284,7 +284,7 @@
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-2">
-                        <h3 class="text-lg font-bold text-white">Movie Vault & Star Wars Classics</h3>
+                        <h3 class="text-lg font-bold text-white">Complete Star Wars Saga & Blockbusters</h3>
                         <span class="text-xs bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold">DIRECT VOD</span>
                     </div>
                     <button class="text-xs font-bold text-pink-500 hover:underline">See all &gt;</button>
@@ -351,14 +351,20 @@
             { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        // VOD Movies Dataset - Configured with distinct test/sample stream variations
+        // VOD Movies Dataset - Configured with the complete Star Wars Saga and distinct direct streams
         const movies = [
-            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950" },
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-slate-900 to-blue-950" },
-            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-purple-950 to-slate-950" },
-            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950" },
-            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-slate-950" },
-            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://content.jwplatform.com/manifests/vM7nH0Kl.m3u8", bg: "from-violet-950 to-purple-900" }
+            { title: "Star Wars: Episode I - The Phantom Menace", year: "1999", genre: "Sci-Fi / Prequel", rating: "8.6", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-amber-950 to-slate-950", logo: "⭐" },
+            { title: "Star Wars: Episode II - Attack of the Clones", year: "2002", genre: "Sci-Fi / Action", rating: "8.4", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-blue-950 to-indigo-950", logo: "⚔️" },
+            { title: "Star Wars: Episode III - Revenge of the Sith", year: "2005", genre: "Sci-Fi / Drama", rating: "9.1", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-red-950 to-slate-950", logo: "🔥" },
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950", logo: "🚀" },
+            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-slate-900 to-blue-950", logo: "🌌" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-purple-950 to-slate-950", logo: "⚡" },
+            { title: "Star Wars: Episode VII - The Force Awakens", year: "2015", genre: "Sci-Fi / Sequel", rating: "8.5", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-cyan-950 to-blue-950", logo: "🛡️" },
+            { title: "Star Wars: Episode VIII - The Last Jedi", year: "2017", genre: "Sci-Fi / Action", rating: "8.2", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-zinc-900 to-slate-950", logo: "🔴" },
+            { title: "Star Wars: Episode IX - The Rise of Skywalker", year: "2019", genre: "Sci-Fi / Finale", rating: "8.3", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-indigo-950 to-purple-950", logo: "👑" },
+            { title: "Rogue One: A Star Wars Story", year: "2016", genre: "Sci-Fi / War", rating: "9.0", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-stone-900 to-zinc-950", logo: "🎯" },
+            { title: "Solo: A Star Wars Story", year: "2018", genre: "Sci-Fi / Heist", rating: "7.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-amber-900 to-stone-950", logo: "🎲" },
+            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950", logo: "🌆" }
         ];
 
         let currentStreamUrl = channels[0].url;
@@ -445,7 +451,7 @@
                 
                 card.innerHTML = `
                     <div class="flex items-center justify-between z-10">
-                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30">VOD</span>
+                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30 flex items-center gap-1"><span>${m.logo || '🎬'}</span> VOD</span>
                         <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-amber-400 border border-amber-500/30 flex items-center gap-1">★ ${m.rating}</span>
                     </div>
                     <div class="z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent -mx-4 -mb-4 p-4 pt-8">
