@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV v4.3 - Dynamic Stream Scanner & Quantum Engine</title>
+    <title>NEXUS TV v4.4 - Direct Stream Resolver</title>
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HLS.js for m3u8 stream playback -->
@@ -41,7 +41,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; AUTO-SCAN</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.4 &bull; DIRECT REPLACED</span>
                 </div>
             </div>
 
@@ -115,11 +115,11 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now &bull; Smart Resolution & Fallback Routing</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Direct Link Mode &bull; No Placeholders</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Multi-directory stream resolver handling directory variations automatically</p>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing updated with custom Google DAI master stream feed for 48 Hours</p>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -135,10 +135,10 @@
                 <!-- Video Stream Section -->
                 <div class="lg:col-span-2 flex flex-col">
                     <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
-                        <!-- Notification Overlay for Stream Status / Fallbacks -->
-                        <div id="streamAlert" class="absolute top-4 left-4 z-20 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
-                            <span>⚠️</span>
-                            <span id="streamAlertText">Resolving stream directory path...</span>
+                        <!-- Notification Overlay for Stream Status -->
+                        <div id="streamAlert" class="absolute top-4 left-4 z-20 hidden bg-emerald-950/90 border border-emerald-500/60 text-emerald-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
+                            <span>⚡</span>
+                            <span id="streamAlertText">Direct stream connected successfully.</span>
                         </div>
                         <video
                             id="videoPlayer"
@@ -153,20 +153,20 @@
                     <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
                         <div class="flex items-center space-x-4">
                             <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
-                                🌟
+                                🔍
                             </div>
                             <div>
-                                <h3 id="currentChannelName" class="text-base font-bold text-white">Select a Channel</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Ready for playback</p>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">48 Hours</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Direct Google DAI Master Stream</p>
                             </div>
                         </div>
 
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Smart Resolver Active
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Direct Feed Active
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Auto-Directory Fallbacks</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">🔒 Zero Placeholders</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -183,7 +183,7 @@
                             <span class="text-sm">📅</span>
                             <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">SELECT</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">48 HOURS</span>
                     </div>
 
                     <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
@@ -191,9 +191,9 @@
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
-                        <div class="bg-purple-950/20 border border-purple-900/30 rounded-xl p-3 text-[11px] text-purple-300 flex items-start space-x-2">
-                            <span>💡</span>
-                            <span>Engine automatically tests alternative file endings (`index.m3u8`, `playlist.m3u8`, `live.m3u8`, `stream.m3u8`) if a direct link fails.</span>
+                        <div class="bg-emerald-950/20 border border-emerald-900/30 rounded-xl p-3 text-[11px] text-emerald-300 flex items-start space-x-2">
+                            <span>✅</span>
+                            <span>Direct stream link updated for 48 Hours using the Google DAI master URL.</span>
                         </div>
                     </div>
                 </div>
@@ -203,7 +203,7 @@
             <div class="mt-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Click any channel to test & play</div>
+                    <div class="text-[11px] text-slate-500">Select any channel to play</div>
                 </div>
                 <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     <!-- Populated dynamically -->
@@ -217,25 +217,20 @@
                 <div>
                     <span class="text-[10px] font-bold tracking-widest text-purple-400 uppercase">⚡ BULK DIRECTORY RESOLVER</span>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Batch Stream & Folder Scanner</h2>
-                    <p class="text-xs text-slate-400 mt-1">Paste a list of base URLs or `.m3u8` links below. The system will automatically check common manifest variations and generate working player entries instantly.</p>
+                    <p class="text-xs text-slate-400 mt-1">Paste a list of base URLs or `.m3u8` links below to ingest custom direct feeds instantly.</p>
                 </div>
 
                 <div class="bg-[#0d1326] border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Paste Stream URLs or Server Roots (one per line)</label>
-                    <textarea id="bulkInput" rows="6" class="w-full bg-[#11182d] border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500 transition-all" placeholder="http://40.160.24.55/NICK_JR/
-http://40.160.24.55/CARTOON_NETWORK/index.m3u8
-https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
+                    <textarea id="bulkInput" rows="6" class="w-full bg-[#11182d] border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-200 focus:outline-none focus:border-purple-500 transition-all" placeholder="https://dai.google.com/linear/hls/event/JUr94WL2QAiVpGNHY5n5dA/master.m3u8"></textarea>
                     
                     <div class="flex items-center justify-between">
                         <div class="text-[11px] text-slate-400">
-                            <span>✨ Automatically appends: </span>
-                            <code class="text-purple-300 bg-purple-950/40 px-1.5 py-0.5 rounded">index.m3u8</code>, 
-                            <code class="text-purple-300 bg-purple-950/40 px-1.5 py-0.5 rounded">playlist.m3u8</code>, 
-                            <code class="text-purple-300 bg-purple-950/40 px-1.5 py-0.5 rounded">live.m3u8</code>
+                            <span>✨ Direct ingestion mode active.</span>
                         </div>
                         <button onclick="runBulkScanner()" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-xs shadow-lg hover:opacity-90 transition-all flex items-center space-x-2">
                             <span>🚀</span>
-                            <span>Generate & Test Links</span>
+                            <span>Add Stream Links</span>
                         </button>
                     </div>
                 </div>
@@ -273,13 +268,12 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.4 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
-    <!-- Application Script Engine with Intelligent Multi-Directory Path Resolution -->
+    <!-- Application Script Engine with Direct Links -->
     <script>
-        // Default channel list equipped with directory variations and fallback candidates
         let channels = [
             { 
                 name: "Nick Jr.", 
@@ -292,10 +286,21 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "http://40.160.24.55/nick_jr/index.m3u8",
                     "http://40.160.24.55/NICKJR/index.m3u8"
                 ],
-                fallbackUrl: "https://animation-plus.amagi.tv/playlist/playlist.m3u8", 
                 now: "Animated Preschool Favorites", 
                 next: "Bedtime Stories & Songs", 
                 icon: "🧸" 
+            },
+            { 
+                name: "48 Hours", 
+                category: "Entertainment & Movies", 
+                res: "Live", 
+                format: "m3u8", 
+                urls: [
+                    "https://dai.google.com/linear/hls/event/JUr94WL2QAiVpGNHY5n5dA/master.m3u8"
+                ],
+                now: "Investigative Crime Files", 
+                next: "Cold Case Special Edition", 
+                icon: "🔍" 
             },
             { 
                 name: "Kutonen", 
@@ -306,7 +311,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv",
                     "https://live-fi.tvkaista.net/kutonen/index.m3u8"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Nordic Prime Time Feed", 
                 next: "Late Night Action Block", 
                 icon: "🌐" 
@@ -320,7 +324,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "https://gpuserver5.tier1streams.com/SYFY/index.m3u8",
                     "https://gpuserver5.tier1streams.com/SYFY/playlist.m3u8"
                 ],
-                fallbackUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
                 now: "Sci-Fi Original Movie Marathon", 
                 next: "Twilight Zone Classics", 
                 icon: "🌌" 
@@ -334,7 +337,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8",
                     "https://gpuserver3.tier1streams.com/DISCOVERY_TURBO/index.m3u8"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Custom Garage Build Off", 
                 next: "Extreme Off-Road Racing", 
                 icon: "🏎️" 
@@ -347,7 +349,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                 urls: [
                     "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Romantic Evening Feature", 
                 next: "Weekend Getaway Romance", 
                 icon: "💝" 
@@ -361,7 +362,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv",
                     "https://live-fi.tvkaista.net/tlc/index.m3u8"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Nordic Reality Showcase", 
                 next: "Home Renovation Diaries", 
                 icon: "🏠" 
@@ -375,7 +375,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                     "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8",
                     "http://158.69.124.9:1935/5aabtv/5aabtv/index.m3u8"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Cultural Music Showcase", 
                 next: "Evening News & Talk", 
                 icon: "🎶" 
@@ -388,7 +387,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                 urls: [
                     "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Saturday Morning Toons", 
                 next: "Adventure Animation Hour", 
                 icon: "🎨" 
@@ -401,7 +399,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                 urls: [
                     "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd"
                 ],
-                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
                 now: "Markets Closing Bell", 
                 next: "Global Wealth Report", 
                 icon: "📈" 
@@ -413,7 +410,7 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
             { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" }
         ];
 
-        let currentChannel = channels[0];
+        let currentChannel = channels[1]; // Default to 48 Hours
         let hlsInstance = null;
         let dashInstance = null;
         const videoElement = document.getElementById('videoPlayer');
@@ -421,7 +418,7 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
         document.getElementById('channelCount').innerText = channels.length;
         renderChannels(channels);
         renderMovies();
-        renderEpg(channels[0]);
+        renderEpg(channels[1]);
         loadActiveStream(currentChannel);
 
         function switchPage(page) {
@@ -542,7 +539,7 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
 
         function playMovieSample(url, title) {
             switchPage('iptv');
-            const vodChannel = { name: title, urls: [url], fallbackUrl: url, format: 'm3u8', category: 'Cinema VOD', icon: '🎬', now: title, res: '1080p' };
+            const vodChannel = { name: title, urls: [url], format: 'm3u8', category: 'Cinema VOD', icon: '🎬', now: title, res: '1080p' };
             currentChannel = vodChannel;
             document.getElementById('currentChannelName').innerText = title;
             document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
@@ -559,17 +556,16 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
             setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
         }
 
-        // Intelligent Recursive Stream Loader that automatically cycles through directory variations (`index.m3u8`, `playlist.m3u8`, `live.m3u8`, etc.)
+        // Direct Stream Loader iterating through supplied URL variations without placeholder switches
         function loadActiveStream(ch, urlIndex = 0) {
             if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
             if (dashInstance) { dashInstance.reset(); dashInstance = null; }
 
-            // Ensure urls array exists
             if (!ch.urls || ch.urls.length === 0) {
-                ch.urls = [ch.url || ch.fallbackUrl];
+                ch.urls = [ch.url];
             }
 
-            const targetUrl = ch.urls[urlIndex] || ch.fallbackUrl;
+            const targetUrl = ch.urls[urlIndex];
             document.getElementById('streamAlert').classList.add('hidden');
 
             if (targetUrl.includes('.mpd')) {
@@ -590,17 +586,12 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                         videoElement.play().catch(() => {});
                     });
 
-                    // Error handling & automatic directory variation fallback
                     hlsInstance.on(Hls.Events.ERROR, (event, data) => {
                         if (data.fatal) {
                             console.warn(`Stream error on path [${targetUrl}]:`, data.type);
                             if (urlIndex + 1 < ch.urls.length) {
-                                showStreamAlert(`Directory path failed. Trying alternative index (${urlIndex + 2}/${ch.urls.length})...`);
+                                showStreamAlert(`Trying path variation (${urlIndex + 2}/${ch.urls.length})...`);
                                 loadActiveStream(ch, urlIndex + 1);
-                            } else if (ch.fallbackUrl && targetUrl !== ch.fallbackUrl) {
-                                showStreamAlert(`Primary directory links exhausted. Switching to emergency backup feed.`);
-                                ch.urls.push(ch.fallbackUrl);
-                                loadActiveStream(ch, ch.urls.length - 1);
                             } else {
                                 hlsInstance.startLoad();
                             }
@@ -618,7 +609,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
             }
         }
 
-        // Bulk Scanner Tool: Generates multi-directory variants for batch links pasted by the user
         function runBulkScanner() {
             const rawText = document.getElementById('bulkInput').value;
             const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -630,46 +620,27 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
             resultsContainer.classList.remove('hidden');
 
             lines.forEach((line, idx) => {
-                // Clean up trailing slash and formulate standard directory variations
-                let cleanBase = line.replace(/\/$/, '');
-                if (cleanBase.endsWith('.m3u8') || cleanBase.endsWith('.mpd')) {
-                    // Extract root directory if a specific file was given
-                    const lastSlash = cleanBase.lastIndexOf('/');
-                    cleanBase = cleanBase.substring(0, lastSlash);
-                }
-
-                const generatedUrls = [
-                    `${cleanBase}/index.m3u8`,
-                    `${cleanBase}/playlist.m3u8`,
-                    `${cleanBase}/live.m3u8`,
-                    `${cleanBase}/stream.m3u8`,
-                    line // original input as backup
-                ];
-
-                const channelName = `Scanned Channel #${idx + 1}`;
+                const channelName = `Custom Stream #${idx + 1}`;
                 const newChannel = {
                     name: channelName,
-                    category: "Scanned Custom",
+                    category: "Custom Ingest",
                     res: "Live",
                     format: "m3u8",
-                    urls: generatedUrls,
-                    fallbackUrl: generatedUrls[0],
-                    now: "Custom Stream Source",
+                    urls: [line],
+                    now: "Live Ingest Stream",
                     icon: "📡"
                 };
 
-                // Push into channels array
                 channels.push(newChannel);
                 document.getElementById('channelCount').innerText = channels.length;
                 renderChannels(channels);
 
-                // Render in scanner box
                 const item = document.createElement('div');
                 item.className = "bg-[#11182d] border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs";
                 item.innerHTML = `
                     <div>
                         <div class="font-bold text-white">${channelName}</div>
-                        <div class="text-[10px] text-purple-400 truncate max-w-md mt-0.5">Base: ${cleanBase} (${generatedUrls.length} path variations indexed)</div>
+                        <div class="text-[10px] text-purple-400 truncate max-w-md mt-0.5">${line}</div>
                     </div>
                     <button onclick='loadScannedChannel(${channels.length - 1})' class="px-3 py-1.5 rounded-lg bg-purple-600 text-white font-bold text-[11px] hover:bg-purple-500 transition-all">
                         Play Now 📺
@@ -678,7 +649,6 @@ https://gpuserver5.tier1streams.com/SYFY/index.m3u8"></textarea>
                 resultsList.appendChild(item);
             });
 
-            // Refresh channel grid view
             renderChannels(channels);
         }
 
