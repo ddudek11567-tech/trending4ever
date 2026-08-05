@@ -327,7 +327,22 @@
         let dashInstance = null;
         const videoElement = document.getElementById('videoPlayer');
         const movies = [
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
+            { 
+                title: "Star Wars (Archived Edition)", 
+                year: "1977", 
+                genre: "Sci-Fi / Space Opera", 
+                rating: "9.5", 
+                url: "https://archive.org/download/star-wars-1977/star-wars-1977_512kb.mp4", 
+                bg: "from-slate-900 to-blue-950" 
+            },
+            { 
+                title: "Star Wars: The Rebellion (Tribute)", 
+                year: "2023", 
+                genre: "Sci-Fi / Trailer", 
+                rating: "8.9", 
+                url: "https://archive.org/download/star-wars-the-rebellion/The%20Rebellion%20_%20STAR%20WARS.mp4", 
+                bg: "from-blue-900 to-slate-950" 
+            },
             { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" }
         ];
 
@@ -454,7 +469,7 @@
 
         function playMovieSample(url, title) {
             switchPage('iptv');
-            const vodChannel = { name: title, url: url, fallbackUrl: url, format: 'm3u8', category: 'Cinema VOD', icon: '🎬', now: title, next: 'Trailers' };
+            const vodChannel = { name: title, url: url, fallbackUrl: url, format: 'mp4', category: 'Cinema VOD', icon: '🎬', now: title, next: 'Trailers' };
             currentChannel = vodChannel;
             document.getElementById('currentChannelName').innerText = title;
             document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
