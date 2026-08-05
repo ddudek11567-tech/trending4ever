@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HLS.js for m3u8 stream playback -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Dash.js for mpd stream playback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -114,7 +116,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Showtime, Starz, Nick, Nick Jr, Disney & premium channels fully linked with live EPG</p>
+                    <p class="text-xs text-slate-400 mt-1">Expanded international, sports, news, and entertainment channel lineup</p>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -149,8 +151,8 @@
                                 🌟
                             </div>
                             <div>
-                                <h3 id="currentChannelName" class="text-base font-bold text-white">Showtime Showcase</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Premium Movie Network Stream</p>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">Kutonen</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Now playing: Nordic Prime Time Feed</p>
                             </div>
                         </div>
 
@@ -176,7 +178,7 @@
                             <span class="text-sm">📅</span>
                             <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">SHOWTIME</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">KUTONEN</span>
                     </div>
 
                     <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
@@ -196,7 +198,7 @@
             <div class="mt-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Select Showtime, Starz, Nick, Disney or others</div>
+                    <div class="text-[11px] text-slate-500">Select international, sports, news, or entertainment feeds</div>
                 </div>
                 <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     <!-- Populated dynamically -->
@@ -305,92 +307,40 @@
 
     <!-- Application Script Engine -->
     <script>
-        // Updated Channels dataset with Showtime, Starz, Nick, Nick Jr, Disney, and previous favorites
+        // Updated channel list including all newly provided channels
         const channels = [
-            { 
-                name: "Showtime Showcase", category: "Premium Networks", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", icon: "🌟",
-                schedule: [
-                    { time: "12:00", show: "Original Dramatic Series Block", live: false },
-                    { time: "15:00", show: "Box Office Championship Feature", live: false },
-                    { time: "18:00", show: "Showtime Live Feature Premiere", live: true },
-                    { time: "20:30", show: "Late Night Cinematic Masterpiece", live: false }
-                ]
-            },
-            { 
-                name: "Starz Encore", category: "Premium Networks", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "💫",
-                schedule: [
-                    { time: "12:00", show: "90s Blockbuster Hits Replay", live: false },
-                    { time: "15:00", show: "Action & Adventure Showcase", live: false },
-                    { time: "18:00", show: "Starz Exclusive Prime Feature", live: true },
-                    { time: "21:00", show: "Midnight Hollywood Classics", live: false }
-                ]
-            },
-            { 
-                name: "Nickelodeon", category: "Family & Kids", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "🟠",
-                schedule: [
-                    { time: "12:00", show: "SpongeBob SquarePants Marathon", live: false },
-                    { time: "15:00", show: "The Loud House Adventures", live: false },
-                    { time: "18:00", show: "Prime Time Animation Block", live: true },
-                    { time: "20:00", show: "Classic Retro Cartoons", live: false }
-                ]
-            },
-            { 
-                name: "Nick Jr", category: "Family & Kids", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "🧸",
-                schedule: [
-                    { time: "12:00", show: "PAW Patrol Rescue Run", live: false },
-                    { time: "14:30", show: "Blaze and the Monster Machines", live: false },
-                    { time: "18:00", show: "Bedtime Stories & Learning Live", live: true },
-                    { time: "20:00", show: "Quiet Time Lullabies", live: false }
-                ]
-            },
-            { 
-                name: "Disney Channel", category: "Family & Kids", res: "1080p", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", icon: "✨",
-                schedule: [
-                    { time: "12:00", show: "Animated Magic Hour", live: false },
-                    { time: "15:00", show: "Classic Disney Afternoon Series", live: false },
-                    { time: "18:00", show: "Disney Movie Night Premiere", live: true },
-                    { time: "20:30", show: "Family Comedy Special", live: false }
-                ]
-            },
-            { 
-                name: "SYFY", category: "Entertainment", res: "1080p", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", icon: "🌌",
-                schedule: [
-                    { time: "12:00", show: "The Twilight Zone Marathon", live: false },
-                    { time: "15:00", show: "Sci-Fi Science & Origins", live: false },
-                    { time: "18:00", show: "Interstellar Frontiers Live", live: true },
-                    { time: "21:00", show: "Alien Encounters Special Edition", live: false }
-                ]
-            },
-            { 
-                name: "ESPN", category: "Sports", res: "720p", url: "https://gpuserver5.tier1streams.com/ESPN/index.m3u8", icon: "⚽",
-                schedule: [
-                    { time: "12:00", show: "SportsCenter Live Edition", live: false },
-                    { time: "15:00", show: "Global Football Preview", live: false },
-                    { time: "18:00", show: "UEFA Champions League: Final", live: true },
-                    { time: "21:00", show: "Post-Match Breakdown & Analysis", live: false }
-                ]
-            },
-            { 
-                name: "Fox News", category: "News", res: "720p", url: "https://fox-foxnews-samsungus.amagi.tv/playlist.m3u8", icon: "📰",
-                schedule: [
-                    { time: "12:00", show: "Special Report Live Desk", live: false },
-                    { time: "15:00", show: "The Five Global Roundtable", live: false },
-                    { time: "18:00", show: "Prime Time Evening News", live: true },
-                    { time: "21:00", show: "Hannity Live Broadcast", live: false }
-                ]
-            },
-            { 
-                name: "NASA TV", category: "Documentary", res: "1080p", url: "https://nasa-i.akamaihd.net/hls/live/508565/NASA-TV-HD/master.m3u8", icon: "🚀",
-                schedule: [
-                    { time: "12:00", show: "Space Station Live Feed", live: false },
-                    { time: "15:00", show: "Earth from Orbit Showcase", live: false },
-                    { time: "18:00", show: "Deep Space Exploration Live", live: true },
-                    { time: "21:00", show: "Journey to Mars Documentaries", live: false }
-                ]
-            }
+            { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
+            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
+            { name: "Nick Jr.", category: "Kids & Family", res: "720p", format: "m3u8", url: "https://jmp2.uk/plu-5ca6748a37b88b269472dad9.m3u8", brand: "nick", now: "Animated Preschool Favorites", next: "Bedtime Stories & Songs", icon: "🧸" },
+            { name: "Discovery Turbo", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", brand: "discovery", now: "Custom Garage Build Off", next: "Extreme Off-Road Racing", icon: "🏎️" },
+            { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "hallmark", now: "Romantic Evening Feature", next: "Weekend Getaway Romance", icon: "💝" },
+            { name: "Xumo Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "xumo", now: "Blockbuster Hits Showcase", next: "Indie Cinema Spotlight", icon: "🎥" },
+            { name: "TLC Finland", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv", brand: "tlc", now: "Nordic Reality Showcase", next: "Home Renovation Diaries", icon: "🏠" },
+            { name: "Star Channel", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/star-channel/live.m3u8?src=freetv", brand: "star", now: "Global Hit Series", next: "International Drama Hour", icon: "🌟" },
+            { name: "MTV Ava", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/ava/live.m3u8?src=freetv", brand: "mtv", now: "Music & Lifestyle Wave", next: "Pop Countdown Live", icon: "🎵" },
+            { name: "Hero", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/hero/live.m3u8?src=freetv", brand: "hero", now: "Action Series Block", next: "Thriller Movie Night", icon: "⚡" },
+            { name: "5AAB TV", category: "International", res: "720p", format: "m3u8", url: "http://158.69.124.9:1935/5aabtv/5aabtv/playlist.m3u8", brand: "5aab", now: "Cultural Music Showcase", next: "Evening News & Talk", icon: "🎶" },
+            { name: "48 Hours", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8", brand: "cbs", now: "Investigative Crime Files", next: "Cold Case Special Edition", icon: "🔍" },
+            { name: "A&E", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", brand: "ae", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
+            { name: "Animation+", category: "Kids & Family", res: "1080p", format: "m3u8", url: "https://pb-ioe9d0fpkd6pp.akamaized.net/playlist.m3u8", brand: "animation", now: "Saturday Morning Toons", next: "Adventure Animation Hour", icon: "🎨" },
+            { name: "Autentic History", category: "Documentary & Lifestyle", res: "1080p", format: "m3u8", url: "https://9e754fa707344ccca6d84955c8fcaf36.mediatailor.us-east-1.amazonaws.com/v1/master/44f73ba4d03e9607dcd9bebdcb8494d86964f1d8/RlaxxTV-eu_AutenticHistory/playlist.m3u8", brand: "autentic", now: "World War Chronicles", next: "Ancient Civilizations Revealed", icon: "📜" },
+            { name: "BNN Bloomberg", category: "News & Regional", res: "Live", format: "mpd", url: "https://pe-ak-lp01a-9c9media.akamaized.net/live/News1BNNDigi/p/dash/00000001/1bba52dc66e4c68e/manifest.mpd", brand: "bnn", now: "Markets Closing Bell", next: "Global Wealth Report", icon: "📈" },
+            { name: "Bonanza", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-696e647b07ea70192d49f6a5.m3u8", brand: "classic", now: "Western Heritage Hour", next: "Ponderosa Frontier Tales", icon: "🤠" },
+            { name: "Cable 14 Hamilton", category: "News & Regional", res: "Live", format: "m3u8", url: "https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8", brand: "cable14", now: "Local Community Spotlight", next: "Regional Town Hall", icon: "🏙️" },
+            { name: "CBC News", category: "News & Regional", res: "1080p", format: "m3u8", url: "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8", brand: "cbc", now: "The National Evening Report", next: "World News Tonight", icon: "📰" },
+            { name: "CHCH-DT", category: "News & Regional", res: "720p", format: "m3u8", url: "http://185.246.209.113/CHCHHD/index.m3u8", brand: "chch", now: "Evening News Hour", next: "Prime Time Movie", icon: "📡" },
+            { name: "Cheers", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-62bdb7f0db2eb30007376d4d.m3u8", brand: "paramount", now: "Classic Sitcom Block", next: "Late Night Comedy Hour", icon: "🍻" },
+            { name: "CityNews Toronto", category: "News & Regional", res: "720p", format: "m3u8", url: "https://citynewsregional.akamaized.net/hls/live/1024052/Regional_Live_7/master.m3u8", brand: "citynews", now: "Local Metro Pulse", next: "GTA Tonight", icon: "🏙️" },
+            { name: "Comedy Central", category: "Entertainment & Movies", res: "Live", format: "m3u8", url: "https://jmp2.uk/plu-64f8a408bd341e000818fcda.m3u8", brand: "comedy", now: "Stand-Up Showcase", next: "Late Night Sketch Comedy", icon: "🎤" },
+            { name: "Cottage Life", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://185.246.209.113/CottageLife/index.m3u8", brand: "cottage", now: "Cabin Life DIY", next: "Great Canadian Waterways", icon: "🌲" },
+            { name: "Cowboy Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://amg17292-amg17292c1-distrotv-us-4170.playouts.now.amagi.tv/playlist/amg17292-tetonridgellc-tetonridgefast-distrotvus/playlist.m3u8", brand: "cowboy", now: "Pro Rodeo Tour Live", next: "Western Heritage Spotlight", icon: "🐎" },
+            { name: "CP24", category: "News & Regional", res: "576p", format: "m3u8", url: "https://trs1.aynaott.com/cp24/index.m3u8", brand: "cp24", now: "Toronto Live Breaking News", next: "Traffic & Weather Center", icon: "🚨" },
+            { name: "CPAC", category: "News & Regional", res: "720p", format: "m3u8", url: "https://d7z3qjdsxbwoq.cloudfront.net/groupa/live/f9809cea-1e07-47cd-a94d-2ddd3e1351db/live.isml/.m3u8", brand: "cpac", now: "Parliamentary Proceedings", next: "Public Policy Forum", icon: "🏛️" },
+            { name: "Golf Channel", category: "Sports & Outdoors", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/GOLF_CHANNEL/index.m3u8", brand: "golf", now: "PGA Tour Live Coverage", next: "Instruction & Swing Analysis", icon: "⛳" },
+            { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        // VOD Movies Dataset including Star Wars Classic Trilogy and Latest Blockbusters with direct links
+        // VOD Movies Dataset
         const movies = [
             { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", bg: "from-blue-900 to-indigo-950" },
             { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
@@ -401,8 +351,10 @@
         ];
 
         let currentStreamUrl = channels[0].url;
+        let currentStreamFormat = channels[0].format;
         let currentChannelName = channels[0].name;
         let hlsInstance = null;
+        let dashInstance = null;
 
         const videoElement = document.getElementById('videoPlayer');
 
@@ -497,7 +449,13 @@
             list.innerHTML = '';
             document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
 
-            channel.schedule.forEach(slot => {
+            const schedule = [
+                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
+                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false },
+                { time: "22:00", show: "Late Night Primetime Special", live: false }
+            ];
+
+            schedule.forEach(slot => {
                 const item = document.createElement('div');
                 item.className = `p-3 rounded-xl border text-xs transition-all ${
                     slot.live 
@@ -522,6 +480,7 @@
 
         function selectChannel(ch) {
             currentStreamUrl = ch.url;
+            currentStreamFormat = ch.format || 'm3u8';
             currentChannelName = ch.name;
             document.getElementById('currentChannelName').innerText = ch.name;
             document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
@@ -535,6 +494,7 @@
         function playMovieSample(url, title) {
             switchPage('iptv');
             currentStreamUrl = url;
+            currentStreamFormat = 'm3u8';
             currentChannelName = title;
             document.getElementById('currentChannelName').innerText = title;
             document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
@@ -542,10 +502,8 @@
             
             const customVodChannel = {
                 name: title,
-                schedule: [
-                    { time: "NOW", show: title + " (Full Feature)", live: true },
-                    { time: "NEXT", show: "Recommended Trailers & Coming Soon", live: false }
-                ]
+                now: title + " (Full Feature)",
+                next: "Recommended Trailers & Coming Soon"
             };
             renderEpg(customVodChannel);
             loadActiveStream();
@@ -556,8 +514,20 @@
                 hlsInstance.destroy();
                 hlsInstance = null;
             }
+            if (dashInstance) {
+                dashInstance.reset();
+                dashInstance = null;
+            }
 
-            if (currentStreamUrl.includes('.m3u8')) {
+            if (currentStreamFormat === 'mpd' || currentStreamUrl.includes('.mpd')) {
+                if (typeof dashjs !== 'undefined') {
+                    dashInstance = dashjs.MediaPlayer().create();
+                    dashInstance.initialize(videoElement, currentStreamUrl, true);
+                } else {
+                    videoElement.src = currentStreamUrl;
+                    videoElement.play().catch(() => {});
+                }
+            } else if (currentStreamUrl.includes('.m3u8') || currentStreamFormat === 'm3u8') {
                 if (Hls.isSupported()) {
                     hlsInstance = new Hls();
                     hlsInstance.loadSource(currentStreamUrl);
