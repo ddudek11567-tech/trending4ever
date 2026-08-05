@@ -25,15 +25,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(71, 85, 105, 0.9);
         }
-        .player-wrapper {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            background-color: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
     </style>
 </head>
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
@@ -97,7 +88,7 @@
                 <span>⚙️</span>
                 <span>Settings</span>
             </button>
-
+            
             <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
                 <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
                     DD
@@ -114,7 +105,7 @@
 
     <!-- Main Dynamic Viewport Area -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
-
+        
         <!-- PAGE 1: LIVE IPTV VIEW -->
         <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
             <!-- Top Bar -->
@@ -127,7 +118,7 @@
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
                     <p class="text-xs text-slate-400 mt-1">Expanded international, sports, news, and entertainment channel lineup</p>
                 </div>
-
+                
                 <div class="flex items-center space-x-4">
                     <div class="relative">
                         <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels or shows..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
@@ -222,10 +213,9 @@
                 <div>
                     <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 BLOCKBUSTERS & STAR WARS SAGA</span>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Classics</h2>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Saga</h2>
                     <p class="text-xs text-slate-400 mt-1">Direct stream VOD playback integration for all titles</p>
                 </div>
-
+                
                 <div class="flex items-center space-x-4">
                     <div class="relative">
                         <input type="text" placeholder="Search movies..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-64 transition-all">
@@ -241,7 +231,7 @@
             <!-- Featured Banner Card -->
             <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 p-8 sm:p-12 mb-8 flex flex-col justify-end min-h-[340px]">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#060913] via-transparent to-transparent opacity-90"></div>
-
+                
                 <div class="relative z-10 flex items-center space-x-3 mb-3">
                     <span class="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
                         <span>✨</span> LEGENDARY MASTERPIECE
@@ -263,9 +253,9 @@
                     <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-6">
                         After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued across the galaxy.
                     </p>
-
+                    
                     <div class="flex items-center space-x-4">
-                        <button onclick="playMovieSample('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                        <button onclick="playMovieSample('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
                             <span>▶</span>
                             <span>Watch Now</span>
                         </button>
@@ -286,7 +276,6 @@
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-2">
                         <h3 class="text-lg font-bold text-white">Movie Vault & Star Wars Classics</h3>
-                        <h3 class="text-lg font-bold text-white">Complete Star Wars Saga & Blockbusters</h3>
                         <span class="text-xs bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold">DIRECT VOD</span>
                     </div>
                     <button class="text-xs font-bold text-pink-500 hover:underline">See all &gt;</button>
@@ -300,17 +289,14 @@
 
         <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS -->
         <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
-            <div id="dynamicEmbedContainer" class="w-full max-w-4xl flex flex-col items-center"></div>
-            <div id="genericDefaultView" class="flex flex-col items-center">
-                <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
-                    ✨
-                </div>
-                <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-                <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
-                <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
-                    Return to Live IPTV
-                </button>
+            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
+                ✨
             </div>
+            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
+            <p class="text-xs text-slate-400 max-w-md mb-6">This feature module is fully integrated into the NEXUS TV ecosystem architecture designed by Daniel Dudek.</p>
+            <button onclick="switchPage('iptv')" class="px-5 py-2.5 rounded-xl bg-pink-600 text-white text-xs font-bold shadow-lg shadow-pink-600/20 hover:bg-pink-500 transition-all">
+                Return to Live IPTV
+            </button>
         </div>
 
         <!-- Footer Signature -->
@@ -321,6 +307,7 @@
 
     <!-- Application Script Engine -->
     <script>
+        // Updated channel list including all newly provided channels
         const channels = [
             { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
             { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
@@ -353,27 +340,14 @@
             { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        // VOD Movies Dataset - Configured with distinct test/sample stream variations
-        // VOD Movies Dataset - Configured with the complete Star Wars Saga and distinct direct streams
+        // VOD Movies Dataset
         const movies = [
-            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950" },
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-slate-900 to-blue-950" },
-            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-purple-950 to-slate-950" },
-            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950" },
-            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-slate-950" },
-            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://content.jwplatform.com/manifests/vM7nH0Kl.m3u8", bg: "from-violet-950 to-purple-900" }
-            { title: "Star Wars: Episode I - The Phantom Menace", year: "1999", genre: "Sci-Fi / Prequel", rating: "8.6", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-amber-950 to-slate-950", logo: "⭐" },
-            { title: "Star Wars: Episode II - Attack of the Clones", year: "2002", genre: "Sci-Fi / Action", rating: "8.4", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-blue-950 to-indigo-950", logo: "⚔️" },
-            { title: "Star Wars: Episode III - Revenge of the Sith", year: "2005", genre: "Sci-Fi / Drama", rating: "9.1", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-red-950 to-slate-950", logo: "🔥" },
-            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950", logo: "🚀" },
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-slate-900 to-blue-950", logo: "🌌" },
-            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-purple-950 to-slate-950", logo: "⚡" },
-            { title: "Star Wars: Episode VII - The Force Awakens", year: "2015", genre: "Sci-Fi / Sequel", rating: "8.5", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-cyan-950 to-blue-950", logo: "🛡️" },
-            { title: "Star Wars: Episode VIII - The Last Jedi", year: "2017", genre: "Sci-Fi / Action", rating: "8.2", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-zinc-900 to-slate-950", logo: "🔴" },
-            { title: "Star Wars: Episode IX - The Rise of Skywalker", year: "2019", genre: "Sci-Fi / Finale", rating: "8.3", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-indigo-950 to-purple-950", logo: "👑" },
-            { title: "Rogue One: A Star Wars Story", year: "2016", genre: "Sci-Fi / War", rating: "9.0", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-stone-900 to-zinc-950", logo: "🎯" },
-            { title: "Solo: A Star Wars Story", year: "2018", genre: "Sci-Fi / Heist", rating: "7.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-amber-900 to-stone-950", logo: "🎲" },
-            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950", logo: "🌆" }
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", bg: "from-blue-900 to-indigo-950" },
+            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-purple-950 to-slate-950" },
+            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-pink-950 to-purple-950" },
+            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" },
+            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", bg: "from-violet-950 to-purple-900" }
         ];
 
         let currentStreamUrl = channels[0].url;
@@ -384,6 +358,7 @@
 
         const videoElement = document.getElementById('videoPlayer');
 
+        // Initialization
         document.getElementById('channelCount').innerText = channels.length;
         renderChannels(channels);
         renderMovies();
@@ -408,12 +383,9 @@
                 document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
             } else {
                 document.getElementById('pageGeneric').classList.remove('hidden');
-                document.getElementById('genericDefaultView').classList.remove('hidden');
-                document.getElementById('dynamicEmbedContainer').innerHTML = '';
-
                 const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
                 document.getElementById('genericTitle').innerText = titles[page] || "Module View";
-
+                
                 const activeNav = document.getElementById('nav' + page.charAt(0).toUpperCase() + page.slice(1));
                 if(activeNav) {
                     activeNav.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-800 text-white border border-slate-700";
@@ -424,7 +396,7 @@
         function renderChannels(list) {
             const grid = document.getElementById('channelsGrid');
             grid.innerHTML = '';
-
+            
             list.forEach(ch => {
                 const isSelected = currentChannelName === ch.name;
                 const card = document.createElement('div');
@@ -434,7 +406,7 @@
                         ? 'bg-pink-600/20 border-pink-500 shadow-lg shadow-pink-950/50 text-white' 
                         : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
                 }`;
-
+                
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
                         <span class="text-xl">${ch.icon || '📺'}</span>
@@ -457,11 +429,10 @@
                 const card = document.createElement('div');
                 card.onclick = () => playMovieSample(m.url, m.title);
                 card.className = `group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 cursor-pointer shadow-xl bg-gradient-to-br ${m.bg} flex flex-col justify-between p-4 hover:border-pink-500 transition-all`;
-
+                
                 card.innerHTML = `
                     <div class="flex items-center justify-between z-10">
                         <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30">VOD</span>
-                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30 flex items-center gap-1"><span>${m.logo || '🎬'}</span> VOD</span>
                         <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-amber-400 border border-amber-500/30 flex items-center gap-1">★ ${m.rating}</span>
                     </div>
                     <div class="z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent -mx-4 -mb-4 p-4 pt-8">
@@ -514,7 +485,7 @@
             document.getElementById('currentChannelName').innerText = ch.name;
             document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
             document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
-
+            
             renderChannels(channels);
             renderEpg(ch);
             loadActiveStream();
@@ -528,7 +499,7 @@
             document.getElementById('currentChannelName').innerText = title;
             document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
             document.getElementById('activeChannelIcon').innerText = '🎬';
-
+            
             const customVodChannel = {
                 name: title,
                 now: title + " (Full Feature)",
