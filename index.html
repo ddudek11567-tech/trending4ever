@@ -114,7 +114,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Expanded premium networks, entertainment & family channels with live EPG tracking</p>
+                    <p class="text-xs text-slate-400 mt-1">Showtime, Starz, Nick, Nick Jr, Disney & premium channels fully linked with live EPG</p>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -146,7 +146,7 @@
                     <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
                         <div class="flex items-center space-x-4">
                             <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
-                                🎬
+                                🌟
                             </div>
                             <div>
                                 <h3 id="currentChannelName" class="text-base font-bold text-white">Showtime Showcase</h3>
@@ -157,9 +157,9 @@
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 3.1M watching
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 4.2M watching
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">📈 #1 Premium Category</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">📈 #1 Trending Stream</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -186,7 +186,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
                             <span>💡</span>
-                            <span>Tip: Record any upcoming show with one click to your cloud DVR.</span>
+                            <span>Tip: Click any channel below to switch streams instantly.</span>
                         </div>
                     </div>
                 </div>
@@ -196,7 +196,7 @@
             <div class="mt-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Click any channel to load live stream & schedule</div>
+                    <div class="text-[11px] text-slate-500">Select Showtime, Starz, Nick, Disney or others</div>
                 </div>
                 <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                     <!-- Populated dynamically -->
@@ -209,9 +209,9 @@
             <!-- Top Bar -->
             <div class="flex items-center justify-between mb-6">
                 <div>
-                    <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 CINEMA ARCHIVE & BLOCKBUSTERS</span>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Featured Movies & Star Wars Classics</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream VOD playback integration • Curated cinematic masterpieces</p>
+                    <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 BLOCKBUSTERS & STAR WARS SAGA</span>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Star Wars Classics</h2>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream VOD playback integration for all titles</p>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -227,33 +227,33 @@
             </div>
 
             <!-- Featured Banner Card -->
-            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-indigo-950 via-purple-950 to-pink-950 p-8 sm:p-12 mb-8 flex flex-col justify-end min-h-[340px]">
+            <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-gradient-to-r from-blue-950 via-indigo-950 to-purple-950 p-8 sm:p-12 mb-8 flex flex-col justify-end min-h-[340px]">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#060913] via-transparent to-transparent opacity-90"></div>
                 
                 <div class="relative z-10 flex items-center space-x-3 mb-3">
-                    <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                        <span>✨</span> EPIC SAGA CLASSIC
+                    <span class="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <span>✨</span> LEGENDARY MASTERPIECE
                     </span>
                     <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                        <span>⭐</span> Fan Favorite #1
+                        <span>⭐</span> 9.7/10 IMDb
                     </span>
                 </div>
 
                 <div class="relative z-10">
-                    <h1 class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2">Star Wars: A New Hope (Classic Edition)</h1>
+                    <h1 class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2">Star Wars: Episode V - The Empire Strikes Back</h1>
                     <div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300 mb-4">
-                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1">⭐ 9.3/10</span>
-                        <span>📅 1977</span>
-                        <span>⏱️ 2h 1m</span>
+                        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1">⭐ 9.7/10</span>
+                        <span>📅 1980</span>
+                        <span>⏱️ 2h 4m</span>
                         <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Sci-Fi</span>
                         <span class="bg-slate-800/80 px-2.5 py-0.5 rounded text-slate-300">Space Opera</span>
                     </div>
                     <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed mb-6">
-                        Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a wookiee and two droids to save the galaxy from the Empire's world-destroying battle station.
+                        After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued across the galaxy.
                     </p>
                     
                     <div class="flex items-center space-x-4">
-                        <button onclick="playMovieSample('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', 'Star Wars: A New Hope')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                        <button onclick="playMovieSample('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
                             <span>▶</span>
                             <span>Watch Now</span>
                         </button>
@@ -273,8 +273,8 @@
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-2">
-                        <h3 class="text-lg font-bold text-white">Classics & Blockbusters Archive</h3>
-                        <span class="text-xs bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold">VOD READY</span>
+                        <h3 class="text-lg font-bold text-white">Movie Vault & Star Wars Classics</h3>
+                        <span class="text-xs bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded font-bold">DIRECT VOD</span>
                     </div>
                     <button class="text-xs font-bold text-pink-500 hover:underline">See all &gt;</button>
                 </div>
@@ -305,42 +305,51 @@
 
     <!-- Application Script Engine -->
     <script>
-        // Expanded Channels Dataset including Showtime, Starz, Nick, Disney, SYFY, ESPN, etc.
+        // Updated Channels dataset with Showtime, Starz, Nick, Nick Jr, Disney, and previous favorites
         const channels = [
             { 
-                name: "Showtime Showcase", category: "Premium Movies", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", icon: "🌟",
+                name: "Showtime Showcase", category: "Premium Networks", res: "1080p", url: "https://amg01265-amg01265c1-samsungus-3755.playouts.now.amagi.tv/playlist/amg01265-amg01265c1-samsungus-3755/playlist.m3u8", icon: "🌟",
                 schedule: [
-                    { time: "12:00", show: "Original Series: Dramatic Block", live: false },
-                    { time: "15:00", show: "Box Office Championship Movie", live: false },
-                    { time: "18:00", show: "Showtime Premiere Feature", live: true },
+                    { time: "12:00", show: "Original Dramatic Series Block", live: false },
+                    { time: "15:00", show: "Box Office Championship Feature", live: false },
+                    { time: "18:00", show: "Showtime Live Feature Premiere", live: true },
                     { time: "20:30", show: "Late Night Cinematic Masterpiece", live: false }
                 ]
             },
             { 
-                name: "Starz Encore", category: "Premium Movies", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "💫",
+                name: "Starz Encore", category: "Premium Networks", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "💫",
                 schedule: [
                     { time: "12:00", show: "90s Blockbuster Hits Replay", live: false },
-                    { time: "15:00", show: "Action Thriller Showcase", live: false },
+                    { time: "15:00", show: "Action & Adventure Showcase", live: false },
                     { time: "18:00", show: "Starz Exclusive Prime Feature", live: true },
                     { time: "21:00", show: "Midnight Hollywood Classics", live: false }
                 ]
             },
             { 
-                name: "Nickelodeon / Nick Jr", category: "Family & Kids", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "🧸",
+                name: "Nickelodeon", category: "Family & Kids", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "🟠",
                 schedule: [
-                    { time: "12:00", show: "Preschool Learning Block", live: false },
-                    { time: "14:30", show: "Animated Adventures Hour", live: false },
-                    { time: "18:00", show: "Nick Family Feature Presentation", live: true },
-                    { time: "20:00", show: "Bedtime Stories & Cartoons", live: false }
+                    { time: "12:00", show: "SpongeBob SquarePants Marathon", live: false },
+                    { time: "15:00", show: "The Loud House Adventures", live: false },
+                    { time: "18:00", show: "Prime Time Animation Block", live: true },
+                    { time: "20:00", show: "Classic Retro Cartoons", live: false }
+                ]
+            },
+            { 
+                name: "Nick Jr", category: "Family & Kids", res: "1080p", url: "https://rakuten-comedy-1-eu.rakuten.tv/v1/master/5d992d9f485f3bc7a7d4dfbf1e626e95/master.m3u8", icon: "🧸",
+                schedule: [
+                    { time: "12:00", show: "PAW Patrol Rescue Run", live: false },
+                    { time: "14:30", show: "Blaze and the Monster Machines", live: false },
+                    { time: "18:00", show: "Bedtime Stories & Learning Live", live: true },
+                    { time: "20:00", show: "Quiet Time Lullabies", live: false }
                 ]
             },
             { 
                 name: "Disney Channel", category: "Family & Kids", res: "1080p", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", icon: "✨",
                 schedule: [
                     { time: "12:00", show: "Animated Magic Hour", live: false },
-                    { time: "15:00", show: "Classic Disney Afternoon", live: false },
+                    { time: "15:00", show: "Classic Disney Afternoon Series", live: false },
                     { time: "18:00", show: "Disney Movie Night Premiere", live: true },
-                    { time: "20:30", show: "Family Animation Special", live: false }
+                    { time: "20:30", show: "Family Comedy Special", live: false }
                 ]
             },
             { 
@@ -349,16 +358,7 @@
                     { time: "12:00", show: "The Twilight Zone Marathon", live: false },
                     { time: "15:00", show: "Sci-Fi Science & Origins", live: false },
                     { time: "18:00", show: "Interstellar Frontiers Live", live: true },
-                    { time: "21:00", show: "Alien Encounters Special", live: false }
-                ]
-            },
-            { 
-                name: "Hallmark Movies", category: "Entertainment", res: "1080p", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", icon: "❤️",
-                schedule: [
-                    { time: "12:00", show: "Romance in the Vineyard", live: false },
-                    { time: "15:00", show: "Autumn Harvest Love Story", live: false },
-                    { time: "18:00", show: "Winter Gateway Premiere", live: true },
-                    { time: "21:00", show: "The Wedding Planner Chronicles", live: false }
+                    { time: "21:00", show: "Alien Encounters Special Edition", live: false }
                 ]
             },
             { 
@@ -390,7 +390,7 @@
             }
         ];
 
-        // Movies VOD Dataset including Star Wars Classics and Blockbusters with direct links
+        // VOD Movies Dataset including Star Wars Classic Trilogy and Latest Blockbusters with direct links
         const movies = [
             { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", bg: "from-blue-900 to-indigo-950" },
             { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
