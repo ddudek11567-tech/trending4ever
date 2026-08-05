@@ -34,14 +34,6 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .player-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
@@ -272,7 +264,7 @@
                     </p>
                     
                     <div class="flex items-center space-x-4">
-                        <button onclick="playMovieSample('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
+                        <button onclick="playMovieSample('https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8', 'Star Wars: Episode V - The Empire Strikes Back')" class="px-6 py-3 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-slate-200 transition-all flex items-center space-x-2 shadow-lg shadow-white/10">
                             <span>▶</span>
                             <span>Watch Now</span>
                         </button>
@@ -359,14 +351,14 @@
             { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        // VOD Movies Dataset - Configured with real operational HLS test streams
+        // VOD Movies Dataset - Configured with distinct test/sample stream variations
         const movies = [
-            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-indigo-950" },
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
-            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-purple-950 to-slate-950" },
-            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-pink-950 to-purple-950" },
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-blue-900 to-indigo-950" },
+            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8", bg: "from-slate-900 to-blue-950" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/tos_ismc/main.m3u8", bg: "from-purple-950 to-slate-950" },
+            { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8", bg: "from-pink-950 to-purple-950" },
             { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-slate-950" },
-            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-violet-950 to-purple-900" }
+            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://content.jwplatform.com/manifests/vM7nH0Kl.m3u8", bg: "from-violet-950 to-purple-900" }
         ];
 
         let currentStreamUrl = channels[0].url;
