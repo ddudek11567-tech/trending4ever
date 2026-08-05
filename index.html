@@ -67,9 +67,9 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
         
-        /* Modal Player */
+        /* Modal Player - Fixed visibility rules */
         #player-modal {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             top: 0;
             left: 0;
@@ -80,6 +80,9 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+        }
+        #player-modal.active {
+            display: flex; /* Shown when active class is added */
         }
         #player-modal button {
             margin-bottom: 15px;
@@ -126,13 +129,13 @@
         const myMovies = [
             {
                 title: "Star Wars: The Force Awakens",
-                id: 140607, // Automatically powers the embed player link
+                id: 140607,
                 backdrop: "https://image.tmdb.org/t/p/w780/nvus08WspfndnjgICrQ1LhWvjhw.jpg",
                 logo: "https://image.tmdb.org/t/p/w500/6FsGeIpPWKcxphzmgTPv881K8o4.png"
             },
             {
                 title: "Inception",
-                id: 27205, // Automatically powers the embed player link
+                id: 27205,
                 backdrop: "https://image.tmdb.org/t/p/w780/s3TBrRGB1ij7gFOCJDRK9D8pkvL.jpg",
                 logo: "https://image.tmdb.org/t/p/w500/oIkQkEkwfgbG7IGTseWpGvPkVZH.png"
             }
@@ -157,10 +160,10 @@
                 }
                 card.innerHTML = innerContent;
 
-                // When clicked, loads the embed player right on your site using the ID
+                // When clicked, assign source and trigger active class
                 card.addEventListener('click', () => {
                     embedFrame.src = `https://player.vidplus.to/embed/movie/${movie.id}`;
-                    modal.style.display = 'flex';
+                    modal.classList.add('active');
                 });
 
                 gridContainer.appendChild(card);
@@ -168,8 +171,8 @@
         }
 
         function closePlayer() {
-            embedFrame.src = ''; // Stops playback instantly when closed
-            modal.style.display = 'none';
+            embedFrame.src = ''; // Stops playback instantly
+            modal.classList.remove('active');
         }
 
         initLibrary();
