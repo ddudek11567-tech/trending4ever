@@ -304,9 +304,8 @@
             </div>
         </div>
 
-        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS / AUTO-EMBED VIEWER -->
+        <!-- PAGE 3: SEARCH, LIST, GUIDE, SETTINGS -->
         <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
-            <!-- Dynamic Auto-Embed Player container injected via JavaScript URL parameter -->
             <div id="dynamicEmbedContainer" class="w-full max-w-4xl flex flex-col items-center"></div>
             <div id="genericDefaultView" class="flex flex-col items-center">
                 <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
@@ -328,7 +327,6 @@
 
     <!-- Application Script Engine -->
     <script>
-        // Updated channel list including all newly provided channels
         const channels = [
             { name: "Kutonen", category: "International", res: "720p", format: "m3u8", url: "https://live-fi.tvkaista.net/kutonen/live.m3u8?src=freetv", brand: "kutonen", now: "Nordic Prime Time Feed", next: "Late Night Action Block", icon: "🌐" },
             { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
@@ -361,14 +359,14 @@
             { name: "Home Network", category: "Documentary & Lifestyle", res: "720p", format: "m3u8", url: "http://40.160.24.53/HGTV/index.m3u8", brand: "hgtv", now: "Dream Home Showcase", next: "Property Flipping Masters", icon: "🏡" }
         ];
 
-        // VOD Movies Dataset
+        // VOD Movies Dataset - Configured with real operational HLS test streams
         const movies = [
-            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", bg: "from-blue-900 to-indigo-950" },
+            { title: "Star Wars: Episode IV - A New Hope", year: "1977", genre: "Sci-Fi / Space", rating: "9.3", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-indigo-950" },
             { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
-            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-purple-950 to-slate-950" },
+            { title: "Star Wars: Episode VI - Return of the Jedi", year: "1983", genre: "Sci-Fi / Epic", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-purple-950 to-slate-950" },
             { title: "Neon Horizon (Latest Blockbuster)", year: "2026", genre: "Action / Cyberpunk", rating: "8.9", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-pink-950 to-purple-950" },
-            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" },
-            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", bg: "from-violet-950 to-purple-900" }
+            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-blue-900 to-slate-950" },
+            { title: "Tears of Steel Sci-Fi", year: "2012", genre: "Sci-Fi Action", rating: "9.1", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-violet-950 to-purple-900" }
         ];
 
         let currentStreamUrl = channels[0].url;
@@ -379,24 +377,13 @@
 
         const videoElement = document.getElementById('videoPlayer');
 
-        // Check if an URL parameter `?id=` exists for auto-embed loading
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieIdParam = urlParams.get('id');
-
-        // Initialization
         document.getElementById('channelCount').innerText = channels.length;
         renderChannels(channels);
         renderMovies();
         renderEpg(channels[0]);
+        loadActiveStream();
 
-        // CRITICAL FIX: Only load default active stream if NO `?id=` parameter is present
-        if (movieIdParam) {
-            switchPage('genericViewer', movieIdParam);
-        } else {
-            loadActiveStream();
-        }
-
-        function switchPage(page, customParam = null) {
+        function switchPage(page) {
             document.getElementById('pageIptv').classList.add('hidden');
             document.getElementById('pageMovies').classList.add('hidden');
             document.getElementById('pageGeneric').classList.add('hidden');
@@ -412,21 +399,6 @@
             } else if (page === 'movies') {
                 document.getElementById('pageMovies').classList.remove('hidden');
                 document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
-            } else if (page === 'genericViewer' && customParam) {
-                document.getElementById('pageGeneric').classList.remove('hidden');
-                document.getElementById('genericDefaultView').classList.add('hidden');
-                
-                // Inject the auto-embed player dynamically via URL parameter ID
-                const embedContainer = document.getElementById('dynamicEmbedContainer');
-                embedContainer.innerHTML = `
-                    <div class="player-wrapper mb-4">
-                        <iframe src="https://vidsrc.xyz/embed/movie/${customParam}" allowfullscreen></iframe>
-                    </div>
-                    <div class="bg-[#181a20] border border-slate-800 p-4 rounded-2xl w-full text-left">
-                        <h3 class="font-bold text-white text-base">Now Streaming via Auto-Embed ID</h3>
-                        <p class="text-xs text-slate-400 mt-1">Requested Identifier: <strong class="text-pink-400">${customParam}</strong></p>
-                    </div>
-                `;
             } else {
                 document.getElementById('pageGeneric').classList.remove('hidden');
                 document.getElementById('genericDefaultView').classList.remove('hidden');
