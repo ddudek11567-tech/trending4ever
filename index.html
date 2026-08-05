@@ -218,13 +218,14 @@
                 </div>
             </div>
 
-            <!-- Channel Selector Strip -->
+            <!-- Channel Selector Strip (Scrollable) -->
             <div class="mt-6">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Select any feed below</div>
+                    <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
                 </div>
-                <div id="channelsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <!-- Scrollable container applied here -->
+                <div id="channelsGrid" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-3">
                     <!-- Populated dynamically -->
                 </div>
             </div>
@@ -370,7 +371,7 @@
                 const isSelected = currentChannel.name === ch.name;
                 const card = document.createElement('div');
                 card.onclick = () => selectChannel(ch);
-                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 ${
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
                     isSelected 
                         ? 'bg-pink-600/20 border-pink-500 shadow-lg shadow-pink-950/50 text-white' 
                         : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
