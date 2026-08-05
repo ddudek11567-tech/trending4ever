@@ -388,11 +388,12 @@
         renderChannels(channels);
         renderMovies();
         renderEpg(channels[0]);
-        loadActiveStream();
 
-        // If an ID is passed in URL, automatically open the dynamic viewer page view
+        // CRITICAL FIX: Only load default active stream if NO `?id=` parameter is present
         if (movieIdParam) {
             switchPage('genericViewer', movieIdParam);
+        } else {
+            loadActiveStream();
         }
 
         function switchPage(page, customParam = null) {
