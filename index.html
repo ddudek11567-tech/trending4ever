@@ -51,7 +51,7 @@
         }
 
         /* ============================================================
-           AETHER — Private Cinema & Archive.org Integration Styles
+           AETHER — Private Cinema Integration Styles
            ============================================================ */
         :root{
             --aether-bg:#060608;
@@ -140,7 +140,7 @@
         .card:hover .card-img{transform:scale(1.08)}
         .card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
 
-        /* Archive.org Stream Section Specific Styles */
+        /* Archive Stream Container */
         .archive-stream-container {
             padding: 4vw;
         }
@@ -189,10 +189,18 @@
                     <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
                 </button>
 
-                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
+                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
-                        <span>Archive Movies</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </button>
+
+                <button onclick="switchPage('archive')" id="navArchive" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🏛️</span>
+                        <span>Archive.org Stream</span>
                     </div>
                     <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
                 </button>
@@ -343,8 +351,26 @@
             </div>
         </div>
 
-        <!-- PAGE 2: ARCHIVE.ORG MOVIES INTEGRATION VIEW -->
-        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar aether-cinema-root">
+        <!-- PAGE 2: AETHER PRIVATE CINEMA (MOVIES) RESTORED -->
+        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
+
+            <!-- Aether Hero Section -->
+            <section class="aether-hero" id="hero">
+                <div class="backdrops" id="backdrops"></div>
+                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
+                <div class="scrim"></div>
+                <div class="hero-content" id="heroContent"></div>
+                <div class="dots" id="dots"></div>
+            </section>
+
+            <!-- Aether Collection Rows -->
+            <section class="collection" id="collection"></section>
+        </div>
+
+        <!-- PAGE 3: ARCHIVE.ORG STREAMING LOADER PAGE -->
+        <div id="pageArchive" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
             <div class="vignette"></div>
             <div class="grain"></div>
 
@@ -358,7 +384,7 @@
             </div>
         </div>
 
-        <!-- PAGE 3: GENERIC VIEWS -->
+        <!-- PAGE 4: GENERIC VIEWS -->
         <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
             <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
                 ✨
@@ -375,7 +401,51 @@
         </footer>
     </main>
 
-    <!-- Application Script Engine with Integrated Channels & Archive.org Loader -->
+    <!-- Aether Video Player Overlay Modal -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
+        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
+            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
+                <div class="t-meta min-w-0">
+                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
+                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
+                </div>
+                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
+                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
+                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="backBtn" title="-10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19V5l-8 7 8 7zM23 19V5"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fwdBtn" title="+10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19V5l8 7-8 7zM1 19V5"/></svg>
+                    </button>
+                    <div class="vol flex items-center gap-2">
+                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
+                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </button>
+                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
+                    </div>
+                    <div class="spacer flex-1"></div>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
+
+    <!-- Application Script Engine with Integrated Channels, Aether Cinema & Archive.org Loader -->
     <script>
         const channels = [
             { name: "A&E", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
@@ -399,15 +469,17 @@
             renderChannels(channels);
             renderEpg(channels[0]);
             loadActiveStream(channels[0]);
-            loadArchiveTop(); // Initialize Archive.org Dynamic Loader
+            initAetherCinema();
+            loadArchiveTop();
         });
 
         function switchPage(page) {
             document.getElementById('pageIptv').classList.add('hidden');
             document.getElementById('pageMovies').classList.add('hidden');
+            document.getElementById('pageArchive').classList.add('hidden');
             document.getElementById('pageGeneric').classList.add('hidden');
 
-            ['navIptv', 'navMovies', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
+            ['navIptv', 'navMovies', 'navArchive', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
                 const btn = document.getElementById(id);
                 if(btn) btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
             });
@@ -417,7 +489,10 @@
                 document.getElementById('navIptv').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border border-red-500/30 shadow-lg shadow-red-950/40";
             } else if (page === 'movies') {
                 document.getElementById('pageMovies').classList.remove('hidden');
-                document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
+                document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40";
+            } else if (page === 'archive') {
+                document.getElementById('pageArchive').classList.remove('hidden');
+                document.getElementById('navArchive').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
             } else {
                 document.getElementById('pageGeneric').classList.remove('hidden');
                 const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
@@ -598,6 +673,264 @@
             } catch(err) {
                 console.error("Failed to load Archive.org items:", err);
             }
+        }
+
+        /* ==================== AETHER CINEMA ENGINE ==================== */
+        function initAetherCinema() {
+            const FILMS=[
+                {id:1,title:"The Silent Horizon",year:2021,rating:8.4,match:97,duration:"2h 07m",genres:["Mystery","Drama"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"4K HDR",progress:0.42,cats:["continue","trending","acclaimed"],synopsis:"A retired cartographer returns to the coast where her sister vanished — only to find the maps no longer match the shore."},
+                {id:2,title:"Crimson Veil",year:2023,rating:7.9,match:91,duration:"1h 58m",genres:["Thriller","Crime"],accent:"#b8423f",rgb:"184,66,63",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",quality:"4K",progress:0.15,cats:["trending","new"],synopsis:"A detective with a failing memory hunts a killer who only ever strikes during thunderstorms."},
+                {id:3,title:"Echoes of Dust",year:2022,rating:8.1,match:95,duration:"2h 22m",genres:["Science Fiction"],accent:"#6f8fd6",rgb:"111,143,214",backdrop:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",quality:"4K HDR",progress:0.63,cats:["continue","trending","acclaimed"],synopsis:"On a silent colony world, a lone archivist begins to hear a voice in the static — one that was never meant to exist."},
+                {id:4,title:"Midnight Cartographer",year:2020,rating:7.6,match:88,duration:"2h 01m",genres:["Adventure"],accent:"#c98a3c",rgb:"201,138,60",backdrop:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",quality:"4K",cats:["new"],synopsis:"Two strangers race a cartel down an unmapped river, chasing a dawn that may never come."},
+                {id:5,title:"The Last Lighthouse",year:2019,rating:8.6,match:99,duration:"1h 49m",genres:["Drama"],accent:"#4f7d8a",rgb:"79,125,138",backdrop:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K HDR",progress:0.78,cats:["continue","acclaimed"],synopsis:"A keeper speaks to the sea every night. One night, after forty years, the sea finally speaks back."}
+            ];
+
+            const ROWS=[
+                {key:"continue",label:"Continue Watching"},
+                {key:"trending",label:"Trending Tonight"},
+                {key:"new",label:"New in Your Collection"},
+                {key:"acclaimed",label:"Critically Acclaimed"}
+            ];
+            const SPOTLIGHT_IDS=[1,2,3,4,5];
+
+            let saved=new Set(JSON.parse(localStorage.getItem("aether_saved")||"[]"));
+            let activeIdx=0,rotTimer=null;
+
+            const backdropsEl=document.getElementById('backdrops');
+            const heroContentEl=document.getElementById('heroContent');
+            const dotsEl=document.getElementById('dots');
+            const collectionEl=document.getElementById('collection');
+
+            function renderHero(){
+                backdropsEl.innerHTML='';
+                dotsEl.innerHTML='';
+                SPOTLIGHT_IDS.forEach((id,i)=>{
+                    const f=FILMS.find(x=>x.id===id);
+                    const bd=document.createElement('div');
+                    bd.className=`bd ${i===0?'active':''}`;
+                    bd.style.backgroundImage=`url('${f.backdrop}')`;
+                    backdropsEl.appendChild(bd);
+
+                    const dot=document.createElement('button');
+                    dot.className=`dot ${i===0?'active':''}`;
+                    dot.onclick=()=>setSpotlight(i);
+                    dotsEl.appendChild(dot);
+                });
+                updateHeroContent(0);
+                startRot();
+            }
+
+            function updateHeroContent(idx){
+                activeIdx=idx;
+                const f=FILMS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
+                document.documentElement.style.setProperty('--accent',f.accent);
+                document.documentElement.style.setProperty('--accent-rgb',f.rgb);
+
+                document.querySelectorAll('.bd').forEach((b,i)=>b.classList.toggle('active',i===idx));
+                document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+
+                heroContentEl.classList.add('switching');
+                setTimeout(()=>{
+                    heroContentEl.innerHTML=`
+                        <div class="eyebrow">${f.genres[0]} Feature</div>
+                        <h2 class="hero-title">${f.title.split(' ').map((w,wi)=>wi===1?`<em>${w}</em>`:w).join(' ')}</h2>
+                        <div class="hero-meta">
+                            <span class="match">${f.match}% Match</span>
+                            <span class="sep"></span>
+                            <span class="rating-pill">★ ${f.rating}</span>
+                            <span class="sep"></span>
+                            <span>${f.year}</span>
+                            <span class="sep"></span>
+                            <span>${f.duration}</span>
+                            <span class="sep"></span>
+                            <span class="badge" style="background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:10px;padding:2px 6px">${f.quality}</span>
+                        </div>
+                        <p class="hero-synopsis">${f.synopsis}</p>
+                        <div class="hero-actions">
+                            <button class="btn-play" onclick="playFilm(${f.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
+                            </button>
+                            <button class="btn-ghost" onclick="toggleSave(${f.id})">
+                                ${saved.has(f.id)?'✓ In Saved List':'+ Add to List'}
+                            </button>
+                        </div>
+                    `;
+                    heroContentEl.classList.remove('switching');
+                },220);
+            }
+
+            function setSpotlight(idx){
+                stopRot();
+                updateHeroContent(idx);
+                startRot();
+            }
+
+            function startRot(){
+                stopRot();
+                rotTimer=setInterval(()=>{
+                    activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;
+                    updateHeroContent(activeIdx);
+                },8000);
+            }
+
+            function stopRot(){
+                if(rotTimer)clearInterval(rotTimer);
+            }
+
+            window.playFilm=function(id){
+                const f=FILMS.find(x=>x.id===id);
+                if(!f)return;
+                openPlayer(f);
+            }
+
+            window.toggleSave=function(id){
+                if(saved.has(id)) saved.delete(id); else saved.add(id);
+                localStorage.setItem("aether_saved",JSON.stringify([...saved]));
+                renderCollection();
+                renderHero();
+                showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
+            }
+
+            function showToast(msg){
+                const t=document.getElementById('toast');
+                t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
+                t.classList.add('opacity-100');
+                setTimeout(()=>t.classList.remove('opacity-100'),2600);
+            }
+
+            function renderCollection(){
+                collectionEl.innerHTML='';
+                ROWS.forEach((r,ri)=>{
+                    let list=FILMS.filter(f=>f.cats.includes(r.key));
+                    if(r.key==='continue') list=list.filter(f=>f.progress>0);
+                    if(list.length===0) return;
+
+                    const row=document.createElement('div');
+                    row.className='row';
+                    row.innerHTML=`
+                        <div class="row-head">
+                            <h3 class="row-title"><span class="num">${String(ri+1).padStart(2,'0')}.</span> ${r.label}</h3>
+                            <span class="row-count text-xs text-slate-500">${list.length} films</span>
+                        </div>
+                        <div class="row-track" id="track-${r.key}"></div>
+                    `;
+                    const track=row.querySelector('.row-track');
+                    list.forEach(f=>{
+                        const card=document.createElement('div');
+                        card.className='card';
+                        card.onclick=(e)=>{
+                            if(e.target.closest('.bookmark')) return;
+                            playFilm(f.id);
+                        };
+
+                        const isSaved=saved.has(f.id);
+                        card.innerHTML=`
+                            <div class="card-img" style="background-image:url('${f.poster}')"></div>
+                            <div class="card-scrim"></div>
+                            <div class="card-top">
+                                <span class="badge rating">★ ${f.rating}</span>
+                                <span class="badge match">${f.match}%</span>
+                                <button class="bookmark ${isSaved?'saved':''}" onclick="toggleSave(${f.id})" title="Save">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                                </button>
+                            </div>
+                            <div class="card-play">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <div class="card-info">
+                                <h3>${f.title}</h3>
+                                <p>${f.genres.join(' · ')} &bull; ${f.duration}</p>
+                            </div>
+                            ${f.progress?`<div class="progress"><span style="width:${f.progress*100}%"></span></div>`:''}
+                        `;
+                        track.appendChild(card);
+                    });
+                    collectionEl.appendChild(row);
+                });
+            }
+
+            renderHero();
+            renderCollection();
+
+            // Player setup logic
+            const playerEl=document.getElementById('player');
+            const videoEl=document.getElementById('video');
+            const loaderEl=document.getElementById('loader');
+            const stageEl=document.getElementById('stage');
+            const seekEl=document.getElementById('seek');
+            const curTimeEl=document.getElementById('curTime');
+            const durTimeEl=document.getElementById('durTime');
+            const ppBtn=document.getElementById('ppBtn');
+            const ppIcon=document.getElementById('ppIcon');
+            const muteBtn=document.getElementById('muteBtn');
+            const volEl=document.getElementById('vol');
+            const fsBtn=document.getElementById('fsBtn');
+
+            function openPlayer(f){
+                playerEl.style.display = 'flex';
+                setTimeout(() => playerEl.classList.add('opacity-100'), 10);
+                document.getElementById('pTitle').innerText=f.title;
+                document.getElementById('pMeta').innerText=`${f.genres.join(' · ')} · ${f.year} · ${f.quality}`;
+                videoEl.src=f.video;
+                videoEl.play().catch(()=>{});
+                setupUI();
+            }
+
+            function closePlayer(){
+                videoEl.pause();
+                videoEl.src="";
+                playerEl.classList.remove('opacity-100');
+                setTimeout(() => playerEl.style.display = 'none', 300);
+                if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+            }
+
+            document.getElementById('closeBtn').onclick=closePlayer;
+
+            function setupUI(){
+                videoEl.onwaiting=()=>loaderEl.style.display='flex';
+                videoEl.onplaying=()=>loaderEl.style.display='none';
+                videoEl.ontimeupdate=()=>{
+                    if(!videoEl.duration)return;
+                    const p=(videoEl.currentTime/videoEl.duration)*1000;
+                    seekEl.value=p;
+                    curTimeEl.innerText=fmtTime(videoEl.currentTime);
+                    durTimeEl.innerText=fmtTime(videoEl.duration);
+                };
+                videoEl.onplay=()=>ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                videoEl.onpause=()=>ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+            }
+
+            function fmtTime(s){
+                if(!isFinite(s))return"0:00";
+                s=Math.floor(s);
+                const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+                return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;
+            }
+
+            seekEl.oninput=(e)=>{
+                if(!videoEl.duration)return;
+                videoEl.currentTime=(e.target.value/1000)*videoEl.duration;
+            };
+
+            ppBtn.onclick=()=>{
+                if(videoEl.paused) videoEl.play(); else videoEl.pause();
+            };
+
+            muteBtn.onclick=()=>{
+                videoEl.muted=!videoEl.muted;
+                volEl.value=videoEl.muted?0:(videoEl.volume*100);
+            };
+
+            volEl.oninput=(e)=>{
+                const v=e.target.value/100;
+                videoEl.volume=v;
+                videoEl.muted=(v===0);
+            };
+
+            fsBtn.onclick=()=>{
+                if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
+                else document.exitFullscreen().catch(()=>{});
+            };
         }
     </script>
 </body>
