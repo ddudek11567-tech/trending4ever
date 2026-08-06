@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXUS TV // Live Stream Suite & Media Center</title>
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,8 +36,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
     <style>
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 4px;
+            height: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: rgba(15, 23, 42, 0.4);
@@ -46,14 +46,13 @@
             background: rgba(51, 65, 85, 0.6);
             border-radius: 3px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 0.9);
+
+        /* Mobile Performance Optimizations */
+        @media (max-width: 768px) {
+            .grain, .glow { display: none !important; }
+            * { -webkit-tap-highlight-color: transparent; }
         }
 
-        /* ============================================================
-           AETHER — Private Cinema Integration Styles
-           Edge-to-edge · 16:9 locked · dark & moody
-           ============================================================ */
         :root{
             --aether-bg:#060608;
             --accent:#c8a86b;
@@ -73,351 +72,206 @@
             min-height: 100%;
         }
 
-        .aether-cinema-root ::selection { background: rgba(var(--accent-rgb),.35); color:#fff; }
+        .vignette{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);}
 
-        .grain,.vignette{position:absolute;inset:0;pointer-events:none;z-index:90}
-        .grain{
-            opacity:.05;
-            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            mix-blend-mode:overlay;
-            animation:grain 1.1s steps(4) infinite;
-        }
-        @keyframes grain{
-            0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}
-            50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}
-        }
-        .vignette{background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);z-index:1}
-
-        .aether-hero{position:relative;height:90vh;width:100%;overflow:hidden}
+        .aether-hero{position:relative;height:75vh;width:100%;overflow:hidden}
         .backdrops{position:absolute;inset:0}
-        .bd{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.1s ease;filter:saturate(.92) contrast(1.05) brightness(.82)}
-        .bd.active{opacity:1;animation:kenburns 20s ease-out forwards}
-        @keyframes kenburns{from{transform:scale(1.06)}to{transform:scale(1.18) translateY(-2%)}}
-        .glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-        .blob{position:absolute;border-radius:50%;filter:blur(120px);transition:background-color 1.3s ease,opacity 1.3s}
-        .blob.a{width:62vw;height:62vw;top:-22vw;right:-12vw;background:rgb(var(--accent-rgb));opacity:.2}
-        .blob.b{width:44vw;height:44vw;bottom:-18vw;left:-12vw;background:rgb(var(--accent-rgb));opacity:.12}
+        .bd{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 0.8s ease;filter:saturate(.92) contrast(1.05) brightness(.82)}
+        .bd.active{opacity:1}
+        
         .scrim{position:absolute;inset:0;z-index:2;background:
             linear-gradient(90deg,rgba(6,6,8,.94) 0%,rgba(6,6,8,.7) 26%,rgba(6,6,8,.12) 58%,rgba(6,6,8,.35) 100%),
             linear-gradient(0deg,rgba(6,6,8,1) 1%,rgba(6,6,8,0) 42%)}
-        .hero-content{position:absolute;left:0;right:0;bottom:13vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .45s ease,transform .45s ease}
-        .hero-content.switching{opacity:0;transform:translateY(16px)}
-        .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px;transition:color 1s}
-        .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent);transition:background 1s}
-        .hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(36px,6.4vw,80px);line-height:.96;letter-spacing:-.015em}
-        .hero-title em{font-style:italic;color:var(--accent);transition:color 1s}
-        .hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;font-size:13.5px;color:var(--muted);margin-top:20px;font-weight:500}
+        .hero-content{position:absolute;left:0;right:0;bottom:10vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .3s ease}
+        .hero-content.switching{opacity:0}
+        .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:12px}
+        .hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(28px,5vw,64px);line-height:1.05;letter-spacing:-.015em}
+        .hero-title em{font-style:italic;color:var(--accent)}
+        .hero-meta{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:12.5px;color:var(--muted);margin-top:14px;font-weight:500}
         .hero-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
         .match{color:#7fd29a;font-weight:700}
-        .rating-pill{color:var(--accent);font-weight:700;transition:color 1s}
-        .hero-synopsis{color:var(--muted);font-size:16px;line-height:1.65;margin-top:18px;max-width:540px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-        .hero-actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
-        .btn-play{background:var(--accent);color:#0a0a0c}
-        .btn-play:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(var(--accent-rgb),.65)}
-        .btn-ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);backdrop-filter:blur(8px)}
-        .btn-ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
-        .dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
-        .dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
-        .dot.active{background:var(--accent);width:44px}
+        .rating-pill{color:var(--accent);font-weight:700}
+        .hero-synopsis{color:var(--muted);font-size:14px;line-height:1.5;margin-top:12px;max-width:540px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .hero-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+        .btn-play{background:var(--accent);color:#0a0a0c;padding:10px 20px;border-radius:8px;font-weight:600;display:flex;align-items:center;gap:8px}
+        .btn-ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);padding:10px 20px;border-radius:8px;font-weight:600}
+        .dots{position:absolute;right:5vw;bottom:10vh;display:flex;gap:6px;z-index:4}
+        .dot{width:20px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;border:0;padding:0}
+        .dot.active{background:var(--accent);width:36px}
 
-        .collection{position:relative;z-index:2;padding:7vh 0 4vh}
-        .row{position:relative;margin-bottom:48px}
-        .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
-        .row-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
-        .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none}
-        .row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
+        .collection{position:relative;z-index:2;padding:5vh 0 4vh}
+        .row{position:relative;margin-bottom:36px}
+        .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:12px}
+        .row-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
+        .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:14px}
+        .row-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 5vw 16px;scrollbar-width:none}
         .row-track::-webkit-scrollbar{display:none}
 
-        .card{flex:0 0 auto;width:clamp(230px,25vw,355px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}
-        .card-img{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.02);transition:transform .7s ease;filter:saturate(.9) contrast(1.05) brightness(.85)}
-        .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.5) 68%,rgba(6,6,8,.94) 100%)}
-        .card::after{content:"";position:absolute;inset:0;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.13),transparent 55%);opacity:0;transition:opacity .35s;pointer-events:none}
-        .card-top{position:absolute;top:11px;left:11px;right:11px;display:flex;align-items:center;gap:6px;z-index:3}
-        .badge{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:1px solid var(--line);font-weight:600;display:inline-flex;align-items:center;gap:4px}
-        .badge.rating{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+        .card{flex:0 0 auto;width:clamp(200px, 42vw, 300px);aspect-ratio:16/9;position:relative;border-radius:12px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start}
+        .card-img{position:absolute;inset:0;background-size:cover;background-position:center}
+        .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.6) 68%,rgba(6,6,8,.95) 100%)}
+        .card-top{position:absolute;top:8px;left:8px;right:8px;display:flex;align-items:center;gap:6px;z-index:3}
+        .badge{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.6);font-weight:600}
+        .badge.rating{color:var(--accent)}
         .badge.match{color:#7fd29a}
-        .bookmark{margin-left:auto;width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border:1px solid var(--line);color:#cfcfcf;display:grid;place-items:center;cursor:pointer;transition:.25s}
-        .bookmark:hover{background:rgba(0,0,0,.7);transform:scale(1.08)}
-        .bookmark.saved{color:var(--accent);border-color:rgba(var(--accent-rgb),.6);background:rgba(0,0,0,.5)}
-        .card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);opacity:0;z-index:3;width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);color:#fff;display:grid;place-items:center;cursor:pointer;transition:.4s cubic-bezier(.2,.8,.2,1)}
-        .card-info{position:absolute;left:0;right:0;bottom:0;padding:13px 14px;z-index:3}
-        .card-info h3{font-size:15px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .card-info p{font-size:11.5px;color:var(--muted);margin-top:3px;opacity:0;transform:translateY(6px);transition:.35s;font-weight:500}
-        .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.16);z-index:3}
-        .progress span{display:block;height:100%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-        .card:hover{transform:translateY(-7px) scale(1.035);z-index:5;box-shadow:0 30px 60px -22px rgba(0,0,0,.85),0 0 0 1px rgba(var(--accent-rgb),.55),0 0 50px -8px rgba(var(--accent-rgb),.4)}
-        .card:hover .card-img{transform:scale(1.12)}
-        .card:hover .card-info p{opacity:1;transform:none}
-        .card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
-        .card:hover::after{opacity:1}
-
-        .results-head{padding:0 5vw;margin-bottom:22px}
-        .results-head h2{font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
-        .results-head h2 em{color:var(--accent);font-style:italic}
-        .results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:0 5vw 20px}
+        .bookmark{margin-left:auto;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.6);color:#cfcfcf;display:grid;place-items:center;cursor:pointer}
+        .card-info{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;z-index:3}
+        .card-info h3{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .card-info p{font-size:10.5px;color:var(--muted);margin-top:2px}
+        .progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.2);z-index:3}
+        .progress span{display:block;height:100%;background:var(--accent)}
     </style>
 </head>
-<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
+<body class="min-h-screen bg-[#060913] text-slate-100 flex flex-col md:flex-row font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
     <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+    <aside class="w-full md:w-64 bg-[#0a0f1d] border-b md:border-b-0 md:border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
         <div>
             <!-- Logo Header -->
-            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+            <div class="p-4 md:p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-lg">
                     ⚡
                 </div>
                 <div>
-                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                    <h1 class="font-extrabold tracking-wider text-base md:text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                    <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
                 </div>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="p-4 space-y-1.5">
-                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-base">📡</span>
+            <nav class="p-3 md:p-4 flex md:block overflow-x-auto gap-2 md:space-y-1.5 custom-scrollbar">
+                <button onclick="switchPage('iptv')" id="navIptv" class="flex-shrink-0 md:w-full flex items-center justify-between px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <div class="flex items-center space-x-2 md:space-x-3">
+                        <span>📡</span>
                         <span>Live IPTV</span>
                     </div>
                 </button>
 
-                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-base">🎬</span>
+                <button onclick="switchPage('movies')" id="navMovies" class="flex-shrink-0 md:w-full flex items-center justify-between px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30">
+                    <div class="flex items-center space-x-2 md:space-x-3">
+                        <span>🎬</span>
                         <span>Latest Movies</span>
                     </div>
-                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
                 </button>
 
-                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
-
-                <button onclick="switchPage('search')" id="navSearch" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
-                    <span class="text-base">🔍</span>
+                <button onclick="switchPage('search')" id="navSearch" class="flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-400 hover:bg-slate-800/40">
+                    <span>🔍</span>
                     <span>Search</span>
                 </button>
 
-                <button onclick="switchPage('mylist')" id="navMyList" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
-                    <span class="text-base">🔖</span>
+                <button onclick="switchPage('mylist')" id="navMyList" class="flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-400 hover:bg-slate-800/40">
+                    <span>🔖</span>
                     <span>My List</span>
                 </button>
 
-                <button onclick="switchPage('guide')" id="navGuide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
-                    <span class="text-base">📅</span>
+                <button onclick="switchPage('guide')" id="navGuide" class="flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-400 hover:bg-slate-800/40">
+                    <span>📅</span>
                     <span>Live Guide</span>
                 </button>
             </nav>
         </div>
 
-        <!-- Sidebar Footer / Profile & Settings -->
-        <div class="p-4 border-t border-slate-800/40 space-y-3">
-            <button onclick="switchPage('settings')" id="navSettings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
-                <span>⚙️</span>
-                <span>Settings</span>
-            </button>
-
+        <!-- Sidebar Footer -->
+        <div class="hidden md:block p-4 border-t border-slate-800/40 space-y-3">
             <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs shadow">
                     DD
                 </div>
                 <div class="overflow-hidden flex-1">
                     <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
-                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
-                        <span>★</span> Lead Architect
-                    </div>
+                    <div class="text-[9px] text-pink-400 font-medium">Lead Architect</div>
                 </div>
             </div>
         </div>
     </aside>
 
     <!-- Main Dynamic Viewport Area -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+    <main class="flex-1 flex flex-col h-[calc(100vh-60px)] md:h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
 
         <!-- PAGE 1: LIVE IPTV VIEW -->
-        <div id="pageIptv" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
-            <!-- Top Bar -->
-            <div class="flex items-center justify-between mb-6">
+        <div id="pageIptv" class="flex-1 flex flex-col p-4 md:p-8 overflow-y-auto custom-scrollbar hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-3">
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
-                    </div>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration[cite: 1]</p>
+                    <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">Live Television</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Direct stream routing with automatic error recovery</p>
                 </div>
-
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels or shows..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
-                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
-                    </div>
+                <div class="relative">
+                    <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-9 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-full md:w-64">
+                    <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
                 </div>
             </div>
 
-            <!-- Content Grid (Player + EPG) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px]">
-                <!-- Video Stream Section -->
+            <!-- Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 flex-1 min-h-[350px]">
                 <div class="lg:col-span-2 flex flex-col">
-                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
-                        <!-- Notification Overlay for Stream Status / Fallbacks -->
-                        <div id="streamAlert" class="absolute top-4 left-4 z-20 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
-                            <span>⚠️</span>
-                            <span id="streamAlertText">Stream handshake unstable. Using backup route.</span>
+                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[260px] md:min-h-[380px] flex items-center justify-center">
+                        <div id="streamAlert" class="absolute top-3 left-3 z-20 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur">
+                            <span id="streamAlertText">Using backup stream route.</span>
                         </div>
-                        <h1 id="currentChannelTitle" class="text-2xl font-black text-white tracking-tight">No Channel Selected</h1>
-                        <video
-                            id="videoPlayer"
-                            controls
-                            autoplay
-                            playsinline
-                            class="w-full h-full object-contain absolute inset-0"
-                        ></video>
+                        <video id="videoPlayer" controls autoplay playsinline class="w-full h-full object-contain absolute inset-0"></video>
                     </div>
 
-                    <!-- Active Stream Info Bar -->
-                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
-                        <div class="flex items-center space-x-4">
-                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
-                                🌟
-                            </div>
+                    <div class="mt-3 bg-[#0d1326] border border-slate-800/80 rounded-xl p-3 md:p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div id="activeChannelIcon" class="w-10 h-10 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-lg">📺</div>
                             <div>
-                                <h3 id="currentChannelName" class="text-base font-bold text-white">Select a Channel</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Choose a feed from below to start viewing</p>
+                                <h3 id="currentChannelName" class="text-sm md:text-base font-bold text-white">Select Channel</h3>
+                                <p id="currentChannelSub" class="text-[11px] text-slate-400">Choose feed from below</p>
                             </div>
                         </div>
-
-                        <div class="flex items-center space-x-6">
-                            <div class="text-right hidden sm:block">
-                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Direct Feed Active
-                                </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Auto-Recovery Ready</div>
-                            </div>
-                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
-                                <span>🤍</span>
-                                <span>Favorite</span>
-                            </button>
-                        </div>
+                        <button onclick="toggleFavorite()" id="favBtn" class="px-3 py-2 rounded-xl bg-[#161f38] border border-slate-700/60 text-xs font-semibold">🤍 Favorite</button>
                     </div>
                 </div>
 
-                <!-- Live Program Guide (EPG Sidebar) -->
-                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm">📅</span>
-                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
-                        </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">IPTV</span>
+                <!-- EPG Sidebar -->
+                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col max-h-[220px] lg:max-h-none">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800/60 mb-2">
+                        <span class="text-xs font-bold uppercase text-slate-300">Program Guide</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300">IPTV</span>
                     </div>
-
-                    <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1">
-                        <!-- Populated dynamically -->
-                    </div>
-
-                    <div class="mt-3 pt-3 border-t border-slate-800/60">
-                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
-                            <span>💡</span>
-                            <span>Protected streams automatically route through backup manifests if connection fails.</span>
-                        </div>
-                    </div>
+                    <div id="epgList" class="space-y-2 overflow-y-auto flex-1 custom-scrollbar pr-1"></div>
                 </div>
             </div>
 
-            <!-- Channel Selector Strip (Scrollable) -->
-            <div class="mt-6">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
-                </div>
-                <div id="channelsGrid" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-3">
-                    <!-- Populated dynamically -->
-                </div>
+            <!-- Channel Selector Strip -->
+            <div class="mt-4 md:mt-6">
+                <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400 mb-2">Available Channels (<span id="channelCount">0</span>)</h3>
+                <div id="channelsGrid" class="grid grid-flow-col auto-cols-[140px] md:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
             </div>
         </div>
 
-        <!-- PAGE 2: NEW AETHER PRIVATE CINEMA (MOVIES) -->
+        <!-- PAGE 2: AETHER PRIVATE CINEMA (MOVIES) -->
         <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar relative aether-cinema-root">
             <div class="vignette"></div>
-            <div class="grain"></div>
-
-            <!-- Aether Hero Section -->
             <section class="aether-hero" id="hero">
                 <div class="backdrops" id="backdrops"></div>
-                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
                 <div class="scrim"></div>
                 <div class="hero-content" id="heroContent"></div>
                 <div class="dots" id="dots"></div>
             </section>
-
-            <!-- Aether Collection Rows -->
             <section class="collection" id="collection"></section>
         </div>
 
         <!-- PAGE 3: GENERIC VIEWS -->
         <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
-            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
-                ✨
-            </div>
-            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-            <button onclick="switchPage('movies')" class="mt-4 px-5 py-2.5 rounded-xl bg-cyan-600 text-white text-xs font-bold shadow-lg hover:bg-cyan-500 transition-all">
-                Return to Latest Movies
-            </button>
+            <h2 id="genericTitle" class="text-xl md:text-2xl font-bold text-white mb-2">Module Under Upgrade</h2>
+            <button onclick="switchPage('movies')" class="mt-3 px-4 py-2 rounded-xl bg-cyan-600 text-white text-xs font-bold">Return to Movies</button>
         </div>
-
-        <!-- Footer Signature -->
-        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek[cite: 3]
-        </footer>
     </main>
 
-    <!-- Aether Video Player Overlay Modal -->
-    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
-        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
+    <!-- Video Player Modal -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center" id="player" style="display:none;">
+        <div class="stage relative w-full h-full md:w-[min(100vw,calc(100vh*16/9))] md:aspect-[16/9] bg-black" id="stage">
             <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
-            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
-            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
-                <div class="t-meta min-w-0">
-                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
-                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
-                </div>
-                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
-                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
-                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
-                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
-                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="backBtn" title="-10s">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19V5l-8 7 8 7zM23 19V5"/></svg>
-                    </button>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fwdBtn" title="+10s">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19V5l8 7-8 7zM1 19V5"/></svg>
-                    </button>
-                    <div class="vol flex items-center gap-2">
-                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
-                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                        </button>
-                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
-                    </div>
-                    <div class="spacer flex-1"></div>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                    </button>
-                </div>
-            </div>
+            <button class="absolute top-4 right-4 bg-white/15 w-10 h-10 rounded-xl text-white z-20 flex items-center justify-center font-bold" id="closeBtn">✕</button>
         </div>
     </div>
 
-    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
+    <div class="toast fixed left-1/2 bottom-6 -translate-x-1/2 z-[120] bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl text-xs font-medium opacity-0 transition-all pointer-events-none" id="toast"></div>
 
-    <!-- Application Script Engine with Integrated Channels & Aether Cinema -->
+    <!-- Application Script Engine -->
     <script>
         const channels = [
             { name: "A&E", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
@@ -427,7 +281,6 @@
         let currentChannel = channels[0];
         let hlsInstance = null;
         let dashInstance = null;
-
         const videoElement = document.getElementById('videoPlayer');
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -436,6 +289,7 @@
             renderEpg(channels[0]);
             loadActiveStream(channels[0]);
             initAetherCinema();
+            switchPage('movies'); // Default to movies view for better initial load performance on mobile
         });
 
         function switchPage(page) {
@@ -443,21 +297,20 @@
             document.getElementById('pageMovies').classList.add('hidden');
             document.getElementById('pageGeneric').classList.add('hidden');
 
-            ['navIptv', 'navMovies', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
+            ['navIptv', 'navMovies', 'navSearch', 'navMyList', 'navGuide'].forEach(id => {
                 const btn = document.getElementById(id);
-                if(btn) btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
+                if(btn) btn.className = "flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-medium text-slate-400 hover:bg-slate-800/40";
             });
 
             if (page === 'iptv') {
                 document.getElementById('pageIptv').classList.remove('hidden');
-                document.getElementById('navIptv').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border border-pink-500/30 shadow-lg shadow-pink-950/40";
+                document.getElementById('navIptv').className = "flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold bg-pink-600/20 text-pink-400 border border-pink-500/30";
             } else if (page === 'movies') {
                 document.getElementById('pageMovies').classList.remove('hidden');
-                document.getElementById('navMovies').className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-950/40";
+                document.getElementById('navMovies').className = "flex-shrink-0 md:w-full flex items-center space-x-2 md:space-x-3 px-3 md:px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold bg-cyan-600/20 text-cyan-400 border border-cyan-500/30";
             } else {
                 document.getElementById('pageGeneric').classList.remove('hidden');
-                const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
-                document.getElementById('genericTitle').innerText = titles[page] || "Module View";
+                document.getElementById('genericTitle').innerText = `${page.toUpperCase()} Module`;
             }
         }
 
@@ -465,26 +318,14 @@
             const grid = document.getElementById('channelsGrid');
             if(!grid) return;
             grid.innerHTML = '';
-
             list.forEach(ch => {
                 const isSelected = currentChannel.name === ch.name;
                 const card = document.createElement('div');
                 card.onclick = () => selectChannel(ch);
-                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
-                    isSelected 
-                        ? 'bg-pink-600/20 border-pink-500 shadow-lg shadow-pink-950/50 text-white' 
-                        : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
-                }`;
-
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-20 shrink-0 ${isSelected ? 'bg-pink-600/20 border-pink-500 text-white' : 'bg-[#0d1326] border-slate-800 text-slate-300'}`;
                 card.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="text-xl">${ch.icon || '📺'}</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${ch.res}</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold truncate">${ch.name}</div>
-                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
-                    </div>
+                    <div class="flex items-center justify-between"><span class="text-base">${ch.icon}</span><span class="text-[9px] px-1 rounded bg-slate-900">${ch.res}</span></div>
+                    <div class="text-xs font-bold truncate">${ch.name}</div>
                 `;
                 grid.appendChild(card);
             });
@@ -499,81 +340,21 @@
         function selectChannel(ch) {
             currentChannel = ch;
             document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
-            document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
-
+            document.getElementById('currentChannelSub').innerText = `${ch.category} (${ch.res})`;
             renderChannels(channels);
             renderEpg(ch);
             loadActiveStream(ch);
         }
 
-        function showStreamAlert(msg) {
-            const alertBox = document.getElementById('streamAlert');
-            const alertText = document.getElementById('streamAlertText');
-            alertText.innerText = msg;
-            alertBox.classList.remove('hidden');
-            setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
-        }
-
         function loadActiveStream(ch, useFallback = false) {
             if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-            if (dashInstance) { dashInstance.reset(); dashInstance = null; }
-
-            const targetUrl = useFallback ? (ch.fallbackUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8") : ch.url;
-
-            if (useFallback) {
-                showStreamAlert(`Primary link restricted/offline. Switched to backup feed for ${ch.name}.`);
-            } else {
-                document.getElementById('streamAlert').classList.add('hidden');
-            }
-
-            if (targetUrl.includes('.mpd')) {
-                if (typeof dashjs !== 'undefined') {
-                    dashInstance = dashjs.MediaPlayer().create();
-                    dashInstance.initialize(videoElement, targetUrl, true);
-                } else {
-                    videoElement.src = targetUrl;
-                    videoElement.play().catch(() => {});
-                }
-            } else if (targetUrl.includes('.m3u8') || ch.format === 'm3u8') {
-                if (Hls.isSupported()) {
-                    hlsInstance = new Hls({ debug: false, maxBufferLength: 30 });
-                    hlsInstance.loadSource(targetUrl);
-                    hlsInstance.attachMedia(videoElement);
-
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        videoElement.play().catch(() => {});
-                    });
-
-                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-                        if (data.fatal) {
-                            switch (data.type) {
-                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                    if (!useFallback && ch.fallbackUrl) {
-                                        loadActiveStream(ch, true);
-                                    } else {
-                                        hlsInstance.startLoad();
-                                    }
-                                    break;
-                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                    hlsInstance.recoverMediaError();
-                                    break;
-                                default:
-                                    if (!useFallback && ch.fallbackUrl) {
-                                        loadActiveStream(ch, true);
-                                    } else {
-                                        hlsInstance.destroy();
-                                    }
-                                    break;
-                            }
-                        }
-                    });
-                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoElement.src = targetUrl;
-                    videoElement.addEventListener('loadedmetadata', () => {
-                        videoElement.play().catch(() => {});
-                    });
-                }
+            const targetUrl = useFallback ? ch.fallbackUrl : ch.url;
+            if (Hls.isSupported() && targetUrl.includes('.m3u8')) {
+                hlsInstance = new Hls({ maxBufferLength: 15 });
+                hlsInstance.loadSource(targetUrl);
+                hlsInstance.attachMedia(videoElement);
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => videoElement.play().catch(() => {}));
+                hlsInstance.on(Hls.Events.ERROR, (e, data) => { if(data.fatal && !useFallback) loadActiveStream(ch, true); });
             } else {
                 videoElement.src = targetUrl;
                 videoElement.play().catch(() => {});
@@ -585,64 +366,29 @@
             if(!list) return;
             list.innerHTML = '';
             document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
-
-            const schedule = [
-                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
-                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false }
-            ];
-
-            schedule.forEach(slot => {
+            [{ time: "18:00", show: channel.now, live: true }, { time: "20:00", show: channel.next, live: false }].forEach(slot => {
                 const item = document.createElement('div');
-                item.className = `p-3 rounded-xl border text-xs transition-all ${slot.live ? 'bg-pink-950/30 border-pink-500/40 text-white shadow' : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300'}`;
-                item.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-mono font-bold ${slot.live ? 'text-pink-400' : 'text-slate-400'}">${slot.time}</span>
-                        ${slot.live ? '<span class="bg-pink-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : ''}
-                    </div>
-                    <div class="font-semibold text-slate-200">${slot.show}</div>
-                `;
+                item.className = `p-2.5 rounded-lg border text-xs ${slot.live ? 'bg-pink-950/30 border-pink-500/40 text-white' : 'bg-slate-900/40 border-slate-800 text-slate-300'}`;
+                item.innerHTML = `<div class="font-bold text-[10px] text-pink-400">${slot.time}</div><div class="font-semibold">${slot.show}</div>`;
                 list.appendChild(item);
             });
         }
 
         function toggleFavorite() {
             const btn = document.getElementById('favBtn');
-            if (btn.classList.contains('text-pink-400')) {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all";
-                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
-            } else {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-pink-600/20 border border-pink-500 text-pink-400 text-xs font-semibold transition-all shadow-lg";
-                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
-            }
+            btn.classList.toggle('bg-pink-600/20');
+            btn.classList.toggle('border-pink-500');
         }
 
-        /* ==================== AETHER CINEMA ENGINE ==================== */
         function initAetherCinema() {
             const FILMS=[
-                {id:1,title:"A Knight's Tale",year:2001,rating:7.0,match:96,duration:"2h 27m",genres:["Action","Adventure","Romance"],accent:"#d4af37",rgb:"212,175,55",backdrop:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/A%20Knight's%20Tale%20(2001)%20Extended%20Cut%20(2160p%20UHD%20x265%20DV%20HDR%20DDP%207.1%20English%20-%20DiscoD%20HONE).mkv",quality:"2160p UHD",cats:["new","trending"],synopsis:"A peasant squire, sharing a passion for jousting with his peers, creates a new life of nobility and romance."},
-                {id:2,title:"Blade Runner 2049",year:2017,rating:8.0,match:99,duration:"2h 44m",genres:["Sci-Fi","Drama","Mystery"],accent:"#f59e0b",rgb:"245,158,11",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Blade.Runner.2049.2017.Open.Matte.RUS.SDR.2160p.mkv",quality:"2160p Open Matte",cats:["trending","acclaimed"],synopsis:"Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard."},
-                {id:3,title:"Flow",year:2024,rating:8.1,match:95,duration:"1h 24m",genres:["Animation","Adventure","Fantasy"],accent:"#38bdf8",rgb:"56,189,248",backdrop:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Flow%202024%201080p%20WEB-DL%20HEVC%20x265%20BONE.mkv",quality:"1080p WEB-DL",cats:["new","acclaimed"],synopsis:"A solitary cat, displaced by a great flood, finds refuge on a boat with various species and must navigate a transformed world."},
-                {id:4,title:"Guardians of the Galaxy Vol. 3",year:2023,rating:7.9,match:94,duration:"2h 30m",genres:["Action","Sci-Fi","Adventure"],accent:"#a855f7",rgb:"168,85,247",backdrop:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Guardians.of.the.Galaxy.Vol.3.2023.1080p.WEB-DL.DDP5.1.Atmos.H.264-CMRG.mkv",quality:"1080p Atmos",cats:["trending","new"],synopsis:"Still reeling from the loss of Gamora, Peter Quill rallies his team to defend the universe and protect one of their own."},
-                {id:5,title:"Hercules",year:1997,rating:7.3,match:92,duration:"1h 33m",genres:["Animation","Family","Fantasy"],accent:"#eab308",rgb:"234,179,8",backdrop:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Hercules.1997.1080p.BluRay.x265.mp4",quality:"1080p BluRay",cats:["acclaimed"],synopsis:"The son of Zeus and Hera is stripped of his immortality as an infant and must become a true hero in order to reclaim it."},
-                {id:6,title:"Street Fighter II: The Animated Movie",year:1994,rating:7.5,match:88,duration:"1h 41m",genres:["Animation","Action","Martial Arts"],accent:"#ef4444",rgb:"239,68,68",backdrop:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Street.Fighter.II.The.Animated.Movie.1994.Unrated.UHD.BluRay.2160p.FLAC.2.0.HEVC.REMUX-FraMeSToR.mkv",quality:"2160p Remux",cats:["acclaimed","trending"],synopsis:"Interpol agent Chun-Li and U.S. Air Force Colonel Guile track down the sinister international crime lord M. Bison."},
-                {id:7,title:"Toy Story 5",year:2026,rating:8.0,match:97,duration:"1h 45m",genres:["Animation","Family","Comedy"],accent:"#3b82f6",rgb:"59,130,246",backdrop:"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=600&q=80",video:"https://195.201.59.219/public/Toy.Story.5.2026.1080p.DCPRIP.MULTi.x264-DKS.mkv",quality:"1080p DCPRIP",cats:["new","trending"],synopsis:"Woody, Buzz, and the rest of the toy gang return for an all-new high-stakes adventure confronting the modern digital age."},
-                {id:8,title:"The Silent Horizon",year:2021,rating:8.4,match:97,duration:"2h 07m",genres:["Mystery","Drama"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"4K HDR",progress:0.42,cats:["continue","trending","acclaimed"],synopsis:"A retired cartographer returns to the coast where her sister vanished — only to find the maps no longer match the shore."},
-                {id:9,title:"Crimson Veil",year:2023,rating:7.9,match:91,duration:"1h 58m",genres:["Thriller","Crime"],accent:"#b8423f",rgb:"184,66,63",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",quality:"4K",progress:0.15,cats:["trending","new"],synopsis:"A detective with a failing memory hunts a killer who only ever strikes during thunderstorms."},
-                {id:10,title:"Echoes of Dust",year:2022,rating:8.1,match:95,duration:"2h 22m",genres:["Science Fiction"],accent:"#6f8fd6",rgb:"111,143,214",backdrop:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",quality:"4K HDR",progress:0.63,cats:["continue","trending","acclaimed"],synopsis:"On a silent colony world, a lone archivist begins to hear a voice in the static — one that was never meant to exist."},
-                {id:11,title:"Midnight Cartographer",year:2020,rating:7.6,match:88,duration:"2h 01m",genres:["Adventure"],accent:"#c98a3c",rgb:"201,138,60",backdrop:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",quality:"4K",cats:["new"],synopsis:"Two strangers race a cartel down an unmapped river, chasing a dawn that may never come."},
-                {id:12,title:"The Last Lighthouse",year:2019,rating:8.6,match:99,duration:"1h 49m",genres:["Drama"],accent:"#4f7d8a",rgb:"79,125,138",backdrop:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80",poster:"https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K HDR",progress:0.78,cats:["continue","acclaimed"],synopsis:"A keeper speaks to the sea every night. One night, after forty years, the sea finally speaks back."}
+                {id:1,title:"A Knight's Tale",year:2001,rating:7.0,match:96,duration:"2h 27m",genres:["Action"],accent:"#d4af37",rgb:"212,175,55",backdrop:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",poster:"https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"2160p UHD",cats:["new","trending"],synopsis:"A peasant squire creates a new life of nobility and romance."},
+                {id:2,title:"Blade Runner 2049",year:2017,rating:8.0,match:99,duration:"2h 44m",genres:["Sci-Fi"],accent:"#f59e0b",rgb:"245,158,11",backdrop:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",poster:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"2160p",cats:["trending","acclaimed"],synopsis:"Young Blade Runner K's discovery leads him to Rick Deckard."},
             ];
 
-            const ROWS=[
-                {key:"continue",label:"Continue Watching"},
-                {key:"trending",label:"Trending Tonight"},
-                {key:"new",label:"New in Your Collection"},
-                {key:"acclaimed",label:"Critically Acclaimed"}
-            ];
-            const SPOTLIGHT_IDS=[1,2,3,7];
-
-            let saved=new Set(JSON.parse(localStorage.getItem("aether_saved")||"[]"));
-            let activeIdx=0,rotTimer=null;
+            const ROWS=[{key:"trending",label:"Trending Tonight"},{key:"new",label:"New Releases"}];
+            const SPOTLIGHT_IDS=[1,2];
+            let activeIdx=0;
 
             const backdropsEl=document.getElementById('backdrops');
             const heroContentEl=document.getElementById('heroContent');
@@ -650,8 +396,7 @@
             const collectionEl=document.getElementById('collection');
 
             function renderHero(){
-                backdropsEl.innerHTML='';
-                dotsEl.innerHTML='';
+                backdropsEl.innerHTML=''; dotsEl.innerHTML='';
                 SPOTLIGHT_IDS.forEach((id,i)=>{
                     const f=FILMS.find(x=>x.id===id);
                     const bd=document.createElement('div');
@@ -661,140 +406,68 @@
 
                     const dot=document.createElement('button');
                     dot.className=`dot ${i===0?'active':''}`;
-                    dot.onclick=()=>setSpotlight(i);
+                    dot.onclick=()=>updateHeroContent(i);
                     dotsEl.appendChild(dot);
                 });
                 updateHeroContent(0);
-                startRot();
             }
 
             function updateHeroContent(idx){
                 activeIdx=idx;
                 const f=FILMS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
-                document.documentElement.style.setProperty('--accent',f.accent);
-                document.documentElement.style.setProperty('--accent-rgb',f.rgb);
-
                 document.querySelectorAll('.bd').forEach((b,i)=>b.classList.toggle('active',i===idx));
                 document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
 
-                heroContentEl.classList.add('switching');
-                setTimeout(()=>{
-                    heroContentEl.innerHTML=`
-                        <div class="eyebrow">${f.genres[0]} Feature</div>
-                        <h2 class="hero-title">${f.title.split(' ').map((w,wi)=>wi===1?`<em>${w}</em>`:w).join(' ')}</h2>
-                        <div class="hero-meta">
-                            <span class="match">${f.match}% Match</span>
-                            <span class="sep"></span>
-                            <span class="rating-pill">★ ${f.rating}</span>
-                            <span class="sep"></span>
-                            <span>${f.year}</span>
-                            <span class="sep"></span>
-                            <span>${f.duration}</span>
-                            <span class="sep"></span>
-                            <span class="badge" style="background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:10px;padding:2px 6px">${f.quality}</span>
-                        </div>
-                        <p class="hero-synopsis">${f.synopsis}</p>
-                        <div class="hero-actions">
-                            <button class="btn btn-play" onclick="playFilm(${f.id})">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
-                            </button>
-                            <button class="btn btn-ghost" onclick="toggleSave(${f.id})">
-                                ${saved.has(f.id)?'✓ In Saved List':'+ Add to List'}
-                            </button>
-                        </div>
-                    `;
-                    heroContentEl.classList.remove('switching');
-                },220);
-            }
-
-            function setSpotlight(idx){
-                stopRot();
-                updateHeroContent(idx);
-                startRot();
-            }
-
-            function startRot(){
-                stopRot();
-                rotTimer=setInterval(()=>{
-                    activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;
-                    updateHeroContent(activeIdx);
-                },8000);
-            }
-
-            function stopRot(){
-                if(rotTimer)clearInterval(rotTimer);
+                heroContentEl.innerHTML=`
+                    <div class="eyebrow">${f.genres[0]} Feature</div>
+                    <h2 class="hero-title">${f.title}</h2>
+                    <div class="hero-meta">
+                        <span class="match">${f.match}% Match</span><span class="sep"></span>
+                        <span class="rating-pill">★ ${f.rating}</span><span class="sep"></span>
+                        <span>${f.year}</span>
+                    </div>
+                    <p class="hero-synopsis">${f.synopsis}</p>
+                    <div class="hero-actions">
+                        <button class="btn-play" onclick="playFilm(${f.id})">▶ Play Film</button>
+                    </div>
+                `;
             }
 
             window.playFilm=function(id){
                 const f=FILMS.find(x=>x.id===id);
                 if(!f)return;
-                openPlayer(f);
+                const playerEl=document.getElementById('player');
+                const videoEl=document.getElementById('video');
+                playerEl.style.display="flex";
+                videoEl.src=f.video;
+                videoEl.play().catch(()=>{});
             }
 
-            window.toggleSave=function(id){
-                if(saved.has(id)) saved.delete(id); else saved.add(id);
-                localStorage.setItem("aether_saved",JSON.stringify([...saved]));
-                renderCollection();
-                renderHero();
-                showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
-            }
-
-            function showToast(msg){
-                const t=document.getElementById('toast');
-                t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
-                t.classList.add('show');
-                setTimeout(()=>t.classList.remove('show'),2600);
-            }
+            document.getElementById('closeBtn').onclick = () => {
+                const playerEl=document.getElementById('player');
+                const videoEl=document.getElementById('video');
+                videoEl.pause();
+                videoEl.src="";
+                playerEl.style.display="none";
+            };
 
             function renderCollection(){
                 collectionEl.innerHTML='';
-                ROWS.forEach((r,ri)=>{
-                    let list=FILMS.filter(f=>f.cats.includes(r.key));
-                    if(r.key==='continue') list=list.filter(f=>f.progress>0);
-                    if(list.length===0) return;
-
+                ROWS.forEach(r=>{
+                    const list=FILMS;
                     const row=document.createElement('div');
                     row.className='row';
-                    row.innerHTML=`
-                        <div class="row-head">
-                            <h3 class="row-title"><span class="num">${String(ri+1).padStart(2,'0')}.</span> ${r.label}</h3>
-                            <span class="row-count">${list.length} films</span>
-                        </div>
-                        <div class="row-track" id="track-${r.key}"></div>
-                    `;
+                    row.innerHTML=`<div class="row-head"><h3 class="row-title">${r.label}</h3></div><div class="row-track" id="track-${r.key}"></div>`;
                     const track=row.querySelector('.row-track');
                     list.forEach(f=>{
                         const card=document.createElement('div');
                         card.className='card';
-                        card.onclick=(e)=>{
-                            if(e.target.closest('.bookmark')) return;
-                            playFilm(f.id);
-                        };
-                        card.onmousemove=(e)=>{
-                            const rct=card.getBoundingClientRect();
-                            card.style.setProperty('--mx',`${e.clientX-rct.left}px`);
-                            card.style.setProperty('--my',`${e.clientY-rct.top}px`);
-                        };
-
-                        const isSaved=saved.has(f.id);
+                        card.onclick=()=>playFilm(f.id);
                         card.innerHTML=`
                             <div class="card-img" style="background-image:url('${f.poster}')"></div>
                             <div class="card-scrim"></div>
-                            <div class="card-top">
-                                <span class="badge rating">★ ${f.rating}</span>
-                                <span class="badge match">${f.match}%</span>
-                                <button class="bookmark ${isSaved?'saved':''}" onclick="toggleSave(${f.id})" title="Save">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                                </button>
-                            </div>
-                            <div class="card-play">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                            </div>
-                            <div class="card-info">
-                                <h3>${f.title}</h3>
-                                <p>${f.genres.join(' · ')} &bull; ${f.duration}</p>
-                            </div>
-                            ${f.progress?`<div class="progress"><span style="width:${f.progress*100}%"></span></div>`:''}
+                            <div class="card-top"><span class="badge rating">★ ${f.rating}</span></div>
+                            <div class="card-info"><h3>${f.title}</h3><p>${f.genres.join(' · ')}</p></div>
                         `;
                         track.appendChild(card);
                     });
@@ -804,120 +477,8 @@
 
             renderHero();
             renderCollection();
-
-            // Player setup logic
-            const playerEl=document.getElementById('player');
-            const videoEl=document.getElementById('video');
-            const loaderEl=document.getElementById('loader');
-            const stageEl=document.getElementById('stage');
-            const seekEl=document.getElementById('seek');
-            const curTimeEl=document.getElementById('curTime');
-            const durTimeEl=document.getElementById('durTime');
-            const ppBtn=document.getElementById('ppBtn');
-            const ppIcon=document.getElementById('ppIcon');
-            const backBtn=document.getElementById('backBtn');
-            const fwdBtn=document.getElementById('fwdBtn');
-            const muteBtn=document.getElementById('muteBtn');
-            const volIcon=document.getElementById('volIcon');
-            const volEl=document.getElementById('vol');
-            const fsBtn=document.getElementById('fsBtn');
-            const closeBtn=document.getElementById('closeBtn');
-            const pTitle=document.getElementById('pTitle');
-            const pMeta=document.getElementById('pMeta');
-
-            let hideTimeout=null;
-
-            function formatTime(s){
-                if(isNaN(s)) return "0:00";
-                const m=Math.floor(s/60);
-                const sec=Math.floor(s%60);
-                return `${m}:${sec<10?'0':''}${sec}`;
-            }
-
-            window.openPlayer=function(f){
-                playerEl.style.display="flex";
-                setTimeout(()=>playerEl.style.opacity="1",10);
-                pTitle.textContent=f.title;
-                pMeta.textContent=`${f.year} · ${f.genres.join(', ')} · ${f.quality}`;
-                videoEl.src=f.video;
-                videoEl.play().catch(()=>{});
-                updatePlayState();
-            }
-
-            function closePlayer(){
-                videoEl.pause();
-                videoEl.src="";
-                playerEl.style.opacity="0";
-                setTimeout(()=>playerEl.style.display="none",300);
-            }
-
-            closeBtn.onclick=closePlayer;
-
-            function updatePlayState(){
-                if(videoEl.paused){
-                    ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
-                }else{
-                    ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                }
-            }
-
-            ppBtn.onclick=()=>{
-                if(videoEl.paused) videoEl.play(); else videoEl.pause();
-            };
-
-            videoEl.onplay=updatePlayState;
-            videoEl.onpause=updatePlayState;
-
-            videoEl.ontimeupdate=()=>{
-                if(!videoEl.duration) return;
-                const pct=(videoEl.currentTime/videoEl.duration)*1000;
-                seekEl.value=pct;
-                seekEl.style.setProperty('--p',`${(videoEl.currentTime/videoEl.duration)*100}%`);
-                curTimeEl.textContent=formatTime(videoEl.currentTime);
-                durTimeEl.textContent=formatTime(videoEl.duration);
-            };
-
-            seekEl.oninput=()=>{
-                if(!videoEl.duration) return;
-                videoEl.currentTime=(seekEl.value/1000)*videoEl.duration;
-            };
-
-            backBtn.onclick=()=>videoEl.currentTime=Math.max(0,videoEl.currentTime-10);
-            fwdBtn.onclick=()=>videoEl.currentTime=Math.min(videoEl.duration||0,videoEl.currentTime+10);
-
-            volEl.oninput=()=>{
-                videoEl.volume=volEl.value/100;
-                videoEl.muted=false;
-                updateVolumeState();
-            };
-
-            muteBtn.onclick=()=>{
-                videoEl.muted=!videoEl.muted;
-                updateVolumeState();
-            };
-
-            function updateVolumeState(){
-                if(videoEl.muted || videoEl.volume===0){
-                    volIcon.innerHTML='<path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
-                    volEl.style.setProperty('--vp','0%');
-                }else{
-                    volIcon.innerHTML='<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>';
-                    volEl.style.setProperty('--vp',`${videoEl.volume*100}%`);
-                    volEl.value=videoEl.volume*100;
-                }
-            }
-
-            fsBtn.onclick=()=>{
-                if(!document.fullscreenElement){
-                    stageEl.requestFullscreen().catch(()=>{});
-                }else{
-                    document.exitFullscreen();
-                }
-            };
-
-            videoEl.onloadstart=()=>loaderEl.style.display="flex";
-            videoEl.oncanplay=()=>loaderEl.style.display="none";
         }
     </script>
 </body>
 </html>
+```[cite: 3]
