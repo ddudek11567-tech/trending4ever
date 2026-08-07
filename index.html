@@ -256,7 +256,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration[cite: 1]</p>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration</p>
                 </div>
 
                 <div class="flex items-center space-x-4">
@@ -360,19 +360,19 @@
             <section class="collection" id="collection"></section>
         </div>
 
-        <!-- PAGE 3: ARCHIVE.ORG STREAMING LOADER PAGE (CORRECTED) -->
+        <!-- PAGE 3: ARCHIVE.ORG STREAMING LOADER PAGE (CURATED MOVIES/TV) -->
         <div id="pageArchive" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar aether-cinema-root">
             <div class="vignette"></div>
             <div class="grain"></div>
 
             <div class="archive-stream-container">
                 <div class="mb-8 text-center sm:text-left">
-                    <h2 class="text-3xl font-black text-white tracking-tight">Top Movies & TV (Archive.org Streaming)</h2>
-                    <p class="text-sm text-slate-400 mt-1">Automatically loaded from Archive.org &mdash; no downloads, streaming only[cite: 1, 2].</p>
+                    <h2 class="text-3xl font-black text-white tracking-tight">Classic Feature Films & TV Series</h2>
+                    <p class="text-sm text-slate-400 mt-1">Curated directly from Archive.org verified movie and television collections.</p>
                 </div>
                 
                 <div id="archiveResults" class="space-y-6">
-                    <div class="text-center text-slate-400 py-12">Loading streams from Archive.org...</div>
+                    <div class="text-center text-slate-400 py-12">Loading curated feature films...</div>
                 </div>
             </div>
         </div>
@@ -632,10 +632,11 @@
             }
         }
 
-        /* ==================== ARCHIVE.ORG STREAMING LOADER (CORRECTED) ==================== */
+        /* ==================== ARCHIVE.ORG STREAMING LOADER (CURATED MOVIES/TV) ==================== */
         async function loadArchiveTop() {
-            const searchQuery = "mediatype:movies AND year:[1950 TO 2026]";
-            const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(searchQuery)}&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=10&output=json`;
+            // Target specific curated collections for real movies and feature-length content
+            const searchQuery = "collection:(feature_films OR classic_tv OR scifi_horror) AND mediatype:movies";
+            const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(searchQuery)}&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=15&output=json`;
 
             try {
                 const response = await fetch(url);
@@ -649,7 +650,7 @@
                 container.innerHTML = "";
 
                 if (!data.response || !data.response.docs || data.response.docs.length === 0) {
-                    container.innerHTML = `<div class="text-center text-slate-400 py-12">No archive streams available at the moment.</div>`;
+                    container.innerHTML = `<div class="text-center text-slate-400 py-12">No archive movies available at the moment.</div>`;
                     return;
                 }
 
