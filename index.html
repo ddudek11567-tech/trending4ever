@@ -634,16 +634,14 @@
 
         /* ==================== ARCHIVE.ORG STREAMING LOADER (CORRECTED) ==================== */
         async function loadArchiveTop() {
-            // Updated query to fetch fields including title
-            const url = "https://archive.org/advancedsearch.php" +
-                "?q=mediatype:movies AND runtime:>2700 AND year:>=1976" +
-                "&fl[]=identifier&fl[]=title" +
-                "&sort[]=downloads desc" +
-                "&rows=10" +
-                "&output=json";
+            const searchQuery = "mediatype:movies AND year:[1950 TO 2026]";
+            const url = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(searchQuery)}&fl[]=identifier&fl[]=title&sort[]=downloads+desc&rows=10&output=json`;
 
             try {
                 const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
 
                 const container = document.getElementById("archiveResults");
@@ -676,7 +674,7 @@
                 console.error("Failed to load Archive.org items:", err);
                 const container = document.getElementById("archiveResults");
                 if(container) {
-                    container.innerHTML = `<div class="text-center text-red-400 py-12">Failed to load Archive.org streams. Please check your network connection.</div>`;
+                    container.innerHTML = `<div class="text-center text-red-400 py-12">Failed to load Archive.org streams. Please check your network connection or CORS settings.</div>`;
                 }
             }
         }
