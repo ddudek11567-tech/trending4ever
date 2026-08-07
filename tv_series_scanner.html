@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master TV Series Streamer (1979–2026)</title>
+    <title>tv_series_scanner.html</title>
     <!-- Tailwind CSS CDN v4 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,9 +30,9 @@
         <!-- Header -->
         <div class="border-b border-zinc-800 pb-4 flex justify-between items-end">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Master TV Series Streamer (1979–2026)</h1>
+                <h1 class="text-2xl font-bold tracking-tight">tv_series_scanner.html</h1>
                 <p class="text-sm text-zinc-400 mt-1">
-                    Scans Archive.org for full English television series (all episodes &amp; complete runs) with strict verification.
+                    Master TV Series Streamer (1979–2026) — Automated Archive.org Scanner with Strict 20+ Minute Duration Validation
                 </p>
             </div>
             <div id="counter" class="text-xs font-mono bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">
@@ -100,7 +100,6 @@
     </div>
 
     <script>
-        // Top 250 TV Series (1979–2026) spanning Sci-Fi, Drama, Comedy, Animation, and Crime
         const masterSeries = [
             // --- Sci-Fi & Fantasy ---
             "Star Trek: The Next Generation", "Star Trek: Deep Space Nine", "Star Trek: Voyager", "Star Trek: Enterprise", "Star Trek: Discovery", "Star Trek: Strange New Worlds", "Star Wars: The Clone Wars", "Star Wars: Rebels", "The Mandalorian", "Andor",
@@ -126,18 +125,16 @@
             "New Girl", "Happy Endings", "Broad City", "Insecure", "Atlanta", "Master of None", "Fleabag", "The Marvelous Mrs. Maisel", "Barry", "Hacks",
 
             // --- Additional Fan Favorites & Classics (1979–2026) ---
-            "Miami Vice", "Magnum, P.I.", "Knight Rider", "The A-Team", "Airwolf", "MacGyver", "Quantum Leap", "Twin Peaks", "Northern Exposure", "The X-Files",
-            "The X-Files", "Roswell", "Dark Angel", "Heroes", "Alcatraz", "Revolution", "Jericho", "The 100", "The Vampire Diaries", "The Originals",
-            "Legacies", "Teen Wolf", "Once Upon a Time", "Grimm", "Constantine", "Preacher", "Gotham Knights", "Titans", "Doom Patrol", "Swamp Thing",
-            "Penny Dreadful", "Salem", "The Strain", "Ash vs Evil Dead", "Channel Zero", "Castle Rock", "The Haunting of Hill House", "The Haunting of Bly Manor", "Midnight Mass", "The Fall of the House of Usher",
-            "Yellowjackets", "Severance", "The Bear", "Abbott Elementary", "Reservation Dogs", "The Righteous Gemstones", "Eastbound & Down", "Vice Principals", "Flight of the Conchords", "Portlandia",
-            "Downton Abbey", "The Crown", "Victoria", "Poldark", "Outlander", "The Last Kingdom", "Vikings", "Vikings: Valhalla", "The Last Czar", "Marco Polo",
-            "Spartacus", "Rome", "The Borgias", "The Tudors", "Versailles", "Medici", "Knightfall", "Barbarians", "The Witcher: Blood Origin", "Shadow and Bone",
-            "Lockwood & Co.", "The Sandman", "Good Omens", "American Gods", "Legion", "The Gifted", "Runaways", "Cloak & Dagger", "Helstrom", "M.O.D.O.K."
+            "Miami Vice", "Magnum, P.I.", "Knight Rider", "The A-Team", "Airwolf", "MacGyver", "Quantum Leap", "Twin Peaks", "Northern Exposure", "Roswell",
+            "Dark Angel", "Heroes", "Alcatraz", "Revolution", "Jericho", "The 100", "The Vampire Diaries", "The Originals", "Legacies", "Teen Wolf",
+            "Once Upon a Time", "Grimm", "Constantine", "Preacher", "Gotham Knights", "Titans", "Doom Patrol", "Swamp Thing", "Penny Dreadful", "Salem",
+            "The Strain", "Ash vs Evil Dead", "Channel Zero", "Castle Rock", "The Haunting of Hill House", "The Haunting of Bly Manor", "Midnight Mass", "The Fall of the House of Usher", "Yellowjackets", "The Bear",
+            "Abbott Elementary", "Reservation Dogs", "The Righteous Gemstones", "Eastbound & Down", "Vice Principals", "Flight of the Conchords", "Portlandia", "Downton Abbey", "The Crown", "Victoria",
+            "Poldark", "Outlander", "The Last Kingdom", "Vikings", "Vikings: Valhalla", "Marco Polo", "Spartacus", "Rome", "The Borgias", "The Tudors",
+            "Versailles", "Medici", "Knightfall", "Barbarians", "Shadow and Bone", "Lockwood & Co.", "The Sandman", "Good Omens", "American Gods", "Legion"
         ];
 
-        // Load persisted results from localStorage on startup
-        let discoveredStreams = JSON.parse(localStorage.getItem('master_series_streams') || '[]');
+        let discoveredStreams = JSON.parse(localStorage.getItem('tv_series_scanner_data') || '[]');
 
         document.addEventListener("DOMContentLoaded", () => {
             renderStoredResults();
@@ -195,7 +192,6 @@
             const statusText = document.getElementById('statusText');
             const progressText = document.getElementById('progressText');
             const scanBtn = document.getElementById('scanBtn');
-            const counter = document.getElementById('counter');
 
             scanBtn.disabled = true;
             scanBtn.textContent = 'Scanning Series List...';
@@ -214,8 +210,7 @@
                 statusText.textContent = `Scanning Archive.org (${i + 1}/${total}): "${titleQuery}"...`;
 
                 try {
-                    // Strict query ensuring we match the title and mediatype (movies/texts/audio/etree - Archive often catalogs shows under mediatype:movies)
-                    const searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=3&output=json`;
+                    const searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=5&output=json`;
                     const searchRes = await fetch(searchUrl);
                     const searchJson = await searchRes.json();
                     const docs = searchJson.response?.docs || [];
@@ -224,7 +219,6 @@
 
                     let validMatch = null;
                     for (const doc of docs) {
-                        // Extra validation to make sure the item title closely matches the requested series to avoid junk
                         const docTitle = (doc.title || "").toLowerCase();
                         const queryLower = titleQuery.toLowerCase();
                         if (!docTitle.includes(queryLower.split(' ')[0])) continue;
@@ -234,17 +228,14 @@
                         const metaJson = await metaRes.json();
                         const files = metaJson.files || [];
 
-                        // Find standard video formats suitable for streaming
+                        // STRICT FILTER: Require length >= 1200 seconds (20 minutes). This filters out junk clips, previews, and trailers.
                         const videoFile = files.find(f => 
                             (f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM' || f.format === 'Matroska') && 
-                            (!f.length || parseFloat(f.length) >= 300) // Ensure it's a substantive video file, not a tiny sample clip
+                            f.length && parseFloat(f.length) >= 1200
                         );
 
                         if (videoFile) {
-                            validMatch = {
-                                doc: doc,
-                                file: videoFile
-                            };
+                            validMatch = { doc: doc, file: videoFile };
                             break;
                         }
                     }
@@ -264,7 +255,7 @@
                         discoveredStreams.push(newItem);
                         existingTitles.add(titleQuery.toLowerCase());
 
-                        localStorage.setItem('master_series_streams', JSON.stringify(discoveredStreams));
+                        localStorage.setItem('tv_series_scanner_data', JSON.stringify(discoveredStreams));
                         renderStoredResults();
                     }
                 } catch (err) {
@@ -274,14 +265,14 @@
                 await new Promise(r => setTimeout(r, 300));
             }
 
-            statusText.textContent = `Status: Scan completed across all 250 series entries. All verified streams are stored.`;
+            statusText.textContent = `Status: Scan completed across all 250 series entries (filtered for 20+ minute length). All verified streams are stored.`;
             scanBtn.disabled = false;
             scanBtn.textContent = 'Resume / Start Series Scan';
         }
 
         function clearStorage() {
             if (confirm("Are you sure you want to clear all saved TV series streams from local storage?")) {
-                localStorage.removeItem('master_series_streams');
+                localStorage.removeItem('tv_series_scanner_data');
                 discoveredStreams = [];
                 renderStoredResults();
                 document.getElementById('statusText').textContent = "Status: Local storage cleared.";
