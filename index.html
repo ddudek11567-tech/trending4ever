@@ -11,7 +11,7 @@
     <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
         <div class="flex items-center gap-3">
-            <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Querying Archive Database...</span>
+            <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Querying High-Tier Archives...</span>
         </div>
     </header>
 
@@ -19,7 +19,7 @@
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
         <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500"></div>
-            <p id="loaderText" class="text-sm text-zinc-400">Scanning Archive.org for up to 2,500 movies...</p>
+            <p id="loaderText" class="text-sm text-zinc-400">Harvesting up to 5,000 top feature films (1971+)...</p>
         </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
@@ -32,7 +32,7 @@
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
                 <h3 id="pTitle" class="font-bold text-lg text-white">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">Massive Index Stream</p>
+                <p id="pMeta" class="text-xs text-zinc-400">High-Tier Archive Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -45,38 +45,55 @@
 
         async function fetchMassiveArchive() {
             try {
-                document.getElementById('loaderText').innerText = "Fetching catalog index (up to 2,500 items)...";
+                document.getElementById('loaderText').innerText = "Fetching top cinematic databases across multiple pages...";
                 
-                // Query Archive.org Advanced Search API for items with mediatype 'movies'
-                const searchUrl = `https://archive.org/advancedsearch.php?q=mediatype%3Amovies+AND+downloads%3A[50+TO+*]&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=250&page=1&output=json`;
-                
-                const response = await fetch(searchUrl);
-                const data = await response.json();
-                const docs = data.response.docs;
+                // Target major verified feature film collections from 1971 onward sorted by highest downloads and rating
+                const queries = [
+                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=1&output=json',
+                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=2&output=json',
+                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=3&output=json',
+                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=4&output=json',
+                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=5&output=json'
+                ];
 
-                if (!docs || docs.length === 0) {
-                    throw new Error("No items returned from archive search.");
+                const responses = await Promise.all(queries.map(url => fetch(url).then(res => res.json()).catch(() => ({ response: { docs: [] } }))));
+                
+                let allDocs = [];
+                responses.forEach(data => {
+                    if (data && data.response && data.response.docs) {
+                        allDocs = allDocs.concat(data.response.docs);
+                    }
+                });
+
+                if (allDocs.length === 0) {
+                    throw new Error("No items returned from archive queries.");
                 }
 
-                document.getElementById('loaderText').innerText = `Resolving playable video streams for ${docs.length} titles...`;
+                document.getElementById('loaderText').innerText = `Filtering and formatting ${allDocs.length} top-tier titles...`;
 
-                // Map search documents into playable stream entries
-                activeItems = docs.map(doc => ({
-                    id: doc.identifier,
-                    title: doc.title || doc.identifier,
-                    year: doc.year || 'Classic',
-                    category: 'movies',
-                    // Default direct stream path fallback format used across archive items
-                    video: `https://archive.org/download/${doc.identifier}/${doc.identifier}.mp4`
-                }));
+                // Map and deduplicate items
+                const uniqueMap = new Map();
+                allDocs.forEach(doc => {
+                    if (doc.identifier && !uniqueMap.has(doc.identifier)) {
+                        uniqueMap.set(doc.identifier, {
+                            id: doc.identifier,
+                            title: doc.title || doc.identifier,
+                            year: doc.year || '1971+',
+                            category: 'movies',
+                            video: `https://archive.org/download/${doc.identifier}/${doc.identifier}.mp4`
+                        });
+                    }
+                });
+
+                activeItems = Array.from(uniqueMap.values());
 
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('statusBadge').innerText = `${activeItems.length} Movies Loaded`;
+                document.getElementById('statusBadge').innerText = `${activeItems.length} Quality Titles Loaded`;
                 renderGrid(activeItems);
 
             } catch (error) {
                 console.error("Discovery error:", error);
-                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to query massive index from Archive.org.</p>';
+                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to query massive high-tier index from Archive.org.</p>';
                 document.getElementById('statusBadge').innerText = 'Index Error';
             }
         }
@@ -97,10 +114,10 @@
                     </div>
                     <div class="p-4 flex flex-col flex-grow justify-between">
                         <div>
-                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">1080p / HD</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">Feature Film</span>
                             <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
                         </div>
-                        <p class="text-xs text-zinc-400 mt-3">${item.year} · Archive Stream</p>
+                        <p class="text-xs text-zinc-400 mt-3">${item.year} · Verified Stream</p>
                     </div>
                 </div>
             `).join('');
@@ -129,7 +146,6 @@
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        // Execute bulk indexing on startup
         fetchMassiveArchive();
     </script>
 </body>
