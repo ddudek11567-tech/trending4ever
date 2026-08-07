@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive.org Media Stream Puller</title>
+    <!-- Tailwind CSS CDN v4 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: {
+                            950: '#09090b',
+                            900: '#18181b',
+                            800: '#27272a',
+                            700: '#3f3f46'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen p-6 font-sans">
+    <div class="max-w-6xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="border-b border-zinc-800 pb-4 flex justify-between items-end">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Archive.org Movie & TV Streamer</h1>
+                <p class="text-sm text-zinc-400 mt-1">
+                    Crawl Archive.org collections, extract direct video streams, and play them directly from your site.
+                </p>
+            </div>
+            <div id="counter" class="text-xs font-mono bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">
+                Found: 0 streams
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
+            <div class="md:col-span-2 space-y-1">
+                <label class="text-xs font-medium text-zinc-300">Archive.org Query</label>
+                <input 
+                    type="text" 
+                    id="searchQuery" 
+                    value="mediatype:(movies) AND (collection:(feature_films) OR collection:(tvshows))" 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 font-mono"
+                >
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-medium text-zinc-300">Max Results</label>
+                <input 
+                    type="number" 
+                    id="maxRows" 
+                    value="30" 
+                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 font-mono"
+                >
+            </div>
+            <div class="flex items-end">
+                <button 
+                    id="scanBtn" 
+                    onclick="startScan()" 
+                    class="w-full bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-4 py-2 rounded-lg text-sm transition cursor-pointer"
+                >
+                    Start Pulling
+                </button>
+            </div>
+            <div class="md:col-span-4 flex items-center justify-between text-xs text-zinc-400 font-mono pt-1">
+                <span id="statusText">Status: Idle. Ready to scan.</span>
+            </div>
+        </div>
+
+        <!-- Main Layout: Player Preview & Results Table -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Active Video Player Section -->
+            <div class="lg:col-span-1 space-y-3">
+                <h2 class="text-lg font-semibold">Stream Preview</h2>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden aspect-video flex items-center justify-center relative">
+                    <video id="mediaPlayer" controls class="w-full h-full object-contain bg-black" style="display: none;"></video>
+                    <div id="playerPlaceholder" class="text-center p-6 text-zinc-500 text-sm">
+                        Select a stream from the list to test and play it directly from Archive.org.
+                    </div>
+                </div>
+                <div id="nowPlayingMeta" class="text-xs text-zinc-400 font-mono space-y-1 bg-zinc-900/30 p-3 rounded-lg border border-zinc-800/60 hidden">
+                    <p class="text-zinc-200 font-medium truncate" id="npTitle">-</p>
+                    <p id="npUrl" class="truncate text-zinc-500">-</p>
+                </div>
+            </div>
+
+            <!-- Discovered Links Table -->
+            <div class="lg:col-span-2 space-y-3">
+                <h2 class="text-lg font-semibold">Extracted Media Links</h2>
+                <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
+                    <div class="max-h-[500px] overflow-y-auto divide-y divide-zinc-900" id="resultsList">
+                        <div class="p-8 text-center text-sm text-zinc-500">
+                            No links loaded yet. Run a pull to populate active streams.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        async function startScan() {
+            const query = document.getElementById('searchQuery').value;
+            const rows = document.getElementById('maxRows').value;
+            const statusText = document.getElementById('statusText');
+            const scanBtn = document.getElementById('scanBtn');
+            const resultsList = document.getElementById('resultsList');
+            const counter = document.getElementById('counter');
+
+            scanBtn.disabled = true;
+            scanBtn.textContent = 'Scanning...';
+            resultsList.innerHTML = '';
+            let foundCount = 0;
+
+            try {
+                statusText.textContent = 'Status: Querying Archive.org search index...';
+                
+                // 1. Fetch search results from Archive.org Advanced Search API
+                const searchUrl = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=${rows}&output=json`;
+                const searchRes = await fetch(searchUrl);
+                const searchJson = await searchRes.json();
+                const docs = searchJson.response?.docs || [];
+
+                statusText.textContent = `Status: Processing metadata for ${docs.length} items...`;
+
+                for (let i = 0; i < docs.length; i++) {
+                    const doc = docs[i];
+                    statusText.textContent = `Status: Checking item ${i + 1} of ${docs.length} (${doc.identifier})...`;
+
+                    try {
+                        // 2. Fetch file metadata for candidate validation
+                        const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
+                        if (!metaRes.ok) continue;
+                        const metaJson = await metaRes.json();
+                        const files = metaJson.files || [];
+
+                        // 3. Filter for direct video playable formats
+                        const videoFile = files.find(f => f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM');
+
+                        if (videoFile) {
+                            foundCount++;
+                            const streamUrl = `https://archive.org/download/${doc.identifier}/${videoFile.name}`;
+                            const title = doc.title || 'Untitled';
+                            const year = doc.year || 'N/A';
+                            const mediatype = doc.mediatype || 'video';
+
+                            if (foundCount === 1) {
+                                resultsList.innerHTML = ''; // Clear placeholder on first item
+                            }
+
+                            // Append to results table
+                            const itemCard = document.createElement('div');
+                            itemCard.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4';
+                            itemCard.innerHTML = `
+                                <div class="space-y-1 min-w-0 flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">${mediatype}</span>
+                                        <span class="text-xs text-zinc-500">${year}</span>
+                                        <span class="text-[10px] font-mono text-zinc-500">(${videoFile.format})</span>
+                                    </div>
+                                    <h3 class="text-sm font-medium text-zinc-200 truncate">${title}</h3>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button onclick="playStream('${escapeHtml(streamUrl)}', '${escapeHtml(title)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                                        Play
+                                    </button>
+                                    <a href="${streamUrl}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
+                                        Raw Link
+                                    </a>
+                                </div>
+                            `;
+                            resultsList.appendChild(itemCard);
+                            counter.textContent = `Found: ${foundCount} streams`;
+                        }
+                    } catch (err) {
+                        // Skip individual item errors silently to keep scanning smooth
+                        console.warn(`Skipped item ${doc.identifier}:`, err);
+                    }
+                }
+
+                statusText.textContent = `Status: Complete. Successfully extracted ${foundCount} playable media streams.`;
+            } catch (err) {
+                statusText.textContent = `Status Error: ${err.message}`;
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.textContent = 'Start Pulling';
+            }
+        }
+
+        function playStream(url, title) {
+            const player = document.getElementById('mediaPlayer');
+            const placeholder = document.getElementById('playerPlaceholder');
+            const metaBox = document.getElementById('nowPlayingMeta');
+            const npTitle = document.getElementById('npTitle');
+            const npUrl = document.getElementById('npUrl');
+
+            player.style.display = 'block';
+            placeholder.style.display = 'none';
+            metaBox.classList.remove('hidden');
+
+            npTitle.textContent = title;
+            npUrl.textContent = url;
+
+            player.src = url;
+            player.load();
+            player.play().catch(e => console.log("Autoplay blocked or format requires interaction:", e));
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
+    </script>
+</body>
+</html>
