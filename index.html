@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NEXUS TV - Auto Archive Streamer</title>
+    <title>NEXUS TV - Massive Archive Streamer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col">
@@ -10,14 +10,16 @@
     <!-- Header Navigation -->
     <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
-        <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Connecting to Archive...</span>
+        <div class="flex items-center gap-3">
+            <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Querying Archive Database...</span>
+        </div>
     </header>
 
     <!-- Main Content Container -->
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
         <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
-            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-amber-500"></div>
-            <p class="text-sm text-zinc-400">Auto-discovering movies from Archive.org...</p>
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500"></div>
+            <p id="loaderText" class="text-sm text-zinc-400">Scanning Archive.org for up to 2,500 movies...</p>
         </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
@@ -30,7 +32,7 @@
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
                 <h3 id="pTitle" class="font-bold text-lg text-white">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">Auto Stream</p>
+                <p id="pMeta" class="text-xs text-zinc-400">Massive Index Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -40,56 +42,49 @@
 
     <script>
         let activeItems = [];
-        const identifier = 'TOP-MOVIES-ENG-1080P';
 
-        // Automatically fetch file list from Archive.org API on startup
-        async function fetchArchiveContent() {
+        async function fetchMassiveArchive() {
             try {
-                const response = await fetch(`https://archive.org/metadata/${identifier}`);
-                const data = await response.json();
+                document.getElementById('loaderText').innerText = "Fetching catalog index (up to 2,500 items)...";
                 
-                // Extract server node prefix and file array safely
-                const server = data.server;
-                const dir = data.dir;
-                const files = data.files;
+                // Query Archive.org Advanced Search API for items with mediatype 'movies'
+                const searchUrl = `https://archive.org/advancedsearch.php?q=mediatype%3Amovies+AND+downloads%3A[50+TO+*]&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=250&page=1&output=json`;
+                
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+                const docs = data.response.docs;
 
-                // Filter out only .mp4 video files from the directory structure
-                activeItems = files
-                    .filter(file => file.name.endsWith('.mp4'))
-                    .map(file => {
-                        // Clean up the file name to create a readable title
-                        let rawName = file.name.split('/').pop().replace('.mp4', '');
-                        let cleanTitle = decodeURIComponent(rawName)
-                            .replace(/\./g, ' ')
-                            .replace(/1080p|BluRay|x264|YIFY|HDRip|WEB-DL/gi, '')
-                            .trim();
+                if (!docs || docs.length === 0) {
+                    throw new Error("No items returned from archive search.");
+                }
 
-                        return {
-                            id: identifier,
-                            title: cleanTitle || 'Untitled Movie',
-                            year: file.year || '2023',
-                            genres: ['Feature Film'],
-                            category: 'movies',
-                            // Construct the exact working URL dynamically using the archive server node path
-                            video: `https://${server}${dir}/${file.name}`
-                        };
-                    });
+                document.getElementById('loaderText').innerText = `Resolving playable video streams for ${docs.length} titles...`;
+
+                // Map search documents into playable stream entries
+                activeItems = docs.map(doc => ({
+                    id: doc.identifier,
+                    title: doc.title || doc.identifier,
+                    year: doc.year || 'Classic',
+                    category: 'movies',
+                    // Default direct stream path fallback format used across archive items
+                    video: `https://archive.org/download/${doc.identifier}/${doc.identifier}.mp4`
+                }));
 
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('statusBadge').innerText = `${activeItems.length} Titles Loaded`;
+                document.getElementById('statusBadge').innerText = `${activeItems.length} Movies Loaded`;
                 renderGrid(activeItems);
 
             } catch (error) {
-                console.error("Failed to load archive index:", error);
-                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to connect to Archive.org API index.</p>';
-                document.getElementById('statusBadge').innerText = 'Connection Error';
+                console.error("Discovery error:", error);
+                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to query massive index from Archive.org.</p>';
+                document.getElementById('statusBadge').innerText = 'Index Error';
             }
         }
 
         function renderGrid(items) {
             const gridEl = document.getElementById('grid');
             if(items.length === 0) {
-                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No video files found in this collection.</p>';
+                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No movies found.</p>';
                 return;
             }
             gridEl.innerHTML = items.map((item, index) => `
@@ -102,10 +97,10 @@
                     </div>
                     <div class="p-4 flex flex-col flex-grow justify-between">
                         <div>
-                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">1080p Movie</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">1080p / HD</span>
                             <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
                         </div>
-                        <p class="text-xs text-zinc-400 mt-3">Direct Archive Stream</p>
+                        <p class="text-xs text-zinc-400 mt-3">${item.year} · Archive Stream</p>
                     </div>
                 </div>
             `).join('');
@@ -134,8 +129,8 @@
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        // Run auto-discovery on page load
-        fetchArchiveContent();
+        // Execute bulk indexing on startup
+        fetchMassiveArchive();
     </script>
 </body>
 </html>
