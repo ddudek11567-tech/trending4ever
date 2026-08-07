@@ -2,16 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NEXUS TV - Massive Archive Streamer</title>
+    <title>NEXUS TV - Curated Archive Streamer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Header Navigation -->
-    <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
-        <div class="flex items-center gap-3">
-            <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Querying High-Tier Archives...</span>
+    <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
+            <div class="flex items-center gap-3">
+                <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Querying Curated Database...</span>
+            </div>
+        </div>
+        <!-- Genre Filter Bar -->
+        <div id="genreFilters" class="flex flex-wrap gap-2 text-xs">
+            <button onclick="filterGenre('all')" class="genre-btn px-3 py-1.5 rounded bg-amber-500 text-black font-semibold transition">All Genres</button>
+            <button onclick="filterGenre('Action')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Action</button>
+            <button onclick="filterGenre('Sci-Fi')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Sci-Fi</button>
+            <button onclick="filterGenre('Horror')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Horror</button>
+            <button onclick="filterGenre('Drama')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Drama</button>
+            <button onclick="filterGenre('Thriller')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Thriller</button>
+            <button onclick="filterGenre('Comedy')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Comedy</button>
+            <button onclick="filterGenre('Romance')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Romance</button>
+            <button onclick="filterGenre('Animation')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Animation</button>
+            <button onclick="filterGenre('Documentary')" class="genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition">Documentary</button>
         </div>
     </header>
 
@@ -19,7 +34,7 @@
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
         <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500"></div>
-            <p id="loaderText" class="text-sm text-zinc-400">Harvesting up to 5,000 top feature films (1971+)...</p>
+            <p id="loaderText" class="text-sm text-zinc-400">Searching Archive.org for curated 1976–1989 catalog...</p>
         </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
@@ -32,7 +47,7 @@
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
                 <h3 id="pTitle" class="font-bold text-lg text-white">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">High-Tier Archive Stream</p>
+                <p id="pMeta" class="text-xs text-zinc-400">Curated Archive Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -41,86 +56,265 @@
     </div>
 
     <script>
+        // Curated master list based on your 1976-1989 batch categories[cite: 1]
+        const curatedList = [
+            // ACTION
+            { title: "The Terminator", year: "1984", genre: "Action" },
+            { title: "Aliens", year: "1986", genre: "Action" },
+            { title: "Die Hard", year: "1988", genre: "Action" },
+            { title: "First Blood", year: "1982", genre: "Action" },
+            { title: "Mad Max", year: "1979", genre: "Action" },
+            { title: "Mad Max 2 The Road Warrior", year: "1981", genre: "Action" },
+            { title: "Escape from New York", year: "1981", genre: "Action" },
+            { title: "Lethal Weapon", year: "1987", genre: "Action" },
+            { title: "Beverly Hills Cop", year: "1984", genre: "Action" },
+            { title: "Robocop", year: "1987", genre: "Action" },
+            { title: "Conan the Barbarian", year: "1982", genre: "Action" },
+            { title: "Predator", year: "1987", genre: "Action" },
+            { title: "Commando", year: "1985", genre: "Action" },
+            { title: "Red Dawn", year: "1984", genre: "Action" },
+            { title: "Big Trouble in Little China", year: "1986", genre: "Action" },
+            { title: "The Running Man", year: "1987", genre: "Action" },
+            { title: "Rocky II", year: "1979", genre: "Action" },
+            { title: "Rocky III", year: "1982", genre: "Action" },
+            { title: "Rocky IV", year: "1985", genre: "Action" },
+            { title: "Enter the Dragon", year: "1973", genre: "Action" },
+            
+            // SCI-FI
+            { title: "Star Wars A New Hope", year: "1977", genre: "Sci-Fi" },
+            { title: "Star Wars The Empire Strikes Back", year: "1980", genre: "Sci-Fi" },
+            { title: "Star Wars Return of the Jedi", year: "1983", genre: "Sci-Fi" },
+            { title: "Blade Runner", year: "1982", genre: "Sci-Fi" },
+            { title: "ET the Extra Terrestrial", year: "1982", genre: "Sci-Fi" },
+            { title: "Close Encounters of the Third Kind", year: "1977", genre: "Sci-Fi" },
+            { title: "The Thing", year: "1982", genre: "Sci-Fi" },
+            { title: "Tron", year: "1982", genre: "Sci-Fi" },
+            { title: "The Fly", year: "1986", genre: "Sci-Fi" },
+            { title: "Back to the Future", year: "1985", genre: "Sci-Fi" },
+            { title: "Back to the Future Part II", year: "1989", genre: "Sci-Fi" },
+            { title: "Back to the Future Part III", year: "1990", genre: "Sci-Fi" },
+            { title: "Dune", year: "1984", genre: "Sci-Fi" },
+            { title: "The Last Starfighter", year: "1984", genre: "Sci-Fi" },
+            { title: "The Abyss", year: "1989", genre: "Sci-Fi" },
+            { title: "Short Circuit", year: "1986", genre: "Sci-Fi" },
+            { title: "WarGames", year: "1983", genre: "Sci-Fi" },
+            { title: "Invasion of the Body Snatchers", year: "1978", genre: "Sci-Fi" },
+            { title: "Superman", year: "1978", genre: "Sci-Fi" },
+            { title: "Superman II", year: "1980", genre: "Sci-Fi" },
+
+            // HORROR
+            { title: "Halloween", year: "1978", genre: "Horror" },
+            { title: "Friday the 13th", year: "1980", genre: "Horror" },
+            { title: "A Nightmare on Elm Street", year: "1984", genre: "Horror" },
+            { title: "The Shining", year: "1980", genre: "Horror" },
+            { title: "The Exorcist II", year: "1977", genre: "Horror" },
+            { title: "The Howling", year: "1981", genre: "Horror" },
+            { title: "Poltergeist", year: "1982", genre: "Horror" },
+            { title: "The Evil Dead", year: "1981", genre: "Horror" },
+            { title: "Evil Dead II", year: "1987", genre: "Horror" },
+            { title: "The Texas Chainsaw Massacre", year: "1974", genre: "Horror" },
+            { title: "The Fog", year: "1980", genre: "Horror" },
+            { title: "Creepshow", year: "1982", genre: "Horror" },
+            { title: "The Changeling", year: "1980", genre: "Horror" },
+            { title: "Hellraiser", year: "1987", genre: "Horror" },
+            { title: "The Hitcher", year: "1986", genre: "Horror" },
+            { title: "Childs Play", year: "1988", genre: "Horror" },
+            { title: "The Blob", year: "1988", genre: "Horror" },
+            { title: "Videodrome", year: "1983", genre: "Horror" },
+            { title: "Scanners", year: "1981", genre: "Horror" },
+            { title: "The Serpent and the Rainbow", year: "1988", genre: "Horror" },
+
+            // DRAMA
+            { title: "Taxi Driver", year: "1976", genre: "Drama" },
+            { title: "Apocalypse Now", year: "1979", genre: "Drama" },
+            { title: "Raging Bull", year: "1980", genre: "Drama" },
+            { title: "The Deer Hunter", year: "1978", genre: "Drama" },
+            { title: "Platoon", year: "1986", genre: "Drama" },
+            { title: "Full Metal Jacket", year: "1987", genre: "Drama" },
+            { title: "The Godfather Part II", year: "1974", genre: "Drama" },
+            { title: "The Godfather Part III", year: "1990", genre: "Drama" },
+            { title: "Scarface", year: "1983", genre: "Drama" },
+            { title: "The Color Purple", year: "1985", genre: "Drama" },
+            { title: "Ordinary People", year: "1980", genre: "Drama" },
+            { title: "Amadeus", year: "1984", genre: "Drama" },
+            { title: "The Elephant Man", year: "1980", genre: "Drama" },
+            { title: "Gandhi", year: "1982", genre: "Drama" },
+            { title: "The Killing Fields", year: "1984", genre: "Drama" },
+            { title: "The Untouchables", year: "1987", genre: "Drama" },
+            { title: "Rain Man", year: "1988", genre: "Drama" },
+            { title: "The Right Stuff", year: "1983", genre: "Drama" },
+            { title: "The Mission", year: "1986", genre: "Drama" },
+            { title: "Sophies Choice", year: "1982", genre: "Drama" },
+
+            // THRILLER
+            { title: "Jaws", year: "1975", genre: "Thriller" },
+            { title: "Jaws 2", year: "1978", genre: "Thriller" },
+            { title: "Blue Velvet", year: "1986", genre: "Thriller" },
+            { title: "The Silence of the Lambs", year: "1991", genre: "Thriller" },
+            { title: "Fatal Attraction", year: "1987", genre: "Thriller" },
+            { title: "The Vanishing", year: "1988", genre: "Thriller" },
+            { title: "Blow Out", year: "1981", genre: "Thriller" },
+            { title: "The Conversation", year: "1974", genre: "Thriller" },
+            { title: "Witness", year: "1985", genre: "Thriller" },
+            { title: "The French Connection II", year: "1975", genre: "Thriller" },
+            { title: "Manhunter", year: "1986", genre: "Thriller" },
+            { title: "Angel Heart", year: "1987", genre: "Thriller" },
+            { title: "To Live and Die in LA", year: "1985", genre: "Thriller" },
+            { title: "The Dead Zone", year: "1983", genre: "Thriller" },
+            { title: "The Falcon and the Snowman", year: "1985", genre: "Thriller" },
+            { title: "The Bedroom Window", year: "1987", genre: "Thriller" },
+
+            // COMEDY
+            { title: "Ghostbusters", year: "1984", genre: "Comedy" },
+            { title: "Ghostbusters II", year: "1989", genre: "Comedy" },
+            { title: "Caddyshack", year: "1980", genre: "Comedy" },
+            { title: "National Lampoons Vacation", year: "1983", genre: "Comedy" },
+            { title: "Ferris Buellers Day Off", year: "1986", genre: "Comedy" },
+            { title: "Trading Places", year: "1983", genre: "Comedy" },
+            { title: "Coming to America", year: "1988", genre: "Comedy" },
+            { title: "Airplane", year: "1980", genre: "Comedy" },
+            { title: "The Blues Brothers", year: "1980", genre: "Comedy" },
+            { title: "Stripes", year: "1981", genre: "Comedy" },
+            { title: "Police Academy", year: "1984", genre: "Comedy" },
+            { title: "Police Academy 2", year: "1985", genre: "Comedy" },
+            { title: "Police Academy 3", year: "1986", genre: "Comedy" },
+            { title: "Police Academy 4", year: "1987", genre: "Comedy" },
+            { title: "Police Academy 5", year: "1988", genre: "Comedy" },
+            { title: "Police Academy 6", year: "1989", genre: "Comedy" },
+            { title: "The Naked Gun", year: "1988", genre: "Comedy" },
+            { title: "Spaceballs", year: "1987", genre: "Comedy" },
+            { title: "Three Amigos", year: "1986", genre: "Comedy" },
+
+            // ROMANCE
+            { title: "Dirty Dancing", year: "1987", genre: "Romance" },
+            { title: "The Blue Lagoon", year: "1980", genre: "Romance" },
+            { title: "An Officer and a Gentleman", year: "1982", genre: "Romance" },
+            { title: "The Last Emperor", year: "1987", genre: "Romance" },
+            { title: "The French Lieutenants Woman", year: "1981", genre: "Romance" },
+            { title: "Somewhere in Time", year: "1980", genre: "Romance" },
+            { title: "The Thorn Birds", year: "1983", genre: "Romance" },
+            { title: "Out of Africa", year: "1985", genre: "Romance" },
+            { title: "The Year of Living Dangerously", year: "1982", genre: "Romance" },
+            { title: "The Lover", year: "1992", genre: "Romance" },
+
+            // ANIMATION
+            { title: "The Secret of NIMH", year: "1982", genre: "Animation" },
+            { title: "The Black Cauldron", year: "1985", genre: "Animation" },
+            { title: "Heavy Metal", year: "1981", genre: "Animation" },
+            { title: "Watership Down", year: "1978", genre: "Animation" },
+            { title: "The Last Unicorn", year: "1982", genre: "Animation" },
+            { title: "The Land Before Time", year: "1988", genre: "Animation" },
+            { title: "The Fox and the Hound", year: "1981", genre: "Animation" },
+            { title: "The Great Mouse Detective", year: "1986", genre: "Animation" },
+            { title: "The Rescuers", year: "1977", genre: "Animation" },
+            { title: "The Rescuers Down Under", year: "1990", genre: "Animation" },
+
+            // DOCUMENTARY
+            { title: "Koyaanisqatsi", year: "1982", genre: "Documentary" },
+            { title: "Powaqqatsi", year: "1988", genre: "Documentary" },
+            { title: "The Thin Blue Line", year: "1988", genre: "Documentary" },
+            { title: "Shoah", year: "1985", genre: "Documentary" },
+            { title: "Burden of Dreams", year: "1982", genre: "Documentary" },
+            { title: "The Decline of Western Civilization", year: "1981", genre: "Documentary" },
+            { title: "The Decline of Western Civilization II", year: "1988", genre: "Documentary" },
+            { title: "Streetwise", year: "1984", genre: "Documentary" },
+            { title: "Harlan County USA", year: "1976", genre: "Documentary" },
+            { title: "The Times of Harvey Milk", year: "1984", genre: "Documentary" }
+        ];
+
         let activeItems = [];
+        let currentGenre = 'all';
 
-        async function fetchMassiveArchive() {
+        async function fetchCuratedArchive() {
             try {
-                document.getElementById('loaderText').innerText = "Fetching top cinematic databases across multiple pages...";
+                document.getElementById('loaderText').innerText = `Targeting ${curatedList.length} curated movies on Archive.org...`;
                 
-                // Target major verified feature film collections from 1971 onward sorted by highest downloads and rating
-                const queries = [
-                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=1&output=json',
-                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=2&output=json',
-                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=3&output=json',
-                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=4&output=json',
-                    'https://archive.org/advancedsearch.php?q=collection:(feature_films OR mpeg_movies OR cinema) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&sort[]=downloads+desc&rows=1000&page=5&output=json'
-                ];
-
-                const responses = await Promise.all(queries.map(url => fetch(url).then(res => res.json()).catch(() => ({ response: { docs: [] } }))));
-                
-                let allDocs = [];
-                responses.forEach(data => {
-                    if (data && data.response && data.response.docs) {
-                        allDocs = allDocs.concat(data.response.docs);
+                // Batch-query archive search API concurrently for each movie title
+                const promises = curatedList.map(async (movie) => {
+                    const cleanQuery = encodeURIComponent(`${movie.title} ${movie.year}`);
+                    const url = `https://archive.org/advancedsearch.php?q=title:(${cleanQuery})+AND+mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&rows=1&output=json`;
+                    
+                    try {
+                        const res = await fetch(url);
+                        const json = await res.json();
+                        const docs = json.response.docs;
+                        if (docs && docs.length > 0) {
+                            const match = docs[0];
+                            return {
+                                id: match.identifier,
+                                title: movie.title,
+                                year: movie.year,
+                                genre: movie.genre,
+                                category: 'movies',
+                                video: `https://archive.org/download/${match.identifier}/${match.identifier}.mp4`
+                            };
+                        }
+                    } catch (e) {
+                        // Skip individual fetch errors
                     }
+                    return null;
                 });
 
-                if (allDocs.length === 0) {
-                    throw new Error("No items returned from archive queries.");
-                }
-
-                document.getElementById('loaderText').innerText = `Filtering and formatting ${allDocs.length} top-tier titles...`;
-
-                // Map and deduplicate items
-                const uniqueMap = new Map();
-                allDocs.forEach(doc => {
-                    if (doc.identifier && !uniqueMap.has(doc.identifier)) {
-                        uniqueMap.set(doc.identifier, {
-                            id: doc.identifier,
-                            title: doc.title || doc.identifier,
-                            year: doc.year || '1971+',
-                            category: 'movies',
-                            video: `https://archive.org/download/${doc.identifier}/${doc.identifier}.mp4`
-                        });
-                    }
-                });
-
-                activeItems = Array.from(uniqueMap.values());
+                const results = await Promise.all(promises);
+                activeItems = results.filter(item => item !== null);
 
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('statusBadge').innerText = `${activeItems.length} Quality Titles Loaded`;
+                document.getElementById('statusBadge').innerText = `${activeItems.length} / ${curatedList.length} Verified Streams Loaded`;
                 renderGrid(activeItems);
 
             } catch (error) {
                 console.error("Discovery error:", error);
-                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to query massive high-tier index from Archive.org.</p>';
+                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to query curated list from Archive.org.</p>';
                 document.getElementById('statusBadge').innerText = 'Index Error';
+            }
+        }
+
+        function filterGenre(genre) {
+            currentGenre = genre;
+            
+            // Update button styles
+            document.querySelectorAll('.genre-btn').forEach(btn => {
+                if(btn.innerText.includes(genre) || (genre === 'all' && btn.innerText === 'All Genres')) {
+                    btn.className = "genre-btn px-3 py-1.5 rounded bg-amber-500 text-black font-semibold transition";
+                } else {
+                    btn.className = "genre-btn px-3 py-1.5 rounded bg-zinc-900 text-zinc-300 hover:bg-zinc-800 transition";
+                }
+            });
+
+            if (genre === 'all') {
+                renderGrid(activeItems);
+            } else {
+                renderGrid(activeItems.filter(item => item.genre === genre));
             }
         }
 
         function renderGrid(items) {
             const gridEl = document.getElementById('grid');
             if(items.length === 0) {
-                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No movies found.</p>';
+                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No matching movies found in this view.</p>';
                 return;
             }
-            gridEl.innerHTML = items.map((item, index) => `
-                <div onclick="openPlayer(${index})" class="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden cursor-pointer hover:border-amber-500 transition group flex flex-col justify-between">
-                    <div class="aspect-video bg-zinc-950 flex items-center justify-center relative overflow-hidden">
-                        <img src="https://archive.org/services/img/${item.id}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/300x169?text=NEXUS+TV'">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                            <span class="px-4 py-2 bg-amber-500 text-black font-bold rounded text-xs shadow-lg">Play Stream</span>
+            gridEl.innerHTML = items.map((item) => {
+                // Find actual array index in activeItems
+                const globalIndex = activeItems.findIndex(i => i.id === item.id);
+                return `
+                    <div onclick="openPlayer(${globalIndex})" class="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden cursor-pointer hover:border-amber-500 transition group flex flex-col justify-between">
+                        <div class="aspect-video bg-zinc-950 flex items-center justify-center relative overflow-hidden">
+                            <img src="https://archive.org/services/img/${item.id}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/300x169?text=NEXUS+TV'">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="px-4 py-2 bg-amber-500 text-black font-bold rounded text-xs shadow-lg">Play Stream</span>
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow justify-between">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-amber-400 rounded">${item.genre}</span>
+                                <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-3">${item.year} · Archive Stream</p>
                         </div>
                     </div>
-                    <div class="p-4 flex flex-col flex-grow justify-between">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">Feature Film</span>
-                            <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
-                        </div>
-                        <p class="text-xs text-zinc-400 mt-3">${item.year} · Verified Stream</p>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         const playerEl = document.getElementById('player');
@@ -131,7 +325,8 @@
             if(!f) return;
             playerEl.style.display = 'flex';
             setTimeout(() => playerEl.classList.add('opacity-100'), 10);
-            document.getElementById('pTitle').innerText = f.title;
+            document.getElementById('pTitle').innerText = `${f.title} (${f.year})`;
+            document.getElementById('pMeta').innerText = `${f.genre} · Curated Stream`;
             videoEl.src = f.video;
             videoEl.load();
             videoEl.play().catch(err => console.log("Playback prevented:", err));
@@ -146,7 +341,8 @@
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        fetchMassiveArchive();
+        // Run targeted indexing on startup
+        fetchCuratedArchive();
     </script>
 </body>
 </html>
