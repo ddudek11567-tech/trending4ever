@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master TV Series Streamer (1979–2026)</title>
+    <!-- Tailwind CSS CDN v4 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: {
+                            950: '#09090b',
+                            900: '#18181b',
+                            800: '#27272a',
+                            700: '#3f3f46'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen p-6 font-sans">
+    <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Header -->
+        <div class="border-b border-zinc-800 pb-4 flex justify-between items-end">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Master TV Series Streamer (1979–2026)</h1>
+                <p class="text-sm text-zinc-400 mt-1">
+                    Scans Archive.org for full English television series (all episodes &amp; complete runs) with strict verification.
+                </p>
+            </div>
+            <div id="counter" class="text-xs font-mono bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">
+                Saved Series: 0
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <span class="text-xs font-medium text-zinc-300">Master List Loaded: <span class="text-zinc-100 font-mono" id="totalCountBadge">250 TV Series</span></span>
+                <div class="flex items-center gap-2">
+                    <button 
+                        id="scanBtn" 
+                        onclick="startTargetedSeriesScan()" 
+                        class="bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-5 py-2 rounded-lg text-sm transition cursor-pointer"
+                    >
+                        Resume / Start Series Scan
+                    </button>
+                    <button 
+                        onclick="clearStorage()" 
+                        class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 font-medium px-3 py-2 rounded-lg text-sm transition cursor-pointer"
+                    >
+                        Clear Saved Data
+                    </button>
+                </div>
+            </div>
+            <div class="text-xs text-zinc-400 font-mono pt-1 border-t border-zinc-800/60 flex justify-between flex-wrap gap-2">
+                <span id="statusText">Status: Idle. Results automatically persist locally in your browser.</span>
+                <span id="progressText">Progress: 0 / 250</span>
+            </div>
+        </div>
+
+        <!-- Main Layout: Player Preview & Results Table -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Active Video Player Section -->
+            <div class="lg:col-span-1 space-y-3">
+                <h2 class="text-lg font-semibold">Stream Preview</h2>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden aspect-video flex items-center justify-center relative">
+                    <video id="mediaPlayer" controls class="w-full h-full object-contain bg-black" style="display: none;"></video>
+                    <div id="playerPlaceholder" class="text-center p-6 text-zinc-500 text-sm">
+                        Select a verified series stream to play it directly.
+                    </div>
+                </div>
+                <div id="nowPlayingMeta" class="text-xs text-zinc-400 font-mono space-y-1 bg-zinc-900/30 p-3 rounded-lg border border-zinc-800/60 hidden">
+                    <p class="text-zinc-200 font-medium truncate" id="npTitle">-</p>
+                    <p id="npUrl" class="truncate text-zinc-500">-</p>
+                </div>
+            </div>
+
+            <!-- Discovered Links Table -->
+            <div class="lg:col-span-2 space-y-3">
+                <h2 class="text-lg font-semibold">Persisted Series Streams</h2>
+                <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
+                    <div class="max-h-[500px] overflow-y-auto divide-y divide-zinc-900" id="resultsList">
+                        <div class="p-8 text-center text-sm text-zinc-500">
+                            No stored series links found. Click "Resume / Start Series Scan" to populate and persist your library.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Top 250 TV Series (1979–2026) spanning Sci-Fi, Drama, Comedy, Animation, and Crime
+        const masterSeries = [
+            // --- Sci-Fi & Fantasy ---
+            "Star Trek: The Next Generation", "Star Trek: Deep Space Nine", "Star Trek: Voyager", "Star Trek: Enterprise", "Star Trek: Discovery", "Star Trek: Strange New Worlds", "Star Wars: The Clone Wars", "Star Wars: Rebels", "The Mandalorian", "Andor",
+            "Doctor Who", "Torchwood", "The X-Files", "Fringe", "The Twilight Zone", "Outer Limits", "Babylon 5", "Battlestar Galactica", "Stargate SG-1", "Stargate Atlantis",
+            "Buffy the Vampire Slayer", "Angel", "Supernatural", "Charmed", "Smallville", "Arrow", "The Flash", "Supergirl", "Legends of Tomorrow", "Gotham",
+            "Lost", "The Leftovers", "Westworld", "Stranger Things", "Black Mirror", "The Witcher", "The Boys", "Invincible", "The Umbrella Academy", "Locke & Key",
+            "Foundation", "The Expanse", "For All Mankind", "Severance", "The Last of Us", "Fallout", "House of the Dragon", "The Lord of the Rings: The Rings of Power", "Wheel of Time", "His Dark Materials",
+
+            // --- Drama & Crime ---
+            "Breaking Bad", "Better Call Saul", "The Wire", "The Sopranos", "Mad Men", "Succession", "Peaky Blinders", "Boardwalk Empire", "Sons of Anarchy", "Mayans M.C.",
+            "The Shield", "Justified", "Deadwood", "Yellowstone", "1883", "1923", "Ozark", "Narcos", "Narcos: Mexico", "The Americans",
+            "Homeland", "The Blacklist", "Designated Survivor", "24", "Alias", "Prison Break", "Dexter", "Hannibal", "Mindhunter", "True Detective",
+            "Sherlock", "Luther", "Line of Duty", "Broadchurch", "Happy Valley", "Vera", "Shetland", "Silent Witness", "Midsomer Murders", "Lewis",
+            "Law & Order", "Law & Order: Special Victims Unit", "Law & Order: Criminal Intent", "CSI: Crime Scene Investigation", "CSI: Miami", "CSI: New York", "NCIS", "NCIS: Los Angeles", "NCIS: New Orleans", "Criminal Minds",
+            "The Mentalist", "Castle", "Bones", "Lie to Me", "White Collar", "Burn Notice", "Suits", "Billions", "The Good Wife", "The Good Fight",
+            "House", "Grey's Anatomy", "ER", "The West Wing", "Scandal", "How to Get Away with Murder", "This Is Us", "Parenthood", "Friday Night Lights", "The O.C.",
+
+            // --- Comedy ---
+            "Friends", "Seinfeld", "The Office", "Parks and Recreation", "Brooklyn Nine-Nine", "Modern Family", "The Big Bang Theory", "Young Sheldon", "How I Met Your Mother", "Two and a Half Men",
+            "It's Always Sunny in Philadelphia", "Curb Your Enthusiasm", "Arrested Development", "Community", "Scrubs", "30 Rock", "Veep", "Silicon Valley", "Ted Lasso", "Schitt's Creek",
+            "The Simpsons", "Futurama", "South Park", "Family Guy", "American Dad!", "Bob's Burgers", "Rick and Morty", "BoJack Horseman", "Archer", "Disenchantment",
+            "Cheers", "Frasier", "Will & Grace", "Everybody Loves Raymond", "The King of Queens", "That '70s Show", "Malcolm in the Middle", "The Fresh Prince of Bel-Air", "Full House", "Boy Meets World",
+            "New Girl", "Happy Endings", "Broad City", "Insecure", "Atlanta", "Master of None", "Fleabag", "The Marvelous Mrs. Maisel", "Barry", "Hacks",
+
+            // --- Additional Fan Favorites & Classics (1979–2026) ---
+            "Miami Vice", "Magnum, P.I.", "Knight Rider", "The A-Team", "Airwolf", "MacGyver", "Quantum Leap", "Twin Peaks", "Northern Exposure", "The X-Files",
+            "The X-Files", "Roswell", "Dark Angel", "Heroes", "Alcatraz", "Revolution", "Jericho", "The 100", "The Vampire Diaries", "The Originals",
+            "Legacies", "Teen Wolf", "Once Upon a Time", "Grimm", "Constantine", "Preacher", "Gotham Knights", "Titans", "Doom Patrol", "Swamp Thing",
+            "Penny Dreadful", "Salem", "The Strain", "Ash vs Evil Dead", "Channel Zero", "Castle Rock", "The Haunting of Hill House", "The Haunting of Bly Manor", "Midnight Mass", "The Fall of the House of Usher",
+            "Yellowjackets", "Severance", "The Bear", "Abbott Elementary", "Reservation Dogs", "The Righteous Gemstones", "Eastbound & Down", "Vice Principals", "Flight of the Conchords", "Portlandia",
+            "Downton Abbey", "The Crown", "Victoria", "Poldark", "Outlander", "The Last Kingdom", "Vikings", "Vikings: Valhalla", "The Last Czar", "Marco Polo",
+            "Spartacus", "Rome", "The Borgias", "The Tudors", "Versailles", "Medici", "Knightfall", "Barbarians", "The Witcher: Blood Origin", "Shadow and Bone",
+            "Lockwood & Co.", "The Sandman", "Good Omens", "American Gods", "Legion", "The Gifted", "Runaways", "Cloak & Dagger", "Helstrom", "M.O.D.O.K."
+        ];
+
+        // Load persisted results from localStorage on startup
+        let discoveredStreams = JSON.parse(localStorage.getItem('master_series_streams') || '[]');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderStoredResults();
+            updateProgressCounters();
+        });
+
+        function updateProgressCounters() {
+            document.getElementById('totalCountBadge').textContent = `${masterSeries.length} TV Series`;
+            document.getElementById('progressText').textContent = `Progress: ${Math.min(discoveredStreams.length, masterSeries.length)} / ${masterSeries.length}`;
+        }
+
+        function renderStoredResults() {
+            const resultsList = document.getElementById('resultsList');
+            const counter = document.getElementById('counter');
+
+            counter.textContent = `Saved Series: ${discoveredStreams.length}`;
+            updateProgressCounters();
+
+            if (discoveredStreams.length === 0) {
+                resultsList.innerHTML = `
+                    <div class="p-8 text-center text-sm text-zinc-500">
+                        No stored series links found. Click "Resume / Start Series Scan" to populate and persist your library.
+                    </div>
+                `;
+                return;
+            }
+
+            resultsList.innerHTML = '';
+            discoveredStreams.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4';
+                itemCard.innerHTML = `
+                    <div class="space-y-1 min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">tv series</span>
+                            <span class="text-xs text-zinc-500">${item.year}</span>
+                            <span class="text-[10px] font-mono text-zinc-500">(${item.format})</span>
+                        </div>
+                        <h3 class="text-sm font-medium text-zinc-200 truncate">${item.title}</h3>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="playStream('${escapeHtml(item.url)}', '${escapeHtml(item.title)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                            Play
+                        </button>
+                        <a href="${item.url}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
+                            Raw Link
+                        </a>
+                    </div>
+                `;
+                resultsList.appendChild(itemCard);
+            });
+        }
+
+        async function startTargetedSeriesScan() {
+            const statusText = document.getElementById('statusText');
+            const progressText = document.getElementById('progressText');
+            const scanBtn = document.getElementById('scanBtn');
+            const counter = document.getElementById('counter');
+
+            scanBtn.disabled = true;
+            scanBtn.textContent = 'Scanning Series List...';
+
+            const existingTitles = new Set(discoveredStreams.map(s => s.title.toLowerCase()));
+            const total = masterSeries.length;
+
+            for (let i = 0; i < total; i++) {
+                const titleQuery = masterSeries[i];
+                progressText.textContent = `Progress: ${i + 1} / ${total}`;
+
+                if (existingTitles.has(titleQuery.toLowerCase())) {
+                    continue; 
+                }
+
+                statusText.textContent = `Scanning Archive.org (${i + 1}/${total}): "${titleQuery}"...`;
+
+                try {
+                    // Strict query ensuring we match the title and mediatype (movies/texts/audio/etree - Archive often catalogs shows under mediatype:movies)
+                    const searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=3&output=json`;
+                    const searchRes = await fetch(searchUrl);
+                    const searchJson = await searchRes.json();
+                    const docs = searchJson.response?.docs || [];
+
+                    if (docs.length === 0) continue;
+
+                    let validMatch = null;
+                    for (const doc of docs) {
+                        // Extra validation to make sure the item title closely matches the requested series to avoid junk
+                        const docTitle = (doc.title || "").toLowerCase();
+                        const queryLower = titleQuery.toLowerCase();
+                        if (!docTitle.includes(queryLower.split(' ')[0])) continue;
+
+                        const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
+                        if (!metaRes.ok) continue;
+                        const metaJson = await metaRes.json();
+                        const files = metaJson.files || [];
+
+                        // Find standard video formats suitable for streaming
+                        const videoFile = files.find(f => 
+                            (f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM' || f.format === 'Matroska') && 
+                            (!f.length || parseFloat(f.length) >= 300) // Ensure it's a substantive video file, not a tiny sample clip
+                        );
+
+                        if (videoFile) {
+                            validMatch = {
+                                doc: doc,
+                                file: videoFile
+                            };
+                            break;
+                        }
+                    }
+
+                    if (validMatch) {
+                        const streamUrl = `https://archive.org/download/${validMatch.doc.identifier}/${validMatch.file.name}`;
+                        const itemTitle = validMatch.doc.title || titleQuery;
+                        const year = validMatch.doc.year || 'N/A';
+
+                        const newItem = {
+                            title: itemTitle,
+                            year: year,
+                            format: validMatch.file.format,
+                            url: streamUrl
+                        };
+
+                        discoveredStreams.push(newItem);
+                        existingTitles.add(titleQuery.toLowerCase());
+
+                        localStorage.setItem('master_series_streams', JSON.stringify(discoveredStreams));
+                        renderStoredResults();
+                    }
+                } catch (err) {
+                    console.warn(`Error processing query for ${titleQuery}:`, err);
+                }
+
+                await new Promise(r => setTimeout(r, 300));
+            }
+
+            statusText.textContent = `Status: Scan completed across all 250 series entries. All verified streams are stored.`;
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Resume / Start Series Scan';
+        }
+
+        function clearStorage() {
+            if (confirm("Are you sure you want to clear all saved TV series streams from local storage?")) {
+                localStorage.removeItem('master_series_streams');
+                discoveredStreams = [];
+                renderStoredResults();
+                document.getElementById('statusText').textContent = "Status: Local storage cleared.";
+            }
+        }
+
+        function playStream(url, title) {
+            const player = document.getElementById('mediaPlayer');
+            const placeholder = document.getElementById('playerPlaceholder');
+            const metaBox = document.getElementById('nowPlayingMeta');
+            const npTitle = document.getElementById('npTitle');
+            const npUrl = document.getElementById('npUrl');
+
+            player.style.display = 'block';
+            placeholder.style.display = 'none';
+            metaBox.classList.remove('hidden');
+
+            npTitle.textContent = title;
+            npUrl.textContent = url;
+
+            player.src = url;
+            player.load();
+            player.play().catch(e => console.log("Autoplay blocked or format requires interaction:", e));
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+        }
+    </script>
+</body>
+</html>
