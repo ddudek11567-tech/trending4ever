@@ -24,12 +24,12 @@
     <!-- Video Modal / Player -->
     <div id="player" class="fixed inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
         <div id="stage" class="relative w-full max-w-5xl aspect-video bg-black flex items-center justify-center">
-            <video id="video" class="w-full h-full" controls></video>
+            <video id="video" class="w-full h-full" controls autoplay></video>
         </div>
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
                 <h3 id="pTitle" class="font-bold text-lg">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">1080p Stream</p>
+                <p id="pMeta" class="text-xs text-zinc-400">1080p Direct Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -38,25 +38,17 @@
     </div>
 
     <script>
-        // Replace the file names below with the exact filenames from your TOP-MOVIES-ENG-1080P folder
+        // Array containing the working direct link tested from your archive collection
         const activeItems = [
             {
                 id: 'TOP-MOVIES-ENG-1080P',
-                title: 'Movie Title One',
-                year: '2023',
-                genres: ['Action'],
+                title: 'Batman Begins (2005)',
+                year: '2005',
+                genres: ['Action', 'Thriller'],
                 category: 'movies',
-                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/exact-filename-1.mp4'
-            },
-            {
-                id: 'TOP-MOVIES-ENG-1080P',
-                title: 'Movie Title Two',
-                year: '2023',
-                genres: ['Drama'],
-                category: 'movies',
-                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/exact-filename-2.mp4'
+                video: 'https://dn711505.ca.archive.org/0/items/TOP-MOVIES-ENG-1080P/THE%20DARK%20KNIGHT%20TRILOGY/Batman.Begins.2005.1080p.BluRay.x264.YIFY.mp4'
             }
-            // Duplicate the block above for every movie in your directory repository
+            // You can add more movies using this exact structure with their specific direct sub-path URLs
         ];
 
         function renderGrid(items) {
@@ -99,7 +91,8 @@
             setTimeout(() => playerEl.classList.add('opacity-100'), 10);
             document.getElementById('pTitle').innerText = f.title;
             videoEl.src = f.video;
-            videoEl.play().catch(()=>{});
+            videoEl.load();
+            videoEl.play().catch(err => console.log("Playback prevented:", err));
         }
 
         function closePlayer(){
