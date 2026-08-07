@@ -1,10 +1,9 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS TV // Live Stream Suite & Media Center</title>
-    <title>NEXUS TV v4.2 - Quantum Engine</title>
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,7 +29,11 @@
     <!-- FontAwesome for professional logos and icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Dash.js for mpd stream playback -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dashjs/4.7.4/dash.all.min.js"></script>
+    <!-- Google Fonts for Aether Cinema styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
     <style>
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -46,6 +49,112 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(71, 85, 105, 0.9);
         }
+
+        /* ============================================================
+           AETHER — Private Cinema Integration Styles
+           Edge-to-edge · 16:9 locked · dark & moody
+           ============================================================ */
+        :root{
+            --aether-bg:#060608;
+            --accent:#c8a86b;
+            --accent-rgb:200,168,107;
+            --text:#f4f1ec;
+            --muted:rgba(244,241,236,.62);
+            --faint:rgba(244,241,236,.4);
+            --line:rgba(244,241,236,.09);
+        }
+
+        .aether-cinema-root {
+            background: var(--aether-bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            position: relative;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        .aether-cinema-root ::selection { background: rgba(var(--accent-rgb),.35); color:#fff; }
+
+        .grain,.vignette{position:absolute;inset:0;pointer-events:none;z-index:90}
+        .grain{
+            opacity:.05;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode:overlay;
+            animation:grain 1.1s steps(4) infinite;
+        }
+        @keyframes grain{
+            0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}
+            50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-2%)}100%{transform:translate(0,0)}
+        }
+        .vignette{background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);z-index:1}
+
+        .aether-hero{position:relative;height:90vh;width:100%;overflow:hidden}
+        .backdrops{position:absolute;inset:0}
+        .bd{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.1s ease;filter:saturate(.92) contrast(1.05) brightness(.82)}
+        .bd.active{opacity:1;animation:kenburns 20s ease-out forwards}
+        @keyframes kenburns{from{transform:scale(1.06)}to{transform:scale(1.18) translateY(-2%)}}
+        .glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+        .blob{position:absolute;border-radius:50%;filter:blur(120px);transition:background-color 1.3s ease,opacity 1.3s}
+        .blob.a{width:62vw;height:62vw;top:-22vw;right:-12vw;background:rgb(var(--accent-rgb));opacity:.2}
+        .blob.b{width:44vw;height:44vw;bottom:-18vw;left:-12vw;background:rgb(var(--accent-rgb));opacity:.12}
+        .scrim{position:absolute;inset:0;z-index:2;background:
+            linear-gradient(90deg,rgba(6,6,8,.94) 0%,rgba(6,6,8,.7) 26%,rgba(6,6,8,.12) 58%,rgba(6,6,8,.35) 100%),
+            linear-gradient(0deg,rgba(6,6,8,1) 1%,rgba(6,6,8,0) 42%)}
+        .hero-content{position:absolute;left:0;right:0;bottom:13vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .45s ease,transform .45s ease}
+        .hero-content.switching{opacity:0;transform:translateY(16px)}
+        .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px;transition:color 1s}
+        .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent);transition:background 1s}
+        .hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(36px,6.4vw,80px);line-height:.96;letter-spacing:-.015em}
+        .hero-title em{font-style:italic;color:var(--accent);transition:color 1s}
+        .hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;font-size:13.5px;color:var(--muted);margin-top:20px;font-weight:500}
+        .hero-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
+        .match{color:#7fd29a;font-weight:700}
+        .rating-pill{color:var(--accent);font-weight:700;transition:color 1s}
+        .hero-synopsis{color:var(--muted);font-size:16px;line-height:1.65;margin-top:18px;max-width:540px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+        .hero-actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+        .btn-play{background:var(--accent);color:#0a0a0c}
+        .btn-play:hover{transform:translateY(-2px);box-shadow:0 16px 34px -10px rgba(var(--accent-rgb),.65)}
+        .btn-ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);backdrop-filter:blur(8px)}
+        .btn-ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-2px)}
+        .dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
+        .dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
+        .dot.active{background:var(--accent);width:44px}
+        
+        .collection{position:relative;z-index:2;padding:7vh 0 4vh}
+        .row{position:relative;margin-bottom:48px}
+        .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
+        .row-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
+        .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none}
+        .row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
+        .row-track::-webkit-scrollbar{display:none}
+        
+        .card{flex:0 0 auto;width:clamp(230px,25vw,355px);aspect-ratio:16/9;position:relative;border-radius:14px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}
+        .card-img{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.02);transition:transform .7s ease;filter:saturate(.9) contrast(1.05) brightness(.85)}
+        .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.5) 68%,rgba(6,6,8,.94) 100%)}
+        .card::after{content:"";position:absolute;inset:0;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.13),transparent 55%);opacity:0;transition:opacity .35s;pointer-events:none}
+        .card-top{position:absolute;top:11px;left:11px;right:11px;display:flex;align-items:center;gap:6px;z-index:3}
+        .badge{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:1px solid var(--line);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+        .badge.rating{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+        .badge.match{color:#7fd29a}
+        .bookmark{margin-left:auto;width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border:1px solid var(--line);color:#cfcfcf;display:grid;place-items:center;cursor:pointer;transition:.25s}
+        .bookmark:hover{background:rgba(0,0,0,.7);transform:scale(1.08)}
+        .bookmark.saved{color:var(--accent);border-color:rgba(var(--accent-rgb),.6);background:rgba(0,0,0,.5)}
+        .card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);opacity:0;z-index:3;width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);color:#fff;display:grid;place-items:center;cursor:pointer;transition:.4s cubic-bezier(.2,.8,.2,1)}
+        .card-info{position:absolute;left:0;right:0;bottom:0;padding:13px 14px;z-index:3}
+        .card-info h3{font-size:15px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .card-info p{font-size:11.5px;color:var(--muted);margin-top:3px;opacity:0;transform:translateY(6px);transition:.35s;font-weight:500}
+        .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.16);z-index:3}
+        .progress span{display:block;height:100%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+        .card:hover{transform:translateY(-7px) scale(1.035);z-index:5;box-shadow:0 30px 60px -22px rgba(0,0,0,.85),0 0 0 1px rgba(var(--accent-rgb),.55),0 0 50px -8px rgba(var(--accent-rgb),.4)}
+        .card:hover .card-img{transform:scale(1.12)}
+        .card:hover .card-info p{opacity:1;transform:none}
+        .card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+        .card:hover::after{opacity:1}
+
+        .results-head{padding:0 5vw;margin-bottom:22px}
+        .results-head h2{font-family:'Playfair Display',serif;font-size:30px;font-weight:600}
+        .results-head h2 em{color:var(--accent);font-style:italic}
+        .results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:0 5vw 20px}
     </style>
 </head>
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
@@ -62,7 +171,6 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.2 &bull; QUANTUM</span>
                     <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
                 </div>
             </div>
@@ -225,64 +333,157 @@
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
                     <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
                 </div>
-                <!-- Scrollable container applied here -->
                 <div id="channelsGrid" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-3">
                     <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 2: LATEST MOVIES VIEW -->
-        <!-- PAGE 2: LATEST MOVIES VIEW (WITH DEDICATED MOVIE PLAYER) -->
-        <div id="pageMovies" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">🎬 BLOCKBUSTERS & VOD</span>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Vault</h2>
-                </div>
-                <button onclick="closeMoviePlayer()" id="backToMoviesBtn" class="hidden items-center space-x-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-700 transition-all">
-                    <span>←</span>
-                    <span>Back to Catalog</span>
-                </button>
+        <!-- PAGE 2: LATEST MOVIES VIEW (WITH DARK THEATER BACKGROUND STYLING) -->
+        <div id="pageMovies" class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar hidden relative bg-[#040508]">
+            <!-- Darkened Movie Theater Ambient Lighting & Seating Glow Layer -->
+            <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
+                <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-cyan-900/20 blur-[120px] rounded-full"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900/40 via-[#030407]/90 to-[#020305]"></div>
             </div>
 
-            <!-- Movie Catalog Grid -->
-            <div id="moviesGridContainer">
-                <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6 relative z-10">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">Blockbusters & VOD</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Latest Movies & Vault</h2>
+                    <p class="text-xs text-slate-400 mt-1">On-demand cinema catalog with high-definition streaming and instant playback</p>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search movies..." class="bg-[#0b0f19]/90 border border-slate-800/80 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-64 transition-all shadow-inner">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid (Movie Player + Movie Info Sidebar) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px] relative z-10">
+                <!-- Video Stream Section -->
+                <div class="lg:col-span-2 flex flex-col">
+                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-950 to-cyan-950">
+                        <!-- Backdrop / Poster Overlay that disappears when playback starts -->
+                        <div id="moviePosterOverlay" class="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-slate-950/95 via-slate-900/90 to-cyan-950/95 backdrop-blur-md transition-opacity duration-500 pointer-events-none">
+                            <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-3xl mb-4 shadow-lg shadow-cyan-950 text-cyan-300">
+                                🎬
+                            </div>
+                            <h3 id="overlayMovieTitle" class="text-xl font-black text-white tracking-tight">Select a Movie to Watch</h3>
+                            <p id="overlayMovieSub" class="text-xs text-slate-400 mt-1 max-w-sm">Choose any title from the catalog below to launch the theater player.</p>
+                        </div>
+
+                        <!-- Notification Overlay for Movie Status -->
+                        <div id="movieStreamAlert" class="absolute top-4 left-4 z-30 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
+                            <span>⚠️</span>
+                            <span id="movieStreamAlertText">Stream handshake unstable. Using backup route.</span>
+                        </div>
+
+                        <video
+                            id="movieVideoPlayer"
+                            controls
+                            autoplay
+                            playsinline
+                            class="w-full h-full object-contain absolute inset-0 z-10"
+                        ></video>
+                    </div>
+
+                    <!-- Active Movie Info Bar -->
+                    <div class="mt-4 bg-[#080c16]/95 border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div id="activeMovieIcon" class="w-12 h-12 rounded-xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-xl shadow-inner text-cyan-400">
+                                🎞️
+                            </div>
+                            <div>
+                                <h3 id="currentMovieTitleBar" class="text-base font-bold text-white">No Movie Selected</h3>
+                                <p id="currentMovieSubBar" class="text-xs text-slate-400 mt-0.5">Select a title from below</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-6">
+                            <div class="text-right hidden sm:block">
+                                <div class="text-xs font-bold text-cyan-400 flex items-center justify-end gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> VOD Stream Ready
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">★ HD 1080p</div>
+                            </div>
+                            <button onclick="toggleMovieFavorite()" id="movieFavBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#0e1424] border border-slate-700/60 hover:border-cyan-500 text-xs font-semibold transition-all">
+                                <span>🤍</span>
+                                <span>Favorite</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movie Details / Chapter Guide Sidebar -->
+                <div class="bg-[#080c16]/95 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">📋</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Feature Details</span>
+                        </div>
+                        <span id="movieTagBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">VOD</span>
+                    </div>
+
+                    <div id="movieInfoSidebar" class="space-y-3 overflow-y-auto flex-1 custom-scrollbar pr-1 text-xs text-slate-300">
+                        <div class="p-3 rounded-xl bg-[#0b0f19]/80 border border-slate-800/60">
+                            <div class="font-bold text-white mb-1">Synopsis</div>
+                            <p id="sidebarSynopsis" class="text-slate-400 text-[11px] leading-relaxed">Select a movie from the catalog to view synopsis, cast, runtime, and director information.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="p-2.5 rounded-xl bg-[#0b0f19]/80 border border-slate-800/60">
+                                <span class="text-[10px] text-slate-500 block uppercase font-bold">Release Year</span>
+                                <span id="sidebarYear" class="font-bold text-white">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-[#0b0f19]/80 border border-slate-800/60">
+                                <span class="text-[10px] text-slate-500 block uppercase font-bold">Rating</span>
+                                <span id="sidebarRating" class="font-bold text-amber-400">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-800/60">
+                        <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
+                            <span>💡</span>
+                            <span>Theater player automatically enters full screen or scales to display ratio upon playback.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movie Selector Strip (Scrollable) -->
+            <div class="mt-6 relative z-10">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Movies (<span id="movieCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Scroll or select any title below</div>
+                </div>
+                <div id="moviesGrid" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-3">
                     <!-- Populated dynamically -->
                 </div>
             </div>
-            <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                <!-- Populated dynamically -->
+        <!-- PAGE 2: NEW AETHER PRIVATE CINEMA (MOVIES) -->
+        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden relative aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
 
-            <!-- Dedicated Movie Player Section (Hidden by default until a movie is selected) -->
-            <div id="moviePlayerSection" class="hidden flex-1 flex flex-col space-y-4">
-                <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[420px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-cyan-950">
-                    <video
-                        id="movieVideoPlayer"
-                        controls
-                        autoplay
-                        playsinline
-                        class="w-full h-full object-contain absolute inset-0"
-                    ></video>
-                </div>
-                <!-- Movie Details & Info Bar -->
-                <div class="bg-[#0d1326] border border-slate-800/80 rounded-2xl p-5 flex items-center justify-between shadow-lg">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-xl shadow-inner text-cyan-400">
-                            🎬
-                        </div>
-                        <div>
-                            <h3 id="currentMovieTitle" class="text-base font-bold text-white">Movie Title</h3>
-                            <p id="currentMovieSub" class="text-xs text-slate-400 mt-0.5">Genre &bull; Year</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-xs font-bold text-cyan-400 px-3 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-800/50">VOD Cinema Engine</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Aether Hero Section -->
+            <section class="aether-hero" id="hero">
+                <div class="backdrops" id="backdrops"></div>
+                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
+                <div class="scrim"></div>
+                <div class="hero-content" id="heroContent"></div>
+                <div class="dots" id="dots"></div>
+            </section>
+
+            <!-- Aether Collection Rows -->
+            <section class="collection" id="collection"></section>
         </div>
 
         <!-- PAGE 3: GENERIC VIEWS -->
@@ -298,12 +499,56 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.2 Engine &bull; Webpage Designed by: Daniel Dudek
             NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
-    <!-- Application Script Engine with Integrated Channels -->
+    <!-- Application Script Engine with Integrated Channels & Movies -->
+    <!-- Aether Video Player Overlay Modal -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
+        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
+            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
+                <div class="t-meta min-w-0">
+                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
+                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
+                </div>
+                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
+                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
+                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="backBtn" title="-10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19V5l-8 7 8 7zM23 19V5"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fwdBtn" title="+10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19V5l8 7-8 7zM1 19V5"/></svg>
+                    </button>
+                    <div class="vol flex items-center gap-2">
+                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
+                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </button>
+                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
+                    </div>
+                    <div class="spacer flex-1"></div>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
+
+    <!-- Application Script Engine with Integrated Channels & Aether Cinema -->
     <script>
         const channels = [
             { name: "A&E", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
@@ -365,7 +610,41 @@
             { name: "VH1", category: "Entertainment", res: "720p", format: "m3u8", url: "http://40.160.24.55/VH1/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Music Videos & Pop Culture", next: "Throwback Playlist", icon: "🎵" }
         ];
 
+        const movies = [
+            { 
+                title: "Star Wars: Episode V - The Empire Strikes Back", 
+                year: "1980", 
+                genre: "Sci-Fi / Adventure", 
+                rating: "9.7", 
+                synopsis: "After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda, while his friends are pursued by Darth Vader.",
+                url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", 
+                fallbackUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                icon: "🚀" 
+            },
+            { 
+                title: "Sintel Epic Fantasy", 
+                year: "2010", 
+                genre: "Animation / Fantasy", 
+                rating: "8.4", 
+                synopsis: "A lonely young woman, Sintel, helps and befriends a small dragon, whom she calls Scales. When it is grown and adult dragons attack, she sets out on a quest to find her lost friend.",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", 
+                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                icon: "🐉" 
+            },
+            { 
+                title: "Tears of Steel Sci-Fi", 
+                year: "2012", 
+                genre: "Sci-Fi / Action", 
+                rating: "8.1", 
+                synopsis: "In a dark and dystopian future, a group of warriors and scientists gather at the old Amsterdam sacked city to stage a desperate mission against destructive robots.",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
+                fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                icon: "🤖" 
+            }
+        ];
+
         let currentChannel = channels[0];
+        let currentMovie = movies[0];
         let hlsInstance = null;
         let dashInstance = null;
         let movieHlsInstance = null;
@@ -373,17 +652,18 @@
         const videoElement = document.getElementById('videoPlayer');
         const movieVideoElement = document.getElementById('movieVideoPlayer');
 
-        const movies = [
-            { title: "Star Wars: Episode V - The Empire Strikes Back", year: "1980", genre: "Sci-Fi / Adventure", rating: "9.7", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", bg: "from-slate-900 to-blue-950" },
-            { title: "Sintel Epic Fantasy", year: "2010", genre: "Fantasy", rating: "8.4", url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", bg: "from-blue-900 to-slate-950" }
-        ];
-
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('channelCount').innerText = channels.length;
+            document.getElementById('movieCount').innerText = movies.length;
+            
             renderChannels(channels);
-            renderMovies();
+            renderMovies(movies);
             renderEpg(channels[0]);
             loadActiveStream(channels[0]);
+            
+            // Preload first movie details on sidebar
+            selectMovie(movies[0], false);
+            initAetherCinema();
         });
 
         function switchPage(page) {
@@ -437,94 +717,31 @@
             });
         }
 
-        function renderMovies() {
+        function renderMovies(list) {
             const grid = document.getElementById('moviesGrid');
             grid.innerHTML = '';
-            movies.forEach(m => {
+
+            list.forEach(m => {
+                const isSelected = currentMovie.title === m.title;
                 const card = document.createElement('div');
-                card.onclick = () => playMovieSample(m.url, m.title);
-                card.className = `group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 cursor-pointer shadow-xl bg-gradient-to-br ${m.bg} flex flex-col justify-between p-4 hover:border-pink-500 transition-all`;
-                card.onclick = () => playMovie(m);
-                card.className = `group relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 cursor-pointer shadow-xl bg-gradient-to-br ${m.bg} flex flex-col justify-between p-4 hover:border-cyan-500 transition-all`;
+                card.onclick = () => selectMovie(m, true);
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
+                    isSelected 
+                        ? 'bg-cyan-600/30 border-cyan-500 shadow-lg shadow-cyan-950/80 text-white ring-1 ring-cyan-500/50' 
+                        : 'bg-[#080c16]/90 border-slate-800/80 hover:border-slate-700 hover:bg-[#0f1526] text-slate-300'
+                }`;
+
                 card.innerHTML = `
-                    <div class="flex items-center justify-between z-10">
-                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-cyan-300 border border-cyan-500/30">VOD</span>
-                        <span class="bg-black/60 backdrop-blur text-[10px] font-bold px-2 py-0.5 rounded text-amber-400 border border-amber-500/30">★ ${m.rating}</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl">${m.icon || '🎬'}</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-amber-400">★ ${m.rating}</span>
                     </div>
-                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
-                        <div class="w-12 h-12 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-bold text-lg shadow-lg transform scale-90 group-hover:scale-100 transition-transform">▶</div>
-                    </div>
-                    <div class="z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent -mx-4 -mb-4 p-4 pt-8">
-                        <div class="text-xs font-bold text-white">${m.title}</div>
-                        <div class="text-[10px] text-slate-400 mt-0.5">${m.genre} &bull; ${m.year}</div>
+                    <div>
+                        <div class="text-xs font-bold truncate">${m.title}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${m.genre}</div>
                     </div>
                 `;
                 grid.appendChild(card);
-            });
-        }
-
-        function playMovie(movie) {
-            document.getElementById('moviesGridContainer').classList.add('hidden');
-            document.getElementById('moviePlayerSection').classList.remove('hidden');
-            document.getElementById('backToMoviesBtn').classList.remove('hidden');
-            document.getElementById('backToMoviesBtn').classList.add('flex');
-
-            document.getElementById('currentMovieTitle').innerText = movie.title;
-            document.getElementById('currentMovieSub').innerText = `${movie.genre} &bull; ${movie.year} &bull; Rating: ★ ${movie.rating}`;
-
-            if (movieHlsInstance) { movieHlsInstance.destroy(); movieHlsInstance = null; }
-
-            const targetUrl = movie.url;
-            if (targetUrl.includes('.m3u8')) {
-                if (Hls.isSupported()) {
-                    movieHlsInstance = new Hls({ debug: false });
-                    movieHlsInstance.loadSource(targetUrl);
-                    movieHlsInstance.attachMedia(movieVideoElement);
-                    movieHlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        movieVideoElement.play().catch(() => {});
-                    });
-                } else if (movieVideoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    movieVideoElement.src = targetUrl;
-                    movieVideoElement.play().catch(() => {});
-                }
-            } else {
-                movieVideoElement.src = targetUrl;
-                movieVideoElement.play().catch(() => {});
-            }
-        }
-
-        function closeMoviePlayer() {
-            if (movieHlsInstance) { movieHlsInstance.destroy(); movieHlsInstance = null; }
-            movieVideoElement.pause();
-            movieVideoElement.src = '';
-
-            document.getElementById('moviePlayerSection').classList.add('hidden');
-            document.getElementById('moviesGridContainer').classList.remove('hidden');
-            document.getElementById('backToMoviesBtn').classList.remove('flex');
-            document.getElementById('backToMoviesBtn').classList.add('hidden');
-        }
-
-        function renderEpg(channel) {
-            const list = document.getElementById('epgList');
-            list.innerHTML = '';
-            document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
-
-            const schedule = [
-                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
-                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false }
-            ];
-
-            schedule.forEach(slot => {
-                const item = document.createElement('div');
-                item.className = `p-3 rounded-xl border text-xs transition-all ${slot.live ? 'bg-pink-950/30 border-pink-500/40 text-white shadow' : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300'}`;
-                item.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-mono font-bold ${slot.live ? 'text-pink-400' : 'text-slate-400'}">${slot.time}</span>
-                        ${slot.live ? '<span class="bg-pink-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : ''}
-                    </div>
-                    <div class="font-semibold text-slate-200">${slot.show}</div>
-                `;
-                list.appendChild(item);
             });
         }
 
@@ -532,6 +749,12 @@
             const filtered = channels.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.category.toLowerCase().includes(query.toLowerCase()));
             renderChannels(filtered);
             document.getElementById('channelCount').innerText = filtered.length;
+        }
+
+        function filterMovies(query) {
+            const filtered = movies.filter(m => m.title.toLowerCase().includes(query.toLowerCase()) || m.genre.toLowerCase().includes(query.toLowerCase()));
+            renderMovies(filtered);
+            document.getElementById('movieCount').innerText = filtered.length;
         }
 
         function selectChannel(ch) {
@@ -545,20 +768,39 @@
             loadActiveStream(ch);
         }
 
-        function playMovieSample(url, title) {
-            switchPage('iptv');
-            const vodChannel = { name: title, url: url, fallbackUrl: url, format: 'm3u8', category: 'Cinema VOD', icon: '🎬', now: title, next: 'Trailers' };
-            currentChannel = vodChannel;
-            document.getElementById('currentChannelName').innerText = title;
-            document.getElementById('currentChannelSub').innerText = "Now playing: Cinema VOD Feature Presentation";
-            document.getElementById('activeChannelIcon').innerText = '🎬';
-            renderEpg(vodChannel);
-            loadActiveStream(vodChannel);
+        function selectMovie(movie, shouldPlay = true) {
+            currentMovie = movie;
+            
+            // Update sidebar info & bottom info bar
+            document.getElementById('currentMovieTitleBar').innerText = movie.title;
+            document.getElementById('currentMovieSubBar').innerText = `${movie.genre} &bull; ${movie.year}`;
+            document.getElementById('activeMovieIcon').innerText = movie.icon || '🎬';
+            document.getElementById('sidebarSynopsis').innerText = movie.synopsis;
+            document.getElementById('sidebarYear').innerText = movie.year;
+            document.getElementById('sidebarRating').innerText = `★ ${movie.rating} / 10`;
+            
+            // Update backdrop poster texts
+            document.getElementById('overlayMovieTitle').innerText = movie.title;
+            document.getElementById('overlayMovieSub').innerText = `${movie.genre} &bull; Released ${movie.year}`;
+
+            renderMovies(movies);
+
+            if (shouldPlay) {
+                loadActiveMovieStream(movie);
+            }
         }
 
         function showStreamAlert(msg) {
             const alertBox = document.getElementById('streamAlert');
             const alertText = document.getElementById('streamAlertText');
+            alertText.innerText = msg;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
+        }
+
+        function showMovieStreamAlert(msg) {
+            const alertBox = document.getElementById('movieStreamAlert');
+            const alertText = document.getElementById('movieStreamAlertText');
             alertText.innerText = msg;
             alertBox.classList.remove('hidden');
             setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
@@ -629,6 +871,80 @@
             }
         }
 
+        function loadActiveMovieStream(movie, useFallback = false) {
+            if (movieHlsInstance) { movieHlsInstance.destroy(); movieHlsInstance = null; }
+
+            const targetUrl = useFallback ? (movie.fallbackUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8") : movie.url;
+
+            if (useFallback) {
+                showMovieStreamAlert(`Primary link restricted. Switched to backup source for ${movie.title}.`);
+            } else {
+                document.getElementById('movieStreamAlert').classList.add('hidden');
+            }
+
+            // Function to hide poster overlay as soon as movie actually starts playing
+            const hidePosterOnPlay = () => {
+                const overlay = document.getElementById('moviePosterOverlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.classList.add('hidden'); }, 500);
+                movieVideoElement.removeEventListener('playing', hidePosterOnPlay);
+                movieVideoElement.removeEventListener('timeupdate', hidePosterOnPlay);
+            };
+
+            movieVideoElement.addEventListener('playing', hidePosterOnPlay);
+            movieVideoElement.addEventListener('timeupdate', hidePosterOnPlay);
+
+            if (targetUrl.includes('.m3u8')) {
+                if (Hls.isSupported()) {
+                    movieHlsInstance = new Hls({ debug: false, maxBufferLength: 30 });
+                    movieHlsInstance.loadSource(targetUrl);
+                    movieHlsInstance.attachMedia(movieVideoElement);
+
+                    movieHlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        movieVideoElement.play().then(hidePosterOnPlay).catch(() => {});
+                    });
+
+                    movieHlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            if (!useFallback && movie.fallbackUrl) {
+                                loadActiveMovieStream(movie, true);
+                            }
+                        }
+                    });
+                } else if (movieVideoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    movieVideoElement.src = targetUrl;
+                    movieVideoElement.play().then(hidePosterOnPlay).catch(() => {});
+                }
+            } else {
+                movieVideoElement.src = targetUrl;
+                movieVideoElement.play().then(hidePosterOnPlay).catch(() => {});
+            }
+        }
+
+        function renderEpg(channel) {
+            const list = document.getElementById('epgList');
+            list.innerHTML = '';
+            document.getElementById('epgChannelTag').innerText = channel.name.toUpperCase();
+
+            const schedule = [
+                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
+                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false }
+            ];
+
+            schedule.forEach(slot => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border text-xs transition-all ${slot.live ? 'bg-pink-950/30 border-pink-500/40 text-white shadow' : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300'}`;
+                item.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono font-bold ${slot.live ? 'text-pink-400' : 'text-slate-400'}">${slot.time}</span>
+                        ${slot.live ? '<span class="bg-pink-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : ''}
+                    </div>
+                    <div class="font-semibold text-slate-200">${slot.show}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
         function toggleFavorite() {
             const btn = document.getElementById('favBtn');
             if (btn.classList.contains('text-pink-400')) {
@@ -638,6 +954,302 @@
                 btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-pink-600/20 border border-pink-500 text-pink-400 text-xs font-semibold transition-all shadow-lg";
                 btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
             }
+        }
+
+        function toggleMovieFavorite() {
+            const btn = document.getElementById('movieFavBtn');
+            if (btn.classList.contains('text-cyan-400')) {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#0e1424] border border-slate-700/60 hover:border-cyan-500 text-xs font-semibold transition-all";
+                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
+            } else {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-cyan-600/20 border border-cyan-500 text-cyan-400 text-xs font-semibold transition-all shadow-lg";
+                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
+        /* ==================== AETHER CINEMA ENGINE ==================== */
+        function initAetherCinema() {
+            const FILMS=[
+                {id:1,title:"The Silent Horizon",year:2021,rating:8.4,match:97,duration:"2h 07m",genres:["Mystery","Drama"],accent:"#c8a86b",rgb:"200,168,107",seed:"horizon-9",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",quality:"4K HDR",progress:0.42,cats:["continue","trending","acclaimed"],synopsis:"A retired cartographer returns to the coast where her sister vanished — only to find the maps no longer match the shore."},
+                {id:2,title:"Crimson Veil",year:2023,rating:7.9,match:91,duration:"1h 58m",genres:["Thriller","Crime"],accent:"#b8423f",rgb:"184,66,63",seed:"veil-3",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",quality:"4K",progress:0.15,cats:["trending","new"],synopsis:"A detective with a failing memory hunts a killer who only ever strikes during thunderstorms."},
+                {id:3,title:"Echoes of Dust",year:2022,rating:8.1,match:95,duration:"2h 22m",genres:["Science Fiction"],accent:"#6f8fd6",rgb:"111,143,214",seed:"dust-7",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",quality:"4K HDR",progress:0.63,cats:["continue","trending","acclaimed"],synopsis:"On a silent colony world, a lone archivist begins to hear a voice in the static — one that was never meant to exist."},
+                {id:4,title:"Midnight Cartographer",year:2020,rating:7.6,match:88,duration:"2h 01m",genres:["Adventure"],accent:"#c98a3c",rgb:"201,138,60",seed:"carto-2",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",quality:"4K",cats:["new"],synopsis:"Two strangers race a cartel down an unmapped river, chasing a dawn that may never come."},
+                {id:5,title:"The Last Lighthouse",year:2019,rating:8.6,match:99,duration:"1h 49m",genres:["Drama"],accent:"#4f7d8a",rgb:"79,125,138",seed:"lighthouse-4",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K HDR",progress:0.78,cats:["continue","acclaimed"],synopsis:"A keeper speaks to the sea every night. One night, after forty years, the sea finally speaks back."},
+                {id:6,title:"Glass Empire",year:2024,rating:7.4,match:84,duration:"2h 11m",genres:["Crime","Drama"],accent:"#8a7bb8",rgb:"138,123,184",seed:"empire-1",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",quality:"4K",cats:["new","trending"],synopsis:"Three siblings inherit a glittering skyline — and the buried secret that paid for every floor."},
+                {id:7,title:"Frostbound",year:2022,rating:7.8,match:90,duration:"1h 52m",genres:["Thriller"],accent:"#6fa0b0",rgb:"111,160,176",seed:"frost-6",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",quality:"4K",cats:["trending"],synopsis:"Stranded on a peak as a whiteout closes in, the climbers realize the storm around them is not natural."},
+                {id:8,title:"Velvet Static",year:2021,rating:8.0,match:93,duration:"2h 03m",genres:["Neo-Noir"],accent:"#c46aa0",rgb:"196,106,160",seed:"static-5",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",quality:"4K HDR",cats:["acclaimed","new"],synopsis:"A late-night radio host takes a call describing a murder in perfect detail — a murder that has not happened yet."},
+                {id:9,title:"The Hollow Tide",year:2023,rating:7.2,match:81,duration:"1h 44m",genres:["Horror"],accent:"#7a5fa0",rgb:"122,95,160",seed:"tide-8",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",quality:"4K",cats:["new"],synopsis:"The village empties at low tide. When the water returns, it brings back something that was never drowned."},
+                {id:10,title:"Paper Cathedrals",year:2018,rating:8.8,match:98,duration:"2h 16m",genres:["Drama"],accent:"#c0a060",rgb:"192,160,96",seed:"cathedrals-0",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",quality:"4K HDR",progress:0.33,cats:["continue","acclaimed"],synopsis:"A novelist builds a world she cannot leave — and a reader who would rather die than put the book down."},
+                {id:11,title:"Neon Requiem",year:2025,rating:7.7,match:89,duration:"2h 09m",genres:["Sci-Fi","Action"],accent:"#5fb0a8",rgb:"95,176,168",seed:"requiem-11",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",quality:"4K HDR",cats:["trending","new"],synopsis:"In a city that never sleeps, sleep itself has just been outlawed — and the waking are starting to see things."},
+                {id:12,title:"Ash & Honey",year:2020,rating:7.5,match:86,duration:"1h 51m",genres:["Romance","Drama"],accent:"#c07a5f",rgb:"192,122,95",seed:"honey-12",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",quality:"4K",cats:["acclaimed"],synopsis:"Two beekeepers meet at the edge of the wildfire season and decide whether to save the hive or run."},
+                {id:13,title:"The Long Dark",year:2024,rating:8.2,match:92,duration:"2h 00m",genres:["Survival","Thriller"],accent:"#6b8aa6",rgb:"107,138,166",seed:"longdark-13",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",quality:"4K HDR",progress:0.2,cats:["new","trending"],synopsis:"Sixty days of polar night. One failing generator. And the slow, patient sound of something scratching at the door."},
+                {id:14,title:"Sapphire Run",year:2023,rating:7.9,match:90,duration:"1h 57m",genres:["Heist","Crime"],accent:"#4f9d8a",rgb:"79,157,138",seed:"sapphire-14",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",quality:"4K",cats:["new"],synopsis:"A thief who steals colors plans her final, impossible job: to steal the blue from a dying sky."}
+            ];
+
+            const ROWS=[
+                {key:"continue",label:"Continue Watching"},
+                {key:"trending",label:"Trending Tonight"},
+                {key:"new",label:"New in Your Collection"},
+                {key:"acclaimed",label:"Critically Acclaimed"}
+            ];
+            const SPOTLIGHT_IDS=[1,3,5,11];
+
+            let saved=new Set(JSON.parse(localStorage.getItem("aether_saved")||"[]"));
+            let activeIdx=0,rotTimer=null;
+            const img=(seed,w,h)=>`https://picsum.photos/seed/${seed}/${w}/${h}`;
+
+            const backdropsEl=document.getElementById('backdrops');
+            const heroContentEl=document.getElementById('heroContent');
+            const dotsEl=document.getElementById('dots');
+            const collectionEl=document.getElementById('collection');
+
+            function renderHero(){
+                backdropsEl.innerHTML='';
+                dotsEl.innerHTML='';
+                SPOTLIGHT_IDS.forEach((id,i)=>{
+                    const f=FILMS.find(x=>x.id===id);
+                    const bd=document.createElement('div');
+                    bd.className=`bd ${i===0?'active':''}`;
+                    bd.style.backgroundImage=`url('${img(f.seed,1920,1080)}')`;
+                    backdropsEl.appendChild(bd);
+
+                    const dot=document.createElement('button');
+                    dot.className=`dot ${i===0?'active':''}`;
+                    dot.onclick=()=>setSpotlight(i);
+                    dotsEl.appendChild(dot);
+                });
+                updateHeroContent(0);
+                startRot();
+            }
+
+            function updateHeroContent(idx){
+                activeIdx=idx;
+                const f=FILMS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
+                document.documentElement.style.setProperty('--accent',f.accent);
+                document.documentElement.style.setProperty('--accent-rgb',f.rgb);
+
+                document.querySelectorAll('.bd').forEach((b,i)=>b.classList.toggle('active',i===idx));
+                document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+
+                heroContentEl.classList.add('switching');
+                setTimeout(()=>{
+                    heroContentEl.innerHTML=`
+                        <div class="eyebrow">${f.genres[0]} Feature</div>
+                        <h2 class="hero-title">${f.title.split(' ').map((w,wi)=>wi===1?`<em>${w}</em>`:w).join(' ')}</h2>
+                        <div class="hero-meta">
+                            <span class="match">${f.match}% Match</span>
+                            <span class="sep"></span>
+                            <span class="rating-pill">★ ${f.rating}</span>
+                            <span class="sep"></span>
+                            <span>${f.year}</span>
+                            <span class="sep"></span>
+                            <span>${f.duration}</span>
+                            <span class="sep"></span>
+                            <span class="badge" style="background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:10px;padding:2px 6px">${f.quality}</span>
+                        </div>
+                        <p class="hero-synopsis">${f.synopsis}</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-play" onclick="playFilm(${f.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
+                            </button>
+                            <button class="btn btn-ghost" onclick="toggleSave(${f.id})">
+                                ${saved.has(f.id)?'✓ In Saved List':'+ Add to List'}
+                            </button>
+                        </div>
+                    `;
+                    heroContentEl.classList.remove('switching');
+                },220);
+            }
+
+            function setSpotlight(idx){
+                stopRot();
+                updateHeroContent(idx);
+                startRot();
+            }
+
+            function startRot(){
+                stopRot();
+                rotTimer=setInterval(()=>{
+                    activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;
+                    updateHeroContent(activeIdx);
+                },8000);
+            }
+
+            function stopRot(){
+                if(rotTimer)clearInterval(rotTimer);
+            }
+
+            window.playFilm=function(id){
+                const f=FILMS.find(x=>x.id===id);
+                if(!f)return;
+                openPlayer(f);
+            }
+
+            window.toggleSave=function(id){
+                if(saved.has(id)) saved.delete(id); else saved.add(id);
+                localStorage.setItem("aether_saved",JSON.stringify([...saved]));
+                renderCollection();
+                renderHero();
+                showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
+            }
+
+            function showToast(msg){
+                const t=document.getElementById('toast');
+                t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
+                t.classList.add('show');
+                setTimeout(()=>t.classList.remove('show'),2600);
+            }
+
+            function renderCollection(){
+                collectionEl.innerHTML='';
+                ROWS.forEach((r,ri)=>{
+                    let list=FILMS.filter(f=>f.cats.includes(r.key));
+                    if(r.key==='continue') list=list.filter(f=>f.progress>0);
+                    if(list.length===0) return;
+
+                    const row=document.createElement('div');
+                    row.className='row';
+                    row.innerHTML=`
+                        <div class="row-head">
+                            <h3 class="row-title"><span class="num">${String(ri+1).padStart(2,'0')}.</span> ${r.label}</h3>
+                            <span class="row-count">${list.length} films</span>
+                        </div>
+                        <div class="row-track" id="track-${r.key}"></div>
+                    `;
+                    const track=row.querySelector('.row-track');
+                    list.forEach(f=>{
+                        const card=document.createElement('div');
+                        card.className='card';
+                        card.onclick=(e)=>{
+                            if(e.target.closest('.bookmark')) return;
+                            playFilm(f.id);
+                        };
+                        card.onmousemove=(e)=>{
+                            const rct=card.getBoundingClientRect();
+                            card.style.setProperty('--mx',`${e.clientX-rct.left}px`);
+                            card.style.setProperty('--my',`${e.clientY-rct.top}px`);
+                        };
+
+                        const isSaved=saved.has(f.id);
+                        card.innerHTML=`
+                            <div class="card-img" style="background-image:url('${img(f.seed,600,340)}')"></div>
+                            <div class="card-scrim"></div>
+                            <div class="card-top">
+                                <span class="badge rating">★ ${f.rating}</span>
+                                <span class="badge match">${f.match}%</span>
+                                <button class="bookmark ${isSaved?'saved':''}" onclick="toggleSave(${f.id})" title="Save">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                                </button>
+                            </div>
+                            <div class="card-play">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <div class="card-info">
+                                <h3>${f.title}</h3>
+                                <p>${f.genres.join(' · ')} &bull; ${f.duration}</p>
+                            </div>
+                            ${f.progress?`<div class="progress"><span style="width:${f.progress*100}%"></span></div>`:''}
+                        `;
+                        track.appendChild(card);
+                    });
+                    collectionEl.appendChild(row);
+                });
+            }
+
+            renderHero();
+            renderCollection();
+
+            // Player setup logic
+            const playerEl=document.getElementById('player');
+            const videoEl=document.getElementById('video');
+            const loaderEl=document.getElementById('loader');
+            const stageEl=document.getElementById('stage');
+            const seekEl=document.getElementById('seek');
+            const curTimeEl=document.getElementById('curTime');
+            const durTimeEl=document.getElementById('durTime');
+            const ppBtn=document.getElementById('ppBtn');
+            const ppIcon=document.getElementById('ppIcon');
+            const muteBtn=document.getElementById('muteBtn');
+            const volEl=document.getElementById('vol');
+            const fsBtn=document.getElementById('fsBtn');
+            let hideTimer=null;
+
+            function openPlayer(f){
+                playerEl.classList.add('open');
+                document.getElementById('pTitle').innerText=f.title;
+                document.getElementById('pMeta').innerText=`${f.genres.join(' · ')} · ${f.year} · ${f.quality}`;
+                videoEl.src=f.video;
+                videoEl.play().catch(()=>{});
+                setupUI();
+            }
+
+            function closePlayer(){
+                videoEl.pause();
+                videoEl.src="";
+                playerEl.classList.remove('open');
+                if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+            }
+
+            document.getElementById('closeBtn').onclick=closePlayer;
+
+            function setupUI(){
+                videoEl.onwaiting=()=>loaderEl.classList.add('show');
+                videoEl.onplaying=()=>loaderEl.classList.remove('show');
+                videoEl.ontimeupdate=()=>{
+                    if(!videoEl.duration)return;
+                    const p=(videoEl.currentTime/videoEl.duration)*1000;
+                    seekEl.value=p;
+                    seekEl.style.setProperty('--p',`${(videoEl.currentTime/videoEl.duration)*100}%`);
+                    curTimeEl.innerText=fmtTime(videoEl.currentTime);
+                    durTimeEl.innerText=fmtTime(videoEl.duration);
+                };
+                videoEl.onplay=()=>ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                videoEl.onpause=()=>ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+            }
+
+            function fmtTime(s){
+                if(!isFinite(s))return"0:00";
+                s=Math.floor(s);
+                const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+                return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;
+            }
+
+            seekEl.oninput=(e)=>{
+                if(!videoEl.duration)return;
+                videoEl.currentTime=(e.target.value/1000)*videoEl.duration;
+            };
+
+            ppBtn.onclick=()=>{
+                if(videoEl.paused) videoEl.play(); else videoEl.pause();
+            };
+
+            muteBtn.onclick=()=>{
+                videoEl.muted=!videoEl.muted;
+                volEl.value=videoEl.muted?0:(videoEl.volume*100);
+            };
+
+            volEl.oninput=(e)=>{
+                const v=e.target.value/100;
+                videoEl.volume=v;
+                videoEl.muted=(v===0);
+                volEl.style.setProperty('--vp',`${e.target.value}%`);
+            };
+
+            fsBtn.onclick=()=>{
+                if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
+                else document.exitFullscreen().catch(()=>{});
+            };
+
+            stageEl.onmousemove=()=>{
+                stageEl.classList.add('show-ui');
+                clearTimeout(hideTimer);
+                hideTimer=setTimeout(()=>stageEl.classList.remove('show-ui'),2500);
+            };
+
+            document.addEventListener('keydown',(e)=>{
+                if(!playerEl.classList.contains('open'))return;
+                if(e.code==='Space'||e.code==='KeyK'){e.preventDefault();if(videoEl.paused)videoEl.play();else videoEl.pause();}
+                if(e.code==='KeyF'){e.preventDefault();fsBtn.click();}
+                if(e.code==='KeyM'){e.preventDefault();muteBtn.click();}
+                if(e.code==='Escape'){closePlayer();}
+            });
         }
     </script>
 </body>
