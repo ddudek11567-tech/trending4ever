@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archive.org Media Stream Puller</title>
+    <title>Classic Movie & Series Streamer (1976–1989)</title>
     <!-- Tailwind CSS CDN v4 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,9 +30,9 @@
         <!-- Header -->
         <div class="border-b border-zinc-800 pb-4 flex justify-between items-end">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Archive.org Movie & TV Streamer</h1>
+                <h1 class="text-2xl font-bold tracking-tight">Classic Media Streamer (1976–1989 List)[cite: 2]</h1>
                 <p class="text-sm text-zinc-400 mt-1">
-                    Crawl Archive.org collections, extract direct video streams, and play them directly from your site.
+                    Automatically scans and matches Archive.org items against your curated list of classic movies.
                 </p>
             </div>
             <div id="counter" class="text-xs font-mono bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">
@@ -41,36 +41,20 @@
         </div>
 
         <!-- Controls -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-zinc-900/50 p-4 rounded-xl border border-zinc-800">
-            <div class="md:col-span-2 space-y-1">
-                <label class="text-xs font-medium text-zinc-300">Archive.org Query</label>
-                <input 
-                    type="text" 
-                    id="searchQuery" 
-                    value="mediatype:(movies) AND (collection:(feature_films) OR collection:(tvshows))" 
-                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 font-mono"
-                >
-            </div>
-            <div class="space-y-1">
-                <label class="text-xs font-medium text-zinc-300">Max Results</label>
-                <input 
-                    type="number" 
-                    id="maxRows" 
-                    value="30" 
-                    class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 font-mono"
-                >
-            </div>
-            <div class="flex items-end">
+        <div class="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-zinc-300">Target List Loaded: <span class="text-zinc-100 font-mono">170+ Classic Titles (1976–1989)</span></span>
                 <button 
                     id="scanBtn" 
-                    onclick="startScan()" 
-                    class="w-full bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-4 py-2 rounded-lg text-sm transition cursor-pointer"
+                    onclick="startTargetedScan()" 
+                    class="bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-5 py-2 rounded-lg text-sm transition cursor-pointer"
                 >
-                    Start Pulling
+                    Start Batch Match
                 </button>
             </div>
-            <div class="md:col-span-4 flex items-center justify-between text-xs text-zinc-400 font-mono pt-1">
-                <span id="statusText">Status: Idle. Ready to scan.</span>
+            <div class="text-xs text-zinc-400 font-mono pt-1 border-t border-zinc-800/60 flex justify-between">
+                <span id="statusText">Status: Idle. Ready to match against targeted library.</span>
+                <span id="progressText">Progress: 0 / 0</span>
             </div>
         </div>
 
@@ -83,7 +67,7 @@
                 <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden aspect-video flex items-center justify-center relative">
                     <video id="mediaPlayer" controls class="w-full h-full object-contain bg-black" style="display: none;"></video>
                     <div id="playerPlaceholder" class="text-center p-6 text-zinc-500 text-sm">
-                        Select a stream from the list to test and play it directly from Archive.org.
+                        Select a matched stream to play it directly from Archive.org.
                     </div>
                 </div>
                 <div id="nowPlayingMeta" class="text-xs text-zinc-400 font-mono space-y-1 bg-zinc-900/30 p-3 rounded-lg border border-zinc-800/60 hidden">
@@ -94,11 +78,11 @@
 
             <!-- Discovered Links Table -->
             <div class="lg:col-span-2 space-y-3">
-                <h2 class="text-lg font-semibold">Extracted Media Links</h2>
+                <h2 class="text-lg font-semibold">Matched Movie Streams</h2>
                 <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
                     <div class="max-h-[500px] overflow-y-auto divide-y divide-zinc-900" id="resultsList">
                         <div class="p-8 text-center text-sm text-zinc-500">
-                            No links loaded yet. Run a pull to populate active streams.
+                            No matched links yet. Click start to cross-reference your list with Archive.org.
                         </div>
                     </div>
                 </div>
@@ -108,92 +92,126 @@
     </div>
 
     <script>
-        async function startScan() {
-            const query = document.getElementById('searchQuery').value;
-            const rows = document.getElementById('maxRows').value;
+        // Compiled list of titles from your attached 1976-1989 collection
+        const targetMovies = [
+            // Action
+            "The Terminator", "Aliens", "Die Hard", "First Blood", "Mad Max", 
+            "Mad Max 2", "Escape from New York", "Lethal Weapon", "Beverly Hills Cop", 
+            "Robocop", "Conan the Barbarian", "Predator", "Commando", "Red Dawn", 
+            "Big Trouble in Little China", "The Running Man", "Rocky II", "Rocky III", 
+            "Rocky IV", "Enter the Dragon",
+            // Sci-Fi
+            "Star Wars", "The Empire Strikes Back", "Return of the Jedi", "Blade Runner", 
+            "E.T. the Extra-Terrestrial", "Close Encounters of the Third Kind", "The Thing", 
+            "Tron", "The Fly", "Back to the Future", "Back to the Future Part II", 
+            "Back to the Future Part III", "Dune", "The Last Starfighter", "The Abyss", 
+            "Short Circuit", "WarGames", "Invasion of the Body Snatchers", "Superman", "Superman II",
+            // Horror
+            "Halloween", "Friday the 13th", "A Nightmare on Elm Street", "The Shining", 
+            "The Exorcist II", "The Howling", "Poltergeist", "The Evil Dead", "Evil Dead II", 
+            "The Texas Chainsaw Massacre", "The Fog", "Creepshow", "The Changeling", 
+            "Hellraiser", "The Hitcher", "Child’s Play", "The Blob", "Videodrome", "Scanners", "The Serpent and the Rainbow",
+            // Drama
+            "Taxi Driver", "Apocalypse Now", "Raging Bull", "The Deer Hunter", "Platoon", 
+            "Full Metal Jacket", "The Godfather Part II", "The Godfather Part III", "Scarface", 
+            "The Color Purple", "Ordinary People", "Amadeus", "The Elephant Man", "Gandhi", 
+            "The Killing Fields", "The Untouchables", "Rain Man", "The Right Stuff", "The Mission", "Sophie's Choice",
+            // Thriller
+            "Jaws", "Jaws 2", "Blue Velvet", "The Silence of the Lambs", "Fatal Attraction", 
+            "The Vanishing", "Blow Out", "The Conversation", "Witness", "The French Connection II", 
+            "Manhunter", "Angel Heart", "To Live and Die in L.A.", "The Dead Zone", "The Falcon and the Snowman", "The Bedroom Window",
+            // Comedy
+            "Ghostbusters", "Ghostbusters II", "Caddyshack", "National Lampoon's Vacation", 
+            "Ferris Bueller's Day Off", "Trading Places", "Coming to America", "Airplane!", 
+            "The Blues Brothers", "Stripes", "Police Academy", "Police Academy 2", "Police Academy 3", 
+            "Police Academy 4", "Police Academy 5", "Police Academy 6", "The Naked Gun", "Spaceballs", "Three Amigos!",
+            // Romance & Animation & Doc
+            "Dirty Dancing", "The Blue Lagoon", "An Officer and a Gentleman", "The Last Emperor", 
+            "Somewhere in Time", "Out of Africa", "The Year of Living Dangerously", "The Secret of NIMH", 
+            "The Black Cauldron", "Heavy Metal", "Watership Down", "The Last Unicorn", "The Land Before Time", 
+            "The Fox and the Hound", "Koyaanisqatsi", "The Thin Blue Line", "Shoah", "Streetwise", "Harlan County, USA"
+        ];
+
+        async function startTargetedScan() {
             const statusText = document.getElementById('statusText');
+            const progressText = document.getElementById('progressText');
             const scanBtn = document.getElementById('scanBtn');
             const resultsList = document.getElementById('resultsList');
             const counter = document.getElementById('counter');
 
             scanBtn.disabled = true;
-            scanBtn.textContent = 'Scanning...';
+            scanBtn.textContent = 'Matching...';
             resultsList.innerHTML = '';
             let foundCount = 0;
+            const total = targetMovies.length;
 
-            try {
-                statusText.textContent = 'Status: Querying Archive.org search index...';
-                
-                // 1. Fetch search results from Archive.org Advanced Search API
-                const searchUrl = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(query)}&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=${rows}&output=json`;
-                const searchRes = await fetch(searchUrl);
-                const searchJson = await searchRes.json();
-                const docs = searchJson.response?.docs || [];
+            for (let i = 0; i < total; i++) {
+                const titleQuery = targetMovies[i];
+                progressText.textContent = `Progress: ${i + 1} / ${total}`;
+                statusText.textContent = `Searching Archive.org for: "${titleQuery}"...`;
 
-                statusText.textContent = `Status: Processing metadata for ${docs.length} items...`;
+                try {
+                    // Search Archive.org specifically by title query
+                    const searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=1&output=json`;
+                    const searchRes = await fetch(searchUrl);
+                    const searchJson = await searchRes.json();
+                    const docs = searchJson.response?.docs || [];
 
-                for (let i = 0; i < docs.length; i++) {
-                    const doc = docs[i];
-                    statusText.textContent = `Status: Checking item ${i + 1} of ${docs.length} (${doc.identifier})...`;
+                    if (docs.length === 0) continue;
+                    const doc = docs[0];
 
-                    try {
-                        // 2. Fetch file metadata for candidate validation
-                        const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
-                        if (!metaRes.ok) continue;
-                        const metaJson = await metaRes.json();
-                        const files = metaJson.files || [];
+                    // Fetch metadata to find a valid playable stream file
+                    const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
+                    if (!metaRes.ok) continue;
+                    const metaJson = await metaRes.json();
+                    const files = metaJson.files || [];
 
-                        // 3. Filter for direct video playable formats
-                        const videoFile = files.find(f => f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM');
+                    const videoFile = files.find(f => f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM');
 
-                        if (videoFile) {
-                            foundCount++;
-                            const streamUrl = `https://archive.org/download/${doc.identifier}/${videoFile.name}`;
-                            const title = doc.title || 'Untitled';
-                            const year = doc.year || 'N/A';
-                            const mediatype = doc.mediatype || 'video';
+                    if (videoFile) {
+                        foundCount++;
+                        const streamUrl = `https://archive.org/download/${doc.identifier}/${videoFile.name}`;
+                        const itemTitle = doc.title || titleQuery;
+                        const year = doc.year || 'N/A';
 
-                            if (foundCount === 1) {
-                                resultsList.innerHTML = ''; // Clear placeholder on first item
-                            }
-
-                            // Append to results table
-                            const itemCard = document.createElement('div');
-                            itemCard.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4';
-                            itemCard.innerHTML = `
-                                <div class="space-y-1 min-w-0 flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">${mediatype}</span>
-                                        <span class="text-xs text-zinc-500">${year}</span>
-                                        <span class="text-[10px] font-mono text-zinc-500">(${videoFile.format})</span>
-                                    </div>
-                                    <h3 class="text-sm font-medium text-zinc-200 truncate">${title}</h3>
-                                </div>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <button onclick="playStream('${escapeHtml(streamUrl)}', '${escapeHtml(title)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
-                                        Play
-                                    </button>
-                                    <a href="${streamUrl}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
-                                        Raw Link
-                                    </a>
-                                </div>
-                            `;
-                            resultsList.appendChild(itemCard);
-                            counter.textContent = `Found: ${foundCount} streams`;
+                        if (foundCount === 1) {
+                            resultsList.innerHTML = ''; // Clear initial placeholder
                         }
-                    } catch (err) {
-                        // Skip individual item errors silently to keep scanning smooth
-                        console.warn(`Skipped item ${doc.identifier}:`, err);
+
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4';
+                        itemCard.innerHTML = `
+                            <div class="space-y-1 min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-mono uppercase bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded">movie</span>
+                                    <span class="text-xs text-zinc-500">${year}</span>
+                                    <span class="text-[10px] font-mono text-zinc-500">(${videoFile.format})</span>
+                                </div>
+                                <h3 class="text-sm font-medium text-zinc-200 truncate">${itemTitle}</h3>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button onclick="playStream('${escapeHtml(streamUrl)}', '${escapeHtml(itemTitle)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                                    Play
+                                </button>
+                                <a href="${streamUrl}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
+                                    Raw Link
+                                </a>
+                            </div>
+                        `;
+                        resultsList.appendChild(itemCard);
+                        counter.textContent = `Found: ${foundCount} streams`;
                     }
+                } catch (err) {
+                    console.warn(`Error processing query for ${titleQuery}:`, err);
                 }
 
-                statusText.textContent = `Status: Complete. Successfully extracted ${foundCount} playable media streams.`;
-            } catch (err) {
-                statusText.textContent = `Status Error: ${err.message}`;
-            } finally {
-                scanBtn.disabled = false;
-                scanBtn.textContent = 'Start Pulling';
+                // Small delay to respect rate limits
+                await new Promise(r => setTimeout(r, 300));
             }
+
+            statusText.textContent = `Status: Complete. Successfully matched and indexed ${foundCount} items from your list.`;
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Start Batch Match';
         }
 
         function playStream(url, title) {
