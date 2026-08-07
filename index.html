@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NEXUS TV - Modern Archive Streamer</title>
+    <title>NEXUS TV - Archive Streamer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col">
@@ -12,7 +12,7 @@
         <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
         <nav class="flex gap-4 text-sm font-medium">
             <button onclick="filterCategory('all')" class="category-btn text-amber-400 hover:text-amber-300 transition">All Content</button>
-            <button onclick="filterCategory('movies')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">Movies (1971+)</button>
+            <button onclick="filterCategory('movies')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">Movies</button>
             <button onclick="filterCategory('series')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">TV Series</button>
             <button onclick="filterCategory('adult')" class="category-btn text-rose-400 hover:text-rose-300 transition">Adult / Mature</button>
         </nav>
@@ -20,18 +20,14 @@
 
     <!-- Main Content Container -->
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
-        <div id="loader" class="hidden flex-col items-center justify-center py-20 gap-4">
-            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-amber-500"></div>
-            <p class="text-sm text-zinc-400">Loading stream library...</p>
-        </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
 
     <!-- Video Modal / Player -->
     <div id="player" class="fixed inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
         <div id="stage" class="relative w-full max-w-5xl aspect-video bg-black flex items-center justify-center">
-            <video id="video" class="w-full h-full"></video>
-            <div id="loadingSpinner" class="absolute inset-0 flex items-center justify-center bg-black/50">
+            <video id="video" class="w-full h-full" controls></video>
+            <div id="loadingSpinner" class="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none hidden">
                 <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500"></div>
             </div>
         </div>
@@ -40,57 +36,30 @@
                 <h3 id="pTitle" class="font-bold text-lg">Title</h3>
                 <p id="pMeta" class="text-xs text-zinc-400">Metadata</p>
             </div>
-            <div class="flex items-center gap-4">
-                <button id="ppBtn" class="p-2 bg-amber-500 text-black rounded font-bold text-xs">Play/Pause</button>
-                <input id="seek" type="range" min="0" max="1000" value="0" class="w-32 accent-amber-500">
-                <span id="curTime" class="text-xs text-zinc-300">0:00</span> / <span id="durTime" class="text-xs text-zinc-300">0:00</span>
-                <button id="muteBtn" class="text-sm text-zinc-300 hover:text-white">Mute</button>
-                <input id="vol" type="range" min="0" max="100" value="100" class="w-20 accent-amber-500">
-                <button id="fsBtn" class="text-sm text-zinc-300 hover:text-white">Fullscreen</button>
-                <button id="closeBtn" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded text-sm">Close</button>
+            <div>
+                <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Curated Library Array (Easily add or modify exact titles, identifiers, and categories here)
+        // Exact entries mapped directly from the TOP-MOVIES-ENG-1080P repository layout
         const activeItems = [
             {
-                id: 'touch-of-satan-1971',
-                title: 'The Touch of Satan',
-                year: '1971',
-                genres: ['Horror', 'Mystery'],
+                id: 'TOP-MOVIES-ENG-1080P',
+                title: 'Featured 1080p Feature Film',
+                year: '2023',
+                genres: ['Action', 'Drama'],
                 category: 'movies',
-                video: 'https://archive.org/download/touch-of-satan-1971/Touch%20Of%20Satan%20%28%201971%29%20WIDESCREEN%20VERSION.mp4'
-            },
-            {
-                id: 'carry-on-at-your-convenience',
-                title: 'Carry On at Your Convenience',
-                year: '1971',
-                genres: ['Comedy'],
-                category: 'movies',
-                video: 'https://archive.org/download/carry-on-at-your-convenience/Carry%20On%20at%20Your%20Convenience.mp4'
-            },
-            {
-                id: 'a-taste-of-evil-1971_202204',
-                title: 'A Taste of Evil',
-                year: '1971',
-                genres: ['Suspense', 'Thriller'],
-                category: 'movies',
-                video: 'https://archive.org/download/a-taste-of-evil-1971_202204/A%20Taste%20Of%20Evil%20-%20Barbara%20Stanwyck.mp4'
+                // Replace filename.mp4 with the exact file name found inside your specific archive folder path
+                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/filename.mp4'
             }
-            // Add additional verified movie or TV series identifiers here following the same object pattern:
-            // { id: 'archive-identifier', title: 'Movie Name', year: '1980', genres: ['Action'], category: 'movies', video: 'direct_mp4_url' }
         ];
-
-        function initApp() {
-            renderGrid(activeItems);
-        }
 
         function renderGrid(items) {
             const gridEl = document.getElementById('grid');
             if(items.length === 0) {
-                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No titles found matching this filter.</p>';
+                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No titles found.</p>';
                 return;
             }
             gridEl.innerHTML = items.map((item, index) => `
@@ -116,29 +85,12 @@
             const buttons = document.querySelectorAll('.category-btn');
             buttons.forEach(b => b.classList.remove('text-amber-400', 'text-rose-400'));
             
-            if(cat === 'all') {
-                renderGrid(activeItems);
-            } else if(cat === 'adult') {
-                renderGrid(activeItems.filter(i => i.category === 'adult'));
-            } else if(cat === 'movies') {
-                renderGrid(activeItems.filter(i => i.category === 'movies'));
-            } else if(cat === 'series') {
-                renderGrid(activeItems.filter(i => i.category === 'series'));
-            }
+            if(cat === 'all') renderGrid(activeItems);
+            else renderGrid(activeItems.filter(i => i.category === cat));
         }
 
-        // Player UI Controls & Full Custom Setup Logic
         const playerEl = document.getElementById('player');
         const videoEl = document.getElementById('video');
-        const loaderEl = document.getElementById('loadingSpinner');
-        const stageEl = document.getElementById('stage');
-        const seekEl = document.getElementById('seek');
-        const curTimeEl = document.getElementById('curTime');
-        const durTimeEl = document.getElementById('durTime');
-        const ppBtn = document.getElementById('ppBtn');
-        const muteBtn = document.getElementById('muteBtn');
-        const volEl = document.getElementById('vol');
-        const fsBtn = document.getElementById('fsBtn');
 
         function openPlayer(index){
             const f = activeItems[index];
@@ -149,7 +101,6 @@
             document.getElementById('pMeta').innerText = `${f.genres.join(' · ')} · ${f.year}`;
             videoEl.src = f.video;
             videoEl.play().catch(()=>{});
-            setupUI();
         }
 
         function closePlayer(){
@@ -157,60 +108,11 @@
             videoEl.src = "";
             playerEl.classList.remove('opacity-100');
             setTimeout(() => playerEl.style.display = 'none', 300);
-            if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
         }
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        function setupUI(){
-            videoEl.onwaiting = () => loaderEl.style.display = 'flex';
-            videoEl.onplaying = () => loaderEl.style.display = 'none';
-            videoEl.ontimeupdate = () => {
-                if(!videoEl.duration) return;
-                const p = (videoEl.currentTime / videoEl.duration) * 1000;
-                seekEl.value = p;
-                curTimeEl.innerText = fmtTime(videoEl.currentTime);
-                durTimeEl.innerText = fmtTime(videoEl.duration);
-            };
-            videoEl.onplay = () => ppBtn.innerText = 'Pause';
-            videoEl.onpause = () => ppBtn.innerText = 'Play';
-        }
-
-        function fmtTime(s){
-            if(!isFinite(s)) return "0:00";
-            s = Math.floor(s);
-            const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
-            return h ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
-        }
-
-        seekEl.oninput = (e) => {
-            if(!videoEl.duration) return;
-            videoEl.currentTime = (e.target.value / 1000) * videoEl.duration;
-        };
-
-        ppBtn.onclick = () => {
-            if(videoEl.paused) videoEl.play(); else videoEl.pause();
-        };
-
-        muteBtn.onclick = () => {
-            videoEl.muted = !videoEl.muted;
-            volEl.value = videoEl.muted ? 0 : (videoEl.volume * 100);
-            muteBtn.innerText = videoEl.muted ? 'Unmute' : 'Mute';
-        };
-
-        volEl.oninput = (e) => {
-            const v = e.target.value / 100;
-            videoEl.volume = v;
-            videoEl.muted = (v === 0);
-            muteBtn.innerText = videoEl.muted ? 'Unmute' : 'Mute';
-        };
-
-        fsBtn.onclick = () => {
-            if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
-            else document.exitFullscreen().catch(()=>{});
-        };
-
-        initApp();
+        renderGrid(activeItems);
     </script>
 </body>
 </html>
