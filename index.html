@@ -20,8 +20,9 @@
 
     <!-- Main Content Container -->
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
-        <div id="loader" class="flex justify-center items-center py-20">
+        <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
             <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-amber-500"></div>
+            <p class="text-sm text-zinc-400">Loading massive stream library from Archive pools...</p>
         </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
@@ -40,37 +41,39 @@
                 <p id="pMeta" class="text-xs text-zinc-400">Metadata</p>
             </div>
             <div class="flex items-center gap-4">
-                <button id="ppBtn" class="p-2 bg-amber-500 text-black rounded font-bold">Play/Pause</button>
+                <button id="ppBtn" class="p-2 bg-amber-500 text-black rounded font-bold text-xs">Play/Pause</button>
                 <input id="seek" type="range" min="0" max="1000" value="0" class="w-32 accent-amber-500">
-                <button id="muteBtn" class="text-sm">Mute</button>
+                <span id="curTime" class="text-xs text-zinc-300">0:00</span> / <span id="durTime" class="text-xs text-zinc-300">0:00</span>
+                <button id="muteBtn" class="text-sm text-zinc-300 hover:text-white">Mute</button>
                 <input id="vol" type="range" min="0" max="100" value="100" class="w-20 accent-amber-500">
-                <button id="fsBtn" class="text-sm">Fullscreen</button>
+                <button id="fsBtn" class="text-sm text-zinc-300 hover:text-white">Fullscreen</button>
                 <button id="closeBtn" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded text-sm">Close</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Archive.org Queries configured for 1971+ and runtime filters, separating adult media into its own tier
+        // Expanded Archive queries targeting high-volume feature films, television, and isolated adult categories from 1971+
         const ARCHIVE_ENDPOINTS = {
-            main: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR classic_tv) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=40&output=json',
-            adult: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR adult) AND date:[1971-01-01 TO 2030-12-31] AND subject:(adult OR erotic) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=20&output=json'
+            main: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR classic_tv OR cinema OR mpeg_movies) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=100&output=json',
+            adult: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR adult) AND date:[1971-01-01 TO 2030-12-31] AND subject:(adult OR erotic) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=40&output=json'
         };
 
         let activeItems = [];
 
         async function fetchContent() {
             try {
-                const response = await fetch(ARCHIVE_ENDPOINTS.main);
-                const data = await response.json();
+                const [mainRes, adultRes] = await Promise.all([
+                    fetch(ARCHIVE_ENDPOINTS.main),
+                    fetch(ARCHIVE_ENDPOINTS.adult)
+                ]);
                 
-                // Fetch adult category separately so it can be isolated
-                const adultResponse = await fetch(ARCHIVE_ENDPOINTS.adult);
-                const adultData = await adultResponse.json();
+                const mainData = await mainRes.json();
+                const adultData = await adultRes.json();
 
                 const formatDocs = (docs, category) => docs.map(doc => ({
                     id: doc.identifier,
-                    title: doc.title || 'Untitled',
+                    title: doc.title || 'Untitled Feature',
                     year: doc.year || '1971+',
                     genres: doc.genre ? [doc.genre].flat() : [category === 'adult' ? 'Adult' : 'Feature Film'],
                     category: category,
@@ -78,7 +81,7 @@
                 }));
 
                 activeItems = [
-                    ...formatDocs(data.response.docs, 'movies'),
+                    ...formatDocs(mainData.response.docs, 'movies'),
                     ...formatDocs(adultData.response.docs, 'adult')
                 ];
 
@@ -86,16 +89,20 @@
                 renderGrid(activeItems);
             } catch (err) {
                 console.error("Failed to load Archive data", err);
-                document.getElementById('loader').innerHTML = '<p class="text-rose-500">Error loading stream library.</p>';
+                document.getElementById('loader').innerHTML = '<p class="text-rose-500">Error loading high-volume stream library.</p>';
             }
         }
 
         function renderGrid(items) {
             const gridEl = document.getElementById('grid');
+            if(items.length === 0) {
+                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No titles found matching this filter.</p>';
+                return;
+            }
             gridEl.innerHTML = items.map((item, index) => `
                 <div onclick="openPlayer(${index})" class="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden cursor-pointer hover:border-amber-500 transition group flex flex-col justify-between">
                     <div class="aspect-video bg-zinc-950 flex items-center justify-center relative overflow-hidden">
-                        <img src="https://archive.org/services/img/${item.id}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'">
+                        <img src="https://archive.org/services/img/${item.id}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://via.placeholder.com/300x169?text=NEXUS+TV'">
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                             <span class="px-4 py-2 bg-amber-500 text-black font-bold rounded text-xs shadow-lg">Play Stream</span>
                         </div>
@@ -112,59 +119,102 @@
         }
 
         function filterCategory(cat) {
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(b => b.classList.remove('text-amber-400', 'text-rose-400'));
+            
             if(cat === 'all') {
                 renderGrid(activeItems);
             } else if(cat === 'adult') {
                 renderGrid(activeItems.filter(i => i.category === 'adult'));
             } else if(cat === 'movies') {
-                renderGrid(activeItems.filter(i => i.category === 'movies' && !i.genres.includes('TV Series')));
+                renderGrid(activeItems.filter(i => i.category === 'movies' && !i.genres.some(g => g.toLowerCase().includes('series') || g.toLowerCase().includes('tv'))));
             } else if(cat === 'series') {
-                renderGrid(activeItems.filter(i => i.genres.includes('TV Series') || i.title.toLowerCase().includes('series')));
+                renderGrid(activeItems.filter(i => i.category === 'movies' && i.genres.some(g => g.toLowerCase().includes('series') || g.toLowerCase().includes('tv'))));
             }
         }
 
-        // Player UI Controls
+        // Player UI Controls & Full Custom Setup Logic
         const playerEl = document.getElementById('player');
         const videoEl = document.getElementById('video');
-        const loaderSpinner = document.getElementById('loadingSpinner');
+        const loaderEl = document.getElementById('loadingSpinner');
+        const stageEl = document.getElementById('stage');
+        const seekEl = document.getElementById('seek');
+        const curTimeEl = document.getElementById('curTime');
+        const durTimeEl = document.getElementById('durTime');
+        const ppBtn = document.getElementById('ppBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const volEl = document.getElementById('vol');
+        const fsBtn = document.getElementById('fsBtn');
 
-        function openPlayer(index) {
-            const item = activeItems[index];
+        function openPlayer(index){
+            const f = activeItems[index];
+            if(!f) return;
             playerEl.style.display = 'flex';
             setTimeout(() => playerEl.classList.add('opacity-100'), 10);
-            document.getElementById('pTitle').innerText = item.title;
-            document.getElementById('pMeta').innerText = `${item.genres.join(' · ')} · ${item.year}`;
-            videoEl.src = item.video;
+            document.getElementById('pTitle').innerText = f.title;
+            document.getElementById('pMeta').innerText = `${f.genres.join(' · ')} · ${f.year}`;
+            videoEl.src = f.video;
             videoEl.play().catch(()=>{});
             setupUI();
         }
 
-        function closePlayer() {
+        function closePlayer(){
             videoEl.pause();
             videoEl.src = "";
             playerEl.classList.remove('opacity-100');
             setTimeout(() => playerEl.style.display = 'none', 300);
+            if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
         }
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        function setupUI() {
-            videoEl.onwaiting = () => loaderSpinner.style.display = 'flex';
-            videoEl.onplaying = () => loaderSpinner.style.display = 'none';
-            document.getElementById('ppBtn').onclick = () => {
-                if(videoEl.paused) videoEl.play(); else videoEl.pause();
+        function setupUI(){
+            videoEl.onwaiting = () => loaderEl.style.display = 'flex';
+            videoEl.onplaying = () => loaderEl.style.display = 'none';
+            videoEl.ontimeupdate = () => {
+                if(!videoEl.duration) return;
+                const p = (videoEl.currentTime / videoEl.duration) * 1000;
+                seekEl.value = p;
+                curTimeEl.innerText = fmtTime(videoEl.currentTime);
+                durTimeEl.innerText = fmtTime(videoEl.duration);
             };
-            document.getElementById('muteBtn').onclick = () => {
-                videoEl.muted = !videoEl.muted;
-            };
-            document.getElementById('vol').oninput = (e) => {
-                videoEl.volume = e.target.value / 100;
-            };
-            document.getElementById('fsBtn').onclick = () => {
-                if(!document.fullscreenElement) document.getElementById('stage').requestFullscreen().catch(()=>{});
-                else document.exitFullscreen().catch(()=>{});
-            };
+            videoEl.onplay = () => ppBtn.innerText = 'Pause';
+            videoEl.onpause = () => ppBtn.innerText = 'Play';
         }
+
+        function fmtTime(s){
+            if(!isFinite(s)) return "0:00";
+            s = Math.floor(s);
+            const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+            return h ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
+        }
+
+        seekEl.oninput = (e) => {
+            if(!videoEl.duration) return;
+            videoEl.currentTime = (e.target.value / 1000) * videoEl.duration;
+        };
+
+        ppBtn.onclick = () => {
+            if(videoEl.paused) videoEl.play(); else videoEl.pause();
+        };
+
+        muteBtn.onclick = () => {
+            videoEl.muted = !videoEl.muted;
+            volEl.value = videoEl.muted ? 0 : (videoEl.volume * 100);
+            muteBtn.innerText = videoEl.muted ? 'Unmute' : 'Mute';
+        };
+
+        volEl.oninput = (e) => {
+            const v = e.target.value / 100;
+            videoEl.volume = v;
+            videoEl.muted = (v === 0);
+            muteBtn.innerText = videoEl.muted ? 'Unmute' : 'Mute';
+        };
+
+        fsBtn.onclick = () => {
+            if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
+            else document.exitFullscreen().catch(()=>{});
+        };
 
         fetchContent();
     </script>
