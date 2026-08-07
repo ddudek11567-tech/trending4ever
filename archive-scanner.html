@@ -50,7 +50,7 @@
                         onclick="startTargetedScan()" 
                         class="bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-5 py-2 rounded-lg text-sm transition cursor-pointer"
                     >
-                        Resume / Start Overnight Scan
+                        Resume / Start Full 1500 Scan
                     </button>
                     <button 
                         onclick="clearStorage()" 
@@ -90,7 +90,7 @@
                 <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
                     <div class="max-h-[500px] overflow-y-auto divide-y divide-zinc-900" id="resultsList">
                         <div class="p-8 text-center text-sm text-zinc-500">
-                            No stored links found. Click "Resume / Start Overnight Scan" to populate and persist your library.
+                            No stored links found. Click "Resume / Start Full 1500 Scan" to populate and persist your library.
                         </div>
                     </div>
                 </div>
@@ -236,7 +236,7 @@
             if (discoveredStreams.length === 0) {
                 resultsList.innerHTML = `
                     <div class="p-8 text-center text-sm text-zinc-500">
-                        No stored links found. Click "Resume / Start Overnight Scan" to populate and persist your library.
+                        No stored links found. Click "Resume / Start Full 1500 Scan" to populate and persist your library.
                     </div>
                 `;
                 return;
@@ -275,9 +275,8 @@
             const counter = document.getElementById('counter');
 
             scanBtn.disabled = true;
-            scanBtn.textContent = 'Scanning Remaining List...';
+            scanBtn.textContent = 'Scanning Full 1,500 List...';
             
-            // Map existing stored titles to avoid duplicate API calls across sessions
             const existingTitles = new Set(discoveredStreams.map(s => s.title.toLowerCase()));
             const total = masterMovies.length;
 
@@ -292,55 +291,78 @@
                 statusText.textContent = `Scanning Archive.org (${i + 1}/${total}): "${titleQuery}"...`;
 
                 try {
-                    const searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=1&output=json`;
-                    const searchRes = await fetch(searchUrl);
-                    const searchJson = await searchRes.json();
-                    const docs = searchJson.response?.docs || [];
+                    // Try exact title query first
+                    let searchUrl = `https://archive.org/advancedsearch.php?q=title:(${encodeURIComponent(titleQuery)})+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=2&output=json`;
+                    let searchRes = await fetch(searchUrl);
+                    
+                    if (!searchRes.ok) {
+                        // Back off briefly and retry if rate-limited or network hiccup occurs
+                        await new Promise(r => setTimeout(r, 1500));
+                        searchRes = await fetch(searchUrl);
+                    }
+
+                    if (!searchRes.ok) continue;
+                    let searchJson = await searchRes.json();
+                    let docs = searchJson.response?.docs || [];
+
+                    // Fallback to general keyword search if exact title fails
+                    if (docs.length === 0) {
+                        const fallbackUrl = `https://archive.org/advancedsearch.php?q=${encodeURIComponent(titleQuery)}+AND+mediatype:(movies)&fl[]=identifier&fl[]=title&fl[]=mediatype&fl[]=year&rows=2&output=json`;
+                        const fbRes = await fetch(fallbackUrl);
+                        if (fbRes.ok) {
+                            const fbJson = await fbRes.json();
+                            docs = fbJson.response?.docs || [];
+                        }
+                    }
 
                     if (docs.length === 0) continue;
-                    const doc = docs[0];
 
-                    const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
-                    if (!metaRes.ok) continue;
-                    const metaJson = await metaRes.json();
-                    const files = metaJson.files || [];
+                    let matchedStreamFound = false;
+                    for (const doc of docs) {
+                        if (matchedStreamFound) break;
 
-                    // Verify full-length runtime (> 1 hour / 3600 seconds)
-                    const videoFile = files.find(f => 
-                        (f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM') && 
-                        (!f.length || parseFloat(f.length) >= 3600)
-                    );
+                        const metaRes = await fetch(`https://archive.org/metadata/${doc.identifier}`);
+                        if (!metaRes.ok) continue;
+                        const metaJson = await metaRes.json();
+                        const files = metaJson.files || [];
 
-                    if (videoFile) {
-                        const streamUrl = `https://archive.org/download/${doc.identifier}/${videoFile.name}`;
-                        const itemTitle = doc.title || titleQuery;
-                        const year = doc.year || 'N/A';
+                        // Find a video file matching format constraints and runtime (> 3600 seconds)
+                        const videoFile = files.find(f => 
+                            (f.format === 'MPEG4' || f.format === 'h.264' || f.format === 'WebM' || f.format === '500kbps MP4') && 
+                            (!f.length || parseFloat(f.length) >= 3600)
+                        );
 
-                        const newItem = {
-                            title: itemTitle,
-                            year: year,
-                            format: videoFile.format,
-                            url: streamUrl
-                        };
+                        if (videoFile) {
+                            const streamUrl = `https://archive.org/download/${doc.identifier}/${videoFile.name}`;
+                            const itemTitle = doc.title || titleQuery;
+                            const year = doc.year || 'N/A';
 
-                        discoveredStreams.push(newItem);
-                        existingTitles.add(titleQuery.toLowerCase());
+                            const newItem = {
+                                title: itemTitle,
+                                year: year,
+                                format: videoFile.format,
+                                url: streamUrl
+                            };
 
-                        // Immediately persist state to localStorage so browser holds full progress safely
-                        localStorage.setItem('master_movie_streams', JSON.stringify(discoveredStreams));
-                        renderStoredResults();
+                            discoveredStreams.push(newItem);
+                            existingTitles.add(titleQuery.toLowerCase());
+
+                            localStorage.setItem('master_movie_streams', JSON.stringify(discoveredStreams));
+                            renderStoredResults();
+                            matchedStreamFound = true;
+                        }
                     }
                 } catch (err) {
-                    console.warn(`Error processing query for ${titleQuery}:`, err);
+                    console.warn(`Transient error processing query for ${titleQuery}, continuing loop...`, err);
                 }
 
-                // Respect rate limits between automated requests
-                await new Promise(r => setTimeout(r, 300));
+                // Balanced pacing delay to prevent browser fetch queue blocks or strict API blocking
+                await new Promise(r => setTimeout(r, 400));
             }
 
-            statusText.textContent = `Status: Scan completed across all entries. All discovered stream matches are safely stored.`;
+            statusText.textContent = `Status: Full scan completed across all 1,500 entries. Matches saved successfully.`;
             scanBtn.disabled = false;
-            scanBtn.textContent = 'Resume / Start Overnight Scan';
+            scanBtn.textContent = 'Resume / Start Full 1500 Scan';
         }
 
         function clearStorage() {
