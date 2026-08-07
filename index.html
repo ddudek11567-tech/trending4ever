@@ -20,9 +20,9 @@
 
     <!-- Main Content Container -->
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
-        <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
+        <div id="loader" class="hidden flex-col items-center justify-center py-20 gap-4">
             <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-amber-500"></div>
-            <p class="text-sm text-zinc-400">Loading massive stream library from Archive pools...</p>
+            <p class="text-sm text-zinc-400">Loading stream library...</p>
         </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
@@ -53,44 +53,38 @@
     </div>
 
     <script>
-        // Expanded Archive queries targeting high-volume feature films, television, and isolated adult categories from 1971+
-        const ARCHIVE_ENDPOINTS = {
-            main: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR classic_tv OR cinema OR mpeg_movies) AND date:[1971-01-01 TO 2030-12-31] AND NOT subject:(homevideo OR amateur OR silent OR corporate) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=100&output=json',
-            adult: 'https://archive.org/advancedsearch.php?q=collection:(feature_films OR adult) AND date:[1971-01-01 TO 2030-12-31] AND subject:(adult OR erotic) AND mediatype:movies&fl[]=identifier&fl[]=title&fl[]=year&fl[]=genre&fl[]=mediatype&rows=40&output=json'
-        };
-
-        let activeItems = [];
-
-        async function fetchContent() {
-            try {
-                const [mainRes, adultRes] = await Promise.all([
-                    fetch(ARCHIVE_ENDPOINTS.main),
-                    fetch(ARCHIVE_ENDPOINTS.adult)
-                ]);
-                
-                const mainData = await mainRes.json();
-                const adultData = await adultRes.json();
-
-                const formatDocs = (docs, category) => docs.map(doc => ({
-                    id: doc.identifier,
-                    title: doc.title || 'Untitled Feature',
-                    year: doc.year || '1971+',
-                    genres: doc.genre ? [doc.genre].flat() : [category === 'adult' ? 'Adult' : 'Feature Film'],
-                    category: category,
-                    video: `https://archive.org/download/${doc.identifier}/${doc.identifier}.mp4`
-                }));
-
-                activeItems = [
-                    ...formatDocs(mainData.response.docs, 'movies'),
-                    ...formatDocs(adultData.response.docs, 'adult')
-                ];
-
-                document.getElementById('loader').style.display = 'none';
-                renderGrid(activeItems);
-            } catch (err) {
-                console.error("Failed to load Archive data", err);
-                document.getElementById('loader').innerHTML = '<p class="text-rose-500">Error loading high-volume stream library.</p>';
+        // Curated Library Array (Easily add or modify exact titles, identifiers, and categories here)
+        const activeItems = [
+            {
+                id: 'touch-of-satan-1971',
+                title: 'The Touch of Satan',
+                year: '1971',
+                genres: ['Horror', 'Mystery'],
+                category: 'movies',
+                video: 'https://archive.org/download/touch-of-satan-1971/Touch%20Of%20Satan%20%28%201971%29%20WIDESCREEN%20VERSION.mp4'
+            },
+            {
+                id: 'carry-on-at-your-convenience',
+                title: 'Carry On at Your Convenience',
+                year: '1971',
+                genres: ['Comedy'],
+                category: 'movies',
+                video: 'https://archive.org/download/carry-on-at-your-convenience/Carry%20On%20at%20Your%20Convenience.mp4'
+            },
+            {
+                id: 'a-taste-of-evil-1971_202204',
+                title: 'A Taste of Evil',
+                year: '1971',
+                genres: ['Suspense', 'Thriller'],
+                category: 'movies',
+                video: 'https://archive.org/download/a-taste-of-evil-1971_202204/A%20Taste%20Of%20Evil%20-%20Barbara%20Stanwyck.mp4'
             }
+            // Add additional verified movie or TV series identifiers here following the same object pattern:
+            // { id: 'archive-identifier', title: 'Movie Name', year: '1980', genres: ['Action'], category: 'movies', video: 'direct_mp4_url' }
+        ];
+
+        function initApp() {
+            renderGrid(activeItems);
         }
 
         function renderGrid(items) {
@@ -112,7 +106,7 @@
                             <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">${item.category}</span>
                             <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
                         </div>
-                        <p class="text-xs text-zinc-400 mt-3">${item.year} · ${item.genres[0]}</p>
+                        <p class="text-xs text-zinc-400 mt-3">${item.year} · ${item.genres.join(', ')}</p>
                     </div>
                 </div>
             `).join('');
@@ -127,9 +121,9 @@
             } else if(cat === 'adult') {
                 renderGrid(activeItems.filter(i => i.category === 'adult'));
             } else if(cat === 'movies') {
-                renderGrid(activeItems.filter(i => i.category === 'movies' && !i.genres.some(g => g.toLowerCase().includes('series') || g.toLowerCase().includes('tv'))));
+                renderGrid(activeItems.filter(i => i.category === 'movies'));
             } else if(cat === 'series') {
-                renderGrid(activeItems.filter(i => i.category === 'movies' && i.genres.some(g => g.toLowerCase().includes('series') || g.toLowerCase().includes('tv'))));
+                renderGrid(activeItems.filter(i => i.category === 'series'));
             }
         }
 
@@ -216,7 +210,7 @@
             else document.exitFullscreen().catch(()=>{});
         };
 
-        fetchContent();
+        initApp();
     </script>
 </body>
 </html>
