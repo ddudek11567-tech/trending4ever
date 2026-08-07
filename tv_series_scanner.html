@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus TV - Deep Directory &amp; Series Scraper</title>
+    <title>Nexus TV - Direct Open Directory Browser</title>
     <!-- Tailwind CSS CDN v4 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,54 +30,54 @@
         <!-- Header -->
         <div class="border-b border-zinc-800 pb-4 flex justify-between items-end">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Nexus TV Deep Directory Scanner</h1>
+                <h1 class="text-2xl font-bold tracking-tight">Nexus TV Open Directory Browser</h1>
                 <p class="text-sm text-zinc-400 mt-1">
-                    Recursive Subdirectory Indexer for <span class="text-zinc-200 font-mono">195.201.59.219/public/</span> &amp; Master Series Catalog
+                    Live Recursive Crawler for <span class="text-zinc-200 font-mono">195.201.59.219/public/</span> (Zero Fake/Guessed Links)
                 </p>
             </div>
             <div id="counter" class="text-xs font-mono bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg text-zinc-400">
-                Folders: 0 | Total Streams: 0
+                Folders: 0 | Verified Media Streams: 0
             </div>
         </div>
 
         <!-- Controls -->
         <div class="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 space-y-4">
             <div class="flex items-center justify-between flex-wrap gap-4">
-                <span class="text-xs font-medium text-zinc-300">Target Root: <span class="text-emerald-400 font-mono">https://195.201.59.219/public/</span></span>
+                <span class="text-xs font-medium text-zinc-300">Target Server: <span class="text-emerald-400 font-mono">https://195.201.59.219/public/</span></span>
                 <div class="flex items-center gap-2">
                     <button 
                         id="scanBtn" 
-                        onclick="runDeepDirectoryScan()" 
+                        onclick="crawlServerDeep()" 
                         class="bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-5 py-2 rounded-lg text-sm transition cursor-pointer"
                     >
-                        Run Deep Recursive Folder Scan
+                        Crawl Server Folders &amp; Files
                     </button>
                     <button 
                         onclick="clearStorage()" 
                         class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 font-medium px-3 py-2 rounded-lg text-sm transition cursor-pointer"
                     >
-                        Clear Saved Data
+                        Clear Saved Index
                     </button>
                 </div>
             </div>
             <div class="text-xs text-zinc-400 font-mono pt-1 border-t border-zinc-800/60 flex justify-between flex-wrap gap-2">
-                <span id="statusText">Status: Idle. Saved folders preserved.</span>
-                <span id="progressText">Progress: 0 items processed</span>
+                <span id="statusText">Status: Idle. Existing catalog loaded.</span>
+                <span id="progressText">Progress: 0 items discovered</span>
             </div>
         </div>
 
         <!-- Breadcrumb & Search Bar -->
         <div class="flex items-center justify-between flex-wrap gap-4 bg-zinc-900/30 p-3 rounded-xl border border-zinc-800/60">
             <div id="breadcrumb" class="text-sm text-zinc-300 font-medium flex items-center gap-2">
-                <button onclick="navigateHome()" class="hover:text-white underline cursor-pointer">All Series Folders</button>
+                <button onclick="navigateHome()" class="hover:text-white underline cursor-pointer">Root Directory</button>
                 <span id="breadcrumbCurrent" class="text-zinc-500"></span>
             </div>
             <div>
                 <input 
                     type="text" 
                     id="seriesSearch" 
-                    oninput="filterSeries(this.value)" 
-                    placeholder="Search folders or series..." 
+                    oninput="filterCatalog(this.value)" 
+                    placeholder="Search folders or files..." 
                     class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-500 w-64"
                 >
             </div>
@@ -92,7 +92,7 @@
                 <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden aspect-video flex items-center justify-center relative">
                     <video id="mediaPlayer" controls class="w-full h-full object-contain bg-black" style="display: none;"></video>
                     <div id="playerPlaceholder" class="text-center p-6 text-zinc-500 text-sm">
-                        Select a stream to play it directly.
+                        Select a verified media file to play.
                     </div>
                 </div>
                 <div id="nowPlayingMeta" class="text-xs text-zinc-400 font-mono space-y-1 bg-zinc-900/30 p-3 rounded-lg border border-zinc-800/60 hidden">
@@ -103,11 +103,11 @@
 
             <!-- Hierarchical Explorer View -->
             <div class="lg:col-span-2 space-y-3">
-                <h2 class="text-lg font-semibold" id="viewHeader">Series Folders</h2>
+                <h2 class="text-lg font-semibold" id="viewHeader">Directory Folders</h2>
                 <div class="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950">
                     <div class="max-h-[500px] overflow-y-auto divide-y divide-zinc-900" id="explorerView">
                         <div class="p-8 text-center text-sm text-zinc-500">
-                            No series folders loaded. Click "Run Deep Recursive Folder Scan" to index server subdirectories.
+                            No directory loaded. Click "Crawl Server Folders &amp; Files" to index real links from 195.201.59.219.
                         </div>
                     </div>
                 </div>
@@ -117,58 +117,30 @@
     </div>
 
     <script>
-        // Persistent master series catalog structured by folder name
-        let seriesCatalog = JSON.parse(localStorage.getItem('nexus_deep_server_catalog') || '{}');
-        let currentActiveFolder = null;
+        // Persistent storage strictly mapping folder path -> Array of verified media files
+        let serverCatalog = JSON.parse(localStorage.getItem('nexus_opendir_strict_v1') || '{}');
+        let currentFolder = null;
         let searchQuery = '';
-
-        // Master Series List Provided
-        const masterSeries = [
-            "Star Trek: The Next Generation", "Star Trek: Deep Space Nine", "Star Trek: Voyager", "Star Trek: Enterprise", "Star Trek: Discovery", "Star Trek: Strange New Worlds", "Star Wars: The Clone Wars", "Star Wars: Rebels", "The Mandalorian", "Andor",
-            "Doctor Who", "Torchwood", "The X-Files", "Fringe", "The Twilight Zone", "Outer Limits", "Babylon 5", "Battlestar Galactica", "Stargate SG-1", "Stargate Atlantis",
-            "Buffy the Vampire Slayer", "Angel", "Supernatural", "Charmed", "Smallville", "Arrow", "The Flash", "Supergirl", "Legends of Tomorrow", "Gotham",
-            "Lost", "The Leftovers", "Westworld", "Stranger Things", "Black Mirror", "The Witcher", "The Boys", "Invincible", "The Umbrella Academy", "Locke & Key",
-            "Foundation", "The Expanse", "For All Mankind", "Severance", "The Last of Us", "Fallout", "House of the Dragon", "The Lord of the Rings: The Rings of Power", "Wheel of Time", "His Dark Materials",
-            "Breaking Bad", "Better Call Saul", "The Wire", "The Sopranos", "Mad Men", "Succession", "Peaky Blinders", "Boardwalk Empire", "Sons of Anarchy", "Mayans M.C.",
-            "The Shield", "Justified", "Deadwood", "Yellowstone", "1883", "1923", "Ozark", "Narcos", "Narcos: Mexico", "The Americans",
-            "Homeland", "The Blacklist", "Designated Survivor", "24", "Alias", "Prison Break", "Dexter", "Hannibal", "Mindhunter", "True Detective",
-            "Sherlock", "Luther", "Line of Duty", "Broadchurch", "Happy Valley", "Vera", "Shetland", "Silent Witness", "Midsomer Murders", "Lewis",
-            "Law & Order", "Law & Order: Special Victims Unit", "Law & Order: Criminal Intent", "CSI: Crime Scene Investigation", "CSI: Miami", "CSI: New York", "NCIS", "NCIS: Los Angeles", "NCIS: New Orleans", "Criminal Minds",
-            "The Mentalist", "Castle", "Bones", "Lie to Me", "White Collar", "Burn Notice", "Suits", "Billions", "The Good Wife", "The Good Fight",
-            "House", "Grey's Anatomy", "ER", "The West Wing", "Scandal", "How to Get Away with Murder", "This Is Us", "Parenthood", "Friday Night Lights", "The O.C.",
-            "Friends", "Seinfeld", "The Office", "Parks and Recreation", "Brooklyn Nine-Nine", "Modern Family", "The Big Bang Theory", "Young Sheldon", "How I Met Your Mother", "Two and a Half Men",
-            "It's Always Sunny in Philadelphia", "Curb Your Enthusiasm", "Arrested Development", "Community", "Scrubs", "30 Rock", "Veep", "Silicon Valley", "Ted Lasso", "Schitt's Creek",
-            "The Simpsons", "Futurama", "South Park", "Family Guy", "American Dad!", "Bob's Burgers", "Rick and Morty", "BoJack Horseman", "Archer", "Disenchantment",
-            "Cheers", "Frasier", "Will & Grace", "Everybody Loves Raymond", "The King of Queens", "That '70s Show", "Malcolm in the Middle", "The Fresh Prince of Bel-Air", "Full House", "Boy Meets World",
-            "New Girl", "Happy Endings", "Broad City", "Insecure", "Atlanta", "Master of None", "Fleabag", "The Marvelous Mrs. Maisel", "Barry", "Hacks",
-            "Miami Vice", "Magnum, P.I.", "Knight Rider", "The A-Team", "Airwolf", "MacGyver", "Quantum Leap", "Twin Peaks", "Northern Exposure", "Roswell", "Dark Angel", "Heroes", "Alcatraz", "Revolution", "Jericho", "The 100", "The Vampire Diaries", "The Originals",
-            "Legacies", "Teen Wolf", "Once Upon a Time", "Grimm", "Constantine", "Preacher", "Gotham Knights", "Titans", "Doom Patrol", "Swamp Thing",
-            "Penny Dreadful", "Salem", "The Strain", "Ash vs Evil Dead", "Channel Zero", "Castle Rock", "The Haunting of Hill House", "The Haunting of Bly Manor", "Midnight Mass", "The Fall of the House of Usher",
-            "Yellowjackets", "The Bear", "Abbott Elementary", "Reservation Dogs", "The Righteous Gemstones", "Eastbound & Down", "Vice Principals", "Flight of the Conchords", "Portlandia",
-            "Downton Abbey", "The Crown", "Victoria", "Poldark", "Outlander", "The Last Kingdom", "Vikings", "Vikings: Valhalla", "The Last Czar", "Marco Polo",
-            "Spartacus", "Rome", "The Borgias", "The Tudors", "Versailles", "Medici", "Knightfall", "Barbarians", "The Witcher: Blood Origin", "Shadow and Bone",
-            "Lockwood & Co.", "The Sandman", "Good Omens", "American Gods", "Legion", "The Gifted", "Runaways", "Cloak & Dagger", "Helstrom", "M.O.D.O.K."
-        ];
 
         document.addEventListener("DOMContentLoaded", () => {
             renderExplorer();
         });
 
         function navigateHome() {
-            currentActiveFolder = null;
+            currentFolder = null;
             document.getElementById('breadcrumbCurrent').textContent = '';
-            document.getElementById('viewHeader').textContent = "Series Folders";
+            document.getElementById('viewHeader').textContent = "Directory Folders";
             renderExplorer();
         }
 
         function openFolder(folderName) {
-            currentActiveFolder = folderName;
+            currentFolder = folderName;
             document.getElementById('breadcrumbCurrent').textContent = ` / ${folderName}`;
-            document.getElementById('viewHeader').textContent = `Streams in folder: ${folderName}`;
+            document.getElementById('viewHeader').textContent = `Contents of: ${folderName}`;
             renderExplorer();
         }
 
-        function filterSeries(query) {
+        function filterCatalog(query) {
             searchQuery = query.toLowerCase();
             renderExplorer();
         }
@@ -177,16 +149,16 @@
             const explorerView = document.getElementById('explorerView');
             const counter = document.getElementById('counter');
             
-            const folderKeys = Object.keys(seriesCatalog);
-            let totalStreams = 0;
-            folderKeys.forEach(k => totalStreams += seriesCatalog[k].length);
+            const folderKeys = Object.keys(serverCatalog);
+            let totalFiles = 0;
+            folderKeys.forEach(k => totalFiles += serverCatalog[k].length);
 
-            counter.textContent = `Folders: ${folderKeys.length} | Total Streams: ${totalStreams}`;
+            counter.textContent = `Folders: ${folderKeys.length} | Verified Media Streams: ${totalFiles}`;
 
             if (folderKeys.length === 0) {
                 explorerView.innerHTML = `
                     <div class="p-8 text-center text-sm text-zinc-500">
-                        No folders loaded. Click "Run Deep Recursive Folder Scan" to parse server subdirectories.
+                        No folders indexed. Click "Crawl Server Folders &amp; Files" to scan the target server.
                     </div>
                 `;
                 return;
@@ -194,29 +166,30 @@
 
             explorerView.innerHTML = '';
 
-            if (currentActiveFolder) {
-                const streams = seriesCatalog[currentActiveFolder] || [];
-                if (streams.length === 0) {
-                    explorerView.innerHTML = `<div class="p-8 text-center text-sm text-zinc-500">No streams found in this folder.</div>`;
+            // If inside a specific sub-folder
+            if (currentFolder) {
+                const files = serverCatalog[currentFolder] || [];
+                if (files.length === 0) {
+                    explorerView.innerHTML = `<div class="p-8 text-center text-sm text-zinc-500">No media files in this folder.</div>`;
                     return;
                 }
 
-                streams.forEach(st => {
+                files.forEach(file => {
                     const row = document.createElement('div');
                     row.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4';
                     row.innerHTML = `
                         <div class="space-y-1 min-w-0 flex-1">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded">Server Stream</span>
-                                <span class="text-xs text-zinc-500">Direct HTTP</span>
+                                <span class="text-[10px] font-mono uppercase bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded">Verified File</span>
+                                <span class="text-xs text-zinc-500">Direct Server Link</span>
                             </div>
-                            <h3 class="text-sm font-medium text-zinc-200 truncate">${st.title}</h3>
+                            <h3 class="text-sm font-medium text-zinc-200 truncate">${file.title}</h3>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <button onclick="playStream('${escapeHtml(st.url)}', '${escapeHtml(st.title)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
+                            <button onclick="playStream('${escapeHtml(file.url)}', '${escapeHtml(file.title)}')" class="text-xs bg-zinc-100 hover:bg-white text-zinc-950 font-medium px-3 py-1.5 rounded-lg transition cursor-pointer">
                                 Play
                             </button>
-                            <a href="${st.url}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
+                            <a href="${file.url}" target="_blank" rel="noreferrer" class="text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition">
                                 Source
                             </a>
                         </div>
@@ -226,15 +199,16 @@
                 return;
             }
 
-            const filteredKeys = folderKeys.filter(name => name.toLowerCase().includes(searchQuery));
+            // Otherwise, render list of top-level folders
+            const filteredFolders = folderKeys.filter(name => name.toLowerCase().includes(searchQuery));
 
-            if (filteredKeys.length === 0) {
-                explorerView.innerHTML = `<div class="p-8 text-center text-sm text-zinc-500">No folders match your search.</div>`;
+            if (filteredFolders.length === 0) {
+                explorerView.innerHTML = `<div class="p-8 text-center text-sm text-zinc-500">No folders match your search query.</div>`;
                 return;
             }
 
-            filteredKeys.forEach(folderName => {
-                const count = seriesCatalog[folderName].length;
+            filteredFolders.forEach(folderName => {
+                const count = serverCatalog[folderName].length;
                 const folderRow = document.createElement('div');
                 folderRow.className = 'p-4 flex items-center justify-between hover:bg-zinc-900/40 transition gap-4 cursor-pointer';
                 folderRow.onclick = () => openFolder(folderName);
@@ -243,7 +217,7 @@
                         <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                         <div class="min-w-0 flex-1">
                             <h3 class="text-sm font-medium text-zinc-200 truncate">${folderName}</h3>
-                            <p class="text-xs text-zinc-500">${count} media file${count === 1 ? '' : 's'}</p>
+                            <p class="text-xs text-zinc-500">${count} verified media file${count === 1 ? '' : 's'}</p>
                         </div>
                     </div>
                     <div>
@@ -254,19 +228,18 @@
             });
         }
 
-        async function runDeepDirectoryScan() {
+        async function crawlServerDeep() {
             const statusText = document.getElementById('statusText');
             const progressText = document.getElementById('progressText');
             const scanBtn = document.getElementById('scanBtn');
 
             scanBtn.disabled = true;
-            scanBtn.textContent = 'Scanning Server Subdirectories...';
-            statusText.textContent = "Status: Connecting to https://195.201.59.219/public/ directory index...";
+            scanBtn.textContent = 'Crawling Server Directory...';
+            statusText.textContent = "Status: Connecting to https://195.201.59.219/public/...";
 
-            let newlyScanned = {};
+            let discoveredCatalog = {};
 
             try {
-                // Fetch root directory index via CORS proxy
                 const rootUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://195.201.59.219/public/');
                 const res = await fetch(rootUrl);
                 const html = await res.text();
@@ -275,45 +248,33 @@
                 const doc = parser.parseFromString(html, 'text/html');
                 const links = doc.querySelectorAll('a');
 
-                let subdirectories = [];
-                let directFiles = [];
+                let subdirs = [];
+                let rootFiles = [];
 
                 links.forEach(a => {
                     const href = a.getAttribute('href');
                     const text = a.textContent.trim();
-                    if (href && href !== '../' && href !== './') {
+                    if (href && href !== '../' && href !== './' && !href.startsWith('?')) {
+                        // Check if it's a directory or media file
                         if (href.endsWith('/') || !href.includes('.')) {
-                            subdirectories.push({ name: text.replace(/\/$/, ''), url: new URL(href, 'https://195.201.59.219/public/').href });
+                            const folderTitle = text.replace(/\/$/, '');
+                            subdirs.push({ name: folderTitle, url: new URL(href, 'https://195.201.59.219/public/').href });
                         } else if (/\.(mp4|mkv|avi|webm|mov|m4v)$/i.test(href)) {
-                            directFiles.push({ name: decodeURIComponent(text), url: new URL(href, 'https://195.201.59.219/public/').href });
+                            rootFiles.push({ title: decodeURIComponent(text), url: new URL(href, 'https://195.201.59.219/public/').href });
                         }
                     }
                 });
 
-                progressText.textContent = `Progress: Found ${subdirectories.length} subfolders, ${directFiles.length} root files`;
+                progressText.textContent = `Discovered ${subdirs.length} directories, ${rootFiles.length} root media files.`;
 
-                // Categorize root files against masterSeries
-                directFiles.forEach(file => {
-                    let matchedFolder = "Uncategorized Media";
-                    const lowerTitle = file.name.toLowerCase();
+                if (rootFiles.length > 0) {
+                    discoveredCatalog["Root Directory"] = rootFiles;
+                }
 
-                    for (let s of masterSeries) {
-                        const sClean = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-                        const fClean = lowerTitle.replace(/[^a-z0-9]/g, '');
-                        if (fClean.includes(sClean) || lowerTitle.includes(s.toLowerCase())) {
-                            matchedFolder = s;
-                            break;
-                        }
-                    }
-
-                    if (!newlyScanned[matchedFolder]) newlyScanned[matchedFolder] = [];
-                    newlyScanned[matchedFolder].push({ title: file.name, url: file.url });
-                });
-
-                // Recursively check subdirectories (depth 1 scan)
-                for (let i = 0; i < subdirectories.length; i++) {
-                    const sub = subdirectories[i];
-                    statusText.textContent = `Status: Scanning folder [${i + 1}/${subdirectories.length}]: ${sub.name}`;
+                // Recursively crawl each discovered subdirectory
+                for (let i = 0; i < subdirs.length; i++) {
+                    const sub = subdirs[i];
+                    statusText.textContent = `Status: Scanning [${i + 1}/${subdirs.length}]: ${sub.name}`;
 
                     try {
                         const subRes = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(sub.url));
@@ -321,56 +282,40 @@
                         const subDoc = parser.parseFromString(subHtml, 'text/html');
                         const subLinks = subDoc.querySelectorAll('a');
 
+                        let folderMedia = [];
                         subLinks.forEach(sa => {
                             const shref = sa.getAttribute('href');
                             const stext = sa.textContent.trim();
-                            if (shref && /\.(mp4|mkv|avi|webm|mov|m4v)$/i.test(shref)) {
-                                const fileUrl = new URL(shref, sub.url).href;
-                                const fileName = decodeURIComponent(stext);
-
-                                let folderName = sub.name;
-                                // Refine folder name if it matches any masterSeries
-                                for (let s of masterSeries) {
-                                    if (sub.name.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(sub.name.toLowerCase())) {
-                                        folderName = s;
-                                        break;
-                                    }
-                                }
-
-                                if (!newlyScanned[folderName]) newlyScanned[folderName] = [];
-                                if (!newlyScanned[folderName].some(item => item.url === fileUrl)) {
-                                    newlyScanned[folderName].push({ title: fileName, url: fileUrl });
+                            if (shref && shref !== '../' && shref !== './' && !shref.startsWith('?')) {
+                                if (/\.(mp4|mkv|avi|webm|mov|m4v)$/i.test(shref)) {
+                                    const fileUrl = new URL(shref, sub.url).href;
+                                    const fileName = decodeURIComponent(stext);
+                                    folderMedia.push({ title: fileName, url: fileUrl });
                                 }
                             }
                         });
+
+                        if (folderMedia.length > 0) {
+                            discoveredCatalog[sub.name] = folderMedia;
+                        }
                     } catch (subErr) {
-                        console.warn(`Could not parse subdirectory ${sub.name}:`, subErr);
+                        console.warn(`Skipping subfolder ${sub.name}:`, subErr);
                     }
                 }
 
             } catch (err) {
-                console.warn("Direct connection restricted or CORS limit reached. Applying full master series fallback mapping.", err);
-                statusText.textContent = "Status: Applying master series index mapping...";
+                console.warn("Crawl failed or blocked by CORS proxy:", err);
+                statusText.textContent = "Status: Crawl encountered network limitation.";
             }
 
-            // Fallback / foundational injection for masterSeries if empty
-            masterSeries.forEach(series => {
-                if (!newlyScanned[series]) {
-                    newlyScanned[series] = [
-                        { title: `${series} - Server Stream 1`, url: `https://195.201.59.219/public/${encodeURIComponent(series)}/episode1.mp4` }
-                    ];
-                }
-            });
-
-            // SAFE ADDITIVE MERGE: Preserve existing saved folders and merge new streams without duplicates
-            let mergedCatalog = { ...seriesCatalog };
-
-            Object.keys(newlyScanned).forEach(folder => {
+            // SAFE MERGE: Keep existing catalog items, add any newly found items
+            let mergedCatalog = { ...serverCatalog };
+            Object.keys(discoveredCatalog).forEach(folder => {
                 if (!mergedCatalog[folder]) {
-                    mergedCatalog[folder] = newlyScanned[folder];
+                    mergedCatalog[folder] = discoveredCatalog[folder];
                 } else {
                     const existingUrls = new Set(mergedCatalog[folder].map(item => item.url));
-                    newlyScanned[folder].forEach(item => {
+                    discoveredCatalog[folder].forEach(item => {
                         if (!existingUrls.has(item.url)) {
                             mergedCatalog[folder].push(item);
                             existingUrls.add(item.url);
@@ -379,22 +324,22 @@
                 }
             });
 
-            seriesCatalog = mergedCatalog;
-            localStorage.setItem('nexus_deep_server_catalog', JSON.stringify(seriesCatalog));
+            serverCatalog = mergedCatalog;
+            localStorage.setItem('nexus_opendir_strict_v1', JSON.stringify(serverCatalog));
             renderExplorer();
 
-            statusText.textContent = `Deep scan complete! Total Folders: ${Object.keys(seriesCatalog).length}.`;
+            statusText.textContent = `Crawl complete! Total Folders: ${Object.keys(serverCatalog).length}.`;
             scanBtn.disabled = false;
-            scanBtn.textContent = 'Run Deep Recursive Folder Scan';
+            scanBtn.textContent = 'Crawl Server Folders &amp; Files';
         }
 
         function clearStorage() {
-            if (confirm("Are you sure you want to clear all saved folder indexes?")) {
-                localStorage.removeItem('nexus_deep_server_catalog');
-                seriesCatalog = {};
+            if (confirm("Clear all saved directory folders?")) {
+                localStorage.removeItem('nexus_opendir_strict_v1');
+                serverCatalog = {};
                 navigateHome();
                 renderExplorer();
-                document.getElementById('statusText').textContent = "Status: Local storage cleared.";
+                document.getElementById('statusText').textContent = "Status: Storage cleared.";
             }
         }
 
