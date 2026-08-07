@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NEXUS TV - Archive Streamer</title>
+    <title>NEXUS TV - Auto Archive Streamer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col">
@@ -10,14 +10,15 @@
     <!-- Header Navigation -->
     <header class="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
         <h1 class="text-xl font-bold tracking-wider text-amber-500">NEXUS <span class="text-zinc-100">TV</span></h1>
-        <nav class="flex gap-4 text-sm font-medium">
-            <button onclick="filterCategory('all')" class="category-btn text-amber-400 hover:text-amber-300 transition">All Content</button>
-            <button onclick="filterCategory('movies')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">Movies</button>
-        </nav>
+        <span id="statusBadge" class="text-xs text-amber-400 bg-amber-950/50 border border-amber-800/50 px-3 py-1 rounded-full">Connecting to Archive...</span>
     </header>
 
     <!-- Main Content Container -->
     <main class="flex-grow p-6 max-w-7xl mx-auto w-full">
+        <div id="loader" class="flex flex-col items-center justify-center py-20 gap-4">
+            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-amber-500"></div>
+            <p class="text-sm text-zinc-400">Auto-discovering movies from Archive.org...</p>
+        </div>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </main>
 
@@ -28,8 +29,8 @@
         </div>
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
-                <h3 id="pTitle" class="font-bold text-lg">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">1080p Direct Stream</p>
+                <h3 id="pTitle" class="font-bold text-lg text-white">Title</h3>
+                <p id="pMeta" class="text-xs text-zinc-400">Auto Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -38,23 +39,57 @@
     </div>
 
     <script>
-        // Array containing the working direct link tested from your archive collection
-        const activeItems = [
-            {
-                id: 'TOP-MOVIES-ENG-1080P',
-                title: 'Batman Begins (2005)',
-                year: '2005',
-                genres: ['Action', 'Thriller'],
-                category: 'movies',
-                video: 'https://dn711505.ca.archive.org/0/items/TOP-MOVIES-ENG-1080P/THE%20DARK%20KNIGHT%20TRILOGY/Batman.Begins.2005.1080p.BluRay.x264.YIFY.mp4'
+        let activeItems = [];
+        const identifier = 'TOP-MOVIES-ENG-1080P';
+
+        // Automatically fetch file list from Archive.org API on startup
+        async function fetchArchiveContent() {
+            try {
+                const response = await fetch(`https://archive.org/metadata/${identifier}`);
+                const data = await response.json();
+                
+                // Extract server node prefix and file array safely
+                const server = data.server;
+                const dir = data.dir;
+                const files = data.files;
+
+                // Filter out only .mp4 video files from the directory structure
+                activeItems = files
+                    .filter(file => file.name.endsWith('.mp4'))
+                    .map(file => {
+                        // Clean up the file name to create a readable title
+                        let rawName = file.name.split('/').pop().replace('.mp4', '');
+                        let cleanTitle = decodeURIComponent(rawName)
+                            .replace(/\./g, ' ')
+                            .replace(/1080p|BluRay|x264|YIFY|HDRip|WEB-DL/gi, '')
+                            .trim();
+
+                        return {
+                            id: identifier,
+                            title: cleanTitle || 'Untitled Movie',
+                            year: file.year || '2023',
+                            genres: ['Feature Film'],
+                            category: 'movies',
+                            // Construct the exact working URL dynamically using the archive server node path
+                            video: `https://${server}${dir}/${file.name}`
+                        };
+                    });
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('statusBadge').innerText = `${activeItems.length} Titles Loaded`;
+                renderGrid(activeItems);
+
+            } catch (error) {
+                console.error("Failed to load archive index:", error);
+                document.getElementById('loader').innerHTML = '<p class="text-rose-500 text-sm">Failed to connect to Archive.org API index.</p>';
+                document.getElementById('statusBadge').innerText = 'Connection Error';
             }
-            // You can add more movies using this exact structure with their specific direct sub-path URLs
-        ];
+        }
 
         function renderGrid(items) {
             const gridEl = document.getElementById('grid');
             if(items.length === 0) {
-                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No titles found.</p>';
+                gridEl.innerHTML = '<p class="text-zinc-500 col-span-full text-center py-10">No video files found in this collection.</p>';
                 return;
             }
             gridEl.innerHTML = items.map((item, index) => `
@@ -67,18 +102,13 @@
                     </div>
                     <div class="p-4 flex flex-col flex-grow justify-between">
                         <div>
-                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">${item.category}</span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded">1080p Movie</span>
                             <h4 class="font-semibold text-sm mt-2 line-clamp-2 text-zinc-100">${item.title}</h4>
                         </div>
-                        <p class="text-xs text-zinc-400 mt-3">${item.year} · ${item.genres.join(', ')}</p>
+                        <p class="text-xs text-zinc-400 mt-3">Direct Archive Stream</p>
                     </div>
                 </div>
             `).join('');
-        }
-
-        function filterCategory(cat) {
-            if(cat === 'all') renderGrid(activeItems);
-            else renderGrid(activeItems.filter(i => i.category === cat));
         }
 
         const playerEl = document.getElementById('player');
@@ -104,7 +134,8 @@
 
         document.getElementById('closeBtn').onclick = closePlayer;
 
-        renderGrid(activeItems);
+        // Run auto-discovery on page load
+        fetchArchiveContent();
     </script>
 </body>
 </html>
