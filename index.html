@@ -13,8 +13,6 @@
         <nav class="flex gap-4 text-sm font-medium">
             <button onclick="filterCategory('all')" class="category-btn text-amber-400 hover:text-amber-300 transition">All Content</button>
             <button onclick="filterCategory('movies')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">Movies</button>
-            <button onclick="filterCategory('series')" class="category-btn text-zinc-400 hover:text-zinc-200 transition">TV Series</button>
-            <button onclick="filterCategory('adult')" class="category-btn text-rose-400 hover:text-rose-300 transition">Adult / Mature</button>
         </nav>
     </header>
 
@@ -27,14 +25,11 @@
     <div id="player" class="fixed inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
         <div id="stage" class="relative w-full max-w-5xl aspect-video bg-black flex items-center justify-center">
             <video id="video" class="w-full h-full" controls></video>
-            <div id="loadingSpinner" class="absolute inset-0 flex items-center justify-center bg-black/50 pointer-events-none hidden">
-                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-amber-500"></div>
-            </div>
         </div>
         <div class="w-full max-w-5xl p-4 flex justify-between items-center bg-zinc-900 border-t border-zinc-800">
             <div>
                 <h3 id="pTitle" class="font-bold text-lg">Title</h3>
-                <p id="pMeta" class="text-xs text-zinc-400">Metadata</p>
+                <p id="pMeta" class="text-xs text-zinc-400">1080p Stream</p>
             </div>
             <div>
                 <button id="closeBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded text-sm font-semibold">Close Player</button>
@@ -43,17 +38,25 @@
     </div>
 
     <script>
-        // Exact entries mapped directly from the TOP-MOVIES-ENG-1080P repository layout
+        // Replace the file names below with the exact filenames from your TOP-MOVIES-ENG-1080P folder
         const activeItems = [
             {
                 id: 'TOP-MOVIES-ENG-1080P',
-                title: 'Featured 1080p Feature Film',
+                title: 'Movie Title One',
                 year: '2023',
-                genres: ['Action', 'Drama'],
+                genres: ['Action'],
                 category: 'movies',
-                // Replace filename.mp4 with the exact file name found inside your specific archive folder path
-                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/filename.mp4'
+                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/exact-filename-1.mp4'
+            },
+            {
+                id: 'TOP-MOVIES-ENG-1080P',
+                title: 'Movie Title Two',
+                year: '2023',
+                genres: ['Drama'],
+                category: 'movies',
+                video: 'https://archive.org/download/TOP-MOVIES-ENG-1080P/exact-filename-2.mp4'
             }
+            // Duplicate the block above for every movie in your directory repository
         ];
 
         function renderGrid(items) {
@@ -82,9 +85,6 @@
         }
 
         function filterCategory(cat) {
-            const buttons = document.querySelectorAll('.category-btn');
-            buttons.forEach(b => b.classList.remove('text-amber-400', 'text-rose-400'));
-            
             if(cat === 'all') renderGrid(activeItems);
             else renderGrid(activeItems.filter(i => i.category === cat));
         }
@@ -98,7 +98,6 @@
             playerEl.style.display = 'flex';
             setTimeout(() => playerEl.classList.add('opacity-100'), 10);
             document.getElementById('pTitle').innerText = f.title;
-            document.getElementById('pMeta').innerText = `${f.genres.join(' · ')} · ${f.year}`;
             videoEl.src = f.video;
             videoEl.play().catch(()=>{});
         }
