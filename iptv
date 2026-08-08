@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TV — Live IPTV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border border-red-500/30 shadow-lg shadow-red-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </a>
+
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </a>
+
+                <a href="archive.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🏛️</span>
+                        <span>Archive.org Stream</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="generic.html?section=search" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </a>
+
+                <a href="generic.html?section=mylist" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </a>
+
+                <a href="generic.html?section=guide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3">
+            <a href="generic.html?section=settings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
+
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+        <div class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
+                    <p class="text-xs text-slate-400 mt-1">Official, freely-licensed live channels — embedded directly from each network's own stream.</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
+                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid (Player + Info) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px]">
+                <!-- Video Stream Section -->
+                <div class="lg:col-span-2 flex flex-col">
+                    <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
+                        <iframe
+                            id="videoPlayer"
+                            class="w-full h-full absolute inset-0"
+                            allow="autoplay; encrypted-media; picture-in-picture"
+                            allowfullscreen
+                            frameborder="0"
+                        ></iframe>
+                    </div>
+
+                    <!-- Active Stream Info Bar -->
+                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
+                                🌟
+                            </div>
+                            <div>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white">Select a Channel</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Choose a feed from below to start viewing</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <div class="text-right hidden sm:block">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Official Source
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">Embedded directly, no third-party relay</div>
+                            </div>
+                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
+                                <span>🤍</span>
+                                <span>Favorite</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Channel Info Sidebar -->
+                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm">ℹ️</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">About This Channel</span>
+                        </div>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">—</span>
+                    </div>
+
+                    <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1 text-sm text-slate-300">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="mt-3 pt-3 border-t border-slate-800/60">
+                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
+                            <span>💡</span>
+                            <span>Every channel here is streamed straight from the network's own official source — nothing routed through third-party relays.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Row Channel Selector Sliders -->
+            <div class="mt-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Scroll horizontally using the sliders below</div>
+                </div>
+                
+                <!-- Row 1 Slider -->
+                <div id="channelsGridRow1" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Row 2 Slider -->
+                <div id="channelsGridRow2" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
+            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+        </footer>
+    </main>
+
+    <script>
+        /* ==================== LIVE IPTV — CHANNELS & LOGOS ==================== */
+        const channels = [
+            { name: "ABC News Live",        category: "News",     icon: "📰", channelId: "UCBi2mrWuNuyYy4gbM6fU18Q", desc: "ABC News' official 24/7 breaking-news streaming channel." },
+            { name: "CBS News 24/7",        category: "News",     icon: "🗞️", channelId: "UC8p1vwvWtl6T73JiExfWs1g", desc: "CBS News' official free 24/7 streaming news channel, available on 30+ platforms." },
+            { name: "NBC News NOW",         category: "News",     icon: "📡", channelId: "UCeY0bbntWzzVIaj2z3QigXg", desc: "NBC News' official free 24/7 streaming news channel." },
+            { name: "Bloomberg Originals",  category: "Business", icon: "📈", channelId: "UCUMZ7gohGI9HcU9VNsr2FJQ", desc: "Bloomberg's official channel for original series and documentaries." },
+            { name: "Bloomberg Television", category: "Business", icon: "💹", channelId: "UCIALMKvObZNtJ6AmdCLP7Lg", desc: "Bloomberg's official 24/7 markets and finance coverage." },
+            { name: "FOX Weather",          category: "Weather",  icon: "⛈️", channelId: "UC1FbPiXx59_ltnFVx7IxWow", desc: "FOX's official free 24/7 national weather channel." }
+        ];
+
+        let currentChannel = channels[0];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try { document.getElementById('channelCount').innerText = channels.length; } catch (e) { console.error(e); }
+            try { renderChannels(channels); } catch (e) { console.error(e); }
+            try { selectChannel(channels[0]); } catch (e) { console.error(e); }
+        });
+
+        function renderChannels(list) {
+            const grid1 = document.getElementById('channelsGridRow1');
+            const grid2 = document.getElementById('channelsGridRow2');
+            grid1.innerHTML = '';
+            grid2.innerHTML = '';
+
+            // Split channels across the two horizontal slider rows
+            const midpoint = Math.ceil(list.length / 2);
+            const row1List = list.slice(0, midpoint);
+            const row2List = list.slice(midpoint);
+
+            const createCard = (ch) => {
+                const isSelected = currentChannel && currentChannel.name === ch.name;
+                const card = document.createElement('div');
+                card.onclick = () => selectChannel(ch);
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
+                    isSelected
+                        ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white'
+                        : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
+                }`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl">${ch.icon}</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">LIVE</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold truncate">${ch.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                    </div>
+                `;
+                return card;
+            };
+
+            row1List.forEach(ch => grid1.appendChild(createCard(ch)));
+            row2List.forEach(ch => grid2.appendChild(createCard(ch)));
+        }
+
+        function filterChannels(query) {
+            const q = query.toLowerCase();
+            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+            renderChannels(filtered);
+            document.getElementById('channelCount').innerText = filtered.length;
+        }
+
+        function selectChannel(ch) {
+            currentChannel = ch;
+            document.getElementById('currentChannelName').innerText = ch.name;
+            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Official live channel`;
+            document.getElementById('activeChannelIcon').innerText = ch.icon;
+            document.getElementById('epgChannelTag').innerText = ch.name.toUpperCase();
+            document.getElementById('epgList').innerHTML = `
+                <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
+                    <p>${ch.desc}</p>
+                </div>
+                <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
+                    <p class="text-slate-400">This is a rolling live channel with no fixed schedule — content changes continuously throughout the day.</p>
+                </div>
+            `;
+            document.getElementById('videoPlayer').src = `https://www.youtube.com/embed/live_stream?channel=${ch.channelId}&autoplay=1&mute=0`;
+            renderChannels(channels);
+        }
+
+        function toggleFavorite() {
+            const btn = document.getElementById('favBtn');
+            if (btn.classList.contains('text-red-400')) {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-red-500 text-xs font-semibold transition-all";
+                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
+            } else {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/20 border border-red-500 text-red-400 text-xs font-semibold transition-all shadow-lg";
+                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
+            }
+        }
+    </script>
+</body>
+</html>
