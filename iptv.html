@@ -179,7 +179,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
                             <span>⚡</span>
-                            <span>HLS.js engine active for direct `.m3u8` stream handling across all channels.</span>
+                            <span>HLS.js engine active with Native fallback &amp; Proxy loader configuration.</span>
                         </div>
                     </div>
                 </div>
@@ -207,7 +207,7 @@
 
     <script>
         const channels = [
-            { name: "US: ABC HD", category: "Networks", icon: "📺", url: "https://stream.cammonitorplus.net/1797/index.m3u8", desc: "American Broadcasting Company live network stream." },
+            { name: "US: ABC HD", category: "Networks", icon: "📺", url: "https://195.201.59.219/public/us_abc/index.m3u8", desc: "American Broadcasting Company live network stream." },
             { name: "US: CBS HD", category: "Networks", icon: "📡", url: "https://195.201.59.219/public/us_cbs/index.m3u8", desc: "Columbia Broadcasting System live network stream." },
             { name: "US: NBC HD", category: "Networks", icon: "📰", url: "https://195.201.59.219/public/us_nbc/index.m3u8", desc: "National Broadcasting Company live network stream." },
             { name: "US: FOX HD", category: "Networks", icon: "⭐", url: "https://195.201.59.219/public/us_fox/index.m3u8", desc: "Fox Broadcasting Company live network stream." },
@@ -235,6 +235,18 @@
 
         let currentChannel = channels[0];
         let hlsInstance = null;
+
+        // Solution D Proxy loader setup (replace string with your server/worker endpoint if proxying)
+        const PROXY = ''; // e.g. 'https://your-worker.workers.dev/?url=' if using a proxy worker
+
+        class ProxyLoader extends Hls.DefaultConfig.loader {
+            load(context, config, callbacks) {
+                if (PROXY && !context.url.startsWith(PROXY)) {
+                    context.url = PROXY + encodeURIComponent(context.url);
+                }
+                super.load(context, config, callbacks);
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             try { document.getElementById('channelCount').innerText = channels.length; } catch (e) { console.error(e); }
@@ -314,22 +326,35 @@
             const video = document.getElementById('videoPlayer');
 
             if (hasUrl) {
-                if (Hls.isSupported()) {
+                // Solution A: Native HLS check (Safari, iOS, etc. bypasses CORS restrictions via media element stack)[cite: 2]
+                video.removeAttribute('crossorigin'); // Must be absent[cite: 2]
+                const native = video.canPlayType('application/vnd.apple.mpegurl') !== '';
+
+                if (native) {
+                    if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+                    video.src = ch.url;
+                    video.play().catch(e => console.log("Autoplay blocked:", e));
+                } else {
+                    // Desktop Chrome/Edge path via HLS.js (with optional proxy loader support)[cite: 2]
                     if (hlsInstance) { hlsInstance.destroy(); }
-                    hlsInstance = new Hls();
+                    hlsInstance = new Hls({
+                        loader: PROXY ? ProxyLoader : Hls.DefaultConfig.loader,
+                        lowLatencyMode: true,
+                        backBufferLength: 30
+                    });
                     hlsInstance.loadSource(ch.url);
                     hlsInstance.attachMedia(video);
                     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
                         video.play().catch(e => console.log("Autoplay blocked:", e));
                     });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = ch.url;
-                    video.addEventListener('loadedmetadata', () => {
-                        video.play().catch(e => console.log("Autoplay blocked:", e));
+                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            console.error("HLS fatal error encountered:", data.details);
+                        }
                     });
                 }
             } else {
-                if (hlsInstance) { hlsInstance.destroy(); }
+                if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
                 video.pause();
                 video.src = "";
             }
