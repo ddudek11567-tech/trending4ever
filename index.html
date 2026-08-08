@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>NEXUS TV v4.3 - Media Suite & Live Stream Hub</title>
+    <title>NEXUS TV v4.4 - Media Suite & Live Stream Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -150,7 +150,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 • QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.4 • QUANTUM</span>
                 </div>
             </div>
 
@@ -368,7 +368,7 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913] shrink-0">
-            NEXUS TV v4.3 Engine • Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.4 Engine • Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
@@ -420,15 +420,15 @@
     <!-- Application Script Engine -->
     <script>
         const channels = [
-            { name: "US Premium: HBO HD", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/HBO/index.m3u8", brand: "hbo", now: "Prime Time Feature Presentation", next: "Original Drama Series", icon: "🎬" },
-            { name: "US Premium: HBO 2", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/HBO2/index.m3u8", brand: "hbo2", now: "Blockbuster Hit Showcase", next: "Late Night Thriller", icon: "🎥" },
-            { name: "US Premium: Cinemax", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/CINEMAX/index.m3u8", brand: "cinemax", now: "Action Movie Hour", next: "Late Night Feature", icon: "💥" },
-            { name: "US Premium: Showtime East", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/SHOWTIME_EAST/index.m3u8", brand: "showtime", now: "Award-Winning Original Series", next: "Late Night Boxing & Sports", icon: "🌟" },
-            { name: "US Premium: Starz East", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/STARZ_EAST/index.m3u8", brand: "starz", now: "Hit Movie Showcase", next: "Original Drama Block", icon: "✨" },
-            { name: "US Premium: TMC (The Movie Channel)", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/TMC/index.m3u8", brand: "tmc", now: "Independent Cinema Spotlight", next: "Classic Retrospective", icon: "🎞️" },
-            { name: "US Premium: MGM+", category: "US Premium", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/MGM_PLUS/index.m3u8", brand: "mgm", now: "Hollywood Hits", next: "Suspense Feature", icon: "🦁" },
-            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", brand: "syfy", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
-            { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", brand: "hallmark", now: "Romantic Evening Feature", next: "Weekend Getaway Romance", icon: "💝" }
+            { name: "US Premium: HBO HD", category: "US Premium", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", now: "Prime Time Feature Presentation", next: "Original Drama Series", icon: "🎬" },
+            { name: "US Premium: HBO 2", category: "US Premium", res: "1080p", format: "m3u8", url: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blockbuster Hit Showcase", next: "Late Night Thriller", icon: "🎥" },
+            { name: "US Premium: Cinemax", category: "US Premium", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", now: "Action Movie Hour", next: "Late Night Feature", icon: "💥" },
+            { name: "US Premium: Showtime East", category: "US Premium", res: "1080p", format: "m3u8", url: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Award-Winning Original Series", next: "Late Night Sports", icon: "🌟" },
+            { name: "US Premium: Starz East", category: "US Premium", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", now: "Hit Movie Showcase", next: "Original Drama Block", icon: "✨" },
+            { name: "US Premium: TMC", category: "US Premium", res: "1080p", format: "m3u8", url: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Independent Cinema Spotlight", next: "Classic Retrospective", icon: "🎞️" },
+            { name: "US Premium: MGM+", category: "US Premium", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", now: "Hollywood Hits", next: "Suspense Feature", icon: "🦁" },
+            { name: "SYFY", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://cph-p2p-ms.akamaized.net/hls/live/2000341/test/master.m3u8", now: "Sci-Fi Original Movie Marathon", next: "Twilight Zone Classics", icon: "🌌" },
+            { name: "Hallmark Movies", category: "Entertainment & Movies", res: "1080p", format: "m3u8", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Romantic Evening Feature", next: "Weekend Getaway Romance", icon: "💝" }
         ];
         let currentChannel = channels[0];
         let hlsInstance = null;
@@ -665,6 +665,21 @@
                             <div class="card-info">
                                 <h3>The Terminator</h3>
                                 <p>Action • 1984</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row-head">
+                        <h2 class="row-title"><span class="num">02</span> Spotlight Premieres</h2>
+                    </div>
+                    <div class="row-track">
+                        <div class="card" onclick="alert('Playing trailer...')">
+                            <div class="card-img" style="background-image: url('https://picsum.photos/seed/film2a/600/340')"></div>
+                            <div class="card-scrim"></div>
+                            <div class="card-info">
+                                <h3>Sci-Fi Universe</h3>
+                                <p>Adventure • 2024</p>
                             </div>
                         </div>
                     </div>
