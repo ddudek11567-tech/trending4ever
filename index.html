@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV v4.3 - Advanced Media Suite & Live Stream Hub</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>NEXUS TV v4.3 - Media Suite & Live Stream Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,462 +15,1101 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: {
-                            900: '#0a0b0e',
-                            800: '#12141c',
-                            700: '#1a1d29',
-                            600: '#262a3b'
-                        },
-                        nexus: {
-                            blue: '#3b82f6',
-                            purple: '#8b5cf6',
-                            pink: '#ec4899',
-                            accent: '#06b6d4'
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d'
                         }
                     }
                 }
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- HLS.js for m3u8 streams -->
+    <!-- HLS.js for m3u8 stream playback -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- Dash.js for mpd streams -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Dash.js for mpd stream playback -->
+    <script src="https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dash.all.min.js"></script>
+    <!-- Google Fonts for Aether Cinema styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0b0e; }
-        ::-webkit-scrollbar-thumb { background: #262a3b; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
-        .glass-panel { background: rgba(18, 20, 28, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .glow-effect { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.9); }
+
+        /* AETHER — Private Cinema Integration Styles */
+        :root{
+            --aether-bg:#060608;
+            --accent:#c8a86b;
+            --accent-rgb:200,168,107;
+            --text:#f4f1ec;
+            --muted:rgba(244,241,236,.62);
+            --faint:rgba(244,241,236,.4);
+            --line:rgba(244,241,236,.09);
+        }
+        .aether-cinema-root {
+            background: var(--aether-bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            position: relative;
+            width: 100%;
+            min-height: 100%;
+        }
+        .aether-cinema-root ::selection { background: rgba(var(--accent-rgb),.35); color:#fff; }
+        .grain,.vignette{position:absolute;inset:0;pointer-events:none;z-index:1}
+        .grain{
+            opacity:.05;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode:overlay;
+        }
+        .vignette{background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);z-index:1}
+        .aether-hero{position:relative;height:88vh;min-height:480px;width:100%;overflow:hidden}
+        .backdrops{position:absolute;inset:0}
+        .bd{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.1s ease;filter:saturate(.92) contrast(1.05) brightness(.82)}
+        .bd.active{opacity:1}
+        .glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+        .blob{position:absolute;border-radius:50%;filter:blur(100px);transition:background-color 1.3s ease,opacity 1.3s}
+        .blob.a{width:62vw;height:62vw;top:-22vw;right:-12vw;background:rgb(var(--accent-rgb));opacity:.15}
+        .blob.b{width:44vw;height:44vw;bottom:-18vw;left:-12vw;background:rgb(var(--accent-rgb));opacity:.1}
+        .scrim{position:absolute;inset:0;z-index:2;background:
+            linear-gradient(90deg,rgba(6,6,8,.94) 0%,rgba(6,6,8,.7) 26%,rgba(6,6,8,.12) 58%,rgba(6,6,8,.35) 100%),
+            linear-gradient(0deg,rgba(6,6,8,1) 1%,rgba(6,6,8,0) 42%)}
+        .hero-content{position:absolute;left:0;right:0;bottom:13vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .35s ease,transform .35s ease}
+        .hero-content.switching{opacity:0;transform:translateY(16px)}
+        .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px}
+        .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+        .hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(32px,5.5vw,68px);line-height:.96;letter-spacing:-.015em}
+        .hero-title em{font-style:italic;color:var(--accent)}
+        .hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;font-size:13px;color:var(--muted);margin-top:18px;font-weight:500}
+        .hero-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
+        .match{color:#7fd29a;font-weight:700}
+        .rating-pill{color:var(--accent);font-weight:700}
+        .hero-synopsis{color:var(--muted);font-size:15px;line-height:1.6;margin-top:16px;max-width:540px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+        .hero-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+        .btn-play{background:var(--accent);color:#0a0a0c;font-weight:700;padding:11px 22px;border-radius:10px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s,box-shadow .2s;border:0}
+        .btn-play:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+        .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);padding:11px 22px;border-radius:10px;cursor:pointer;transition:background .2s;font-weight:600}
+        .btn-ghost:hover{background:rgba(255,255,255,.15)}
+        .dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
+        .dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
+        .dot.active{background:var(--accent);width:44px}
+        .collection{position:relative;z-index:2;padding:7vh 0 4vh}
+        .row{position:relative;margin-bottom:44px}
+        .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
+        .row-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+        .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none;font-weight:600}
+        .row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
+        .row-track::-webkit-scrollbar{display:none}
+        .card{flex:0 0 auto;width:clamp(220px,24vw,320px);aspect-ratio:16/9;position:relative;border-radius:12px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .3s ease,box-shadow .3s ease}
+        .card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease;filter:saturate(.9) contrast(1.05) brightness(.85)}
+        .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.5) 68%,rgba(6,6,8,.94) 100%)}
+        .card-top{position:absolute;top:11px;left:11px;right:11px;display:flex;align-items:center;gap:6px;z-index:3}
+        .badge{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.45);border:1px solid var(--line);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+        .badge.rating{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+        .badge.match{color:#7fd29a}
+        .bookmark{margin-left:auto;width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.5);border:1px solid var(--line);color:#cfcfcf;display:grid;place-items:center;cursor:pointer;transition:.2s}
+        .bookmark.saved{color:var(--accent);border-color:rgba(var(--accent-rgb),.6)}
+        .card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;z-index:3;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);backdrop-filter:blur(8px);color:#fff;display:grid;place-items:center;transition:.3s}
+        .card-info{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;z-index:3}
+        .card-info h3{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .card-info p{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
+        .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.16);z-index:3}
+        .progress span{display:block;height:100%;background:var(--accent)}
+        .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -15px rgba(0,0,0,.8),0 0 0 1px rgba(var(--accent-rgb),.4)}
+        .card:hover .card-img{transform:scale(1.08)}
+        .card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+        /* Archive Stream */
+        .archive-stream-container { padding: 3.5vw; max-width: 1400px; margin: 0 auto; }
+        .video-block { margin-bottom: 28px; text-align: center; background: rgba(12, 12, 17, 0.6); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; padding: 18px; }
+        .video-block iframe { width: 100%; max-width: 820px; height: 460px; border: none; border-radius: 8px; display:block; margin:0 auto; }
+        @media (max-width: 700px){ .video-block iframe{ height: 240px; } }
+
+        /* Player overlay */
+        .player .controls, .player .titlebar{ transition: opacity .3s; }
+        .player:hover .controls, .player:hover .titlebar{ opacity:1; }
     </style>
 </head>
-<body class="bg-dark-900 text-gray-100 min-h-screen flex flex-col selection:bg-nexus-blue selection:text-white">
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-    <!-- Top Navigation Header -->
-    <header class="glass-panel sticky top-0 z-50 border-b border-dark-700/60 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-nexus-blue to-nexus-purple flex items-center justify-center glow-effect">
-                <i class="fa-solid fa-bolt-lightning text-white text-lg"></i>
+    <!-- Sidebar Navigation — QUANTUM DESIGN -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div class="flex flex-col flex-1 min-h-0">
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40 shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 • QUANTUM</span>
+                </div>
             </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-wider bg-gradient-to-r from-white via-gray-200 to-nexus-accent bg-clip-text text-transparent">NEXUS TV <span class="text-xs px-2 py-0.5 rounded bg-nexus-blue/20 text-nexus-blue font-mono border border-nexus-blue/30">v4.3</span></h1>
-                <p class="text-xs text-gray-400">Advanced Media Suite & Live Stream Hub</p>
-            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5 flex-1 overflow-y-auto custom-scrollbar">
+                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border border-red-500/30 shadow-lg shadow-red-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </button>
+
+                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </button>
+
+                <button onclick="switchPage('archive')" id="navArchive" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🏛️</span>
+                        <span>Archive.org Stream</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
+                </button>
+
+                <div class="pt-4 pb-1 px-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <button onclick="switchPage('search')" id="navSearch" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </button>
+
+                <button onclick="switchPage('mylist')" id="navMyList" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </button>
+
+                <button onclick="switchPage('guide')" id="navGuide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </button>
+            </nav>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="hidden md:flex items-center space-x-1 bg-dark-800/80 p-1.5 rounded-xl border border-dark-700">
-            <button onclick="switchTab('iptv')" id="nav-iptv" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 bg-nexus-blue text-white shadow-lg shadow-nexus-blue/25">
-                <i class="fa-solid fa-tv"></i>
-                <span>Live IPTV</span>
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3 shrink-0">
+            <button onclick="switchPage('settings')" id="navSettings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+                <span>⚙️</span>
+                <span>Settings</span>
             </button>
-            <button onclick="switchTab('cinema')" id="nav-cinema" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700">
-                <i class="fa-solid fa-film"></i>
-                <span>Aether Cinema</span>
-            </button>
-            <button onclick="switchTab('archive')" id="nav-archive" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700">
-                <i class="fa-solid fa-box-archive"></i>
-                <span>Archive Library</span>
-            </button>
-        </nav>
-
-        <!-- System Status Bar -->
-        <div class="flex items-center space-x-4">
-            <div class="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 text-xs font-mono text-gray-400">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="system-clock">00:00:00 UTC</span>
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
             </div>
-            <div class="w-9 h-9 rounded-xl bg-dark-800 border border-dark-700 flex items-center justify-center text-gray-400 hover:text-white cursor-pointer transition" title="Settings">
-                <i class="fa-solid fa-gear"></i>
-            </div>
+            <div class="text-[11px] text-slate-500 px-1">Engine Status: <span class="text-emerald-400 font-semibold">Online</span></div>
         </div>
-    </header>
+    </aside>
 
-    <!-- Main Content Workspace -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col gap-6">
+    <!-- Main Dynamic Viewport Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
 
-        <!-- ================= TAB 1: LIVE IPTV ================= -->
-        <section id="tab-iptv" class="space-y-6">
-            <!-- Video Player & Telemetry Workspace -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Main Player View (2 Cols) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-dark-700 shadow-2xl group flex items-center justify-center">
-                        <video id="iptv-player" class="w-full h-full object-contain" controls autoplay playsinline></video>
-                        
-                        <!-- Offline / Default State Overlay -->
-                        <div id="player-overlay" class="absolute inset-0 bg-dark-900/90 flex flex-col items-center justify-center space-y-3 z-10 transition-opacity duration-300">
-                            <div class="w-16 h-16 rounded-full bg-nexus-blue/10 border border-nexus-blue/30 flex items-center justify-center text-nexus-blue text-2xl">
-                                <i class="fa-solid fa-satellite-dish animate-bounce"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-gray-200">Select a Channel to Initialize Stream</h3>
-                            <p class="text-xs text-gray-400 max-w-sm text-center">Choose from the working channel directory on the right to start live streaming via HLS or DASH protocols.</p>
+        <!-- PAGE 1: LIVE IPTV VIEW -->
+        <div id="pageIptv" class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto custom-scrollbar">
+            <!-- Top Bar -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 shrink-0">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-1">Live Television</h2>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with automatic error recovery and full channel list integration</p>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels or shows..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all placeholder:text-slate-500">
+                        <span class="absolute left-3 top-3 text-slate-500 text-xs">🔍</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid (Player + EPG) -->
+            <div class="flex flex-col lg:flex-row gap-6 items-start">
+                <!-- Video Stream Section -->
+                <div class="flex-1 lg:w-2/3 flex flex-col gap-4 min-w-0">
+                    <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 h-[380px] lg:h-[440px] flex items-center justify-center shrink-0">
+                        <!-- Notification Overlay for Stream Status / Fallbacks -->
+                        <div id="streamAlert" class="absolute top-4 left-4 z-20 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
+                            <span>⚠️</span>
+                            <span id="streamAlertText">Stream handshake unstable. Using backup route.</span>
                         </div>
+                        <h1 id="currentChannelTitle" class="text-2xl font-black text-white tracking-tight absolute z-0">No Channel Selected</h1>
+                        <video
+                            id="videoPlayer"
+                            controls
+                            autoplay
+                            playsinline
+                            class="w-full h-full object-contain absolute inset-0 z-10 bg-black"
+                        ></video>
                     </div>
 
-                    <!-- Current Stream Info Bar -->
-                    <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-dark-700">
-                        <div class="flex items-center space-x-3">
-                            <div id="current-channel-logo" class="w-12 h-12 rounded-xl bg-dark-800 border border-dark-600 flex items-center justify-center text-nexus-accent">
-                                <i class="fa-solid fa-tv text-lg"></i>
+                    <!-- Active Stream Info Bar -->
+                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                        <div class="flex items-center space-x-4">
+                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner shrink-0">
+                                🌟
                             </div>
-                            <div>
-                                <h4 id="current-channel-title" class="font-bold text-white">No Channel Selected</h4>
-                                <p id="current-channel-category" class="text-xs text-gray-400 font-mono">Status: Standby</p>
+                            <div class="min-w-0">
+                                <h3 id="currentChannelName" class="text-base font-bold text-white truncate">Select a Channel</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5 truncate">Choose a feed from below to start viewing</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="toggleFullscreen()" class="px-3 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-dark-600 text-xs text-gray-300 flex items-center space-x-1.5 transition">
-                                <i class="fa-solid fa-expand"></i>
-                                <span class="hidden sm:inline">Fullscreen</span>
+                        <div class="flex items-center space-x-4 shrink-0">
+                            <div class="text-right hidden sm:block">
+                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Direct Feed Active
+                                </div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Auto-Recovery Ready</div>
+                            </div>
+                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all text-slate-200">
+                                <span>🤍</span>
+                                <span>Favorite</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Channel Directory (1 Col) -->
-                <div class="glass-panel rounded-2xl p-4 border border-dark-700 flex flex-col h-[520px]">
-                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-dark-700">
+                <!-- Live Program Guide (EPG Sidebar) -->
+                <div class="lg:w-1/3 w-full bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl shrink-0">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
                         <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-list text-nexus-blue"></i>
-                            <h3 class="font-bold text-sm uppercase tracking-wider text-gray-200">Working Channels</h3>
+                            <span class="text-sm">📅</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
                         </div>
-                        <span id="channel-count" class="text-xs font-mono px-2 py-0.5 rounded bg-dark-800 border border-dark-700 text-nexus-accent">0 Active</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-1 rounded bg-pink-950 text-pink-300 border border-pink-800">IPTV</span>
                     </div>
-
-                    <!-- Channel List Container -->
-                    <div id="channel-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
-                        <!-- Populated via JavaScript dynamically -->
+                    <div id="epgList" class="space-y-2.5 custom-scrollbar pr-1">
+                        <!-- Populated dynamically -->
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ================= TAB 2: AETHER CINEMA ================= -->
-        <section id="tab-cinema" class="space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl border border-dark-700 bg-gradient-to-r from-dark-800 via-dark-800/50 to-nexus-blue/10 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div class="space-y-2 max-w-xl">
-                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-nexus-purple/20 text-nexus-purple border border-nexus-purple/30">Curated Film Vault</span>
-                    <h2 class="text-2xl font-bold tracking-tight text-white">Aether Private Cinema</h2>
-                    <p class="text-sm text-gray-400">Stream timeless classics, vintage features, and acclaimed independent cinema directly from verified archival endpoints.</p>
-                </div>
-                <div class="w-full md:w-auto flex items-center space-x-3">
-                    <div class="relative flex-1 md:w-72">
-                        <i class="fa-solid fa-search absolute left-3.5 top-3 text-gray-500 text-sm"></i>
-                        <input type="text" id="cinema-search" oninput="filterCinema()" placeholder="Search movie catalog..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-dark-900 border border-dark-700 text-sm text-gray-200 focus:outline-none focus:border-nexus-blue transition">
+                    <div class="mt-3 pt-3 border-t border-slate-800/60">
+                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] leading-relaxed text-pink-300 flex items-start space-x-2">
+                            <span class="mt-0.5">💡</span>
+                            <span>Protected streams automatically route through backup manifests if connection fails.</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Cinema Grid -->
-            <div id="cinema-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                <!-- Populated via JavaScript -->
-            </div>
-        </section>
-
-        <!-- ================= TAB 3: ARCHIVE LIBRARY ================= -->
-        <section id="tab-archive" class="space-y-6 hidden">
-            <div class="glass-panel p-6 rounded-2xl border border-dark-700 flex flex-col md:flex-row items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-database text-nexus-accent"></i>
-                        <span>Archive.org Raw Index</span>
-                    </h2>
-                    <p class="text-xs text-gray-400 mt-1">Direct stream indices extracted for high-compatibility playback.</p>
+            <!-- Channel Selector Strip (Scrollable) -->
+            <div class="mt-8 shrink-0 clear-both relative z-10 bg-[#060913] pt-2">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
                 </div>
-                <button onclick="loadArchiveData()" class="px-4 py-2 rounded-xl bg-nexus-blue hover:bg-nexus-blue/80 text-white text-xs font-medium transition flex items-center space-x-2 shadow-lg shadow-nexus-blue/20">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>Refresh Index</span>
-                </button>
-            </div>
-
-            <div class="glass-panel rounded-2xl border border-dark-700 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-dark-800/80 text-gray-400 uppercase font-mono border-b border-dark-700">
-                            <tr>
-                                <th class="px-6 py-3">Title / Identifier</th>
-                                <th class="px-6 py-3">Source Format</th>
-                                <th class="px-6 py-3">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="archive-table-body" class="divide-y divide-dark-700/50">
-                            <!-- Populated via JS -->
-                        </tbody>
-                    </table>
+                <div id="channelsGrid" class="flex gap-3 overflow-x-auto custom-scrollbar pb-3 snap-x">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
-        </section>
+        </div>
 
+        <!-- PAGE 2: AETHER PRIVATE CINEMA (MOVIES) -->
+        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
+
+            <!-- Aether Hero Section -->
+            <section class="aether-hero" id="hero">
+                <div class="backdrops" id="backdrops"></div>
+                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
+                <div class="scrim"></div>
+                <div class="hero-content" id="heroContent"></div>
+                <div class="dots" id="dots"></div>
+            </section>
+
+            <!-- Aether Collection Rows -->
+            <section class="collection" id="collection"></section>
+        </div>
+
+        <!-- PAGE 3: ARCHIVE.ORG STREAMING LOADER PAGE -->
+        <div id="pageArchive" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
+            <div class="archive-stream-container relative z-10">
+                <div class="mb-8 text-center sm:text-left">
+                    <h2 class="text-3xl font-black text-white tracking-tight">Top Movies &amp; TV <span class="text-cyan-400">(Archive.org Streaming)</span></h2>
+                    <p class="text-sm text-slate-400 mt-2">Automatically loaded from Archive.org — streaming only, no downloads.</p>
+                </div>
+                <div id="archiveResults" class="min-h-[200px]"></div>
+                <div id="archiveLoading" class="text-center py-12 text-slate-400 text-sm">Loading Archive.org catalog…</div>
+            </div>
+        </div>
+
+        <!-- PAGE 4: GENERIC VIEWS -->
+        <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
+            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
+                ✨
+            </div>
+            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
+            <p class="text-sm text-slate-400 max-w-md">This module is being upgraded to the Quantum streaming fabric. Please return to Live IPTV or Latest Movies.</p>
+            <button onclick="switchPage('iptv')" class="mt-6 px-6 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-bold shadow-lg hover:bg-pink-500 transition-all">
+                Return to Live IPTV
+            </button>
+        </div>
+
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913] shrink-0">
+            NEXUS TV v4.3 Engine • Webpage Designed by: Daniel Dudek
+        </footer>
     </main>
 
-    <!-- Modal for Cinematic Player / Trailer Overlay -->
-    <div id="media-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl bg-dark-800 border border-dark-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-            <div class="px-6 py-4 border-b border-dark-700 flex items-center justify-between">
-                <h3 id="modal-title" class="font-bold text-white text-base">Media Stream</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-dark-700 text-gray-400 hover:text-white flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
+    <!-- Aether Video Player Overlay Modal — Supports both native video and YouTube iframe -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
+        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)] overflow-hidden" id="stage">
+            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <iframe id="ytFrame" class="w-full h-full block bg-black hidden" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/50 z-20" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 z-10">
+                <div class="t-meta min-w-0 flex-1">
+                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
+                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
+                </div>
+                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center hover:bg-white/20 transition-colors" id="closeBtn" title="Close (Esc)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
             </div>
-            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
-                <video id="modal-player" class="w-full h-full object-contain" controls autoplay playsinline></video>
+            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent z-10">
+                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+                <div class="btnrow flex items-center gap-[18px] mt-[6px] flex-wrap">
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
+                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="backBtn" title="-10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19V5l-8 7 8 7zM23 19V5"/></svg>
+                    </button>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fwdBtn" title="+10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19V5l8 7-8 7zM1 19V5"/></svg>
+                    </button>
+                    <div class="vol flex items-center gap-2">
+                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
+                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </button>
+                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
+                    </div>
+                    <div class="spacer flex-1 hidden sm:block"></div>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Application Script Logic -->
+    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[10px] z-[120] bg-[rgba(18,18,24,.92)] border border-[rgba(244,241,236,.15)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px] text-white shadow-xl" id="toast"></div>
+
+    <!-- Application Script Engine -->
     <script>
-        // --- Working Channel Directory with Verified Functional Links ---
         const channels = [
-            {
-                name: "SYFY Channel",
-                category: "Entertainment & Movies",
-                url: "https://cph-p2p-msft.akamaized.net/hls/live/2029391/master/manifest.m3u8",
-                type: "hls",
-                icon: "fa-wand-magic-sparkles",
-                quality: "1080p"
-            },
-            {
-                name: "Nick Jr.",
-                category: "Kids & Family",
-                url: "https://rb.gy/hvx1q5",
-                type: "hls",
-                icon: "fa-child-reaching",
-                quality: "720p"
-            },
-            {
-                name: "BNN Bloomberg",
-                category: "News & Regional",
-                url: "https://rb.gy/9m5y2v",
-                type: "dash",
-                icon: "fa-chart-line",
-                quality: "Live MPD"
-            },
-            {
-                name: "Golf Channel",
-                category: "Sports & Outdoors",
-                url: "https://rb.gy/7k4q1n",
-                type: "hls",
-                icon: "fa-golf-ball-tee",
-                quality: "1080p"
-            },
-            {
-                name: "CBC News",
-                category: "News & Regional",
-                url: "https://rb.gy/3f8w2x",
-                type: "hls",
-                icon: "fa-globe",
-                quality: "1080p"
-            }
+            { name: "A&E", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/AE/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Biography Special", next: "Real Life Mysteries", icon: "📺" },
+            { name: "ABC", category: "News & Networks", res: "720p", format: "m3u8", url: "http://41.205.93.154/ABC/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "National News Broadcast", next: "Prime Time Lineup", icon: "📡" },
+            { name: "ABC News Live", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://pb-0n3n2ej0w8pl9.akamaized.net/ABCNewsLive_Disney.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Global Breaking News", next: "The Rundown", icon: "📰" },
+            { name: "ACC Network", category: "Sports", res: "720p", format: "m3u8", url: "https://gpuserver3.tier1streams.com/ACC_NETWORK/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "ACC Live Game Coverage", next: "Conference Analysis", icon: "🏈" },
+            { name: "AMC", category: "Movies", res: "1080p", format: "m3u8", url: "https://amchls.wns.live/hls/stream.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blockbuster Feature Film", next: "Late Night Movie Showcase", icon: "🎬" },
+            { name: "BBC News", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://pb-iiczlgfysam0q.akamaized.net/v1/amcnetworks_bbcnews_1/samsungheadend_us/latest/main/hls/playlist.m3u8", fallbackUrl: "https://xemzi.short.gy/1000015", now: "World News Hour", next: "The Context", icon: "🌍" },
+            { name: "ESPN", category: "Sports", res: "1080p", format: "m3u8", url: "http://181.78.197.59:8000/play/a07z/index.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "SportsCenter Live", next: "Live Event Coverage", icon: "🏆" },
+            { name: "Fox", category: "News & Networks", res: "1080p", format: "m3u8", url: "https://messi.damitv.st/papi/ts/fox-usa/playlist.m3u8", fallbackUrl: "http://stream.mcquack.net/182/index.m3u8", now: "Fox Network Feed", next: "Prime Time Block", icon: "🦊" },
+            { name: "HBO", category: "Entertainment", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Original Feature Series", next: "Late Night Cinema", icon: "🎬" }
         ];
-
-        // --- Curated Film Vault Catalog ---
-        const cinemaMovies = [
-            {
-                title: "Night of the Living Dead (1968)",
-                genre: "Horror / Classic",
-                url: "https://archive.org/download/night_of_the_living_dead/night_of_the_living_dead_512kb.mp4",
-                poster: "https://archive.org/services/img/night_of_the_living_dead"
-            },
-            {
-                title: "Plan 9 from Outer Space (1959)",
-                genre: "Sci-Fi / Cult",
-                url: "https://archive.org/download/plan_9_from_outer_space_1959/plan_9_from_outer_space_512kb.mp4",
-                poster: "https://archive.org/services/img/plan_9_from_outer_space_1959"
-            },
-            {
-                title: "His Girl Friday (1940)",
-                genre: "Comedy / Romance",
-                url: "https://archive.org/download/His_Girl_Friday/His_Girl_Friday_512kb.mp4",
-                poster: "https://archive.org/services/img/His_Girl_Friday"
-            },
-            {
-                title: "The Phantom of the Opera (1925)",
-                genre: "Silent Horror / Classic",
-                url: "https://archive.org/download/The_Phantom_of_the_Opera_1925/Phantom_Opera_512kb.mp4",
-                poster: "https://archive.org/services/img/The_Phantom_of_the_Opera_1925"
-            },
-            {
-                title: "House on Haunted Hill (1959)",
-                genre: "Suspense / Horror",
-                url: "https://archive.org/download/house_on_haunted_hill/house_on_haunted_hill_512kb.mp4",
-                poster: "https://archive.org/services/img/house_on_haunted_hill"
-            }
-        ];
-
+        let currentChannel = channels[0];
         let hlsInstance = null;
         let dashInstance = null;
-        let modalHls = null;
+        const videoElement = document.getElementById('videoPlayer');
 
-        // --- Initialization on Load ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderChannels();
-            renderCinema();
-            renderArchiveTable();
-            setInterval(updateClock, 1000);
+            document.getElementById('channelCount').innerText = channels.length;
+            renderChannels(channels);
+            renderEpg(channels[0]);
+            loadActiveStream(channels[0]);
+            initAetherCinema();
+            loadArchiveTop();
+            document.getElementById('currentChannelName').innerText = 'Select a Channel';
+            document.getElementById('currentChannelSub').innerText = 'Choose a feed from below to start viewing';
         });
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('system-clock').textContent = now.toUTCString().split(' ')[4] + ' UTC';
+        function switchPage(page) {
+            document.getElementById('pageIptv').classList.add('hidden');
+            document.getElementById('pageMovies').classList.add('hidden');
+            document.getElementById('pageArchive').classList.add('hidden');
+            document.getElementById('pageGeneric').classList.add('hidden');
+            ['navIptv', 'navMovies', 'navArchive', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
+            });
+            const setActive = (id, grad) => {
+                const el=document.getElementById(id);
+                if(el) el.className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border shadow-lg " + grad;
+            };
+            if (page === 'iptv') {
+                document.getElementById('pageIptv').classList.remove('hidden');
+                setActive('navIptv', "bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border-red-500/30 shadow-red-950/40");
+            } else if (page === 'movies') {
+                document.getElementById('pageMovies').classList.remove('hidden');
+                setActive('navMovies', "bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border-pink-500/30 shadow-pink-950/40");
+            } else if (page === 'archive') {
+                document.getElementById('pageArchive').classList.remove('hidden');
+                setActive('navArchive', "bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border-cyan-500/30 shadow-cyan-950/40");
+            } else {
+                document.getElementById('pageGeneric').classList.remove('hidden');
+                const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
+                document.getElementById('genericTitle').innerText = titles[page] || "Module View";
+                const navMap={search:'navSearch',mylist:'navMyList',guide:'navGuide',settings:'navSettings'};
+                if(navMap[page]) {
+                    const b=document.getElementById(navMap[page]);
+                    if(b) b.className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all bg-slate-800 text-slate-200 border border-slate-700";
+                }
+            }
         }
 
-        // --- Tab Management ---
-        function switchTab(tabId) {
-            ['iptv', 'cinema', 'archive'].forEach(id => {
-                const section = document.getElementById(`tab-${id}`);
-                const btn = document.getElementById(`nav-${id}`);
-                if (id === tabId) {
-                    section.classList.remove('hidden');
-                    btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 bg-nexus-blue text-white shadow-lg shadow-nexus-blue/25";
+        function renderChannels(list) {
+            const grid = document.getElementById('channelsGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            list.forEach(ch => {
+                const isSelected = currentChannel && currentChannel.name === ch.name;
+                const card = document.createElement('div');
+                card.onclick = () => selectChannel(ch);
+                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 flex-none w-[160px] sm:w-[180px] snap-start ${isSelected ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white' : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl">${ch.icon || '📺'}</span>
+                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${ch.res}</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold truncate">${ch.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterChannels(query) {
+            const q = query.toLowerCase().trim();
+            if(!q){ renderChannels(channels); document.getElementById('channelCount').innerText = channels.length; return; }
+            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+            renderChannels(filtered);
+            document.getElementById('channelCount').innerText = filtered.length;
+        }
+
+        function selectChannel(ch) {
+            currentChannel = ch;
+            document.getElementById('currentChannelName').innerText = ch.name;
+            document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
+            document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
+            document.getElementById('currentChannelTitle').innerText = ch.name;
+            renderChannels(channels);
+            renderEpg(ch);
+            loadActiveStream(ch);
+        }
+
+        function showStreamAlert(msg) {
+            const alertBox = document.getElementById('streamAlert');
+            const alertText = document.getElementById('streamAlertText');
+            if(!alertBox || !alertText) return;
+            alertText.innerText = msg;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
+        }
+
+        function loadActiveStream(ch, useFallback = false) {
+            if (hlsInstance) { try{ hlsInstance.destroy(); }catch(e){} hlsInstance = null; }
+            if (dashInstance) { try{ dashInstance.reset(); }catch(e){} dashInstance = null; }
+            const targetUrl = useFallback ? (ch.fallbackUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8") : ch.url;
+            if (useFallback) {
+                showStreamAlert(`Primary link restricted/offline. Switched to backup feed for ${ch.name}.`);
+            } else {
+                const ab=document.getElementById('streamAlert');
+                if(ab) ab.classList.add('hidden');
+            }
+            if (targetUrl.includes('.mpd')) {
+                if (typeof dashjs !== 'undefined') {
+                    dashInstance = dashjs.MediaPlayer().create();
+                    dashInstance.initialize(videoElement, targetUrl, true);
                 } else {
-                    section.classList.add('hidden');
-                    btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700";
+                    videoElement.src = targetUrl;
+                    try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
                 }
-            });
-        }
-
-        // --- Render IPTV Channels ---
-        function renderChannels() {
-            const container = document.getElementById('channel-list');
-            document.getElementById('channel-count').textContent = `${channels.length} Active`;
-            container.innerHTML = channels.map((ch, idx) => `
-                <div onclick="playChannel(${idx})" class="group p-3 rounded-xl bg-dark-800 hover:bg-dark-700 border border-dark-700 hover:border-nexus-blue/50 cursor-pointer transition flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-dark-900 border border-dark-600 flex items-center justify-center text-nexus-blue group-hover:text-white transition">
-                            <i class="fa-solid ${ch.icon}"></i>
-                        </div>
-                        <div>
-                            <h5 class="text-sm font-bold text-white group-hover:text-nexus-accent transition">${ch.name}</h5>
-                            <p class="text-[10px] text-gray-400 font-mono">${ch.category} • ${ch.quality}</p>
-                        </div>
-                    </div>
-                    <div class="w-8 h-8 rounded-lg bg-dark-900 flex items-center justify-center text-gray-500 group-hover:text-nexus-blue transition">
-                        <i class="fa-solid fa-play text-xs"></i>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // --- Play IPTV Stream ---
-        function playChannel(index) {
-            const ch = channels[index];
-            const video = document.getElementById('iptv-player');
-            const overlay = document.getElementById('player-overlay');
-            
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById('current-channel-title').textContent = ch.name;
-            document.getElementById('current-channel-category').textContent = `${ch.category} | Protocol: ${ch.type.toUpperCase()}`;
-            document.getElementById('current-channel-logo').innerHTML = `<i class="fa-solid ${ch.icon} text-lg"></i>`;
-
-            // Clean up previous instances
-            if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-            if (dashInstance) { dashInstance.reset(); dashInstance = null; }
-
-            if (ch.type === 'hls') {
-                if (Hls.isSupported()) {
-                    hlsInstance = new Hls();
-                    hlsInstance.loadSource(ch.url);
-                    hlsInstance.attachMedia(video);
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = ch.url;
-                    video.addEventListener('loadedmetadata', () => video.play());
+            } else if (targetUrl.includes('.m3u8') || ch.format === 'm3u8') {
+                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                    hlsInstance = new Hls({ debug: false, maxBufferLength: 30 });
+                    hlsInstance.loadSource(targetUrl);
+                    hlsInstance.attachMedia(videoElement);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
+                    });
+                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            if (!useFallback && ch.fallbackUrl) {
+                                loadActiveStream(ch, true);
+                            } else {
+                                try{ hlsInstance.destroy(); }catch(e){}
+                            }
+                        }
+                    });
+                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                    videoElement.src = targetUrl;
+                    videoElement.addEventListener('loadedmetadata', () => {
+                        try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
+                    }, {once:true});
+                } else {
+                    videoElement.src = targetUrl;
+                    try{const _p1s=videoElement.play(); if(_p1s&&_p1s.catch) _p1s.catch(()=>{});}catch(e){}
                 }
-            } else if (ch.type === 'dash') {
-                dashInstance = dashjs.MediaPlayer().create();
-                dashInstance.initialize(video, ch.url, true);
+            } else {
+                videoElement.src = targetUrl;
+                try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
             }
         }
 
-        // --- Render Cinema Vault ---
-        function renderCinema() {
-            const grid = document.getElementById('cinema-grid');
-            grid.innerHTML = cinemaMovies.map((mov, idx) => `
-                <div onclick="openModal('${mov.title}', '${mov.url}')" class="glass-panel rounded-2xl overflow-hidden border border-dark-700 hover:border-nexus-blue/50 cursor-pointer transition group flex flex-col">
-                    <div class="relative aspect-[2/3] bg-dark-900 overflow-hidden">
-                        <img src="${mov.poster}" alt="${mov.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent opacity-60"></div>
-                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 backdrop-blur-xs transition duration-200">
-                            <div class="w-12 h-12 rounded-full bg-nexus-blue text-white flex items-center justify-center shadow-lg shadow-nexus-blue/40">
-                                <i class="fa-solid fa-play ml-0.5"></i>
+        function renderEpg(channel) {
+            const list = document.getElementById('epgList');
+            if(!list) return;
+            list.innerHTML = '';
+            const tag=document.getElementById('epgChannelTag');
+            if(tag) tag.innerText = channel.name.toUpperCase();
+            const schedule = [
+                { time: "18:00", show: channel.now || "Live Feature Presentation", live: true },
+                { time: "20:00", show: channel.next || "Upcoming Broadcast Block", live: false }
+            ];
+            schedule.forEach(slot => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border text-xs transition-all ${slot.live ? 'bg-red-950/30 border-red-500/40 text-white shadow' : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300'}`;
+                item.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono font-bold ${slot.live ? 'text-red-400' : 'text-slate-400'}">${slot.time}</span>
+                        ${slot.live ? '<span class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : ''}
+                    </div>
+                    <div class="font-semibold text-slate-200">${slot.show}</div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function toggleFavorite() {
+            const btn = document.getElementById('favBtn');
+            if(!btn) return;
+            if (btn.classList.contains('text-red-400') || btn.innerHTML.includes('Favorited')) {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all text-slate-200";
+                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
+            } else {
+                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/20 border border-red-500 text-red-400 text-xs font-semibold transition-all shadow-lg";
+                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
+            }
+        }
+
+        /* ==================== ARCHIVE.ORG STREAMING LOADER ==================== */
+        async function loadArchiveTop() {
+            const container = document.getElementById("archiveResults");
+            const loading = document.getElementById("archiveLoading");
+            if(!container) return;
+            const url = "https://archive.org/advancedsearch.php?q=" + encodeURIComponent("mediatype:movies AND runtime:[2700 TO *] AND year:[1976 TO *]") + "&fl[]=identifier&sort[]=downloads+desc&rows=24&output=json";
+            try {
+                const response = await fetch(url);
+                if(!response.ok) throw new Error("Archive fetch failed");
+                const data = await response.json();
+                container.innerHTML = "";
+                if(loading) loading.style.display="none";
+                if(!data.response || !data.response.docs || data.response.docs.length===0){
+                    container.innerHTML = '<div class="text-center text-slate-400 text-sm py-8">No Archive.org results found. Try again later.</div>';
+                    return;
+                }
+                data.response.docs.forEach(item => {
+                    const block = document.createElement("div");
+                    block.className = "video-block";
+                    block.innerHTML = `
+                        <iframe src="https://archive.org/embed/${item.identifier}" allowfullscreen loading="lazy" title="${item.identifier}"></iframe>
+                        <p class="text-xs text-slate-400 mt-3 font-mono font-medium truncate">${item.identifier}</p>
+                    `;
+                    container.appendChild(block);
+                });
+            } catch(err) {
+                console.error("Failed to load Archive.org items:", err);
+                if(loading) loading.innerText="Failed to load Archive.org catalog — please check connection or try again later.";
+                container.innerHTML += '<div class="text-center text-amber-300 text-xs py-4">Archive.org is currently unreachable. The rest of the site remains fully functional.</div>';
+            }
+        }
+
+        /* ==================== AETHER CINEMA ENGINE ==================== */
+        function initAetherCinema() {
+            const FILMS=[
+
+            {id:1,title:"The Terminator",year:1984,rating:7.0,match:85,duration:"1h 10m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film1a/1920/1080",poster:"https://picsum.photos/seed/film1b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Terminator%201984%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"A action classic from 1984."},
+            {id:2,title:"Aliens",year:1986,rating:7.1,match:86,duration:"2h 17m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film2a/1920/1080",poster:"https://picsum.photos/seed/film2b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Aliens%201986%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1986."},
+            {id:3,title:"Die Hard",year:1988,rating:7.2,match:87,duration:"3h 24m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film3a/1920/1080",poster:"https://picsum.photos/seed/film3b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Die%20Hard%201988%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1988."},
+            {id:4,title:"First Blood",year:1982,rating:7.3,match:88,duration:"1h 31m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film4a/1920/1080",poster:"https://picsum.photos/seed/film4b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=First%20Blood%201982%20trailer",quality:"SD",progress:0.75,cats:['continue', 'trending'],synopsis:"A action classic from 1982."},
+            {id:5,title:"Mad Max",year:1979,rating:7.4,match:89,duration:"2h 38m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film5a/1920/1080",poster:"https://picsum.photos/seed/film5b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Mad%20Max%201979%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"A action classic from 1979."},
+            {id:6,title:"Mad Max 2: The Road Warrior",year:1981,rating:7.5,match:90,duration:"3h 45m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film6a/1920/1080",poster:"https://picsum.photos/seed/film6b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Mad%20Max%202%3A%20The%20Road%20Warrior%201981%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A action classic from 1981."},
+            {id:7,title:"Escape from New York",year:1981,rating:7.6,match:91,duration:"1h 52m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film7a/1920/1080",poster:"https://picsum.photos/seed/film7b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Escape%20from%20New%20York%201981%20trailer",quality:"SD",progress:0.50,cats:['continue', 'trending'],synopsis:"A action classic from 1981."},
+            {id:8,title:"Lethal Weapon",year:1987,rating:7.7,match:92,duration:"2h 59m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film8a/1920/1080",poster:"https://picsum.photos/seed/film8b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Lethal%20Weapon%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1987."},
+            {id:9,title:"Beverly Hills Cop",year:1984,rating:7.8,match:93,duration:"3h 16m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film9a/1920/1080",poster:"https://picsum.photos/seed/film9b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Beverly%20Hills%20Cop%201984%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"A action classic from 1984."},
+            {id:10,title:"Robocop",year:1987,rating:7.9,match:94,duration:"1h 23m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film10a/1920/1080",poster:"https://picsum.photos/seed/film10b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Robocop%201987%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1987."},
+            {id:11,title:"Conan the Barbarian",year:1982,rating:8.0,match:95,duration:"2h 30m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film11a/1920/1080",poster:"https://picsum.photos/seed/film11b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Conan%20the%20Barbarian%201982%20trailer",quality:"SD",progress:0.50,cats:['continue', 'trending'],synopsis:"A action classic from 1982."},
+            {id:12,title:"Predator",year:1987,rating:8.1,match:96,duration:"3h 37m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film12a/1920/1080",poster:"https://picsum.photos/seed/film12b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Predator%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1987."},
+            {id:13,title:"Commando",year:1985,rating:8.2,match:97,duration:"1h 44m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film13a/1920/1080",poster:"https://picsum.photos/seed/film13b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Commando%201985%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1985."},
+            {id:14,title:"Red Dawn",year:1984,rating:8.3,match:85,duration:"2h 51m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film14a/1920/1080",poster:"https://picsum.photos/seed/film14b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Red%20Dawn%201984%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A action classic from 1984."},
+            {id:15,title:"Big Trouble in Little China",year:1986,rating:8.4,match:86,duration:"3h 58m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film15a/1920/1080",poster:"https://picsum.photos/seed/film15b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Big%20Trouble%20in%20Little%20China%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1986."},
+            {id:16,title:"The Running Man",year:1987,rating:8.5,match:87,duration:"1h 15m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film16a/1920/1080",poster:"https://picsum.photos/seed/film16b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Running%20Man%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1987."},
+            {id:17,title:"Rocky II",year:1979,rating:8.6,match:88,duration:"2h 22m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film17a/1920/1080",poster:"https://picsum.photos/seed/film17b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Rocky%20II%201979%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"A action classic from 1979."},
+            {id:18,title:"Rocky III",year:1982,rating:8.7,match:89,duration:"3h 29m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film18a/1920/1080",poster:"https://picsum.photos/seed/film18b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Rocky%20III%201982%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A action classic from 1982."},
+            {id:19,title:"Rocky IV",year:1985,rating:8.8,match:90,duration:"1h 36m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film19a/1920/1080",poster:"https://picsum.photos/seed/film19b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Rocky%20IV%201985%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A action classic from 1985."},
+            {id:20,title:"Enter the Dragon",year:1973,rating:8.9,match:91,duration:"2h 43m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film20a/1920/1080",poster:"https://picsum.photos/seed/film20b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Enter%20the%20Dragon%201973%20trailer",quality:"SD",progress:0.75,cats:['continue', 'trending'],synopsis:"A action classic from 1973."},
+            {id:21,title:"Star Wars: A New Hope",year:1977,rating:9.0,match:92,duration:"3h 50m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film21a/1920/1080",poster:"https://picsum.photos/seed/film21b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Star%20Wars%3A%20A%20New%20Hope%201977%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A sci‑fi classic from 1977."},
+            {id:22,title:"Star Wars: The Empire Strikes Back",year:1980,rating:9.1,match:93,duration:"1h 57m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film22a/1920/1080",poster:"https://picsum.photos/seed/film22b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Star%20Wars%3A%20The%20Empire%20Strikes%20Back%201980%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A sci‑fi classic from 1980."},
+            {id:23,title:"Star Wars: Return of the Jedi",year:1983,rating:9.2,match:94,duration:"2h 14m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film23a/1920/1080",poster:"https://picsum.photos/seed/film23b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Star%20Wars%3A%20Return%20of%20the%20Jedi%201983%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A sci‑fi classic from 1983."},
+            {id:24,title:"Blade Runner",year:1982,rating:9.3,match:95,duration:"3h 21m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film24a/1920/1080",poster:"https://picsum.photos/seed/film24b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Blade%20Runner%201982%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A sci‑fi classic from 1982."},
+            {id:25,title:"E.T. the Extra‑Terrestrial",year:1982,rating:9.4,match:96,duration:"1h 28m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film25a/1920/1080",poster:"https://picsum.photos/seed/film25b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=E.T.%20the%20Extra%E2%80%91Terrestrial%201982%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A sci‑fi classic from 1982."},
+            {id:26,title:"Close Encounters of the Third Kind",year:1977,rating:9.5,match:97,duration:"2h 35m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film26a/1920/1080",poster:"https://picsum.photos/seed/film26b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Close%20Encounters%20of%20the%20Third%20Kind%201977%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A sci‑fi classic from 1977."},
+            {id:27,title:"The Thing",year:1982,rating:9.6,match:85,duration:"3h 42m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film27a/1920/1080",poster:"https://picsum.photos/seed/film27b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Thing%201982%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A sci‑fi classic from 1982."},
+            {id:28,title:"Tron",year:1982,rating:9.7,match:86,duration:"1h 49m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film28a/1920/1080",poster:"https://picsum.photos/seed/film28b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Tron%201982%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A sci‑fi classic from 1982."},
+            {id:29,title:"The Fly",year:1986,rating:9.8,match:87,duration:"2h 56m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film29a/1920/1080",poster:"https://picsum.photos/seed/film29b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Fly%201986%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1986."},
+            {id:30,title:"Back to the Future",year:1985,rating:9.9,match:88,duration:"3h 13m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film30a/1920/1080",poster:"https://picsum.photos/seed/film30b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Back%20to%20the%20Future%201985%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1985."},
+            {id:31,title:"Back to the Future Part II",year:1989,rating:7.0,match:89,duration:"1h 20m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film31a/1920/1080",poster:"https://picsum.photos/seed/film31b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Back%20to%20the%20Future%20Part%20II%201989%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1989."},
+            {id:32,title:"Back to the Future Part III",year:1990,rating:7.1,match:90,duration:"2h 27m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film32a/1920/1080",poster:"https://picsum.photos/seed/film32b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Back%20to%20the%20Future%20Part%20III%201990%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1990."},
+            {id:33,title:"Dune",year:1984,rating:7.2,match:91,duration:"3h 34m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film33a/1920/1080",poster:"https://picsum.photos/seed/film33b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Dune%201984%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A sci‑fi classic from 1984."},
+            {id:34,title:"The Last Starfighter",year:1984,rating:7.3,match:92,duration:"1h 41m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film34a/1920/1080",poster:"https://picsum.photos/seed/film34b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Last%20Starfighter%201984%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A sci‑fi classic from 1984."},
+            {id:35,title:"The Abyss",year:1989,rating:7.4,match:93,duration:"2h 48m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film35a/1920/1080",poster:"https://picsum.photos/seed/film35b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Abyss%201989%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1989."},
+            {id:36,title:"Short Circuit",year:1986,rating:7.5,match:94,duration:"3h 55m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film36a/1920/1080",poster:"https://picsum.photos/seed/film36b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Short%20Circuit%201986%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new'],synopsis:"A sci‑fi classic from 1986."},
+            {id:37,title:"WarGames",year:1983,rating:7.6,match:95,duration:"1h 12m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film37a/1920/1080",poster:"https://picsum.photos/seed/film37b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=WarGames%201983%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A sci‑fi classic from 1983."},
+            {id:38,title:"Invasion of the Body Snatchers",year:1978,rating:7.7,match:96,duration:"2h 19m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film38a/1920/1080",poster:"https://picsum.photos/seed/film38b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Invasion%20of%20the%20Body%20Snatchers%201978%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A sci‑fi classic from 1978."},
+            {id:39,title:"Superman",year:1978,rating:7.8,match:97,duration:"3h 26m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film39a/1920/1080",poster:"https://picsum.photos/seed/film39b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Superman%201978%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A sci‑fi classic from 1978."},
+            {id:40,title:"Superman II",year:1980,rating:7.9,match:85,duration:"1h 33m",genres:["Sci‑Fi"],accent:"#c8a86b",rgb:"200,168,107",backdrop:"https://picsum.photos/seed/film40a/1920/1080",poster:"https://picsum.photos/seed/film40b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Superman%20II%201980%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A sci‑fi classic from 1980."},
+            {id:41,title:"Halloween",year:1978,rating:8.0,match:86,duration:"2h 40m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film41a/1920/1080",poster:"https://picsum.photos/seed/film41b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Halloween%201978%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1978."},
+            {id:42,title:"Friday the 13th",year:1980,rating:8.1,match:87,duration:"3h 47m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film42a/1920/1080",poster:"https://picsum.photos/seed/film42b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Friday%20the%2013th%201980%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1980."},
+            {id:43,title:"A Nightmare on Elm Street",year:1984,rating:8.2,match:88,duration:"1h 54m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film43a/1920/1080",poster:"https://picsum.photos/seed/film43b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=A%20Nightmare%20on%20Elm%20Street%201984%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1984."},
+            {id:44,title:"The Shining",year:1980,rating:8.3,match:89,duration:"2h 11m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film44a/1920/1080",poster:"https://picsum.photos/seed/film44b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Shining%201980%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1980."},
+            {id:45,title:"The Exorcist II",year:1977,rating:8.4,match:90,duration:"3h 18m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film45a/1920/1080",poster:"https://picsum.photos/seed/film45b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Exorcist%20II%201977%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1977."},
+            {id:46,title:"The Howling",year:1981,rating:8.5,match:91,duration:"1h 25m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film46a/1920/1080",poster:"https://picsum.photos/seed/film46b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Howling%201981%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1981."},
+            {id:47,title:"Poltergeist",year:1982,rating:8.6,match:92,duration:"2h 32m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film47a/1920/1080",poster:"https://picsum.photos/seed/film47b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Poltergeist%201982%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1982."},
+            {id:48,title:"The Evil Dead",year:1981,rating:8.7,match:93,duration:"3h 39m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film48a/1920/1080",poster:"https://picsum.photos/seed/film48b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Evil%20Dead%201981%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1981."},
+            {id:49,title:"Evil Dead II",year:1987,rating:8.8,match:94,duration:"1h 46m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film49a/1920/1080",poster:"https://picsum.photos/seed/film49b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Evil%20Dead%20II%201987%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1987."},
+            {id:50,title:"The Texas Chainsaw Massacre",year:1974,rating:8.9,match:95,duration:"2h 53m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film50a/1920/1080",poster:"https://picsum.photos/seed/film50b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Texas%20Chainsaw%20Massacre%201974%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1974."},
+            {id:51,title:"The Fog",year:1980,rating:9.0,match:96,duration:"3h 10m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film51a/1920/1080",poster:"https://picsum.photos/seed/film51b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Fog%201980%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1980."},
+            {id:52,title:"Creepshow",year:1982,rating:9.1,match:97,duration:"1h 17m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film52a/1920/1080",poster:"https://picsum.photos/seed/film52b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Creepshow%201982%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1982."},
+            {id:53,title:"The Changeling",year:1980,rating:9.2,match:85,duration:"2h 24m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film53a/1920/1080",poster:"https://picsum.photos/seed/film53b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Changeling%201980%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1980."},
+            {id:54,title:"Hellraiser",year:1987,rating:9.3,match:86,duration:"3h 31m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film54a/1920/1080",poster:"https://picsum.photos/seed/film54b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Hellraiser%201987%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1987."},
+            {id:55,title:"The Hitcher",year:1986,rating:9.4,match:87,duration:"1h 38m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film55a/1920/1080",poster:"https://picsum.photos/seed/film55b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Hitcher%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1986."},
+            {id:56,title:"Child’s Play",year:1988,rating:9.5,match:88,duration:"2h 45m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film56a/1920/1080",poster:"https://picsum.photos/seed/film56b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Child%E2%80%99s%20Play%201988%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1988."},
+            {id:57,title:"The Blob",year:1988,rating:9.6,match:89,duration:"3h 52m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film57a/1920/1080",poster:"https://picsum.photos/seed/film57b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Blob%201988%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1988."},
+            {id:58,title:"Videodrome",year:1983,rating:9.7,match:90,duration:"1h 59m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film58a/1920/1080",poster:"https://picsum.photos/seed/film58b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Videodrome%201983%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1983."},
+            {id:59,title:"Scanners",year:1981,rating:9.8,match:91,duration:"2h 16m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film59a/1920/1080",poster:"https://picsum.photos/seed/film59b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Scanners%201981%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A horror classic from 1981."},
+            {id:60,title:"The Serpent and the Rainbow",year:1988,rating:9.9,match:92,duration:"3h 23m",genres:["Horror"],accent:"#8e44ad",rgb:"142,68,173",backdrop:"https://picsum.photos/seed/film60a/1920/1080",poster:"https://picsum.photos/seed/film60b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Serpent%20and%20the%20Rainbow%201988%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'acclaimed'],synopsis:"A horror classic from 1988."},
+            {id:61,title:"Taxi Driver",year:1976,rating:7.0,match:93,duration:"1h 30m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film61a/1920/1080",poster:"https://picsum.photos/seed/film61b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Taxi%20Driver%201976%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1976."},
+            {id:62,title:"Apocalypse Now",year:1979,rating:7.1,match:94,duration:"2h 37m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film62a/1920/1080",poster:"https://picsum.photos/seed/film62b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Apocalypse%20Now%201979%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1979."},
+            {id:63,title:"Raging Bull",year:1980,rating:7.2,match:95,duration:"3h 44m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film63a/1920/1080",poster:"https://picsum.photos/seed/film63b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Raging%20Bull%201980%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1980."},
+            {id:64,title:"The Deer Hunter",year:1978,rating:7.3,match:96,duration:"1h 51m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film64a/1920/1080",poster:"https://picsum.photos/seed/film64b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Deer%20Hunter%201978%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1978."},
+            {id:65,title:"Platoon",year:1986,rating:7.4,match:97,duration:"2h 58m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film65a/1920/1080",poster:"https://picsum.photos/seed/film65b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Platoon%201986%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1986."},
+            {id:66,title:"Full Metal Jacket",year:1987,rating:7.5,match:85,duration:"3h 15m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film66a/1920/1080",poster:"https://picsum.photos/seed/film66b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Full%20Metal%20Jacket%201987%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1987."},
+            {id:67,title:"The Godfather Part II",year:1974,rating:7.6,match:86,duration:"1h 22m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film67a/1920/1080",poster:"https://picsum.photos/seed/film67b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Godfather%20Part%20II%201974%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1974."},
+            {id:68,title:"The Godfather Part III",year:1990,rating:7.7,match:87,duration:"2h 29m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film68a/1920/1080",poster:"https://picsum.photos/seed/film68b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Godfather%20Part%20III%201990%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1990."},
+            {id:69,title:"Scarface",year:1983,rating:7.8,match:88,duration:"3h 36m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film69a/1920/1080",poster:"https://picsum.photos/seed/film69b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Scarface%201983%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1983."},
+            {id:70,title:"The Color Purple",year:1985,rating:7.9,match:89,duration:"1h 43m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film70a/1920/1080",poster:"https://picsum.photos/seed/film70b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Color%20Purple%201985%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1985."},
+            {id:71,title:"Ordinary People",year:1980,rating:8.0,match:90,duration:"2h 50m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film71a/1920/1080",poster:"https://picsum.photos/seed/film71b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Ordinary%20People%201980%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1980."},
+            {id:72,title:"Amadeus",year:1984,rating:8.1,match:91,duration:"3h 57m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film72a/1920/1080",poster:"https://picsum.photos/seed/film72b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Amadeus%201984%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1984."},
+            {id:73,title:"The Elephant Man",year:1980,rating:8.2,match:92,duration:"1h 14m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film73a/1920/1080",poster:"https://picsum.photos/seed/film73b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Elephant%20Man%201980%20trailer",quality:"SD",progress:0.00,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1980."},
+            {id:74,title:"Gandhi",year:1982,rating:8.3,match:93,duration:"2h 21m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film74a/1920/1080",poster:"https://picsum.photos/seed/film74b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Gandhi%201982%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1982."},
+            {id:75,title:"The Killing Fields",year:1984,rating:8.4,match:94,duration:"3h 28m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film75a/1920/1080",poster:"https://picsum.photos/seed/film75b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Killing%20Fields%201984%20trailer",quality:"SD",progress:0.50,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1984."},
+            {id:76,title:"The Untouchables",year:1987,rating:8.5,match:95,duration:"1h 35m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film76a/1920/1080",poster:"https://picsum.photos/seed/film76b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Untouchables%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1987."},
+            {id:77,title:"Rain Man",year:1988,rating:8.6,match:96,duration:"2h 42m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film77a/1920/1080",poster:"https://picsum.photos/seed/film77b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Rain%20Man%201988%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1988."},
+            {id:78,title:"The Right Stuff",year:1983,rating:8.7,match:97,duration:"3h 49m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film78a/1920/1080",poster:"https://picsum.photos/seed/film78b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Right%20Stuff%201983%20trailer",quality:"SD",progress:0.25,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1983."},
+            {id:79,title:"The Mission",year:1986,rating:8.8,match:85,duration:"1h 56m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film79a/1920/1080",poster:"https://picsum.photos/seed/film79b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Mission%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'acclaimed'],synopsis:"A drama classic from 1986."},
+            {id:80,title:"Sophie's Choice",year:1982,rating:8.9,match:86,duration:"2h 13m",genres:["Drama"],accent:"#d4a017",rgb:"212,160,23",backdrop:"https://picsum.photos/seed/film80a/1920/1080",poster:"https://picsum.photos/seed/film80b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Sophie%27s%20Choice%201982%20trailer",quality:"SD",progress:0.75,cats:['continue', 'acclaimed'],synopsis:"A drama classic from 1982."},
+            {id:81,title:"Jaws",year:1975,rating:9.0,match:87,duration:"3h 20m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film81a/1920/1080",poster:"https://picsum.photos/seed/film81b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Jaws%201975%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"A thriller classic from 1975."},
+            {id:82,title:"Jaws 2",year:1978,rating:9.1,match:88,duration:"1h 27m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film82a/1920/1080",poster:"https://picsum.photos/seed/film82b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Jaws%202%201978%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A thriller classic from 1978."},
+            {id:83,title:"Blue Velvet",year:1986,rating:9.2,match:89,duration:"2h 34m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film83a/1920/1080",poster:"https://picsum.photos/seed/film83b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Blue%20Velvet%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1986."},
+            {id:84,title:"The Silence of the Lambs",year:1991,rating:9.3,match:90,duration:"3h 41m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film84a/1920/1080",poster:"https://picsum.photos/seed/film84b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Silence%20of%20the%20Lambs%201991%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1991."},
+            {id:85,title:"Fatal Attraction",year:1987,rating:9.4,match:91,duration:"1h 48m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film85a/1920/1080",poster:"https://picsum.photos/seed/film85b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Fatal%20Attraction%201987%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1987."},
+            {id:86,title:"The Vanishing",year:1988,rating:9.5,match:92,duration:"2h 55m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film86a/1920/1080",poster:"https://picsum.photos/seed/film86b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Vanishing%201988%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1988."},
+            {id:87,title:"Blow Out",year:1981,rating:9.6,match:93,duration:"3h 12m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film87a/1920/1080",poster:"https://picsum.photos/seed/film87b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Blow%20Out%201981%20trailer",quality:"SD",progress:0.50,cats:['continue', 'trending'],synopsis:"A thriller classic from 1981."},
+            {id:88,title:"The Conversation",year:1974,rating:9.7,match:94,duration:"1h 19m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film88a/1920/1080",poster:"https://picsum.photos/seed/film88b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Conversation%201974%20trailer",quality:"SD",progress:0.75,cats:['continue', 'trending'],synopsis:"A thriller classic from 1974."},
+            {id:89,title:"Witness",year:1985,rating:9.8,match:95,duration:"2h 26m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film89a/1920/1080",poster:"https://picsum.photos/seed/film89b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Witness%201985%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1985."},
+            {id:90,title:"The French Connection II",year:1975,rating:9.9,match:96,duration:"3h 33m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film90a/1920/1080",poster:"https://picsum.photos/seed/film90b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20French%20Connection%20II%201975%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A thriller classic from 1975."},
+            {id:91,title:"Manhunter",year:1986,rating:7.0,match:97,duration:"1h 40m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film91a/1920/1080",poster:"https://picsum.photos/seed/film91b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Manhunter%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1986."},
+            {id:92,title:"Angel Heart",year:1987,rating:7.1,match:85,duration:"2h 47m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film92a/1920/1080",poster:"https://picsum.photos/seed/film92b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Angel%20Heart%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1987."},
+            {id:93,title:"To Live and Die in L.A.",year:1985,rating:7.2,match:86,duration:"3h 54m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film93a/1920/1080",poster:"https://picsum.photos/seed/film93b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=To%20Live%20and%20Die%20in%20L.A.%201985%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1985."},
+            {id:94,title:"The Dead Zone",year:1983,rating:7.3,match:87,duration:"1h 11m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film94a/1920/1080",poster:"https://picsum.photos/seed/film94b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Dead%20Zone%201983%20trailer",quality:"SD",progress:0.25,cats:['continue', 'trending'],synopsis:"A thriller classic from 1983."},
+            {id:95,title:"The Falcon and the Snowman",year:1985,rating:7.4,match:88,duration:"2h 18m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film95a/1920/1080",poster:"https://picsum.photos/seed/film95b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Falcon%20and%20the%20Snowman%201985%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1985."},
+            {id:96,title:"The Bedroom Window",year:1987,rating:7.5,match:89,duration:"3h 25m",genres:["Thriller"],accent:"#2c3e50",rgb:"44,62,80",backdrop:"https://picsum.photos/seed/film96a/1920/1080",poster:"https://picsum.photos/seed/film96b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Bedroom%20Window%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new', 'trending'],synopsis:"A thriller classic from 1987."},
+            {id:97,title:"Ghostbusters",year:1984,rating:7.6,match:90,duration:"1h 32m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film97a/1920/1080",poster:"https://picsum.photos/seed/film97b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Ghostbusters%201984%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A comedy classic from 1984."},
+            {id:98,title:"Ghostbusters II",year:1989,rating:7.7,match:91,duration:"2h 39m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film98a/1920/1080",poster:"https://picsum.photos/seed/film98b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Ghostbusters%20II%201989%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A comedy classic from 1989."},
+            {id:99,title:"Caddyshack",year:1980,rating:7.8,match:92,duration:"3h 46m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film99a/1920/1080",poster:"https://picsum.photos/seed/film99b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Caddyshack%201980%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A comedy classic from 1980."},
+            {id:100,title:"National Lampoon’s Vacation",year:1983,rating:7.9,match:93,duration:"1h 53m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film100a/1920/1080",poster:"https://picsum.photos/seed/film100b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=National%20Lampoon%E2%80%99s%20Vacation%201983%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A comedy classic from 1983."},
+            {id:101,title:"Ferris Bueller’s Day Off",year:1986,rating:8.0,match:94,duration:"2h 10m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film101a/1920/1080",poster:"https://picsum.photos/seed/film101b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Ferris%20Bueller%E2%80%99s%20Day%20Off%201986%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A comedy classic from 1986."},
+            {id:102,title:"Trading Places",year:1983,rating:8.1,match:95,duration:"3h 17m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film102a/1920/1080",poster:"https://picsum.photos/seed/film102b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Trading%20Places%201983%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A comedy classic from 1983."},
+            {id:103,title:"Coming to America",year:1988,rating:8.2,match:96,duration:"1h 24m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film103a/1920/1080",poster:"https://picsum.photos/seed/film103b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Coming%20to%20America%201988%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A comedy classic from 1988."},
+            {id:104,title:"Airplane!",year:1980,rating:8.3,match:97,duration:"2h 31m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film104a/1920/1080",poster:"https://picsum.photos/seed/film104b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Airplane%21%201980%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A comedy classic from 1980."},
+            {id:105,title:"The Blues Brothers",year:1980,rating:8.4,match:85,duration:"3h 38m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film105a/1920/1080",poster:"https://picsum.photos/seed/film105b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Blues%20Brothers%201980%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A comedy classic from 1980."},
+            {id:106,title:"Stripes",year:1981,rating:8.5,match:86,duration:"1h 45m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film106a/1920/1080",poster:"https://picsum.photos/seed/film106b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Stripes%201981%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A comedy classic from 1981."},
+            {id:107,title:"Police Academy",year:1984,rating:8.6,match:87,duration:"2h 52m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film107a/1920/1080",poster:"https://picsum.photos/seed/film107b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%201984%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A comedy classic from 1984."},
+            {id:108,title:"Police Academy 2",year:1985,rating:8.7,match:88,duration:"3h 59m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film108a/1920/1080",poster:"https://picsum.photos/seed/film108b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%202%201985%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new'],synopsis:"A comedy classic from 1985."},
+            {id:109,title:"Police Academy 3",year:1986,rating:8.8,match:89,duration:"1h 16m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film109a/1920/1080",poster:"https://picsum.photos/seed/film109b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%203%201986%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A comedy classic from 1986."},
+            {id:110,title:"Police Academy 4",year:1987,rating:8.9,match:90,duration:"2h 23m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film110a/1920/1080",poster:"https://picsum.photos/seed/film110b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%204%201987%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A comedy classic from 1987."},
+            {id:111,title:"Police Academy 5",year:1988,rating:9.0,match:91,duration:"3h 30m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film111a/1920/1080",poster:"https://picsum.photos/seed/film111b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%205%201988%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A comedy classic from 1988."},
+            {id:112,title:"Police Academy 6",year:1989,rating:9.1,match:92,duration:"1h 37m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film112a/1920/1080",poster:"https://picsum.photos/seed/film112b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Police%20Academy%206%201989%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new'],synopsis:"A comedy classic from 1989."},
+            {id:113,title:"The Naked Gun",year:1988,rating:9.2,match:93,duration:"2h 44m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film113a/1920/1080",poster:"https://picsum.photos/seed/film113b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Naked%20Gun%201988%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A comedy classic from 1988."},
+            {id:114,title:"Spaceballs",year:1987,rating:9.3,match:94,duration:"3h 51m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film114a/1920/1080",poster:"https://picsum.photos/seed/film114b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Spaceballs%201987%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A comedy classic from 1987."},
+            {id:115,title:"Three Amigos!",year:1986,rating:9.4,match:95,duration:"1h 58m",genres:["Comedy"],accent:"#27ae60",rgb:"39,174,96",backdrop:"https://picsum.photos/seed/film115a/1920/1080",poster:"https://picsum.photos/seed/film115b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Three%20Amigos%21%201986%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A comedy classic from 1986."},
+            {id:116,title:"Dirty Dancing",year:1987,rating:9.5,match:96,duration:"2h 15m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film116a/1920/1080",poster:"https://picsum.photos/seed/film116b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Dirty%20Dancing%201987%20trailer",quality:"HD",progress:0.75,cats:['continue', 'new'],synopsis:"A romance classic from 1987."},
+            {id:117,title:"The Blue Lagoon",year:1980,rating:9.6,match:97,duration:"3h 22m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film117a/1920/1080",poster:"https://picsum.photos/seed/film117b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Blue%20Lagoon%201980%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A romance classic from 1980."},
+            {id:118,title:"An Officer and a Gentleman",year:1982,rating:9.7,match:85,duration:"1h 29m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film118a/1920/1080",poster:"https://picsum.photos/seed/film118b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=An%20Officer%20and%20a%20Gentleman%201982%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A romance classic from 1982."},
+            {id:119,title:"The Last Emperor",year:1987,rating:9.8,match:86,duration:"2h 36m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film119a/1920/1080",poster:"https://picsum.photos/seed/film119b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Last%20Emperor%201987%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A romance classic from 1987."},
+            {id:120,title:"The French Lieutenant’s Woman",year:1981,rating:9.9,match:87,duration:"3h 43m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film120a/1920/1080",poster:"https://picsum.photos/seed/film120b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20French%20Lieutenant%E2%80%99s%20Woman%201981%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A romance classic from 1981."},
+            {id:121,title:"Somewhere in Time",year:1980,rating:7.0,match:88,duration:"1h 50m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film121a/1920/1080",poster:"https://picsum.photos/seed/film121b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Somewhere%20in%20Time%201980%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A romance classic from 1980."},
+            {id:122,title:"The Thorn Birds",year:1983,rating:7.1,match:89,duration:"2h 57m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film122a/1920/1080",poster:"https://picsum.photos/seed/film122b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Thorn%20Birds%201983%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A romance classic from 1983."},
+            {id:123,title:"Out of Africa",year:1985,rating:7.2,match:90,duration:"3h 14m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film123a/1920/1080",poster:"https://picsum.photos/seed/film123b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Out%20of%20Africa%201985%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A romance classic from 1985."},
+            {id:124,title:"The Year of Living Dangerously",year:1982,rating:7.3,match:91,duration:"1h 21m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film124a/1920/1080",poster:"https://picsum.photos/seed/film124b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Year%20of%20Living%20Dangerously%201982%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A romance classic from 1982."},
+            {id:125,title:"The Lover",year:1992,rating:7.4,match:92,duration:"2h 28m",genres:["Romance"],accent:"#e91e63",rgb:"233,30,99",backdrop:"https://picsum.photos/seed/film125a/1920/1080",poster:"https://picsum.photos/seed/film125b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Lover%201992%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A romance classic from 1992."},
+            {id:126,title:"The Secret of NIMH",year:1982,rating:7.5,match:93,duration:"3h 35m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film126a/1920/1080",poster:"https://picsum.photos/seed/film126b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Secret%20of%20NIMH%201982%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A animation classic from 1982."},
+            {id:127,title:"The Black Cauldron",year:1985,rating:7.6,match:94,duration:"1h 42m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film127a/1920/1080",poster:"https://picsum.photos/seed/film127b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Black%20Cauldron%201985%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A animation classic from 1985."},
+            {id:128,title:"Heavy Metal",year:1981,rating:7.7,match:95,duration:"2h 49m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film128a/1920/1080",poster:"https://picsum.photos/seed/film128b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Heavy%20Metal%201981%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A animation classic from 1981."},
+            {id:129,title:"Watership Down",year:1978,rating:7.8,match:96,duration:"3h 56m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film129a/1920/1080",poster:"https://picsum.photos/seed/film129b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Watership%20Down%201978%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A animation classic from 1978."},
+            {id:130,title:"The Last Unicorn",year:1982,rating:7.9,match:97,duration:"1h 13m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film130a/1920/1080",poster:"https://picsum.photos/seed/film130b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Last%20Unicorn%201982%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A animation classic from 1982."},
+            {id:131,title:"The Land Before Time",year:1988,rating:8.0,match:85,duration:"2h 20m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film131a/1920/1080",poster:"https://picsum.photos/seed/film131b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Land%20Before%20Time%201988%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A animation classic from 1988."},
+            {id:132,title:"The Fox and the Hound",year:1981,rating:8.1,match:86,duration:"3h 27m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film132a/1920/1080",poster:"https://picsum.photos/seed/film132b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Fox%20and%20the%20Hound%201981%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A animation classic from 1981."},
+            {id:133,title:"The Great Mouse Detective",year:1986,rating:8.2,match:87,duration:"1h 34m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film133a/1920/1080",poster:"https://picsum.photos/seed/film133b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Great%20Mouse%20Detective%201986%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A animation classic from 1986."},
+            {id:134,title:"The Rescuers",year:1977,rating:8.3,match:88,duration:"2h 41m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film134a/1920/1080",poster:"https://picsum.photos/seed/film134b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Rescuers%201977%20trailer",quality:"SD",progress:0.25,cats:['continue'],synopsis:"A animation classic from 1977."},
+            {id:135,title:"The Rescuers Down Under",year:1990,rating:8.4,match:89,duration:"3h 48m",genres:["Animation"],accent:"#ff6f00",rgb:"255,111,0",backdrop:"https://picsum.photos/seed/film135a/1920/1080",poster:"https://picsum.photos/seed/film135b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Rescuers%20Down%20Under%201990%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A animation classic from 1990."},
+            {id:136,title:"Koyaanisqatsi",year:1982,rating:8.5,match:90,duration:"1h 55m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film136a/1920/1080",poster:"https://picsum.photos/seed/film136b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Koyaanisqatsi%201982%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A documentary classic from 1982."},
+            {id:137,title:"Powaqqatsi",year:1988,rating:8.6,match:91,duration:"2h 12m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film137a/1920/1080",poster:"https://picsum.photos/seed/film137b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Powaqqatsi%201988%20trailer",quality:"HD",progress:0.00,cats:['continue', 'new'],synopsis:"A documentary classic from 1988."},
+            {id:138,title:"The Thin Blue Line",year:1988,rating:8.7,match:92,duration:"3h 19m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film138a/1920/1080",poster:"https://picsum.photos/seed/film138b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Thin%20Blue%20Line%201988%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A documentary classic from 1988."},
+            {id:139,title:"Shoah",year:1985,rating:8.8,match:93,duration:"1h 26m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film139a/1920/1080",poster:"https://picsum.photos/seed/film139b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Shoah%201985%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new'],synopsis:"A documentary classic from 1985."},
+            {id:140,title:"Burden of Dreams",year:1982,rating:8.9,match:94,duration:"2h 33m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film140a/1920/1080",poster:"https://picsum.photos/seed/film140b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Burden%20of%20Dreams%201982%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A documentary classic from 1982."},
+            {id:141,title:"The Decline of Western Civilization",year:1981,rating:9.0,match:95,duration:"3h 40m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film141a/1920/1080",poster:"https://picsum.photos/seed/film141b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Decline%20of%20Western%20Civilization%201981%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A documentary classic from 1981."},
+            {id:142,title:"The Decline of Western Civilization II",year:1988,rating:9.1,match:96,duration:"1h 47m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film142a/1920/1080",poster:"https://picsum.photos/seed/film142b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Decline%20of%20Western%20Civilization%20II%201988%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new'],synopsis:"A documentary classic from 1988."},
+            {id:143,title:"Streetwise",year:1984,rating:9.2,match:97,duration:"2h 54m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film143a/1920/1080",poster:"https://picsum.photos/seed/film143b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Streetwise%201984%20trailer",quality:"SD",progress:0.50,cats:['continue'],synopsis:"A documentary classic from 1984."},
+            {id:144,title:"Harlan County, USA",year:1976,rating:9.3,match:85,duration:"3h 11m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film144a/1920/1080",poster:"https://picsum.photos/seed/film144b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Harlan%20County%2C%20USA%201976%20trailer",quality:"SD",progress:0.75,cats:['continue'],synopsis:"A documentary classic from 1976."},
+            {id:145,title:"The Times of Harvey Milk",year:1984,rating:9.4,match:86,duration:"1h 18m",genres:["Documentary"],accent:"#607d8b",rgb:"96,125,139",backdrop:"https://picsum.photos/seed/film145a/1920/1080",poster:"https://picsum.photos/seed/film145b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Times%20of%20Harvey%20Milk%201984%20trailer",quality:"SD",progress:0.00,cats:['continue'],synopsis:"A documentary classic from 1984."}
+                        ];
+
+            const ROWS=[
+                {key:"continue",label:"Full Catalog"},
+                {key:"trending",label:"Trending Tonight"},
+                {key:"new",label:"New Additions"},
+                {key:"acclaimed",label:"Critically Acclaimed"}
+            ];
+            const SPOTLIGHT_IDS=[1,21,41,61,81];
+
+            let saved=new Set(JSON.parse(localStorage.getItem("aether_saved")||"[]"));
+            let activeIdx=0,rotTimer=null;
+
+            const backdropsEl=document.getElementById('backdrops');
+            const heroContentEl=document.getElementById('heroContent');
+            const dotsEl=document.getElementById('dots');
+            const collectionEl=document.getElementById('collection');
+
+            function renderHero(){
+                if(!backdropsEl || !dotsEl) return;
+                backdropsEl.innerHTML='';
+                dotsEl.innerHTML='';
+                SPOTLIGHT_IDS.forEach((id,i)=>{
+                    const f=FILMS.find(x=>x.id===id);
+                    if(!f) return;
+                    const bd=document.createElement('div');
+                    bd.className=`bd ${i===0?'active':''}`;
+                    bd.style.backgroundImage=`url('${f.backdrop}')`;
+                    backdropsEl.appendChild(bd);
+
+                    const dot=document.createElement('button');
+                    dot.className=`dot ${i===0?'active':''}`;
+                    dot.setAttribute('aria-label','Spotlight '+f.title);
+                    dot.onclick=()=>setSpotlight(i);
+                    dotsEl.appendChild(dot);
+                });
+                updateHeroContent(0);
+                startRot();
+            }
+
+            function updateHeroContent(idx){
+                activeIdx=idx;
+                const f=FILMS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
+                if(!f || !heroContentEl) return;
+                document.documentElement.style.setProperty('--accent',f.accent);
+                document.documentElement.style.setProperty('--accent-rgb',f.rgb);
+
+                document.querySelectorAll('.bd').forEach((b,i)=>b.classList.toggle('active',i===idx));
+                document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+
+                heroContentEl.classList.add('switching');
+                setTimeout(()=>{
+                    heroContentEl.innerHTML=`
+                        <div class="eyebrow">${f.genres[0]} Feature</div>
+                        <h2 class="hero-title">${f.title.split(' ').map((w,wi)=>wi===1?`<em>${w}</em>`:w).join(' ')}</h2>
+                        <div class="hero-meta">
+                            <span class="match">${f.match}% Match</span>
+                            <span class="sep"></span>
+                            <span class="rating-pill">★ ${f.rating}</span>
+                            <span class="sep"></span>
+                            <span>${f.year}</span>
+                            <span class="sep"></span>
+                            <span>${f.duration}</span>
+                            <span class="sep"></span>
+                            <span class="badge" style="background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:10px;padding:2px 6px">${f.quality}</span>
+                        </div>
+                        <p class="hero-synopsis">${f.synopsis}</p>
+                        <div class="hero-actions">
+                            <button class="btn-play" onclick="playFilm(${f.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
+                            </button>
+                            <button class="btn-ghost" onclick="toggleSave(${f.id})">
+                                ${saved.has(f.id)?'✓ In Saved List':'+ Add to List'}
+                            </button>
+                        </div>
+                    `;
+                    heroContentEl.classList.remove('switching');
+                },220);
+            }
+
+            function setSpotlight(idx){
+                stopRot();
+                updateHeroContent(idx);
+                startRot();
+            }
+
+            function startRot(){
+                stopRot();
+                rotTimer=setInterval(()=>{
+                    activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;
+                    updateHeroContent(activeIdx);
+                },8000);
+            }
+
+            function stopRot(){
+                if(rotTimer)clearInterval(rotTimer);
+            }
+
+            window.playFilm=function(id){
+                const f=FILMS.find(x=>x.id===id);
+                if(!f)return;
+                openPlayer(f);
+            }
+
+            window.toggleSave=function(id){
+                if(saved.has(id)) saved.delete(id); else saved.add(id);
+                localStorage.setItem("aether_saved",JSON.stringify([...saved]));
+                renderCollection();
+                const idx=SPOTLIGHT_IDS.indexOf(id);
+                if(idx!==-1) updateHeroContent(activeIdx);
+                showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
+            }
+
+            function showToast(msg){
+                const t=document.getElementById('toast');
+                if(!t) return;
+                t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
+                t.classList.remove('opacity-0','translate-y-[10px]');
+                t.classList.add('opacity-100','translate-y-0');
+                setTimeout(()=>{
+                    t.classList.add('opacity-0','translate-y-[10px]');
+                    t.classList.remove('opacity-100','translate-y-0');
+                },2600);
+            }
+
+            function renderCollection(){
+                if(!collectionEl) return;
+                collectionEl.innerHTML='';
+                ROWS.forEach((r,ri)=>{
+                    let list=FILMS.filter(f=>f.cats.includes(r.key));
+                    if(r.key==='continue') list=list.filter(f=>f.progress>0);
+                    if(list.length===0) return;
+
+                    const row=document.createElement('div');
+                    row.className='row';
+                    row.innerHTML=`
+                        <div class="row-head">
+                            <h3 class="row-title"><span class="num">${String(ri+1).padStart(2,'0')}.</span> ${r.label}</h3>
+                            <span class="row-count text-xs text-slate-500">${list.length} films</span>
+                        </div>
+                        <div class="row-track" id="track-${r.key}"></div>
+                    `;
+                    const track=row.querySelector('.row-track');
+                    list.forEach(f=>{
+                        const card=document.createElement('div');
+                        card.className='card';
+                        card.onclick=(e)=>{
+                            if(e.target.closest('.bookmark')) return;
+                            playFilm(f.id);
+                        };
+
+                        const isSaved=saved.has(f.id);
+                        card.innerHTML=`
+                            <div class="card-img" style="background-image:url('${f.poster}')"></div>
+                            <div class="card-scrim"></div>
+                            <div class="card-top">
+                                <span class="badge rating">★ ${f.rating}</span>
+                                <span class="badge match">${f.match}%</span>
+                                <button class="bookmark ${isSaved?'saved':''}" onclick="toggleSave(${f.id})" title="Save">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="p-3 flex flex-col flex-1 justify-between">
-                        <h4 class="text-xs font-bold text-white group-hover:text-nexus-accent transition line-clamp-1">${mov.title}</h4>
-                        <span class="text-[10px] text-gray-400 font-mono mt-1">${mov.genre}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterCinema() {
-            const query = document.getElementById('cinema-search').value.toLowerCase();
-            const cards = document.querySelectorAll('#cinema-grid > div');
-            cinemaMovies.forEach((mov, idx) => {
-                const match = mov.title.toLowerCase().includes(query) || mov.genre.toLowerCase().includes(query);
-                cards[idx].style.display = match ? 'flex' : 'none';
-            });
-        }
-
-        // --- Render Archive Table ---
-        function renderArchiveTable() {
-            const tbody = document.getElementById('archive-table-body');
-            tbody.innerHTML = cinemaMovies.map(mov => `
-                <tr class="hover:bg-dark-700/30 transition">
-                    <td class="px-6 py-4 font-medium text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-file-video text-nexus-blue"></i>
-                        <span>${mov.title}</span>
-                    </td>
-                    <td class="px-6 py-4 text-gray-400 font-mono">MP4 Direct Stream</td>
-                    <td class="px-6 py-4">
-                        <button onclick="openModal('${mov.title}', '${mov.url}')" class="px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-nexus-blue text-gray-300 hover:text-white border border-dark-600 transition text-xs flex items-center space-x-1 w-fit">
-                            <i class="fa-solid fa-play text-[10px]"></i>
-                            <span>Stream</span>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function loadArchiveData() {
-            renderArchiveTable();
-        }
-
-        // --- Modal & Playback Handlers ---
-        function openModal(title, url) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('media-modal').classList.remove('hidden');
-            const video = document.getElementById('modal-player');
-            video.src = url;
-            video.play();
-        }
-
-        function closeModal() {
-            document.getElementById('media-modal').classList.add('hidden');
-            const video = document.getElementById('modal-player');
-            video.pause();
-            video.src = '';
-        }
-
-        function toggleFullscreen() {
-            const video = document.getElementById('iptv-player');
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
+                            <div class="card-play">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <div class="card-info">
+                                <h3>${f.title}</h3>
+                                <p>${f.genres.join(' · ')} • ${f.duration}</p>
+                            </div>
+                            ${f.progress?`<div class="progress"><span style="width:${f.progress*100}%"></span></div>`:''}
+                        `;
+                        track.appendChild(card);
+                    });
+                    collectionEl.appendChild(row);
+                });
             }
+
+            renderHero();
+            renderCollection();
+
+            // Player setup logic — supports both native MP4 (video) and YouTube (iframe)
+            const playerEl=document.getElementById('player');
+            const videoEl=document.getElementById('video');
+            const ytFrame=document.getElementById('ytFrame');
+            const loaderEl=document.getElementById('loader');
+            const stageEl=document.getElementById('stage');
+            const seekEl=document.getElementById('seek');
+            const curTimeEl=document.getElementById('curTime');
+            const durTimeEl=document.getElementById('durTime');
+            const ppBtn=document.getElementById('ppBtn');
+            const ppIcon=document.getElementById('ppIcon');
+            const muteBtn=document.getElementById('muteBtn');
+            const volEl=document.getElementById('vol');
+            const fsBtn=document.getElementById('fsBtn');
+            let isYT=false;
+
+            function openPlayer(f){
+                if(!playerEl) return;
+                isYT = f.video && f.video.includes('youtube.com');
+                playerEl.style.display = 'flex';
+                void playerEl.offsetWidth;
+                playerEl.classList.remove('hidden');
+                playerEl.classList.add('opacity-100');
+                playerEl.classList.remove('opacity-0');
+                document.getElementById('pTitle').innerText=f.title;
+                document.getElementById('pMeta').innerText=`${f.genres.join(' · ')} • ${f.year} • ${f.quality}`;
+
+                if(isYT){
+                    videoEl.classList.add('hidden');
+                    videoEl.pause();
+                    videoEl.removeAttribute('src');
+                    ytFrame.classList.remove('hidden');
+                    ytFrame.src=f.video;
+                    if(loaderEl) loaderEl.style.display='none';
+                    seekEl.style.opacity='0.3';
+                    seekEl.style.pointerEvents='none';
+                } else {
+                    ytFrame.classList.add('hidden');
+                    ytFrame.src="";
+                    videoEl.classList.remove('hidden');
+                    videoEl.src=f.video;
+                    try{const _p2=videoEl.play(); if(_p2&&_p2.catch) _p2.catch(()=>{});}catch(e){}
+                    seekEl.style.opacity='1';
+                    seekEl.style.pointerEvents='auto';
+                    setupVideoUI();
+                }
+            }
+            window.openPlayer=openPlayer;
+
+            function closePlayer(){
+                if(!playerEl) return;
+                if(isYT){
+                    ytFrame.src="";
+                    ytFrame.classList.add('hidden');
+                } else {
+                    videoEl.pause();
+                    videoEl.removeAttribute('src');
+                    videoEl.load();
+                }
+                playerEl.classList.remove('opacity-100');
+                playerEl.classList.add('opacity-0');
+                setTimeout(() => { playerEl.style.display = 'none'; playerEl.classList.add('hidden'); }, 300);
+                if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+            }
+            window.closePlayer=closePlayer;
+            if(document.getElementById('closeBtn')) document.getElementById('closeBtn').onclick=closePlayer;
+            if(playerEl) playerEl.addEventListener('click', (e)=>{ if(e.target===playerEl) closePlayer(); });
+            document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && playerEl.style.display!=='none') closePlayer(); });
+
+            function setupVideoUI(){
+                if(!videoEl) return;
+                videoEl.onwaiting=()=>{ if(loaderEl) loaderEl.style.display='flex'; };
+                videoEl.onplaying=()=>{ if(loaderEl) loaderEl.style.display='none'; };
+                videoEl.oncanplay=()=>{ if(loaderEl) loaderEl.style.display='none'; };
+                videoEl.ontimeupdate=()=>{
+                    if(!videoEl.duration) return;
+                    const p=(videoEl.currentTime/videoEl.duration)*1000;
+                    seekEl.value=p;
+                    seekEl.style.setProperty('--p', (p/10)+'%');
+                    curTimeEl.innerText=fmtTime(videoEl.currentTime);
+                    durTimeEl.innerText=fmtTime(videoEl.duration);
+                };
+                videoEl.onplay=()=>{ if(ppIcon) ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'; };
+                videoEl.onpause=()=>{ if(ppIcon) ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; };
+            }
+
+            function fmtTime(s){
+                if(!isFinite(s)) return "0:00";
+                s=Math.floor(s);
+                const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+                return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;
+            }
+
+            if(seekEl) seekEl.oninput=(e)=>{
+                if(isYT || !videoEl.duration) return;
+                videoEl.currentTime=(e.target.value/1000)*videoEl.duration;
+            };
+            if(ppBtn) ppBtn.onclick=()=>{
+                if(isYT) return;
+                if(videoEl.paused) videoEl.play(); else videoEl.pause();
+            };
+            if(muteBtn) muteBtn.onclick=()=>{
+                if(isYT) return;
+                videoEl.muted=!videoEl.muted;
+                volEl.value=videoEl.muted?0:(videoEl.volume*100);
+                volEl.style.setProperty('--vp', volEl.value+'%');
+            };
+            if(volEl) volEl.oninput=(e)=>{
+                if(isYT) return;
+                const v=e.target.value/100;
+                videoEl.volume=v;
+                videoEl.muted=(v===0);
+                e.target.style.setProperty('--vp', e.target.value+'%');
+            };
+            if(fsBtn) fsBtn.onclick=()=>{
+                if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{});
+                else document.exitFullscreen().catch(()=>{});
+            };
+            const backBtn=document.getElementById('backBtn');
+            const fwdBtn=document.getElementById('fwdBtn');
+            if(backBtn) backBtn.onclick=()=>{ if(!isYT && videoEl.duration) videoEl.currentTime=Math.max(0, videoEl.currentTime-10); };
+            if(fwdBtn) fwdBtn.onclick=()=>{ if(!isYT && videoEl.duration) videoEl.currentTime=Math.min(videoEl.duration, videoEl.currentTime+10); };
+
+            document.addEventListener('keydown', (e)=>{
+                if(playerEl.style.display==='none' || isYT) return;
+                if(e.code==='Space' || e.key==='k'){ e.preventDefault(); if(videoEl.paused) videoEl.play(); else videoEl.pause(); }
+                if(e.key==='m'){ videoEl.muted=!videoEl.muted; }
+                if(e.key==='f'){ if(!document.fullscreenElement) stageEl.requestFullscreen().catch(()=>{}); else document.exitFullscreen().catch(()=>{}); }
+                if(e.key==='ArrowLeft'){ videoEl.currentTime=Math.max(0, videoEl.currentTime-10); }
+                if(e.key==='ArrowRight'){ videoEl.currentTime=Math.min(videoEl.duration, videoEl.currentTime+10); }
+            });
         }
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a27a908e485c26df',t:'MTc4NjE1MDYyMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
