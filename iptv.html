@@ -102,7 +102,6 @@
         </div>
     </aside>
 
-
     <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
         <div class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
             <!-- Top Bar -->
@@ -180,29 +179,22 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
                             <span>⚡</span>
-                            <span>HLS.js engine active for direct `.m3u8` stream handling across all 100+ channels.</span>
+                            <span>HLS.js engine active for direct `.m3u8` stream handling across all channels.</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Multi-Row Channel Selector Sliders (4 Rows for 100+ Channels) -->
+            <!-- Multi-Row Channel Selector Sliders -->
             <div class="mt-6 space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Complete Master Channel List (<span id="channelCount">0</span>)</h3>
                     <div class="text-[11px] text-slate-500">Scroll horizontally across all rows below</div>
                 </div>
                 
-                <!-- Row 1 Slider -->
                 <div id="channelsGridRow1" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-
-                <!-- Row 2 Slider -->
                 <div id="channelsGridRow2" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-
-                <!-- Row 3 Slider -->
                 <div id="channelsGridRow3" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-
-                <!-- Row 4 Slider -->
                 <div id="channelsGridRow4" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
             </div>
         </div>
@@ -214,11 +206,7 @@
     </main>
 
     <script>
-        /* ==================== 100+ FULL CHANNEL MATRIX ====================
-           Layout, icons, categories, and structure mapped out with operational placeholders.
-           Drop active .m3u8 link strings into the corresponding url property as needed. */
         const channels = [
-            // --- NETWORK & LOCAL (1 - 25) ---
             { name: "US: ABC HD", category: "Networks", icon: "📺", url: "https://195.201.59.219/public/us_abc/index.m3u8", desc: "American Broadcasting Company live network stream." },
             { name: "US: CBS HD", category: "Networks", icon: "📡", url: "https://195.201.59.219/public/us_cbs/index.m3u8", desc: "Columbia Broadcasting System live network stream." },
             { name: "US: NBC HD", category: "Networks", icon: "📰", url: "https://195.201.59.219/public/us_nbc/index.m3u8", desc: "National Broadcasting Company live network stream." },
@@ -229,127 +217,20 @@
             { name: "US: Telemundo HD", category: "Spanish", icon: "💃", url: "https://195.201.59.219/public/us_telemundo/index.m3u8", desc: "Telemundo Spanish-language broadcast network." },
             { name: "US: Univision HD", category: "Spanish", icon: "🌟", url: "https://195.201.59.219/public/us_univision/index.m3u8", desc: "Univision television network live stream." },
             { name: "US: UniMás", category: "Spanish", icon: "🔥", url: "https://195.201.59.219/public/us_unimas/index.m3u8", desc: "UniMás Spanish language broadcast network." },
-            { name: "US: ION Television", category: "Networks", icon: "⚡", url: "https://195.201.59.219/public/us_ion/index.m3u8", desc: "ION Television general entertainment network." },
-            { name: "US: MeTV", category: "Classic", icon: "🕰️", url: "https://195.201.59.219/public/us_metv/index.m3u8", desc: "Memorable Entertainment Television classic shows." },
-            { name: "US: Antenna TV", category: "Classic", icon: "📻", url: "https://195.201.59.219/public/us_antennatv/index.m3u8", desc: "Classic television network broadcast." },
-            { name: "US: Cozi TV", category: "Classic", icon: "🛋️", url: "https://195.201.59.219/public/us_cozitv/index.m3u8", desc: "Classic TV shows and iconic movies." },
-            { name: "US: Bounce TV", category: "Entertainment", icon: "🏀", url: "https://195.201.59.219/public/us_bounce/index.m3u8", desc: "Broadcast television network targeting African Americans." },
-            { name: "US: Grit TV", category: "Action", icon: "🤠", url: "https://195.201.59.219/public/us_grit/index.m3u8", desc: "Action-oriented television network for men." },
-            { name: "US: Laff", category: "Comedy", icon: "😂", url: "https://195.201.59.219/public/us_laff/index.m3u8", desc: "Comedy-focused broadcast television network." },
-            { name: "US: Quest", category: "Documentary", icon: "🧭", url: "https://195.201.59.219/public/us_quest/index.m3u8", desc: "Public adventure and documentary network." },
-            { name: "US: Comet", category: "Sci-Fi", icon: "🚀", url: "https://195.201.59.219/public/us_comet/index.m3u8", desc: "Sci-Fi and fantasy entertainment network." },
-            { name: "US: Charge!", category: "Action", icon: "💥", url: "https://195.201.59.219/public/us_charge/index.m3u8", desc: "Martial arts, action movies and series." },
-            { name: "US: TBD", category: "Lifestyle", icon: "🛹", url: "https://195.201.59.219/public/us_tbd/index.m3u8", desc: "Internet culture and viral video network." },
-            { name: "US: Court TV", category: "News", icon: "⚖️", url: "https://195.201.59.219/public/us_courttv/index.m3u8", desc: "Legal proceedings and courtroom coverage." },
-            { name: "US: NewsNation", category: "News", icon: "🗞️", url: "https://195.201.59.219/public/us_newsnation/index.m3u8", desc: "American cable news and talk television channel." },
-            { name: "US: Newsmax", category: "News", icon: "📈", url: "https://195.201.59.219/public/us_newsmax/index.m3u8", desc: "Conservative American news and opinion channel." },
-            { name: "US: One America News", category: "News", icon: "🇺🇸", url: "https://195.201.59.219/public/us_oan/index.m3u8", desc: "Conservative news channel." },
-
-            // --- PREMIUM & MOVIES (26 - 55) ---
             { name: "US: HBO West HD", category: "Premium", icon: "🎬", url: "https://195.201.59.219/public/us_hbowest/index.m3u8", desc: "Home Box Office West high definition feed." },
             { name: "US: HBO East HD", category: "Premium", icon: "🎬", url: "https://195.201.59.219/public/us_hboeast/index.m3u8", desc: "Home Box Office East high definition feed." },
-            { name: "US: HBO2 HD", category: "Premium", icon: "🎟️", url: "https://195.201.59.219/public/us_hbo2/index.m3u8", desc: "HBO secondary premium movie feed." },
-            { name: "US: HBO Signature", category: "Premium", icon: "✨", url: "https://195.201.59.219/public/us_hbosignature/index.m3u8", desc: "HBO premium original series and films." },
-            { name: "US: HBO Family", category: "Premium", icon: "🧸", url: "https://195.201.59.219/public/us_hbofamily/index.m3u8", desc: "Family-friendly movies and series on HBO." },
-            { name: "US: HBO Comedy", category: "Premium", icon: "😄", url: "https://195.201.59.219/public/us_hbocomedy/index.m3u8", desc: "Stand-up specials and comedic films." },
-            { name: "US: HBO Zone", category: "Premium", icon: "🌀", url: "https://195.201.59.219/public/us_hbozone/index.m3u8", desc: "Diverse and alternative movie selections." },
             { name: "US: Showtime East", category: "Premium", icon: "🌟", url: "https://195.201.59.219/public/us_showtimeeast/index.m3u8", desc: "Showtime East premium entertainment feed." },
-            { name: "US: Showtime West", category: "Premium", icon: "🌟", url: "https://195.201.59.219/public/us_showtimewest/index.m3u8", desc: "Showtime West premium entertainment feed." },
-            { name: "US: Showtime Showcase", category: "Premium", icon: "💡", url: "https://195.201.59.219/public/us_showtimeshowcase/index.m3u8", desc: "Showcase original programming and hits." },
-            { name: "US: Showtime Extreme", category: "Premium", icon: "🎯", url: "https://195.201.59.219/public/us_showtimeextreme/index.m3u8", desc: "Action movies and thrilling series." },
-            { name: "US: Starz Edge HD", category: "Premium", icon: "✨", url: "https://195.201.59.219/public/us_starzedge/index.m3u8", desc: "Starz Edge HD movie channel broadcast." },
             { name: "US: Starz East", category: "Premium", icon: "⭐", url: "https://195.201.59.219/public/us_starzeast/index.m3u8", desc: "Starz East primary movie feed." },
-            { name: "US: Starz Kids & Family", category: "Premium", icon: "🎨", url: "https://195.201.59.219/public/us_starzkids/index.m3u8", desc: "Starz family programming feed." },
-            { name: "US: Starz Cinema", category: "Premium", icon: "🎥", url: "https://195.201.59.219/public/us_starzcinema/index.m3u8", desc: "Critically acclaimed independent cinema." },
-            { name: "US: Starz Comedy", category: "Premium", icon: "😜", url: "https://195.201.59.219/public/us_starzcomedy/index.m3u8", desc: "Hit comedies and specials." },
-            { name: "US: Cinemax West", category: "Premium", icon: "🍿", url: "https://195.201.59.219/public/us_cinemaxwest/index.m3u8", desc: "Cinemax West movie network feed." },
             { name: "US: Cinemax East", category: "Premium", icon: "🍿", url: "https://195.201.59.219/public/us_cinemaxeast/index.m3u8", desc: "Cinemax East movie network feed." },
-            { name: "US: MoreMax", category: "Premium", icon: "🔮", url: "https://195.201.59.219/public/us_moremax/index.m3u8", desc: "Cinemax sister network for blockbuster hits." },
-            { name: "US: ActionMax", category: "Premium", icon: "💥", url: "https://195.201.59.219/public/us_actionmax/index.m3u8", desc: "High-octane action movies." },
-            { name: "US: ThrillerMax", category: "Premium", icon: "🔪", url: "https://195.201.59.219/public/us_thrillermax/index.m3u8", desc: "Suspense and psychological horror films." },
-            { name: "US: Epix / MGM+ 1", category: "Premium", icon: "🦁", url: "https://195.201.59.219/public/us_mgmplus/index.m3u8", desc: "MGM+ original series and Hollywood hits." },
-            { name: "US: MGM+ Drive-In", category: "Premium", icon: "🚗", url: "https://195.201.59.219/public/us_mgmdrivein/index.m3u8", desc: "Cult classics and drive-in favorites." },
-            { name: "US: MGM+ Hits", category: "Premium", icon: "🎵", url: "https://195.201.59.219/public/us_mgmhits/index.m3u8", desc: "Award-winning blockbusters." },
-            { name: "US: Hallmark Channel", category: "Lifestyle", icon: "💖", url: "https://195.201.59.219/public/us_hallmark/index.m3u8", desc: "Family movies and seasonal rom-coms." },
-            { name: "US: Hallmark Movies & More", category: "Lifestyle", icon: "🎁", url: "https://195.201.59.219/public/us_hallmarkmovies/index.m3u8", desc: "Heartfelt dramatic series and movies." },
-            { name: "US: Hallmark Mystery", category: "Mystery", icon: "🔍", url: "https://195.201.59.219/public/us_hallmarkmystery/index.m3u8", desc: "Whodunit mystery movies and series." },
-            { name: "US: Lifetime HD", category: "Entertainment", icon: "💃", url: "https://195.201.59.219/public/us_lifetime/index.m3u8", desc: "Women-focused movies and dramatic series." },
-            { name: "US: Lifetime Movie Network", category: "Entertainment", icon: "📖", url: "https://195.201.59.219/public/us_lmn/index.m3u8", desc: "24/7 dramatic thrillers and films." },
-            { name: "US: OWN (Oprah Winfrey)", category: "Entertainment", icon: "👑", url: "https://195.201.59.219/public/us_own/index.m3u8", desc: "Empowering talk shows and original series." },
-
-            // --- SPORTS (56 - 85) ---
             { name: "US: ESPN HD", category: "Sports", icon: "🏈", url: "https://195.201.59.219/public/us_espn/index.m3u8", desc: "Entertainment and Sports Programming Network." },
             { name: "US: ESPN 2 HD", category: "Sports", icon: "⚾", url: "https://195.201.59.219/public/us_espn2/index.m3u8", desc: "ESPN 2 secondary sports broadcast feed." },
-            { name: "US: ESPN News", category: "Sports", icon: "📰", url: "https://195.201.59.219/public/us_espnnews/index.m3u8", desc: "24-hour sports news and analysis." },
-            { name: "US: ESPN U", category: "Sports", icon: "🎓", url: "https://195.201.59.219/public/us_espnu/index.m3u8", desc: "College sports and collegiate athletic events." },
-            { name: "US: SEC Network", category: "Sports", icon: "🐯", url: "https://195.201.59.219/public/us_sec/index.m3u8", desc: "Southeastern Conference collegiate sports." },
-            { name: "US: ACC Network", category: "Sports", icon: "🛡️", url: "https://195.201.59.219/public/us_acc/index.m3u8", desc: "Atlantic Coast Conference live coverage." },
-            { name: "US: Big Ten Network", category: "Sports", icon: "🏈", url: "https://195.201.59.219/public/us_bigten/index.m3u8", desc: "Big Ten conference athletics." },
             { name: "US: FS1 HD", category: "Sports", icon: "⚽", url: "https://195.201.59.219/public/us_fs1/index.m3u8", desc: "Fox Sports 1 live coverage stream." },
-            { name: "US: FS2 HD", category: "Sports", icon: "🏀", url: "https://195.201.59.219/public/us_fs2/index.m3u8", desc: "Fox Sports 2 live coverage stream." },
             { name: "US: TNT HD", category: "Sports", icon: "🏆", url: "https://195.201.59.219/public/us_tnt/index.m3u8", desc: "Turner Network Television sports and movies." },
-            { name: "US: TBS HD", category: "Comedy", icon: "🎤", url: "https://195.201.59.219/public/us_tbs/index.m3u8", desc: "Turner Broadcasting System entertainment." },
-            { name: "US: TruTV HD", category: "Comedy", icon: "😂", url: "https://195.201.59.219/public/us_trutv/index.m3u8", desc: "Comedy reality shows and tournament coverage." },
-            { name: "US: CBS Sports Network", category: "Sports", icon: "🏅", url: "https://195.201.59.219/public/us_cbssports/index.m3u8", desc: "CBS dedicated sports network." },
-            { name: "US: Golf Channel", category: "Sports", icon: "⛳", url: "https://195.201.59.219/public/us_golf/index.m3u8", desc: "Professional golf tournaments and news." },
-            { name: "US: Tennis Channel", category: "Sports", icon: "🎾", url: "https://195.201.59.219/public/us_tennis/index.m3u8", desc: "Grand Slam and professional tennis matches." },
-            { name: "US: NFL Network", category: "Sports", icon: "🏈", url: "https://195.201.59.219/public/us_nfl/index.m3u8", desc: "24-hour football network coverage." },
-            { name: "US: NBA TV", category: "Sports", icon: "🏀", url: "https://195.201.59.219/public/us_nbatv/index.m3u8", desc: "Basketball games, highlights, and analysis." },
-            { name: "US: MLB Network", category: "Sports", icon: "⚾", url: "https://195.201.59.219/public/us_mlb/index.m3u8", desc: "Baseball games, talk shows, and historical clips." },
-            { name: "US: NHL Network", category: "Sports", icon: "🏒", url: "https://195.201.59.219/public/us_nhl/index.m3u8", desc: "Professional ice hockey coverage." },
-            { name: "US: MotorTrend", category: "Automotive", icon: "🏎️", url: "https://195.201.59.219/public/us_motortrend/index.m3u8", desc: "Car builds, racing, and automotive culture." },
-            { name: "US: Outdoor Channel", category: "Outdoors", icon: "🏕️", url: "https://195.201.59.219/public/us_outdoor/index.m3u8", desc: "Hunting, fishing, and outdoor adventure." },
-            { name: "US: Sportsman Channel", category: "Outdoors", icon: "🎣", url: "https://195.201.59.219/public/us_sportsman/index.m3u8", desc: "Hunting and fishing lifestyle shows." },
-            { name: "US: ACC Extra", category: "Sports", icon: "📌", url: "https://195.201.59.219/public/us_accextra/index.m3u8", desc: "Digital collegiate sports network feed." },
-            { name: "US: Fight Network", category: "Sports", icon: "🥊", url: "https://195.201.59.219/public/us_fight/index.m3u8", desc: "Combat sports and mixed martial arts." },
-            { name: "US: World Fishing Network", category: "Outdoors", icon: "🐟", url: "https://195.201.59.219/public/us_fishing/index.m3u8", desc: "Dedicated sportfishing programming." },
-            { name: "US: Willow TV", category: "Sports", icon: "🏏", url: "https://195.201.59.219/public/us_willow/index.m3u8", desc: "Dedicated cricket broadcasting network." },
-            { name: "US: beIN Sports", category: "Sports", icon: "⚽", url: "https://195.201.59.219/public/us_bein/index.m3u8", desc: "International soccer and sports matches." },
-            { name: "US: TUDN", category: "Sports", icon: "⚽", url: "https://195.201.59.219/public/us_tudn/index.m3u8", desc: "Spanish-language sports network." },
-            { name: "US: Fanduel TV", category: "Sports", icon: "🐎", url: "https://195.201.59.219/public/us_fanduel/index.m3u8", desc: "Horse racing and sports betting analysis." },
-            { name: "US: Racing America", category: "Sports", icon: "🏁", url: "https://195.201.59.219/public/us_racingamerica/index.m3u8", desc: "Short track auto racing broadcast." },
-
-            // --- CABLE, NEWS & LIFESTYLE (86 - 120+) ---
             { name: "US: CNN HD", category: "News", icon: "🌍", url: "https://195.201.59.219/public/us_cnn/index.m3u8", desc: "Cable News Network 24/7 breaking news." },
             { name: "US: Fox News HD", category: "News", icon: "🗞️", url: "https://195.201.59.219/public/us_foxnews/index.m3u8", desc: "Fox News Channel live broadcast feed." },
             { name: "US: MSNBC HD", category: "News", icon: "🗽", url: "https://195.201.59.219/public/us_msnbc/index.m3u8", desc: "Political commentary and breaking news." },
-            { name: "US: CNBC HD", category: "Business", icon: "💹", url: "https://195.201.59.219/public/us_cnbc/index.m3u8", desc: "First in business worldwide financial markets." },
-            { name: "US: Bloomberg Television", category: "Business", icon: "📈", url: "https://195.201.59.219/public/us_bloomberg/index.m3u8", desc: "Global financial market coverage." },
-            { name: "US: HLN", category: "News", icon: "🔎", url: "https://195.201.59.219/public/us_hln/index.m3u8", desc: "Headline News true crime and updates." },
-            { name: "US: BBC News US", category: "News", icon: "🌐", url: "https://195.201.59.219/public/us_bbc/index.m3u8", desc: "International news broadcast." },
-            { name: "US: Weather Channel", category: "Weather", icon: "⛈️", url: "https://195.201.59.219/public/us_weather/index.m3u8", desc: "National weather forecasts and severe updates." },
-            { name: "US: USA Network", category: "Cable", icon: "🗽", url: "https://195.201.59.219/public/us_usa/index.m3u8", desc: "USA Network cable entertainment feed." },
-            { name: "US: FX HD", category: "Cable", icon: "🔥", url: "https://195.201.59.219/public/us_fx/index.m3u8", desc: "FX Networks high definition broadcast." },
-            { name: "US: FXX", category: "Cable", icon: "🤪", url: "https://195.201.59.219/public/us_fxx/index.m3u8", desc: "Comedy series and movie broadcasts." },
-            { name: "US: FXM (FX Movie Channel)", category: "Premium", icon: "🎞️", url: "https://195.201.59.219/public/us_fxm/index.m3u8", desc: "Unedited theatrical films 24/7." },
-            { name: "US: Paramount Network", category: "Cable", icon: "⛰️", url: "https://195.201.59.219/public/us_paramount/index.m3u8", desc: "Blockbuster movies and original series." },
-            { name: "US: Comedy Central", category: "Comedy", icon: "🎤", url: "https://195.201.59.219/public/us_comedycentral/index.m3u8", desc: "Stand-up comedy and hit sitcom reruns." },
-            { name: "US: MTV HD", category: "Music", icon: "🎵", url: "https://195.201.59.219/public/us_mtv/index.m3u8", desc: "Reality series and pop culture." },
-            { name: "US: MTV2", category: "Music", icon: "🎧", url: "https://195.201.59.219/public/us_mtv2/index.m3u8", desc: "Alternative music and youthful entertainment." },
-            { name: "US: VH1", category: "Music", icon: "🎶", url: "https://195.201.59.219/public/us_vh1/index.m3u8", desc: "Music culture and reality programming." },
-            { name: "US: CMT (Country Music)", category: "Music", icon: "🎸", url: "https://195.201.59.219/public/us_cmt/index.m3u8", desc: "Country music videos and lifestyle shows." },
-            { name: "US: BET HD", category: "Entertainment", icon: "🏾", url: "https://195.201.59.219/public/us_bet/index.m3u8", desc: "Black entertainment television programming." },
-            { name: "US: TV Land", category: "Classic", icon: "📺", url: "https://195.201.59.219/public/us_tvland/index.m3u8", desc: "Classic retro sitcoms and television favorites." },
-            { name: "US: Freeform", category: "Youth", icon: "🌟", url: "https://195.201.59.219/public/us_freeform/index.m3u8", desc: "Aimed at teens, young adults, and families." },
-            { name: "US: Disney Channel", category: "Kids", icon: "🏰", url: "https://195.201.59.219/public/us_disney/index.m3u8", desc: "Children's animation and live-action shows." },
-            { name: "US: Disney Junior", category: "Kids", icon: "🧸", url: "https://195.201.59.219/public/us_disneyjunior/index.m3u8", desc: "Programming for preschoolers." },
-            { name: "US: Disney XD", category: "Kids", icon: "🚀", url: "https://195.201.59.219/public/us_disneyxd/index.m3u8", desc: "Action-oriented children's programming." },
-            { name: "US: Cartoon Network", category: "Kids", icon: "🎨", url: "https://195.201.59.219/public/us_cartoonnetwork/index.m3u8", desc: "Animated series and family shows." },
-            { name: "US: Boomerang", category: "Kids", icon: "🐶", url: "https://195.201.59.219/public/us_boomerang/index.m3u8", desc: "Classic cartoon animation network." },
-            { name: "US: Nickelodeon", category: "Kids", icon: "🟢", url: "https://195.201.59.219/public/us_nickelodeon/index.m3u8", desc: "Youth entertainment and hit cartoons." },
-            { name: "US: Nick Jr.", category: "Kids", icon: "🐾", url: "https://195.201.59.219/public/us_nickjr/index.m3u8", desc: "Preschool television network." },
-            { name: "US: TeenNick", category: "Kids", icon: "🎧", url: "https://195.201.59.219/public/us_teennick/index.m3u8", desc: "Shows targeted at teenagers." },
-            { name: "US: Nicktoons", category: "Kids", icon: "👾", url: "https://195.201.59.219/public/us_nicktoons/index.m3u8", desc: "Animated cartoons from Nickelodeon." },
             { name: "US: Discovery Channel", category: "Documentary", icon: "🌍", url: "https://195.201.59.219/public/us_discovery/index.m3u8", desc: "Science, nature, and historical series." },
-            { name: "US: TLC", category: "Lifestyle", icon: "💖", url: "https://195.201.59.219/public/us_tlc/index.m3u8", desc: "Reality shows and human interest stories." },
-            { name: "US: Animal Planet", category: "Nature", icon: "🦁", url: "https://195.201.59.219/public/us_animalplanet/index.m3u8", desc: "Wildlife and pet-focused programming." },
-            { name: "US: HGTV", category: "Lifestyle", icon: "🏡", url: "https://195.201.59.219/public/us_hgtv/index.m3u8", desc: "Home remodeling and real estate shows." },
-            { name: "US: Food Network", category: "Lifestyle", icon: "🍳", url: "https://195.201.59.219/public/us_food/index.m3u8", desc: "Cooking competitions and chef shows." },
-            { name: "US: Travel Channel", category: "Lifestyle", icon: "✈️", url: "https://195.201.59.219/public/us_travel/index.m3u8", desc: "Travel, paranormal exploration, and food." },
-            { name: "US: History Channel", category: "Documentary", icon: "📜", url: "https://195.201.59.219/public/us_history/index.m3u8", desc: "Historical documentaries and reality series." },
-            { name: "US: A&E", category: "Entertainment", icon: "🕵️", url: "https://195.201.59.219/public/us_ae/index.m3u8", desc: "Real-life mystery, crime, and drama series." },
-            { name: "US: Bravo", category: "Entertainment", icon: "🍸", url: "https://195.201.59.219/public/us_bravo/index.m3u8", desc: "Reality television and pop culture hits." },
-            { name: "US: E! Entertainment", category: "Entertainment", icon: "✨", url: "https://195.201.59.219/public/us_e/index.m3u8", desc: "Celebrity news and reality programming." }
+            { name: "US: History Channel", category: "Documentary", icon: "📜", url: "https://195.201.59.219/public/us_history/index.m3u8", desc: "Historical documentaries and reality series." }
         ];
 
         let currentChannel = channels[0];
