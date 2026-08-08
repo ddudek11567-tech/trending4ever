@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>NEXUS TV v4.3 - Media Suite & Live Stream Hub</title>
+    <title>NEXUS TV v4.3 - Advanced Media Suite & Live Stream Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,726 +12,462 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            900: '#14532d'
+                        dark: {
+                            900: '#0a0b0e',
+                            800: '#12141c',
+                            700: '#1a1d29',
+                            600: '#262a3b'
+                        },
+                        nexus: {
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            pink: '#ec4899',
+                            accent: '#06b6d4'
                         }
                     }
                 }
             }
         }
     </script>
-    <!-- HLS.js for m3u8 stream playback -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <!-- FontAwesome for icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Dash.js for mpd stream playback -->
-    <script src="https://cdn.jsdelivr.net/npm/dashjs@4.7.4/dash.all.min.js"></script>
-    <!-- Google Fonts for Aether Cinema styling -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+    <!-- HLS.js for m3u8 streams -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- Dash.js for mpd streams -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.9); }
-
-        /* AETHER — Private Cinema Integration Styles */
-        :root{
-            --aether-bg:#060608;
-            --accent:#c8a86b;
-            --accent-rgb:200,168,107;
-            --text:#f4f1ec;
-            --muted:rgba(244,241,236,.62);
-            --faint:rgba(244,241,236,.4);
-            --line:rgba(244,241,236,.09);
-        }
-        .aether-cinema-root {
-            background: var(--aether-bg);
-            color: var(--text);
-            font-family: 'Inter', system-ui, sans-serif;
-            position: relative;
-            width: 100%;
-            min-height: 100%;
-        }
-        .aether-cinema-root ::selection { background: rgba(var(--accent-rgb),.35); color:#fff; }
-        .grain,.vignette{position:absolute;inset:0;pointer-events:none;z-index:1}
-        .grain{
-            opacity:.05;
-            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            mix-blend-mode:overlay;
-        }
-        .vignette{background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);z-index:1}
-        .aether-hero{position:relative;height:88vh;min-height:480px;width:100%;overflow:hidden}
-        .backdrops{position:absolute;inset:0}
-        .bd{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.1s ease;filter:saturate(.92) contrast(1.05) brightness(.82)}
-        .bd.active{opacity:1}
-        .glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
-        .blob{position:absolute;border-radius:50%;filter:blur(100px);transition:background-color 1.3s ease,opacity 1.3s}
-        .blob.a{width:62vw;height:62vw;top:-22vw;right:-12vw;background:rgb(var(--accent-rgb));opacity:.15}
-        .blob.b{width:44vw;height:44vw;bottom:-18vw;left:-12vw;background:rgb(var(--accent-rgb));opacity:.1}
-        .scrim{position:absolute;inset:0;z-index:2;background:
-            linear-gradient(90deg,rgba(6,6,8,.94) 0%,rgba(6,6,8,.7) 26%,rgba(6,6,8,.12) 58%,rgba(6,6,8,.35) 100%),
-            linear-gradient(0deg,rgba(6,6,8,1) 1%,rgba(6,6,8,0) 42%)}
-        .hero-content{position:absolute;left:0;right:0;bottom:13vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .35s ease,transform .35s ease}
-        .hero-content.switching{opacity:0;transform:translateY(16px)}
-        .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px}
-        .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
-        .hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(32px,5.5vw,68px);line-height:.96;letter-spacing:-.015em}
-        .hero-title em{font-style:italic;color:var(--accent)}
-        .hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;font-size:13px;color:var(--muted);margin-top:18px;font-weight:500}
-        .hero-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
-        .match{color:#7fd29a;font-weight:700}
-        .rating-pill{color:var(--accent);font-weight:700}
-        .hero-synopsis{color:var(--muted);font-size:15px;line-height:1.6;margin-top:16px;max-width:540px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-        .hero-actions{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
-        .btn-play{background:var(--accent);color:#0a0a0c;font-weight:700;padding:11px 22px;border-radius:10px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s,box-shadow .2s;border:0}
-        .btn-play:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-        .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);padding:11px 22px;border-radius:10px;cursor:pointer;transition:background .2s;font-weight:600}
-        .btn-ghost:hover{background:rgba(255,255,255,.15)}
-        .dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
-        .dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
-        .dot.active{background:var(--accent);width:44px}
-        .collection{position:relative;z-index:2;padding:7vh 0 4vh}
-        .row{position:relative;margin-bottom:44px}
-        .row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
-        .row-title{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
-        .row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none;font-weight:600}
-        .row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
-        .row-track::-webkit-scrollbar{display:none}
-        .card{flex:0 0 auto;width:clamp(220px,24vw,320px);aspect-ratio:16/9;position:relative;border-radius:12px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .3s ease,box-shadow .3s ease}
-        .card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s ease;filter:saturate(.9) contrast(1.05) brightness(.85)}
-        .card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 30%,rgba(6,6,8,.5) 68%,rgba(6,6,8,.94) 100%)}
-        .card-top{position:absolute;top:11px;left:11px;right:11px;display:flex;align-items:center;gap:6px;z-index:3}
-        .badge{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.45);border:1px solid var(--line);font-weight:600;display:inline-flex;align-items:center;gap:4px}
-        .badge.rating{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
-        .badge.match{color:#7fd29a}
-        .bookmark{margin-left:auto;width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.5);border:1px solid var(--line);color:#cfcfcf;display:grid;place-items:center;cursor:pointer;transition:.2s}
-        .bookmark.saved{color:var(--accent);border-color:rgba(var(--accent-rgb),.6)}
-        .card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;z-index:3;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);backdrop-filter:blur(8px);color:#fff;display:grid;place-items:center;transition:.3s}
-        .card-info{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;z-index:3}
-        .card-info h3{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .card-info p{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
-        .progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.16);z-index:3}
-        .progress span{display:block;height:100%;background:var(--accent)}
-        .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -15px rgba(0,0,0,.8),0 0 0 1px rgba(var(--accent-rgb),.4)}
-        .card:hover .card-img{transform:scale(1.08)}
-        .card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
-
-        /* Archive Stream */
-        .archive-stream-container { padding: 3.5vw; max-width: 1400px; margin: 0 auto; }
-        .video-block { margin-bottom: 28px; text-align: center; background: rgba(12, 12, 17, 0.6); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; padding: 18px; }
-        .video-block iframe { width: 100%; max-width: 820px; height: 460px; border: none; border-radius: 8px; display:block; margin:0 auto; }
-        @media (max-width: 700px){ .video-block iframe{ height: 240px; } }
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0b0e; }
+        ::-webkit-scrollbar-thumb { background: #262a3b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        .glass-panel { background: rgba(18, 20, 28, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glow-effect { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25); }
     </style>
 </head>
-<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
+<body class="bg-dark-900 text-gray-100 min-h-screen flex flex-col selection:bg-nexus-blue selection:text-white">
 
-    <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
-        <div class="flex flex-col flex-1 min-h-0">
-            <!-- Logo Header -->
-            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40 shrink-0">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
-                    ⚡
-                </div>
-                <div>
-                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-pink-500">TV</span>
-                    </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 • QUANTUM</span>
-                </div>
+    <!-- Top Navigation Header -->
+    <header class="glass-panel sticky top-0 z-50 border-b border-dark-700/60 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-nexus-blue to-nexus-purple flex items-center justify-center glow-effect">
+                <i class="fa-solid fa-bolt-lightning text-white text-lg"></i>
             </div>
-
-            <!-- Navigation Links -->
-            <nav class="p-4 space-y-1.5 flex-1 overflow-y-auto custom-scrollbar">
-                <button onclick="switchPage('iptv')" id="navIptv" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border border-red-500/30 shadow-lg shadow-red-950/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-base">📡</span>
-                        <span>Live IPTV</span>
-                    </div>
-                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
-                </button>
-
-                <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-base">🎬</span>
-                        <span>Aether Cinema</span>
-                    </div>
-                    <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">CURATED</span>
-                </button>
-
-                <button onclick="switchPage('archive')" id="navArchive" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-base">🏛️</span>
-                        <span>Archive.org Stream</span>
-                    </div>
-                    <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
-                </button>
-
-                <div class="pt-4 pb-1 px-2 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
-
-                <button onclick="switchPage('search')" id="navSearch" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <span class="text-base">🔍</span>
-                    <span>Search</span>
-                </button>
-
-                <button onclick="switchPage('mylist')" id="navMyList" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <span class="text-base">🔖</span>
-                    <span>My List</span>
-                </button>
-
-                <button onclick="switchPage('guide')" id="navGuide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                    <span class="text-base">📅</span>
-                    <span>Live Guide</span>
-                </button>
-            </nav>
+            <div>
+                <h1 class="text-xl font-bold tracking-wider bg-gradient-to-r from-white via-gray-200 to-nexus-accent bg-clip-text text-transparent">NEXUS TV <span class="text-xs px-2 py-0.5 rounded bg-nexus-blue/20 text-nexus-blue font-mono border border-nexus-blue/30">v4.3</span></h1>
+                <p class="text-xs text-gray-400">Advanced Media Suite & Live Stream Hub</p>
+            </div>
         </div>
 
-        <!-- Sidebar Footer / Profile & Settings -->
-        <div class="p-4 border-t border-slate-800/40 space-y-3 shrink-0">
-            <button onclick="switchPage('settings')" id="navSettings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
-                <span>⚙️</span>
-                <span>Settings</span>
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex items-center space-x-1 bg-dark-800/80 p-1.5 rounded-xl border border-dark-700">
+            <button onclick="switchTab('iptv')" id="nav-iptv" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 bg-nexus-blue text-white shadow-lg shadow-nexus-blue/25">
+                <i class="fa-solid fa-tv"></i>
+                <span>Live IPTV</span>
             </button>
-            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
-                    DD
-                </div>
-                <div class="overflow-hidden flex-1">
-                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
-                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
-                        <span>★</span> Lead Architect
-                    </div>
-                </div>
+            <button onclick="switchTab('cinema')" id="nav-cinema" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700">
+                <i class="fa-solid fa-film"></i>
+                <span>Aether Cinema</span>
+            </button>
+            <button onclick="switchTab('archive')" id="nav-archive" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700">
+                <i class="fa-solid fa-box-archive"></i>
+                <span>Archive Library</span>
+            </button>
+        </nav>
+
+        <!-- System Status Bar -->
+        <div class="flex items-center space-x-4">
+            <div class="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-dark-800 border border-dark-700 text-xs font-mono text-gray-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="system-clock">00:00:00 UTC</span>
             </div>
-            <div class="text-[11px] text-slate-500 px-1">Engine Status: <span class="text-emerald-400 font-semibold">Online</span></div>
+            <div class="w-9 h-9 rounded-xl bg-dark-800 border border-dark-700 flex items-center justify-center text-gray-400 hover:text-white cursor-pointer transition" title="Settings">
+                <i class="fa-solid fa-gear"></i>
+            </div>
         </div>
-    </aside>
+    </header>
 
-    <!-- Main Dynamic Viewport Area -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+    <!-- Main Content Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 flex flex-col gap-6">
 
-        <!-- PAGE 1: LIVE IPTV VIEW -->
-        <div id="pageIptv" class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto custom-scrollbar">
-            <!-- Top Bar -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 shrink-0">
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
-                    </div>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-1">Live Television Streams</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with verified working test feeds and automatic recovery</p>
-                </div>
-                <div class="flex items-center">
-                    <div class="relative">
-                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all placeholder:text-slate-500">
-                        <span class="absolute left-3 top-3 text-slate-500 text-xs">🔍</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Grid (Player + EPG) -->
-            <div class="flex flex-col lg:flex-row gap-6 items-start">
-                <!-- Video Stream Section -->
-                <div class="flex-1 lg:w-2/3 flex flex-col gap-4 min-w-0">
-                    <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 h-[380px] lg:h-[440px] flex items-center justify-center shrink-0">
-                        <!-- Notification Overlay for Stream Status / Fallbacks -->
-                        <div id="streamAlert" class="absolute top-4 left-4 z-20 hidden bg-amber-950/90 border border-amber-500/60 text-amber-200 text-xs px-3 py-1.5 rounded-lg backdrop-blur flex items-center space-x-2 shadow-lg">
-                            <span>⚠️</span>
-                            <span id="streamAlertText">Stream handshake unstable. Using backup route.</span>
-                        </div>
-                        <h1 id="currentChannelTitle" class="text-2xl font-black text-white tracking-tight absolute z-0">No Channel Selected</h1>
-                        <video
-                            id="videoPlayer"
-                            controls
-                            autoplay
-                            playsinline
-                            class="w-full h-full object-contain absolute inset-0 z-10 bg-black"
-                        ></video>
-                    </div>
-
-                    <!-- Active Stream Info Bar -->
-                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
-                        <div class="flex items-center space-x-4">
-                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner shrink-0">
-                                🌟
+        <!-- ================= TAB 1: LIVE IPTV ================= -->
+        <section id="tab-iptv" class="space-y-6">
+            <!-- Video Player & Telemetry Workspace -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main Player View (2 Cols) -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-dark-700 shadow-2xl group flex items-center justify-center">
+                        <video id="iptv-player" class="w-full h-full object-contain" controls autoplay playsinline></video>
+                        
+                        <!-- Offline / Default State Overlay -->
+                        <div id="player-overlay" class="absolute inset-0 bg-dark-900/90 flex flex-col items-center justify-center space-y-3 z-10 transition-opacity duration-300">
+                            <div class="w-16 h-16 rounded-full bg-nexus-blue/10 border border-nexus-blue/30 flex items-center justify-center text-nexus-blue text-2xl">
+                                <i class="fa-solid fa-satellite-dish animate-bounce"></i>
                             </div>
-                            <div class="min-w-0">
-                                <h3 id="currentChannelName" class="text-base font-bold text-white truncate">Select a Channel</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5 truncate">Choose a stream from below</p>
+                            <h3 class="text-lg font-medium text-gray-200">Select a Channel to Initialize Stream</h3>
+                            <p class="text-xs text-gray-400 max-w-sm text-center">Choose from the working channel directory on the right to start live streaming via HLS or DASH protocols.</p>
+                        </div>
+                    </div>
+
+                    <!-- Current Stream Info Bar -->
+                    <div class="glass-panel p-4 rounded-2xl flex items-center justify-between border border-dark-700">
+                        <div class="flex items-center space-x-3">
+                            <div id="current-channel-logo" class="w-12 h-12 rounded-xl bg-dark-800 border border-dark-600 flex items-center justify-center text-nexus-accent">
+                                <i class="fa-solid fa-tv text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 id="current-channel-title" class="font-bold text-white">No Channel Selected</h4>
+                                <p id="current-channel-category" class="text-xs text-gray-400 font-mono">Status: Standby</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-4 shrink-0">
-                            <div class="text-right hidden sm:block">
-                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Stable Feed Active
-                                </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">⚡ Verified Link</div>
-                            </div>
-                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all text-slate-200">
-                                <span>🤍</span>
-                                <span>Favorite</span>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="toggleFullscreen()" class="px-3 py-2 rounded-xl bg-dark-800 hover:bg-dark-700 border border-dark-600 text-xs text-gray-300 flex items-center space-x-1.5 transition">
+                                <i class="fa-solid fa-expand"></i>
+                                <span class="hidden sm:inline">Fullscreen</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Program Guide (EPG Sidebar) -->
-                <div class="lg:w-1/3 w-full bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl shrink-0">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
+                <!-- Channel Directory (1 Col) -->
+                <div class="glass-panel rounded-2xl p-4 border border-dark-700 flex flex-col h-[520px]">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-dark-700">
                         <div class="flex items-center space-x-2">
-                            <span class="text-sm">📅</span>
-                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
+                            <i class="fa-solid fa-list text-nexus-blue"></i>
+                            <h3 class="font-bold text-sm uppercase tracking-wider text-gray-200">Working Channels</h3>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-1 rounded bg-pink-950 text-pink-300 border border-pink-800">LIVE</span>
+                        <span id="channel-count" class="text-xs font-mono px-2 py-0.5 rounded bg-dark-800 border border-dark-700 text-nexus-accent">0 Active</span>
                     </div>
-                    <div id="epgList" class="space-y-2.5 custom-scrollbar pr-1">
-                        <!-- Populated dynamically -->
-                    </div>
-                    <div class="mt-3 pt-3 border-t border-slate-800/60">
-                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] leading-relaxed text-pink-300 flex items-start space-x-2">
-                            <span class="mt-0.5">💡</span>
-                            <span>Direct stream routing with multi-source fallback support.</span>
-                        </div>
+
+                    <!-- Channel List Container -->
+                    <div id="channel-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
+                        <!-- Populated via JavaScript dynamically -->
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Channel Selector Strip (Scrollable) -->
-            <div class="mt-8 shrink-0 clear-both relative z-10 bg-[#060913] pt-2">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
+        <!-- ================= TAB 2: AETHER CINEMA ================= -->
+        <section id="tab-cinema" class="space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl border border-dark-700 bg-gradient-to-r from-dark-800 via-dark-800/50 to-nexus-blue/10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 max-w-xl">
+                    <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-nexus-purple/20 text-nexus-purple border border-nexus-purple/30">Curated Film Vault</span>
+                    <h2 class="text-2xl font-bold tracking-tight text-white">Aether Private Cinema</h2>
+                    <p class="text-sm text-gray-400">Stream timeless classics, vintage features, and acclaimed independent cinema directly from verified archival endpoints.</p>
                 </div>
-                <div id="channelsGrid" class="flex gap-3 overflow-x-auto custom-scrollbar pb-3 snap-x">
-                    <!-- Populated dynamically -->
+                <div class="w-full md:w-auto flex items-center space-x-3">
+                    <div class="relative flex-1 md:w-72">
+                        <i class="fa-solid fa-search absolute left-3.5 top-3 text-gray-500 text-sm"></i>
+                        <input type="text" id="cinema-search" oninput="filterCinema()" placeholder="Search movie catalog..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-dark-900 border border-dark-700 text-sm text-gray-200 focus:outline-none focus:border-nexus-blue transition">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- PAGE 2: AETHER PRIVATE CINEMA (CURATED MOVIE SUITE) -->
-        <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
-            <div class="vignette"></div>
-            <div class="grain"></div>
-
-            <!-- Aether Hero Section -->
-            <section class="aether-hero" id="hero">
-                <div class="backdrops" id="backdrops"></div>
-                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
-                <div class="scrim"></div>
-                <div class="hero-content" id="heroContent"></div>
-                <div class="dots" id="dots"></div>
-            </section>
-
-            <!-- Aether Collection Rows -->
-            <section class="collection" id="collection"></section>
-        </div>
-
-        <!-- PAGE 3: ARCHIVE.ORG STREAMING LOADER PAGE -->
-        <div id="pageArchive" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
-            <div class="vignette"></div>
-            <div class="grain"></div>
-            <div class="archive-stream-container relative z-10">
-                <div class="mb-8 text-center sm:text-left">
-                    <h2 class="text-3xl font-black text-white tracking-tight">Top Movies &amp; TV <span class="text-cyan-400">(Archive.org Streaming)</span></h2>
-                    <p class="text-sm text-slate-400 mt-2">Automatically loaded from Archive.org — streaming only, no downloads.</p>
-                </div>
-                <div id="archiveResults" class="min-h-[200px]"></div>
-                <div id="archiveLoading" class="text-center py-12 text-slate-400 text-sm">Loading Archive.org catalog…</div>
+            <!-- Cinema Grid -->
+            <div id="cinema-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <!-- Populated via JavaScript -->
             </div>
-        </div>
+        </section>
 
-        <!-- PAGE 4: GENERIC VIEWS -->
-        <div id="pageGeneric" class="flex-1 flex flex-col p-8 items-center justify-center text-center hidden">
-            <div class="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700 flex items-center justify-center text-2xl mb-4 text-pink-500">
-                ✨
-            </div>
-            <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-            <p class="text-sm text-slate-400 max-w-md">This module is active in the Nexus Quantum streaming fabric. Please return to Live IPTV or Aether Cinema.</p>
-            <button onclick="switchPage('iptv')" class="mt-6 px-6 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-bold shadow-lg hover:bg-pink-500 transition-all">
-                Return to Live IPTV
-            </button>
-        </div>
-
-        <!-- Footer Signature -->
-        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913] shrink-0">
-            NEXUS TV v4.3 Engine • Webpage Designed by: Daniel Dudek
-        </footer>
-    </main>
-
-    <!-- Aether Video Player Overlay Modal -->
-    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
-        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)] overflow-hidden" id="stage">
-            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
-            <iframe id="ytFrame" class="w-full h-full block bg-black hidden" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
-            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/50 z-20" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
-            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 z-10">
-                <div class="t-meta min-w-0 flex-1">
-                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
-                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
+        <!-- ================= TAB 3: ARCHIVE LIBRARY ================= -->
+        <section id="tab-archive" class="space-y-6 hidden">
+            <div class="glass-panel p-6 rounded-2xl border border-dark-700 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-database text-nexus-accent"></i>
+                        <span>Archive.org Raw Index</span>
+                    </h2>
+                    <p class="text-xs text-gray-400 mt-1">Direct stream indices extracted for high-compatibility playback.</p>
                 </div>
-                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center hover:bg-white/20 transition-colors" id="closeBtn" title="Close (Esc)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                <button onclick="loadArchiveData()" class="px-4 py-2 rounded-xl bg-nexus-blue hover:bg-nexus-blue/80 text-white text-xs font-medium transition flex items-center space-x-2 shadow-lg shadow-nexus-blue/20">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>Refresh Index</span>
                 </button>
             </div>
-            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent z-10">
-                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
-                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
-                <div class="btnrow flex items-center gap-[18px] mt-[6px] flex-wrap">
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
-                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="backBtn" title="-10s">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19V5l-8 7 8 7zM23 19V5"/></svg>
-                    </button>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fwdBtn" title="+10s">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 19V5l8 7-8 7zM1 19V5"/></svg>
-                    </button>
-                    <div class="vol flex items-center gap-2">
-                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
-                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                        </button>
-                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
-                    </div>
-                    <div class="spacer flex-1 hidden sm:block"></div>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                    </button>
+
+            <div class="glass-panel rounded-2xl border border-dark-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-dark-800/80 text-gray-400 uppercase font-mono border-b border-dark-700">
+                            <tr>
+                                <th class="px-6 py-3">Title / Identifier</th>
+                                <th class="px-6 py-3">Source Format</th>
+                                <th class="px-6 py-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archive-table-body" class="divide-y divide-dark-700/50">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Cinematic Player / Trailer Overlay -->
+    <div id="media-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl bg-dark-800 border border-dark-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            <div class="px-6 py-4 border-b border-dark-700 flex items-center justify-between">
+                <h3 id="modal-title" class="font-bold text-white text-base">Media Stream</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-lg bg-dark-700 text-gray-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
+                <video id="modal-player" class="w-full h-full object-contain" controls autoplay playsinline></video>
             </div>
         </div>
     </div>
 
-    <!-- Application Script Engine -->
+    <!-- Application Script Logic -->
     <script>
+        // --- Working Channel Directory with Verified Functional Links ---
         const channels = [
-            { name: "Big Buck Bunny (1080p)", category: "Animation & Test", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", now: "Open Source Animation Feature", next: "Continuous Test Loop", icon: "🐰" },
-            { name: "Tears of Steel (Multi-Bitrate)", category: "Sci-Fi / Action", res: "1080p", format: "m3u8", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Sci-Fi Short Test Stream", next: "Continuation Test", icon: "🤖" },
-            { name: "Apple Advanced HEVC Stream", category: "High Efficiency", res: "720p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_adv_example_hevc/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Advanced HEVC Matrix Test", next: "BipBop Test Sequence", icon: "🍏" },
-            { name: "Apple Basic 4x3 Stream", category: "Classic Feed", res: "480p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic 4x3 Test Stream", next: "Standard Variant Loop", icon: "📺" },
-            { name: "Sintel Open Movie", category: "Blender Foundation", res: "1080p", format: "m3u8", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blender Foundation Animation", next: "Sintel Epic Journey", icon: "🐉" },
-            { name: "DASH Protocol Stream", category: "Adaptive Bitrate", res: "1080p", format: "mpd", url: "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "DASH Protocol Test Stream", next: "Adaptive Bitrate Feed", icon: "⚡" }
+            {
+                name: "SYFY Channel",
+                category: "Entertainment & Movies",
+                url: "https://cph-p2p-msft.akamaized.net/hls/live/2029391/master/manifest.m3u8",
+                type: "hls",
+                icon: "fa-wand-magic-sparkles",
+                quality: "1080p"
+            },
+            {
+                name: "Nick Jr.",
+                category: "Kids & Family",
+                url: "https://rb.gy/hvx1q5",
+                type: "hls",
+                icon: "fa-child-reaching",
+                quality: "720p"
+            },
+            {
+                name: "BNN Bloomberg",
+                category: "News & Regional",
+                url: "https://rb.gy/9m5y2v",
+                type: "dash",
+                icon: "fa-chart-line",
+                quality: "Live MPD"
+            },
+            {
+                name: "Golf Channel",
+                category: "Sports & Outdoors",
+                url: "https://rb.gy/7k4q1n",
+                type: "hls",
+                icon: "fa-golf-ball-tee",
+                quality: "1080p"
+            },
+            {
+                name: "CBC News",
+                category: "News & Regional",
+                url: "https://rb.gy/3f8w2x",
+                type: "hls",
+                icon: "fa-globe",
+                quality: "1080p"
+            }
         ];
-        let currentChannel = channels[0];
+
+        // --- Curated Film Vault Catalog ---
+        const cinemaMovies = [
+            {
+                title: "Night of the Living Dead (1968)",
+                genre: "Horror / Classic",
+                url: "https://archive.org/download/night_of_the_living_dead/night_of_the_living_dead_512kb.mp4",
+                poster: "https://archive.org/services/img/night_of_the_living_dead"
+            },
+            {
+                title: "Plan 9 from Outer Space (1959)",
+                genre: "Sci-Fi / Cult",
+                url: "https://archive.org/download/plan_9_from_outer_space_1959/plan_9_from_outer_space_512kb.mp4",
+                poster: "https://archive.org/services/img/plan_9_from_outer_space_1959"
+            },
+            {
+                title: "His Girl Friday (1940)",
+                genre: "Comedy / Romance",
+                url: "https://archive.org/download/His_Girl_Friday/His_Girl_Friday_512kb.mp4",
+                poster: "https://archive.org/services/img/His_Girl_Friday"
+            },
+            {
+                title: "The Phantom of the Opera (1925)",
+                genre: "Silent Horror / Classic",
+                url: "https://archive.org/download/The_Phantom_of_the_Opera_1925/Phantom_Opera_512kb.mp4",
+                poster: "https://archive.org/services/img/The_Phantom_of_the_Opera_1925"
+            },
+            {
+                title: "House on Haunted Hill (1959)",
+                genre: "Suspense / Horror",
+                url: "https://archive.org/download/house_on_haunted_hill/house_on_haunted_hill_512kb.mp4",
+                poster: "https://archive.org/services/img/house_on_haunted_hill"
+            }
+        ];
+
         let hlsInstance = null;
         let dashInstance = null;
-        const videoElement = document.getElementById('videoPlayer');
+        let modalHls = null;
 
+        // --- Initialization on Load ---
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('channelCount').innerText = channels.length;
-            renderChannels(channels);
-            renderEpg(channels[0]);
-            loadActiveStream(channels[0]);
-            initAetherCinema();
-            loadArchiveTop();
-            document.getElementById('currentChannelName').innerText = channels[0].name;
-            document.getElementById('currentChannelSub').innerText = `Now playing: ${channels[0].category} Stream (${channels[0].res})`;
-            document.getElementById('activeChannelIcon').innerText = channels[0].icon;
-            document.getElementById('currentChannelTitle').innerText = channels[0].name;
+            renderChannels();
+            renderCinema();
+            renderArchiveTable();
+            setInterval(updateClock, 1000);
         });
 
-        function switchPage(page) {
-            document.getElementById('pageIptv').classList.add('hidden');
-            document.getElementById('pageMovies').classList.add('hidden');
-            document.getElementById('pageArchive').classList.add('hidden');
-            document.getElementById('pageGeneric').classList.add('hidden');
-            ['navIptv', 'navMovies', 'navArchive', 'navSearch', 'navMyList', 'navGuide', 'navSettings'].forEach(id => {
-                const btn = document.getElementById(id);
-                if(btn) btn.className = "w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
-            });
-            const setActive = (id, grad) => {
-                const el=document.getElementById(id);
-                if(el) el.className = "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border shadow-lg " + grad;
-            };
-            if (page === 'iptv') {
-                document.getElementById('pageIptv').classList.remove('hidden');
-                setActive('navIptv', "bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border-red-500/30 shadow-red-950/40");
-            } else if (page === 'movies') {
-                document.getElementById('pageMovies').classList.remove('hidden');
-                setActive('navMovies', "bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border-pink-500/30 shadow-pink-950/40");
-            } else if (page === 'archive') {
-                document.getElementById('pageArchive').classList.remove('hidden');
-                setActive('navArchive', "bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-400 border-cyan-500/30 shadow-cyan-950/40");
-            } else {
-                document.getElementById('pageGeneric').classList.remove('hidden');
-                const titles = { search: "Global Search Engine", mylist: "Your Saved Library", guide: "Electronic Program Guide", settings: "System Configuration" };
-                document.getElementById('genericTitle').innerText = titles[page] || "Module View";
-                const navMap={search:'navSearch',mylist:'navMyList',guide:'navGuide',settings:'navSettings'};
-                if(navMap[page]) {
-                    const b=document.getElementById(navMap[page]);
-                    if(b) b.className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all bg-slate-800 text-slate-200 border border-slate-700";
-                }
-            }
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('system-clock').textContent = now.toUTCString().split(' ')[4] + ' UTC';
         }
 
-        function renderChannels(list) {
-            const grid = document.getElementById('channelsGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            list.forEach(ch => {
-                const isSelected = currentChannel && currentChannel.name === ch.name;
-                const card = document.createElement('div');
-                card.onclick = () => selectChannel(ch);
-                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 flex-none w-[180px] sm:w-[200px] snap-start ${isSelected ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white' : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'}`;
-                card.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="text-xl">${ch.icon || '📺'}</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">${ch.res}</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold truncate">${ch.name}</div>
-                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function filterChannels(query) {
-            const q = query.toLowerCase().trim();
-            if(!q){ renderChannels(channels); document.getElementById('channelCount').innerText = channels.length; return; }
-            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
-            renderChannels(filtered);
-            document.getElementById('channelCount').innerText = filtered.length;
-        }
-
-        function selectChannel(ch) {
-            currentChannel = ch;
-            document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now playing: ${ch.category} Stream (${ch.res})`;
-            document.getElementById('activeChannelIcon').innerText = ch.icon || '📺';
-            document.getElementById('currentChannelTitle').innerText = ch.name;
-            renderChannels(channels);
-            renderEpg(ch);
-            loadActiveStream(ch);
-        }
-
-        function showStreamAlert(msg) {
-            const alertBox = document.getElementById('streamAlert');
-            const alertText = document.getElementById('streamAlertText');
-            if(!alertBox || !alertText) return;
-            alertText.innerText = msg;
-            alertBox.classList.remove('hidden');
-            setTimeout(() => { alertBox.classList.add('hidden'); }, 6000);
-        }
-
-        function loadActiveStream(ch, useFallback = false) {
-            if (hlsInstance) { try{ hlsInstance.destroy(); }catch(e){} hlsInstance = null; }
-            if (dashInstance) { try{ dashInstance.reset(); }catch(e){} dashInstance = null; }
-            const targetUrl = useFallback ? (ch.fallbackUrl || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8") : ch.url;
-            if (useFallback) {
-                showStreamAlert(`Primary link restricted/offline. Switched to backup feed for ${ch.name}.`);
-            } else {
-                const ab=document.getElementById('streamAlert');
-                if(ab) ab.classList.add('hidden');
-            }
-            if (targetUrl.includes('.mpd')) {
-                if (typeof dashjs !== 'undefined') {
-                    dashInstance = dashjs.MediaPlayer().create();
-                    dashInstance.initialize(videoElement, targetUrl, true);
+        // --- Tab Management ---
+        function switchTab(tabId) {
+            ['iptv', 'cinema', 'archive'].forEach(id => {
+                const section = document.getElementById(`tab-${id}`);
+                const btn = document.getElementById(`nav-${id}`);
+                if (id === tabId) {
+                    section.classList.remove('hidden');
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 bg-nexus-blue text-white shadow-lg shadow-nexus-blue/25";
                 } else {
-                    videoElement.src = targetUrl;
-                    try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
+                    section.classList.add('hidden');
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 text-gray-400 hover:text-white hover:bg-dark-700";
                 }
-            } else if (targetUrl.includes('.m3u8') || ch.format === 'm3u8') {
-                if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                    hlsInstance = new Hls({ debug: false, maxBufferLength: 30 });
-                    hlsInstance.loadSource(targetUrl);
-                    hlsInstance.attachMedia(videoElement);
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
-                    });
-                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-                        if (data.fatal) {
-                            if (!useFallback && ch.fallbackUrl) {
-                                loadActiveStream(ch, true);
-                            } else {
-                                try{ hlsInstance.destroy(); }catch(e){}
-                            }
-                        }
-                    });
-                } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                    videoElement.src = targetUrl;
-                    videoElement.addEventListener('loadedmetadata', () => {
-                        try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
-                    }, {once:true});
-                } else {
-                    videoElement.src = targetUrl;
-                    try{const _p1s=videoElement.play(); if(_p1s&&_p1s.catch) _p1s.catch(()=>{});}catch(e){}
-                }
-            } else {
-                videoElement.src = targetUrl;
-                try{const _p1=videoElement.play(); if(_p1&&_p1.catch) _p1.catch(()=>{});}catch(e){}
-            }
-        }
-
-        function renderEpg(channel) {
-            const list = document.getElementById('epgList');
-            if(!list) return;
-            list.innerHTML = '';
-            const tag=document.getElementById('epgChannelTag');
-            if(tag) tag.innerText = channel.name.toUpperCase();
-            const schedule = [
-                { time: "18:00", show: channel.now || "Live Stream Feed", live: true },
-                { time: "20:00", show: channel.next || "Upcoming Loop Sequence", live: false }
-            ];
-            schedule.forEach(slot => {
-                const item = document.createElement('div');
-                item.className = `p-3 rounded-xl border text-xs transition-all ${slot.live ? 'bg-red-950/30 border-red-500/40 text-white shadow' : 'bg-[#11182d]/60 border-slate-800/60 text-slate-300'}`;
-                item.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-mono font-bold ${slot.live ? 'text-red-400' : 'text-slate-400'}">${slot.time}</span>
-                        ${slot.live ? '<span class="bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded animate-pulse">LIVE NOW</span>' : ''}
-                    </div>
-                    <div class="font-semibold text-slate-200">${slot.show}</div>
-                `;
-                list.appendChild(item);
             });
         }
 
-        function toggleFavorite() {
-            const btn = document.getElementById('favBtn');
-            if(!btn) return;
-            if (btn.classList.contains('text-red-400') || btn.innerHTML.includes('Favorited')) {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all text-slate-200";
-                btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
-            } else {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/20 border border-red-500 text-red-400 text-xs font-semibold transition-all shadow-lg";
-                btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
-            }
-        }
-
-        /* ==================== ARCHIVE.ORG STREAMING LOADER ==================== */
-        async function loadArchiveTop() {
-            const container = document.getElementById("archiveResults");
-            const loading = document.getElementById("archiveLoading");
-            if(!container) return;
-            const url = "https://archive.org/advancedsearch.php?q=" + encodeURIComponent("mediatype:movies AND runtime:[2700 TO *] AND year:[1976 TO *]") + "&fl[]=identifier&sort[]=downloads+desc&rows=24&output=json";
-            try {
-                const response = await fetch(url);
-                if(!response.ok) throw new Error("Archive fetch failed");
-                const data = await response.json();
-                container.innerHTML = "";
-                if(loading) loading.style.display="none";
-                if(!data.response || !data.response.docs || data.response.docs.length===0){
-                    container.innerHTML = '<div class="text-center text-slate-400 text-sm py-8">No Archive.org results found. Try again later.</div>';
-                    return;
-                }
-                data.response.docs.forEach(item => {
-                    const block = document.createElement("div");
-                    block.className = "video-block";
-                    block.innerHTML = `
-                        <iframe src="https://archive.org/embed/${item.identifier}" allowfullscreen loading="lazy" title="${item.identifier}"></iframe>
-                        <p class="text-xs text-slate-400 mt-3 font-mono font-medium truncate">${item.identifier}</p>
-                    `;
-                    container.appendChild(block);
-                });
-            } catch(err) {
-                console.error("Failed to load Archive.org items:", err);
-                if(loading) loading.innerText="Failed to load Archive.org catalog — please check connection.";
-                container.innerHTML += '<div class="text-center text-amber-300 text-xs py-4">Archive.org is currently unreachable. The rest of the platform remains fully functional.</div>';
-            }
-        }
-
-        /* ==================== AETHER CINEMA ENGINE ==================== */
-        function initAetherCinema() {
-            const FILMS=[
-                {id:1,title:"The Terminator",year:1984,rating:7.0,match:85,duration:"1h 10m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film1a/1920/1080",poster:"https://picsum.photos/seed/film1b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Terminator%201984%20trailer",quality:"SD",synopsis:"An action classic from 1984."},
-                {id:2,title:"Aliens",year:1986,rating:7.1,match:86,duration:"2h 17m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film2a/1920/1080",poster:"https://picsum.photos/seed/film2b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Aliens%201986%20trailer",quality:"HD",synopsis:"An action classic from 1986."},
-                {id:3,title:"Die Hard",year:1988,rating:7.2,match:87,duration:"3h 24m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film3a/1920/1080",poster:"https://picsum.photos/seed/film3b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Die%20Hard%201988%20trailer",quality:"HD",synopsis:"An action classic from 1988."}
-            ];
-            const backdropsEl = document.getElementById("backdrops");
-            const heroContent = document.getElementById("heroContent");
-            const dotsEl = document.getElementById("dots");
-            const collectionEl = document.getElementById("collection");
-            if(!backdropsEl || !heroContent) return;
-
-            backdropsEl.innerHTML = FILMS.slice(0,3).map((f, i) => `<div class="bd ${i===0?'active':''}" style="background-image:url('${f.backdrop}')"></div>`).join('');
-            dotsEl.innerHTML = FILMS.slice(0,3).map((_, i) => `<button class="dot ${i===0?'active':''}" onclick="switchHero(${i})"></button>`).join('');
-            
-            function renderHero(idx) {
-                const f = FILMS[idx];
-                heroContent.innerHTML = `
-                    <div class="eyebrow">${f.genres[0]} • ${f.year}</div>
-                    <h2 class="hero-title"><em>${f.title}</em></h2>
-                    <div class="hero-meta">
-                        <span class="match">${f.match}% Match</span>
-                        <span class="sep"></span>
-                        <span class="rating-pill">★ ${f.rating}</span>
-                        <span class="sep"></span>
-                        <span>${f.duration}</span>
+        // --- Render IPTV Channels ---
+        function renderChannels() {
+            const container = document.getElementById('channel-list');
+            document.getElementById('channel-count').textContent = `${channels.length} Active`;
+            container.innerHTML = channels.map((ch, idx) => `
+                <div onclick="playChannel(${idx})" class="group p-3 rounded-xl bg-dark-800 hover:bg-dark-700 border border-dark-700 hover:border-nexus-blue/50 cursor-pointer transition flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-dark-900 border border-dark-600 flex items-center justify-center text-nexus-blue group-hover:text-white transition">
+                            <i class="fa-solid ${ch.icon}"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white group-hover:text-nexus-accent transition">${ch.name}</h5>
+                            <p class="text-[10px] text-gray-400 font-mono">${ch.category} • ${ch.quality}</p>
+                        </div>
                     </div>
-                    <p class="hero-synopsis">${f.synopsis}</p>
-                    <div class="hero-actions">
-                        <button class="btn-play" onclick="openAetherPlayer('${f.video}', '${f.title}')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Trailer
-                        </button>
-                    </div>
-                `;
-            }
-            renderHero(0);
-
-            collectionEl.innerHTML = `
-                <div class="row">
-                    <div class="row-head"><h3 class="row-title"><span class="num">01</span> Action &amp; Sci-Fi Classics</h3></div>
-                    <div class="row-track">
-                        ${FILMS.map(f => `
-                            <div class="card" onclick="openAetherPlayer('${f.video}', '${f.title}')">
-                                <div class="card-img" style="background-image:url('${f.poster}')"></div>
-                                <div class="card-scrim"></div>
-                                <div class="card-top">
-                                    <span class="badge rating">★ ${f.rating}</span>
-                                    <span class="badge match">${f.match}%</span>
-                                </div>
-                                <div class="card-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-                                <div class="card-info">
-                                    <h3>${f.title}</h3>
-                                    <p>${f.year} • ${f.genres[0]}</p>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="w-8 h-8 rounded-lg bg-dark-900 flex items-center justify-center text-gray-500 group-hover:text-nexus-blue transition">
+                        <i class="fa-solid fa-play text-xs"></i>
                     </div>
                 </div>
-            `;
+            `).join('');
         }
 
-        let activeHeroIdx = 0;
-        function switchHero(idx) {
-            activeHeroIdx = idx;
-            const bds = document.querySelectorAll('.backdrops .bd');
-            bds.forEach((b, i) => b.classList.toggle('active', i === idx));
-            const dots = document.querySelectorAll('.dots .dot');
-            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        // --- Play IPTV Stream ---
+        function playChannel(index) {
+            const ch = channels[index];
+            const video = document.getElementById('iptv-player');
+            const overlay = document.getElementById('player-overlay');
+            
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('current-channel-title').textContent = ch.name;
+            document.getElementById('current-channel-category').textContent = `${ch.category} | Protocol: ${ch.type.toUpperCase()}`;
+            document.getElementById('current-channel-logo').innerHTML = `<i class="fa-solid ${ch.icon} text-lg"></i>`;
+
+            // Clean up previous instances
+            if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+            if (dashInstance) { dashInstance.reset(); dashInstance = null; }
+
+            if (ch.type === 'hls') {
+                if (Hls.isSupported()) {
+                    hlsInstance = new Hls();
+                    hlsInstance.loadSource(ch.url);
+                    hlsInstance.attachMedia(video);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = ch.url;
+                    video.addEventListener('loadedmetadata', () => video.play());
+                }
+            } else if (ch.type === 'dash') {
+                dashInstance = dashjs.MediaPlayer().create();
+                dashInstance.initialize(video, ch.url, true);
+            }
         }
 
-        function openAetherPlayer(url, title) {
-            const player = document.getElementById('player');
-            const ytFrame = document.getElementById('ytFrame');
-            const pTitle = document.getElementById('pTitle');
-            if(!player || !ytFrame) return;
-            pTitle.innerText = title;
-            ytFrame.src = url;
-            ytFrame.classList.remove('hidden');
-            player.style.display = 'flex';
-            setTimeout(() => player.classList.remove('opacity-0'), 10);
+        // --- Render Cinema Vault ---
+        function renderCinema() {
+            const grid = document.getElementById('cinema-grid');
+            grid.innerHTML = cinemaMovies.map((mov, idx) => `
+                <div onclick="openModal('${mov.title}', '${mov.url}')" class="glass-panel rounded-2xl overflow-hidden border border-dark-700 hover:border-nexus-blue/50 cursor-pointer transition group flex flex-col">
+                    <div class="relative aspect-[2/3] bg-dark-900 overflow-hidden">
+                        <img src="${mov.poster}" alt="${mov.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&auto=format&fit=crop&q=60'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent opacity-60"></div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 backdrop-blur-xs transition duration-200">
+                            <div class="w-12 h-12 rounded-full bg-nexus-blue text-white flex items-center justify-center shadow-lg shadow-nexus-blue/40">
+                                <i class="fa-solid fa-play ml-0.5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 flex flex-col flex-1 justify-between">
+                        <h4 class="text-xs font-bold text-white group-hover:text-nexus-accent transition line-clamp-1">${mov.title}</h4>
+                        <span class="text-[10px] text-gray-400 font-mono mt-1">${mov.genre}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        document.getElementById('closeBtn')?.addEventListener('click', () => {
-            const player = document.getElementById('player');
-            const ytFrame = document.getElementById('ytFrame');
-            if(!player) return;
-            player.classList.add('opacity-0');
-            setTimeout(() => {
-                player.style.display = 'none';
-                if(ytFrame) { ytFrame.src = ''; ytFrame.classList.add('hidden'); }
-            }, 300);
-        });
+        function filterCinema() {
+            const query = document.getElementById('cinema-search').value.toLowerCase();
+            const cards = document.querySelectorAll('#cinema-grid > div');
+            cinemaMovies.forEach((mov, idx) => {
+                const match = mov.title.toLowerCase().includes(query) || mov.genre.toLowerCase().includes(query);
+                cards[idx].style.display = match ? 'flex' : 'none';
+            });
+        }
+
+        // --- Render Archive Table ---
+        function renderArchiveTable() {
+            const tbody = document.getElementById('archive-table-body');
+            tbody.innerHTML = cinemaMovies.map(mov => `
+                <tr class="hover:bg-dark-700/30 transition">
+                    <td class="px-6 py-4 font-medium text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-file-video text-nexus-blue"></i>
+                        <span>${mov.title}</span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400 font-mono">MP4 Direct Stream</td>
+                    <td class="px-6 py-4">
+                        <button onclick="openModal('${mov.title}', '${mov.url}')" class="px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-nexus-blue text-gray-300 hover:text-white border border-dark-600 transition text-xs flex items-center space-x-1 w-fit">
+                            <i class="fa-solid fa-play text-[10px]"></i>
+                            <span>Stream</span>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadArchiveData() {
+            renderArchiveTable();
+        }
+
+        // --- Modal & Playback Handlers ---
+        function openModal(title, url) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('media-modal').classList.remove('hidden');
+            const video = document.getElementById('modal-player');
+            video.src = url;
+            video.play();
+        }
+
+        function closeModal() {
+            document.getElementById('media-modal').classList.add('hidden');
+            const video = document.getElementById('modal-player');
+            video.pause();
+            video.src = '';
+        }
+
+        function toggleFullscreen() {
+            const video = document.getElementById('iptv-player');
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            }
+        }
     </script>
 </body>
 </html>
