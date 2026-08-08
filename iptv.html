@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS TV — Live IPTV</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include HLS.js for direct .m3u8 stream playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -112,7 +114,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Official, freely-licensed live channels — embedded directly from each network's own stream.</p>
+                    <p class="text-xs text-slate-400 mt-1">Direct HLS/M3U8 streaming feeds loaded from your premium playlist.</p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
@@ -127,20 +129,21 @@
                 <!-- Video Stream Section -->
                 <div class="lg:col-span-2 flex flex-col">
                     <div class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
-                        <iframe
+                        <!-- Native HTML5 Video Element with HLS.js support for .m3u8 streams -->
+                        <video
                             id="videoPlayer"
-                            class="w-full h-full absolute inset-0"
-                            allow="autoplay; encrypted-media; picture-in-picture"
-                            allowfullscreen
-                            frameborder="0"
-                        ></iframe>
+                            class="w-full h-full absolute inset-0 object-contain bg-black"
+                            controls
+                            autoplay
+                            playsinline
+                        ></video>
                     </div>
 
                     <!-- Active Stream Info Bar -->
                     <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
                         <div class="flex items-center space-x-4">
                             <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
-                                🌟
+                                📺
                             </div>
                             <div>
                                 <h3 id="currentChannelName" class="text-base font-bold text-white">Select a Channel</h3>
@@ -149,10 +152,10 @@
                         </div>
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
-                                <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Official Source
+                                <div class="text-xs font-bold text-cyan-400 flex items-center justify-end gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> HLS Stream
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">Embedded directly, no third-party relay</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">Direct M3U8 playback</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -167,19 +170,21 @@
                     <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="text-sm">ℹ️</span>
-                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">About This Channel</span>
+                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Channel Info</span>
                         </div>
                         <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">—</span>
                     </div>
 
                     <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1 text-sm text-slate-300">
-                        <!-- Populated dynamically -->
+                        <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
+                            <p class="text-slate-400">Select any channel from the slider below to stream your custom M3U8 feed directly.</p>
+                        </div>
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
-                        <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] text-pink-300 flex items-start space-x-2">
-                            <span>💡</span>
-                            <span>Every channel here is streamed straight from the network's own official source — nothing routed through third-party relays.</span>
+                        <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
+                            <span>⚡</span>
+                            <span>Powered by HLS.js engine for robust native stream handling.</span>
                         </div>
                     </div>
                 </div>
@@ -188,7 +193,7 @@
             <!-- Two-Row Channel Selector Sliders -->
             <div class="mt-6 space-y-4">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">US Premium Channels (<span id="channelCount">0</span>)</h3>
                     <div class="text-[11px] text-slate-500">Scroll horizontally using the sliders below</div>
                 </div>
                 
@@ -211,17 +216,20 @@
     </main>
 
     <script>
-        /* ==================== LIVE IPTV — CHANNELS & LOGOS ==================== */
+        /* ==================== US PREMIUM M3U8 CHANNELS ==================== */
         const channels = [
-            { name: "ABC News Live",        category: "News",     icon: "📰", channelId: "UCBi2mrWuNuyYy4gbM6fU18Q", desc: "ABC News' official 24/7 breaking-news streaming channel." },
-            { name: "CBS News 24/7",        category: "News",     icon: "🗞️", channelId: "UC8p1vwvWtl6T73JiExfWs1g", desc: "CBS News' official free 24/7 streaming news channel, available on 30+ platforms." },
-            { name: "NBC News NOW",         category: "News",     icon: "📡", channelId: "UCeY0bbntWzzVIaj2z3QigXg", desc: "NBC News' official free 24/7 streaming news channel." },
-            { name: "Bloomberg Originals",  category: "Business", icon: "📈", channelId: "UCUMZ7gohGI9HcU9VNsr2FJQ", desc: "Bloomberg's official channel for original series and documentaries." },
-            { name: "Bloomberg Television", category: "Business", icon: "💹", channelId: "UCIALMKvObZNtJ6AmdCLP7Lg", desc: "Bloomberg's official 24/7 markets and finance coverage." },
-            { name: "FOX Weather",          category: "Weather",  icon: "⛈️", channelId: "UC1FbPiXx59_ltnFVx7IxWow", desc: "FOX's official free 24/7 national weather channel." }
+            { name: "US: HBO West HD",         category: "Premium", icon: "🎬", url: "http://your-server-ip:port/live/user/pass/hbo_west.m3u8", desc: "HBO West High Definition stream." },
+            { name: "US: Showtime East HD",    category: "Premium", icon: "🌟", url: "http://your-server-ip:port/live/user/pass/showtime_east.m3u8", desc: "Showtime East HD broadcast feed." },
+            { name: "US: Starz Edge HD",       category: "Premium", icon: "✨", url: "http://your-server-ip:port/live/user/pass/starz_edge.m3u8", desc: "Starz Edge HD live channel feed." },
+            { name: "US: Cinemax West HD",     category: "Premium", icon: "🍿", url: "http://your-server-ip:port/live/user/pass/cinemax_west.m3u8", desc: "Cinemax West HD streaming feed." },
+            { name: "US: ESPN HD",             category: "Sports",  icon: "🏈", url: "http://your-server-ip:port/live/user/pass/espn.m3u8", desc: "ESPN HD sports network broadcast." },
+            { name: "US: ESPN 2 HD",           category: "Sports",  icon: "⚾", url: "http://your-server-ip:port/live/user/pass/espn2.m3u8", desc: "ESPN 2 HD sports network broadcast." },
+            { name: "US: TNT HD",              category: "Sports",  icon: "🏀", url: "http://your-server-ip:port/live/user/pass/tnt.m3u8", desc: "TNT HD live feed." },
+            { name: "US: TBS HD",              category: "Entertainment", icon: "📺", url: "http://your-server-ip:port/live/user/pass/tbs.m3u8", desc: "TBS HD live feed." }
         ];
 
         let currentChannel = channels[0];
+        let hlsInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             try { document.getElementById('channelCount').innerText = channels.length; } catch (e) { console.error(e); }
@@ -235,7 +243,6 @@
             grid1.innerHTML = '';
             grid2.innerHTML = '';
 
-            // Split channels across the two horizontal slider rows
             const midpoint = Math.ceil(list.length / 2);
             const row1List = list.slice(0, midpoint);
             const row2List = list.slice(midpoint);
@@ -276,7 +283,7 @@
         function selectChannel(ch) {
             currentChannel = ch;
             document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Official live channel`;
+            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · M3U8 Stream`;
             document.getElementById('activeChannelIcon').innerText = ch.icon;
             document.getElementById('epgChannelTag').innerText = ch.name.toUpperCase();
             document.getElementById('epgList').innerHTML = `
@@ -284,10 +291,30 @@
                     <p>${ch.desc}</p>
                 </div>
                 <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
-                    <p class="text-slate-400">This is a rolling live channel with no fixed schedule — content changes continuously throughout the day.</p>
+                    <p class="text-slate-400 font-mono text-[11px] break-all">Stream URL: ${ch.url}</p>
                 </div>
             `;
-            document.getElementById('videoPlayer').src = `https://www.youtube.com/embed/live_stream?channel=${ch.channelId}&autoplay=1&mute=0`;
+
+            const video = document.getElementById('videoPlayer');
+
+            // Handle HLS playback via HLS.js or native browser support (Safari)
+            if (Hls.isSupported()) {
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                }
+                hlsInstance = new Hls();
+                hlsInstance.loadSource(ch.url);
+                hlsInstance.attachMedia(video);
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log("Autoplay blocked:", e));
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = ch.url;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(e => console.log("Autoplay blocked:", e));
+                });
+            }
+
             renderChannels(channels);
         }
 
