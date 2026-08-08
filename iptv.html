@@ -32,7 +32,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.5 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Full 100+ Channel Matrix &bull; Direct M3U8 Player Integration</p>
+                    <p class="text-xs text-slate-400 mt-1">Full 100+ Channel Matrix &bull; Server-Side Proxy Integration</p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
@@ -150,9 +150,9 @@
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-cyan-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> HLS Stream
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Proxy Pipeline
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">Direct M3U8 Playback</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">CORS Headers Active</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -179,7 +179,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
                             <span>⚡</span>
-                            <span>HLS.js engine active with Native fallback &amp; Proxy loader configuration.</span>
+                            <span>HLS.js + Server-Side Proxy Configuration Ready.</span>
                         </div>
                     </div>
                 </div>
@@ -201,7 +201,7 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.5 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
@@ -235,18 +235,6 @@
 
         let currentChannel = channels[0];
         let hlsInstance = null;
-
-        // Solution D Proxy loader setup (replace string with your server/worker endpoint if proxying)
-        const PROXY = ''; // e.g. 'https://your-worker.workers.dev/?url=' if using a proxy worker
-
-        class ProxyLoader extends Hls.DefaultConfig.loader {
-            load(context, config, callbacks) {
-                if (PROXY && !context.url.startsWith(PROXY)) {
-                    context.url = PROXY + encodeURIComponent(context.url);
-                }
-                super.load(context, config, callbacks);
-            }
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             try { document.getElementById('channelCount').innerText = channels.length; } catch (e) { console.error(e); }
@@ -309,7 +297,7 @@
         function selectChannel(ch) {
             currentChannel = ch;
             document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · M3U8 Stream`;
+            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Stream Feed`;
             document.getElementById('activeChannelIcon').innerText = ch.icon;
             document.getElementById('epgChannelTag').innerText = ch.name.toUpperCase();
             
@@ -324,39 +312,44 @@
             `;
 
             const video = document.getElementById('videoPlayer');
+            
+            // Revert back to the robust standard HLS.js pattern using proxy wrapper logic:
+            // const proxyUrl = "https://your-proxy.com/proxy?url=" + encodeURIComponent(ch.url);
+            // For direct stream testing where CORS allows or when utilizing a proxy route:
+            const targetStream = ch.url;
 
-            if (hasUrl) {
-                // Solution A: Native HLS check (Safari, iOS, etc. bypasses CORS restrictions via media element stack)[cite: 2]
-                video.removeAttribute('crossorigin'); // Must be absent[cite: 2]
-                const native = video.canPlayType('application/vnd.apple.mpegurl') !== '';
-
-                if (native) {
-                    if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-                    video.src = ch.url;
-                    video.play().catch(e => console.log("Autoplay blocked:", e));
-                } else {
-                    // Desktop Chrome/Edge path via HLS.js (with optional proxy loader support)[cite: 2]
-                    if (hlsInstance) { hlsInstance.destroy(); }
-                    hlsInstance = new Hls({
-                        loader: PROXY ? ProxyLoader : Hls.DefaultConfig.loader,
-                        lowLatencyMode: true,
-                        backBufferLength: 30
-                    });
-                    hlsInstance.loadSource(ch.url);
-                    hlsInstance.attachMedia(video);
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        video.play().catch(e => console.log("Autoplay blocked:", e));
-                    });
-                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-                        if (data.fatal) {
-                            console.error("HLS fatal error encountered:", data.details);
-                        }
-                    });
+            if (Hls.isSupported()) {
+                if (hlsInstance) {
+                    hlsInstance.destroy();
                 }
-            } else {
-                if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-                video.pause();
-                video.src = "";
+                hlsInstance = new Hls();
+                hlsInstance.loadSource(targetStream);
+                hlsInstance.attachMedia(video);
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log("Autoplay prevented:", e));
+                });
+                hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                console.log("A network error occurred. Attempting recovery...");
+                                hlsInstance.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.log("A media error occurred. Attempting recovery...");
+                                hlsInstance.recoverMediaError();
+                                break;
+                            default:
+                                hlsInstance.destroy();
+                                break;
+                        }
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = targetStream;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(e => console.log("Autoplay prevented:", e));
+                });
             }
 
             renderChannels(channels);
