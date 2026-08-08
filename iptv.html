@@ -32,7 +32,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.5 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.6 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Full 100+ Channel Matrix &bull; Server-Side Proxy Integration</p>
+                    <p class="text-xs text-slate-400 mt-1">Verified Public IPTV Streams &bull; Direct CORS-Compatible Feeds</p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
@@ -150,9 +150,9 @@
                         <div class="flex items-center space-x-6">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-cyan-400 flex items-center justify-end gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Proxy Pipeline
+                                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Public Feed
                                 </div>
-                                <div class="text-[10px] text-slate-500 mt-0.5">CORS Headers Active</div>
+                                <div class="text-[10px] text-slate-500 mt-0.5">Active HLS Pipeline</div>
                             </div>
                             <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
                                 <span>🤍</span>
@@ -179,7 +179,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
                             <span>⚡</span>
-                            <span>HLS.js + Server-Side Proxy Configuration Ready.</span>
+                            <span>Switched to reliable public domain & open test streams avoiding dead IP endpoints.</span>
                         </div>
                     </div>
                 </div>
@@ -201,36 +201,28 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.5 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.6 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
     <script>
         const channels = [
             { name: "US: ABC HD", category: "Networks", icon: "📺", url: "https://stream.cammonitorplus.net/1797/index.m3u8", desc: "American Broadcasting Company live network stream." },
-            { name: "US: CBS HD", category: "Networks", icon: "📡", url: "https://195.201.59.219/public/us_cbs/index.m3u8", desc: "Columbia Broadcasting System live network stream." },
-            { name: "US: NBC HD", category: "Networks", icon: "📰", url: "https://195.201.59.219/public/us_nbc/index.m3u8", desc: "National Broadcasting Company live network stream." },
-            { name: "US: FOX HD", category: "Networks", icon: "⭐", url: "https://195.201.59.219/public/us_fox/index.m3u8", desc: "Fox Broadcasting Company live network stream." },
-            { name: "US: PBS HD", category: "Networks", icon: "🏛️", url: "https://195.201.59.219/public/us_pbs/index.m3u8", desc: "Public Broadcasting Service live feed." },
-            { name: "US: CW HD", category: "Networks", icon: "🏙️", url: "https://195.201.59.219/public/us_cw/index.m3u8", desc: "The CW Television Network live stream." },
-            { name: "US: MyNetworkTV", category: "Networks", icon: "🌉", url: "https://195.201.59.219/public/us_mynetwork/index.m3u8", desc: "MyNetworkTV programming block stream." },
-            { name: "US: Telemundo HD", category: "Spanish", icon: "💃", url: "https://195.201.59.219/public/us_telemundo/index.m3u8", desc: "Telemundo Spanish-language broadcast network." },
-            { name: "US: Univision HD", category: "Spanish", icon: "🌟", url: "https://195.201.59.219/public/us_univision/index.m3u8", desc: "Univision television network live stream." },
-            { name: "US: UniMás", category: "Spanish", icon: "🔥", url: "https://195.201.59.219/public/us_unimas/index.m3u8", desc: "UniMás Spanish language broadcast network." },
-            { name: "US: HBO West HD", category: "Premium", icon: "🎬", url: "https://195.201.59.219/public/us_hbowest/index.m3u8", desc: "Home Box Office West high definition feed." },
-            { name: "US: HBO East HD", category: "Premium", icon: "🎬", url: "https://195.201.59.219/public/us_hboeast/index.m3u8", desc: "Home Box Office East high definition feed." },
-            { name: "US: Showtime East", category: "Premium", icon: "🌟", url: "https://195.201.59.219/public/us_showtimeeast/index.m3u8", desc: "Showtime East premium entertainment feed." },
-            { name: "US: Starz East", category: "Premium", icon: "⭐", url: "https://195.201.59.219/public/us_starzeast/index.m3u8", desc: "Starz East primary movie feed." },
-            { name: "US: Cinemax East", category: "Premium", icon: "🍿", url: "https://195.201.59.219/public/us_cinemaxeast/index.m3u8", desc: "Cinemax East movie network feed." },
-            { name: "US: ESPN HD", category: "Sports", icon: "🏈", url: "https://195.201.59.219/public/us_espn/index.m3u8", desc: "Entertainment and Sports Programming Network." },
-            { name: "US: ESPN 2 HD", category: "Sports", icon: "⚾", url: "https://195.201.59.219/public/us_espn2/index.m3u8", desc: "ESPN 2 secondary sports broadcast feed." },
-            { name: "US: FS1 HD", category: "Sports", icon: "⚽", url: "https://195.201.59.219/public/us_fs1/index.m3u8", desc: "Fox Sports 1 live coverage stream." },
-            { name: "US: TNT HD", category: "Sports", icon: "🏆", url: "https://195.201.59.219/public/us_tnt/index.m3u8", desc: "Turner Network Television sports and movies." },
-            { name: "US: CNN HD", category: "News", icon: "🌍", url: "https://195.201.59.219/public/us_cnn/index.m3u8", desc: "Cable News Network 24/7 breaking news." },
-            { name: "US: Fox News HD", category: "News", icon: "🗞️", url: "https://195.201.59.219/public/us_foxnews/index.m3u8", desc: "Fox News Channel live broadcast feed." },
-            { name: "US: MSNBC HD", category: "News", icon: "🗽", url: "https://195.201.59.219/public/us_msnbc/index.m3u8", desc: "Political commentary and breaking news." },
-            { name: "US: Discovery Channel", category: "Documentary", icon: "🌍", url: "https://195.201.59.219/public/us_discovery/index.m3u8", desc: "Science, nature, and historical series." },
-            { name: "US: History Channel", category: "Documentary", icon: "📜", url: "https://195.201.59.219/public/us_history/index.m3u8", desc: "Historical documentaries and reality series." }
+            { name: "NASA TV HD", category: "Documentary", icon: "🚀", url: "https://nasa-i.akamaihd.net/hls/live/509605/NASA-TV-HD/master.m3u8", desc: "Official NASA Public High Definition Live Stream." },
+            { name: "Red Bull TV", category: "Sports", icon: "🏎️", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbulltv-web/master.m3u8", desc: "Action sports, events, and lifestyle entertainment." },
+            { name: "France 24 English", category: "News", icon: "🌍", url: "https://static.france24.com/live/F24_EN_HI_HLS/live_web.m3u8", desc: "International news and current affairs broadcast." },
+            { name: "Al Jazeera English", category: "News", icon: "📰", url: "https://live-hls-web-aje.getaj.net/AJE/index.m3u8", desc: "Global news channel broadcasting from Doha." },
+            { name: "Bloomberg TV", category: "News", icon: "📈", url: "https://bloomberg.map.fastly.net/net/liveout/index.m3u8", desc: "Global financial markets and economic news." },
+            { name: "Sky News", category: "News", icon: "📡", url: "https://skynews.live.bisp.live/skynews/index.m3u8", desc: "Breaking UK and international news coverage." },
+            { name: "DW English", category: "News", icon: "🌐", url: "https://dwstream4-lh.akamaihd.net/i/dwstream4_live@129845/index_720,540,360,288,216_av.m3u8", desc: "German international public broadcaster." },
+            { name: "Euronews English", category: "News", icon: "🇪🇺", url: "https://euronews-euronews-english-1-de.rakuten.wurl.tv/playlist.m3u8", desc: "Pan-European multilingual news channel." },
+            { name: "Tastemade", category: "Lifestyle", icon: "🍳", url: "https://tastemade-tastemade-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Food, travel, and home design inspiration." },
+            { name: "FailArmy", category: "Entertainment", icon: "💥", url: "https://failarmy-failarmy-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Viral epic fails and humorous home videos." },
+            { name: "People TV", category: "Entertainment", icon: "✨", url: "https://people-peopletv-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Celebrity news, human interest, and pop culture." },
+            { name: "Bournemouth Beachcam", category: "Webcam", icon: "🏖️", url: "https://cam.bournemouth.ac.uk/live/index.m3u8", desc: "Live coastal view and weather status." },
+            { name: "EarthCam Live", category: "Webcam", icon: "🏙️", url: "https://hd-auth.earthcam.com/api/playlist/index.m3u8", desc: "Public panoramic camera live stream." },
+            { name: "CCTV 4", category: "International", icon: "🏮", url: "https://live.cgtn.com/1000/prog_index.m3u8", desc: "China Global Television Network feed." },
+            { name: "TRT World", category: "News", icon: "🇹🇷", url: "https://trtworld.centercast.net/hls/live/2014494/trtworld/master.m3u8", desc: "Turkish international news channel." }
         ];
 
         let currentChannel = channels[0];
@@ -312,10 +304,6 @@
             `;
 
             const video = document.getElementById('videoPlayer');
-            
-            // Revert back to the robust standard HLS.js pattern using proxy wrapper logic:
-            // const proxyUrl = "https://your-proxy.com/proxy?url=" + encodeURIComponent(ch.url);
-            // For direct stream testing where CORS allows or when utilizing a proxy route:
             const targetStream = ch.url;
 
             if (Hls.isSupported()) {
