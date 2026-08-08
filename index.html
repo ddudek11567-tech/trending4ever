@@ -130,15 +130,11 @@
         .video-block { margin-bottom: 28px; text-align: center; background: rgba(12, 12, 17, 0.6); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; padding: 18px; }
         .video-block iframe { width: 100%; max-width: 820px; height: 460px; border: none; border-radius: 8px; display:block; margin:0 auto; }
         @media (max-width: 700px){ .video-block iframe{ height: 240px; } }
-
-        /* Player overlay */
-        .player .controls, .player .titlebar{ transition: opacity .3s; }
-        .player:hover .controls, .player:hover .titlebar{ opacity:1; }
     </style>
 </head>
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-    <!-- Sidebar Navigation — QUANTUM DESIGN -->
+    <!-- Sidebar Navigation -->
     <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
         <div class="flex flex-col flex-1 min-h-0">
             <!-- Logo Header -->
@@ -167,9 +163,9 @@
                 <button onclick="switchPage('movies')" id="navMovies" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
-                        <span>Latest Movies</span>
+                        <span>Aether Cinema</span>
                     </div>
-                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                    <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">CURATED</span>
                 </button>
 
                 <button onclick="switchPage('archive')" id="navArchive" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
@@ -232,12 +228,12 @@
                         <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Now</span>
                     </div>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-1">Live Television (Test Streams)</h2>
-                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with guaranteed working test feeds and automatic recovery</p>
+                    <h2 class="text-3xl font-black text-white tracking-tight mt-1">Live Television Streams</h2>
+                    <p class="text-xs text-slate-400 mt-1">Direct stream routing with verified working test feeds and automatic recovery</p>
                 </div>
                 <div class="flex items-center">
                     <div class="relative">
-                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search test channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all placeholder:text-slate-500">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all placeholder:text-slate-500">
                         <span class="absolute left-3 top-3 text-slate-500 text-xs">🔍</span>
                     </div>
                 </div>
@@ -270,14 +266,14 @@
                                 🌟
                             </div>
                             <div class="min-w-0">
-                                <h3 id="currentChannelName" class="text-base font-bold text-white truncate">Select a Test Channel</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5 truncate">Choose a test stream from below</p>
+                                <h3 id="currentChannelName" class="text-base font-bold text-white truncate">Select a Channel</h3>
+                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5 truncate">Choose a stream from below</p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-4 shrink-0">
                             <div class="text-right hidden sm:block">
                                 <div class="text-xs font-bold text-emerald-400 flex items-center justify-end gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Stable Test Feed Active
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Stable Feed Active
                                 </div>
                                 <div class="text-[10px] text-slate-500 mt-0.5">⚡ Verified Link</div>
                             </div>
@@ -296,7 +292,7 @@
                             <span class="text-sm">📅</span>
                             <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Program Guide</span>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-1 rounded bg-pink-950 text-pink-300 border border-pink-800">TEST</span>
+                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-1 rounded bg-pink-950 text-pink-300 border border-pink-800">LIVE</span>
                     </div>
                     <div id="epgList" class="space-y-2.5 custom-scrollbar pr-1">
                         <!-- Populated dynamically -->
@@ -304,7 +300,7 @@
                     <div class="mt-3 pt-3 border-t border-slate-800/60">
                         <div class="bg-pink-950/20 border border-pink-900/30 rounded-xl p-3 text-[11px] leading-relaxed text-pink-300 flex items-start space-x-2">
                             <span class="mt-0.5">💡</span>
-                            <span>Using verified reliable test streams from Mux, Apple, and standard HLS test sources.</span>
+                            <span>Direct stream routing with multi-source fallback support.</span>
                         </div>
                     </div>
                 </div>
@@ -313,8 +309,8 @@
             <!-- Channel Selector Strip (Scrollable) -->
             <div class="mt-8 shrink-0 clear-both relative z-10 bg-[#060913] pt-2">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Working Test Channels (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Scroll or select any test feed below</div>
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Available Channels (<span id="channelCount">0</span>)</h3>
+                    <div class="text-[11px] text-slate-500">Scroll or select any feed below</div>
                 </div>
                 <div id="channelsGrid" class="flex gap-3 overflow-x-auto custom-scrollbar pb-3 snap-x">
                     <!-- Populated dynamically -->
@@ -322,7 +318,7 @@
             </div>
         </div>
 
-        <!-- PAGE 2: AETHER PRIVATE CINEMA (MOVIES) -->
+        <!-- PAGE 2: AETHER PRIVATE CINEMA (CURATED MOVIE SUITE) -->
         <div id="pageMovies" class="flex-1 flex flex-col overflow-y-auto custom-scrollbar hidden aether-cinema-root">
             <div class="vignette"></div>
             <div class="grain"></div>
@@ -360,7 +356,7 @@
                 ✨
             </div>
             <h2 id="genericTitle" class="text-2xl font-bold text-white mb-2">Section Under Quantum Upgrade</h2>
-            <p class="text-sm text-slate-400 max-w-md">This module is being upgraded to the Quantum streaming fabric. Please return to Live IPTV or Latest Movies.</p>
+            <p class="text-sm text-slate-400 max-w-md">This module is active in the Nexus Quantum streaming fabric. Please return to Live IPTV or Aether Cinema.</p>
             <button onclick="switchPage('iptv')" class="mt-6 px-6 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-bold shadow-lg hover:bg-pink-500 transition-all">
                 Return to Live IPTV
             </button>
@@ -372,7 +368,7 @@
         </footer>
     </main>
 
-    <!-- Aether Video Player Overlay Modal — Supports both native video and YouTube iframe -->
+    <!-- Aether Video Player Overlay Modal -->
     <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
         <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)] overflow-hidden" id="stage">
             <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
@@ -415,17 +411,15 @@
         </div>
     </div>
 
-    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[10px] z-[120] bg-[rgba(18,18,24,.92)] border border-[rgba(244,241,236,.15)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px] text-white shadow-xl" id="toast"></div>
-
     <!-- Application Script Engine -->
     <script>
         const channels = [
-            { name: "Test Stream - Big Buck Bunny (1080p)", category: "Test Streams", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", now: "Open Source Animation Feature", next: "Continuous Test Loop", icon: "🐰" },
-            { name: "Test Stream - Tears of Steel (Multi-Bitrate)", category: "Test Streams", res: "1080p", format: "m3u8", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Sci-Fi Short Test Stream", next: "Continuation Test", icon: "🤖" },
-            { name: "Test Stream - Apple Advanced HLS", category: "Test Streams", res: "720p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_adv_example_hevc/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Advanced HEVC Matrix Test", next: "BipBop Test Sequence", icon: "🍏" },
-            { name: "Test Stream - Apple Basic HLS", category: "Test Streams", res: "480p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic 4x3 Test Stream", next: "Standard Variant Loop", icon: "📺" },
-            { name: "Test Stream - Sintel Open Movie", category: "Test Streams", res: "1080p", format: "m3u8", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blender Foundation Animation", next: "Sintel Epic Journey", icon: "🐉" },
-            { name: "Test Stream - DASH MPD Stream", category: "Test Streams", res: "1080p", format: "mpd", url: "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "DASH Protocol Test Stream", next: "Adaptive Bitrate Feed", icon: "⚡" }
+            { name: "Big Buck Bunny (1080p)", category: "Animation & Test", res: "1080p", format: "m3u8", url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", fallbackUrl: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", now: "Open Source Animation Feature", next: "Continuous Test Loop", icon: "🐰" },
+            { name: "Tears of Steel (Multi-Bitrate)", category: "Sci-Fi / Action", res: "1080p", format: "m3u8", url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Sci-Fi Short Test Stream", next: "Continuation Test", icon: "🤖" },
+            { name: "Apple Advanced HEVC Stream", category: "High Efficiency", res: "720p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_adv_example_hevc/master.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Advanced HEVC Matrix Test", next: "BipBop Test Sequence", icon: "🍏" },
+            { name: "Apple Basic 4x3 Stream", category: "Classic Feed", res: "480p", format: "m3u8", url: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Classic 4x3 Test Stream", next: "Standard Variant Loop", icon: "📺" },
+            { name: "Sintel Open Movie", category: "Blender Foundation", res: "1080p", format: "m3u8", url: "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "Blender Foundation Animation", next: "Sintel Epic Journey", icon: "🐉" },
+            { name: "DASH Protocol Stream", category: "Adaptive Bitrate", res: "1080p", format: "mpd", url: "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd", fallbackUrl: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", now: "DASH Protocol Test Stream", next: "Adaptive Bitrate Feed", icon: "⚡" }
         ];
         let currentChannel = channels[0];
         let hlsInstance = null;
@@ -587,8 +581,8 @@
             const tag=document.getElementById('epgChannelTag');
             if(tag) tag.innerText = channel.name.toUpperCase();
             const schedule = [
-                { time: "18:00", show: channel.now || "Live Test Stream Presentation", live: true },
-                { time: "20:00", show: channel.next || "Upcoming Stream Loop", live: false }
+                { time: "18:00", show: channel.now || "Live Stream Feed", live: true },
+                { time: "20:00", show: channel.next || "Upcoming Loop Sequence", live: false }
             ];
             schedule.forEach(slot => {
                 const item = document.createElement('div');
@@ -643,17 +637,17 @@
                 });
             } catch(err) {
                 console.error("Failed to load Archive.org items:", err);
-                if(loading) loading.innerText="Failed to load Archive.org catalog — please check connection or try again later.";
-                container.innerHTML += '<div class="text-center text-amber-300 text-xs py-4">Archive.org is currently unreachable. The rest of the site remains fully functional.</div>';
+                if(loading) loading.innerText="Failed to load Archive.org catalog — please check connection.";
+                container.innerHTML += '<div class="text-center text-amber-300 text-xs py-4">Archive.org is currently unreachable. The rest of the platform remains fully functional.</div>';
             }
         }
 
         /* ==================== AETHER CINEMA ENGINE ==================== */
         function initAetherCinema() {
             const FILMS=[
-                {id:1,title:"The Terminator",year:1984,rating:7.0,match:85,duration:"1h 10m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film1a/1920/1080",poster:"https://picsum.photos/seed/film1b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Terminator%201984%20trailer",quality:"SD",progress:0.00,cats:['continue', 'trending'],synopsis:"An action classic from 1984."},
-                {id:2,title:"Aliens",year:1986,rating:7.1,match:86,duration:"2h 17m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film2a/1920/1080",poster:"https://picsum.photos/seed/film2b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Aliens%201986%20trailer",quality:"HD",progress:0.25,cats:['continue', 'new', 'trending'],synopsis:"An action classic from 1986."},
-                {id:3,title:"Die Hard",year:1988,rating:7.2,match:87,duration:"3h 24m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film3a/1920/1080",poster:"https://picsum.photos/seed/film3b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Die%20Hard%201988%20trailer",quality:"HD",progress:0.50,cats:['continue', 'new', 'trending'],synopsis:"An action classic from 1988."}
+                {id:1,title:"The Terminator",year:1984,rating:7.0,match:85,duration:"1h 10m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film1a/1920/1080",poster:"https://picsum.photos/seed/film1b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=The%20Terminator%201984%20trailer",quality:"SD",synopsis:"An action classic from 1984."},
+                {id:2,title:"Aliens",year:1986,rating:7.1,match:86,duration:"2h 17m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film2a/1920/1080",poster:"https://picsum.photos/seed/film2b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Aliens%201986%20trailer",quality:"HD",synopsis:"An action classic from 1986."},
+                {id:3,title:"Die Hard",year:1988,rating:7.2,match:87,duration:"3h 24m",genres:["Action"],accent:"#c0392b",rgb:"200,57,43",backdrop:"https://picsum.photos/seed/film3a/1920/1080",poster:"https://picsum.photos/seed/film3b/600/340",video:"https://www.youtube.com/embed?autoplay=1&listType=search&list=Die%20Hard%201988%20trailer",quality:"HD",synopsis:"An action classic from 1988."}
             ];
             const backdropsEl = document.getElementById("backdrops");
             const heroContent = document.getElementById("heroContent");
