@@ -132,12 +132,12 @@
         /* Hero Carousel Section */
         .hero {
             position: relative;
-            height: 520px;
+            height: 480px;
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: flex-end;
-            padding: 60px 40px;
+            padding: 50px 40px;
             transition: background-image 0.8s ease-in-out;
         }
 
@@ -168,7 +168,7 @@
         }
 
         .hero-title {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 800;
             margin-bottom: 12px;
             letter-spacing: 0.5px;
@@ -178,7 +178,7 @@
             font-size: 14px;
             color: var(--text-muted);
             line-height: 1.5;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .hero-buttons {
@@ -218,7 +218,7 @@
         .carousel-dots {
             position: absolute;
             right: 40px;
-            bottom: 60px;
+            bottom: 40px;
             z-index: 3;
             display: flex;
             gap: 8px;
@@ -237,27 +237,30 @@
             background-color: var(--text-main);
         }
 
-        /* Video Player Section */
+        /* Video Player Section (Hidden by default) */
         .player-section {
-            padding: 30px 40px;
-            display: flex;
+            display: none;
+            padding: 25px 40px;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .player-section.active {
+            display: flex;
         }
 
         .player-section h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
+            font-size: 15px;
+            margin-bottom: 12px;
             color: #e50914;
+            font-weight: 600;
         }
 
         video {
             width: 100%;
-            max-width: 900px;
-            max-height: 500px;
+            max-width: 850px;
+            max-height: 450px;
             background: #000;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -265,13 +268,13 @@
 
         /* Content Rows Section */
         .content-section {
-            padding: 30px 40px 50px 40px;
+            padding: 20px 40px 40px 40px;
         }
 
         .section-title {
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: var(--text-main);
         }
 
@@ -291,7 +294,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 220px;
+            height: 200px;
             border: 1px solid rgba(255, 255, 255, 0.03);
             cursor: pointer;
             transition: transform 0.2s, border-color 0.2s;
@@ -383,9 +386,9 @@
             </div>
         </div>
 
-        <!-- Integrated Video Player Section -->
-        <div class="player-section">
-            <h2 id="now-playing">Select a movie from the hero banner or cards below</h2>
+        <!-- Integrated Video Player Section (Hidden initially) -->
+        <div class="player-section" id="playerSection">
+            <h2 id="now-playing">Select a movie from the hero banner or library cards below</h2>
             <video id="videoPlayer" controls>
                 Your browser does not support the video tag.
             </video>
@@ -457,8 +460,7 @@
             "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop"
         ];
 
         // Hero carousel options
@@ -531,6 +533,10 @@
         }
 
         function playMedia(url, title) {
+            // Reveal and populate the player section
+            const playerSection = document.getElementById('playerSection');
+            playerSection.classList.add('active');
+
             document.getElementById('now-playing').innerText = "Now Playing: " + title;
             var player = document.getElementById('videoPlayer');
             player.src = url;
@@ -538,7 +544,7 @@
             player.play();
             
             // Smoothly scroll down to the player section
-            document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
+            playerSection.scrollIntoView({ behavior: 'smooth' });
         }
 
         function updateHero(index) {
