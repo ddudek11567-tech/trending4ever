@@ -29,13 +29,12 @@
             overflow: hidden;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
+        /* App Sidebar */
+        .app-sidebar {
+            width: 320px;
             background-color: var(--sidebar-color);
             display: flex;
             flex-direction: column;
-            padding: 20px 0;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 10;
         }
@@ -44,34 +43,44 @@
             font-size: 22px;
             font-weight: bold;
             color: var(--text-main);
-            padding: 0 20px 20px 20px;
+            padding: 20px;
             letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-area span {
             color: var(--accent-red);
         }
 
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .sidebar-library {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
         }
 
-        .nav-item {
-            padding: 12px 20px;
-            color: var(--text-muted);
-            text-decoration: none;
+        .sidebar-library h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #e50914;
             font-size: 14px;
-            transition: all 0.2s ease;
-            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(139, 0, 0, 0.2);
-            color: var(--text-main);
-            border-left: 4px solid var(--accent-red);
+        .movie-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #161e2e;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            word-break: break-word;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .movie-item:hover {
+            background: rgba(139, 0, 0, 0.3);
         }
 
         /* Main Content Wrapper */
@@ -90,7 +99,7 @@
             padding: 20px 40px;
             background: linear-gradient(to bottom, rgba(11,15,25,0.9), transparent);
             position: absolute;
-            width: calc(100% - 220px);
+            width: calc(100% - 320px);
             z-index: 5;
         }
 
@@ -132,12 +141,12 @@
         /* Hero Carousel Section */
         .hero {
             position: relative;
-            height: 550px;
+            height: 480px;
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: flex-end;
-            padding: 60px 40px;
+            padding: 50px 40px;
             transition: background-image 0.8s ease-in-out;
         }
 
@@ -155,7 +164,7 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 600px;
+            max-width: 650px;
         }
 
         .hero-tag {
@@ -168,17 +177,17 @@
         }
 
         .hero-title {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 800;
             margin-bottom: 12px;
             letter-spacing: 0.5px;
         }
 
         .hero-desc {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
             line-height: 1.5;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .hero-buttons {
@@ -218,7 +227,7 @@
         .carousel-dots {
             position: absolute;
             right: 40px;
-            bottom: 60px;
+            bottom: 40px;
             z-index: 3;
             display: flex;
             gap: 8px;
@@ -237,7 +246,31 @@
             background-color: var(--text-main);
         }
 
-        /* Content Rows Section */
+        /* Video Player Section */
+        .player-section {
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(0,0,0,0.2);
+        }
+
+        .player-section h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #e50914;
+        }
+
+        video {
+            width: 100%;
+            max-width: 900px;
+            max-height: 500px;
+            background: #000;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Category Rows Section */
         .content-section {
             padding: 20px 40px 40px 40px;
         }
@@ -265,7 +298,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 200px;
+            height: 180px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
@@ -277,33 +310,32 @@
         }
 
         .card-info {
-            padding: 12px;
+            padding: 10px;
         }
 
         .card-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .card-genre {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
+    <!-- Sidebar with Dynamic Movie Archive List -->
+    <div class="app-sidebar">
         <div class="logo-area">NEXUS<span>TV</span></div>
-        <ul class="nav-menu">
-            <a href="#" class="nav-item">Live IPTV</a>
-            <a href="#" class="nav-item active">Latest Movies</a>
-            <a href="#" class="nav-item">Archive.org</a>
-            <a href="#" class="nav-item">Search</a>
-            <a href="#" class="nav-item">My List</a>
-        </ul>
+        <div class="sidebar-library">
+            <h3>Library Archive</h3>
+            <div id="list">
+                <!-- Archive movie items populated dynamically -->
+            </div>
+        </div>
     </div>
 
     <!-- Main Container -->
@@ -332,8 +364,8 @@
                 <h1 class="hero-title" id="heroTitle">The Expanse</h1>
                 <p class="hero-desc" id="heroDesc">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="playCurrentMovie()">▶ Play Film</button>
-                    <button class="btn btn-secondary" onclick="addCurrentMovie()">+ Add to List</button>
+                    <button class="btn btn-primary" onclick="playCurrentHeroMovie()">▶ Play Film</button>
+                    <button class="btn btn-secondary" onclick="addCurrentHeroMovie()">+ Add to List</button>
                 </div>
             </div>
             
@@ -347,7 +379,15 @@
             </div>
         </div>
 
-        <!-- Content Rows -->
+        <!-- Integrated Video Player Section -->
+        <div class="player-section">
+            <h2 id="now-playing">Select a movie from the left archive or hero banner</h2>
+            <video id="videoPlayer" controls>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Recommendation Rows -->
         <div class="content-section">
             <div class="section-title"><span>Nexus</span> TV shows we think you'll like</div>
             <div class="card-row">
@@ -385,54 +425,130 @@
     </div>
 
     <script>
-        // Array of 5 movies to cycle through in the upper hero section
+        // Full verified list of media URLs mapping to your archive
+        const mediaLinks = [
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Coherence.2013.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Batman.V.Superman.Dawn.Of.Justice.2016.1080p.BluRay.x264-[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Man.of.Steel.2013.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Zack.Snyders.Justice.League.2021.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Deja.Vu.2006.720p.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.One.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dunkirk.2017.1080p.BluRay.x264-[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Edge.of.Tomorrow.2014.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Everything.Everywhere.All.At.Once.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/F1 The Movie 2025 INTERNAL 1080p 10bit WEBRip 2CH X265 HEVC-PSA.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Fight.Club.1999.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Geostorm.2017.1080p.WEBRip.DDP5.1.x265.10bit-GalaxyRG265.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gladiator.2000.1080p.BluRay.DDP5.1.x265.10bit-GalaxyRG265.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gone.Girl.2014.720p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gravity.2013.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Hereditary.2018.1080p.WEBRip.x264-[YTS.AM].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Insidious.2010.1080p.BrRip.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.2014.1080p.BluRay.x264-[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.2.2017.1080p.BluRay.x264-[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.4.2023.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Joker.2019.1080p.WEBRip.x264-[YTS.LT].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Ant-Man.2015.1080p.BluRay.x264.[YTS.AG].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Avengers.Endgame.2019.1080p.WEBRip.x264-[YTS.LT].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Deadpool.Wolverine.2024.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Memento.2000.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Oppenheimer.2023.1080p.BluRay.x265.10bit.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Tenet.2020.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4",
+            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
+        ];
+
+        // 5 Auto-Scrolling Featured Movies mapped directly to actual working stream items where available
         const heroMovies = [
             {
                 tag: "Featured Original",
-                title: "The Expanse",
-                desc: "A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')"
+                title: "Interstellar",
+                desc: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft to find a new planet for humans.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')",
+                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4"
             },
             {
                 tag: "Trending Now",
                 title: "Blade Runner 2049",
-                desc: "A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, who's been missing for thirty years.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop')"
+                desc: "A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, missing for thirty years.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop')",
+                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4"
             },
             {
                 tag: "Critically Acclaimed",
-                title: "Interstellar",
-                desc: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')"
+                title: "Dune: Part Two",
+                desc: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')",
+                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
             },
             {
                 tag: "Nexus Exclusive",
-                title: "The Terminator",
-                desc: "A human soldier is sent from 2029 to 1984 to stop an nearly indestructible cyborg killing machine, programmed to execute a young woman whose unborn son is the key to humanity's future.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop')"
+                title: "The Batman",
+                desc: "When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop')",
+                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
             },
             {
                 tag: "Fan Favorite",
-                title: "Mad Max: Fury Road",
-                desc: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the help of a group of female prisoners, a psychotic worshiper, and a drifter named Max.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop')"
+                title: "Inception",
+                desc: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop')",
+                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4"
             }
         ];
 
         let currentIndex = 0;
         let slideInterval;
 
+        function cleanTitle(url) {
+            let filename = url.split('/').pop();
+            return filename.replace('.mp4', '').replace(/\./g, ' ');
+        }
+
+        function initList() {
+            const listContainer = document.getElementById('list');
+            mediaLinks.forEach(link => {
+                let title = cleanTitle(link);
+                let itemDiv = document.createElement('div');
+                itemDiv.className = 'movie-item';
+                itemDiv.innerText = title;
+                itemDiv.onclick = () => playMedia(link, title);
+                listContainer.appendChild(itemDiv);
+            });
+        }
+
+        function playMedia(url, title) {
+            document.getElementById('now-playing').innerText = title;
+            var player = document.getElementById('videoPlayer');
+            player.src = url;
+            player.load();
+            player.play();
+        }
+
         function updateHero(index) {
             currentIndex = index;
             const movie = heroMovies[currentIndex];
             
-            // Update content elements
             document.getElementById('heroTag').innerText = movie.tag;
             document.getElementById('heroTitle').innerText = movie.title;
             document.getElementById('heroDesc').innerText = movie.desc;
             document.getElementById('heroBanner').style.backgroundImage = movie.bg;
 
-            // Update dots
             const dots = document.querySelectorAll('.dot');
             dots.forEach((dot, i) => {
                 if (i === currentIndex) {
@@ -455,21 +571,23 @@
 
         function resetTimer() {
             clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, 6000); // Auto scrolls every 6 seconds
+            slideInterval = setInterval(nextSlide, 6000);
         }
 
-        function playCurrentMovie() {
-            const activeMovie = heroMovies[currentIndex].title;
-            alert(`Playing movie: ${activeMovie}`);
+        function playCurrentHeroMovie() {
+            const movie = heroMovies[currentIndex];
+            playMedia(movie.url, movie.title);
         }
 
-        function addCurrentMovie() {
-            const activeMovie = heroMovies[currentIndex].title;
-            alert(`Added "${activeMovie}" to your List!`);
+        function addCurrentHeroMovie() {
+            const movie = heroMovies[currentIndex];
+            alert(`Added "${movie.title}" to your List!`);
         }
 
-        // Initialize auto-scroll timer on load
-        slideInterval = setInterval(nextSlide, 6000);
+        window.onload = () => {
+            initList();
+            slideInterval = setInterval(nextSlide, 6000);
+        };
     </script>
 </body>
 </html>
