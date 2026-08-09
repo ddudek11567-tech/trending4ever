@@ -87,7 +87,64 @@
             overflow: hidden;
         }
 
-        /* Fixed Top Hero Banner */
+        /* Prime Video Top Navigation Bar */
+        .prime-top-nav {
+            height: 60px;
+            background-color: #0b0f19;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .prime-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .prime-logo {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #00a8e1;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+        }
+
+        .prime-menu {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+
+        .prime-menu li a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .prime-menu li.active a, .prime-menu li a:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .prime-right-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        /* Fixed Top Hero Banner (Prime Style) */
         .hero-banner-section {
             flex-shrink: 0;
             width: 100%;
@@ -109,7 +166,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #38bdf8;
+            color: #00a8e1;
             margin-bottom: 8px;
             font-weight: 700;
         }
@@ -183,6 +240,14 @@
             font-weight: 700;
             margin-bottom: 16px;
             color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-title span {
+            color: #00a8e1;
+            font-weight: 600;
         }
 
         .movie-row-cards {
@@ -253,8 +318,8 @@
             <div>
                 <div class="brand">NEXUS <span>TV</span></div>
                 <ul class="nav-links">
-                    <li><a href="#">Live IPTV</a></li>
-                    <li class="active"><a href="#">Latest Movies</a></li>
+                    <li><a href="movies.html">Live IPTV</a></li>
+                    <li class="active"><a href="movies.html">Latest Movies</a></li>
                     <li><a href="#">Archive.org</a></li>
                     <li><a href="#">Search</a></li>
                     <li><a href="#">My List</a></li>
@@ -265,6 +330,24 @@
 
         <!-- Main Workspace -->
         <main class="main-content">
+            <!-- Prime Video Top Sub-Navigation Bar -->
+            <nav class="prime-top-nav">
+                <div class="prime-logo-area">
+                    <div class="prime-logo">prime video</div>
+                    <ul class="prime-menu">
+                        <li><a href="#">Home</a></li>
+                        <li class="active"><a href="#">Prime</a></li>
+                        <li><a href="#">Store</a></li>
+                        <li><a href="#">Channels</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">My Stuff</a></li>
+                    </ul>
+                </div>
+                <div class="prime-right-nav">
+                    ⚙️
+                </div>
+            </nav>
+
             <!-- Fixed Top Hero Banner -->
             <section class="hero-banner-section">
                 <div class="hero-content">
@@ -286,7 +369,7 @@
             <section class="scrollable-rows-section">
                 <!-- Row 1 -->
                 <div class="row-category">
-                    <h2 class="row-title">TV shows we think you'll like</h2>
+                    <h2 class="row-title"><span>prime</span> TV shows we think you'll like</h2>
                     <div class="movie-row-cards">
                         <div class="movie-card">
                             <div class="movie-poster"></div>
@@ -328,7 +411,7 @@
 
                 <!-- Row 2 -->
                 <div class="row-category">
-                    <h2 class="row-title">Action &amp; Adventure Movies (1976–1989)</h2>
+                    <h2 class="row-title"><span>prime</span> Action &amp; Adventure Movies (1976–1989)</h2>
                     <div class="movie-row-cards">
                         <div class="movie-card">
                             <div class="movie-poster"></div>
