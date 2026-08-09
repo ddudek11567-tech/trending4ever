@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV — Live IPTV</title>
+    <title>NEXUS TV — Classic Guide IPTV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
@@ -15,53 +15,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(6, 9, 19, 0.5); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 9999px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(30, 58, 138, 0.6); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(37, 99, 235, 0.8); }
+        .guide-grid-bg {
+            background: linear-gradient(135deg, #09132b 0%, #030712 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+        .cable-glow {
+            box-shadow: 0 0 25px rgba(14, 116, 144, 0.25);
+        }
     </style>
 </head>
-<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
+<body class="min-h-screen bg-[#030712] text-slate-100 flex font-sans selection:bg-cyan-600 selection:text-white overflow-hidden">
 
     <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen sticky top-0">
+    <aside class="w-64 bg-[#060b19] border-r border-cyan-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
         <div>
             <!-- Logo Header -->
-            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
-                    ⚡
+            <div class="p-6 flex items-center space-x-3 border-b border-cyan-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-xl">
+                    📺
                 </div>
                 <div>
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-pink-500">TV</span>
+                        NEXUS<span class="text-cyan-400">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v6.0 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.2 &bull; GUIDE</span>
                 </div>
             </div>
 
             <!-- Navigation Links -->
             <nav class="p-4 space-y-1.5">
-                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-red-600/20 to-purple-600/10 text-red-400 border border-red-500/30 shadow-lg shadow-red-950/40">
+                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
                     <div class="flex items-center space-x-3">
-                        <span class="text-base">📡</span>
-                        <span>Live IPTV</span>
+                        <span class="text-base">📅</span>
+                        <span>Interactive Guide</span>
                     </div>
-                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
                 </a>
             </nav>
         </div>
 
         <!-- Sidebar Footer / Profile -->
-        <div class="p-4 border-t border-slate-800/40 space-y-3">
-            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+        <div class="p-4 border-t border-cyan-950/40 space-y-3">
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-[#091022] border border-cyan-950/80">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white text-sm shadow">
                     DD
                 </div>
                 <div class="overflow-hidden flex-1">
                     <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
-                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                    <div class="text-[10px] text-cyan-400 font-medium flex items-center gap-1">
                         <span>★</span> Lead Architect
                     </div>
                 </div>
@@ -69,365 +76,47 @@
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+    <!-- Main Content Area: Expanded Upper Section & Reduced Guide -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden guide-grid-bg">
         
-        <!-- Fixed Sticky Top Header & Player Section Wrapper -->
-        <div class="sticky top-0 z-25 bg-[#060913]/95 backdrop-blur-md px-8 pt-6 pb-4 border-b border-slate-800/60 shadow-xl">
-            <!-- Top Bar Header -->
-            <div class="flex items-center justify-between mb-4">
+        <!-- Top Section: Expanded Metadata Preview & PiP Video Player (~55% Screen Height) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 p-6 border-b border-cyan-950/60 bg-[#060b19]/95 backdrop-blur-md shadow-2xl shrink-0 h-[54vh]">
+            
+            <!-- Top-Left: Program Metadata Display -->
+            <div class="lg:col-span-6 bg-[#040814] border border-cyan-900/50 rounded-2xl p-6 flex flex-col justify-between cable-glow relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-cyan-600/5 rounded-full blur-3xl pointer-events-none"></div>
                 <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                        <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Master Bank</span>
-                    </div>
-                    <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
-                        <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Compact Player & Status Bar Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <!-- Video Stream Section -->
-                <div class="lg:col-span-2 flex flex-col">
-                    <div id="playerContainer" class="relative bg-black rounded-xl overflow-hidden shadow-2xl border border-slate-800/80 h-[240px] sm:h-[280px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
-                        <video
-                            id="videoPlayer"
-                            class="w-full h-full absolute inset-0 object-contain bg-black"
-                            controls
-                            autoplay
-                            playsinline
-                        ></video>
-                    </div>
-                </div>
-
-                <!-- Active Stream Info & Controls -->
-                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between shadow-xl">
-                    <div class="flex items-center space-x-3">
-                        <div id="activeChannelIcon" class="w-10 h-10 rounded-lg bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-lg shadow-inner shrink-0">
-                            🌟
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2.5">
+                            <span id="guideChannelNumBadge" class="bg-cyan-500 text-slate-950 px-2.5 py-1 rounded text-xs font-black font-mono">01</span>
+                            <span id="guideNetworkName" class="text-xs font-extrabold tracking-wider uppercase text-cyan-400">SELECT A CHANNEL</span>
                         </div>
-                        <div class="overflow-hidden">
-                            <h3 id="currentChannelName" class="text-sm font-bold text-white truncate">Select a Channel</h3>
-                            <p id="currentChannelSub" class="text-[11px] text-slate-400 truncate mt-0.5">Primary Stream Feed</p>
-                        </div>
+                        <div id="guideRatingBadge" class="text-[11px] bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-0.5 rounded font-bold font-mono">TV-PG</div>
                     </div>
-
-                    <!-- Extra Links Bar (Displayed when multiple links exist for a channel) -->
-                    <div id="extraLinksContainer" class="hidden mt-2 pt-2 border-t border-slate-800/60 flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
-                        <!-- Extra stream buttons injected dynamically -->
-                    </div>
-
-                    <div class="mt-3 pt-3 border-t border-slate-800/60 flex items-center justify-between">
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">—</span>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="toggleEmbedMode()" id="modeToggleBtn" class="px-2.5 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-[11px] font-semibold transition-all">
-                                🔄 Embed Mode
-                            </button>
-                            <button onclick="toggleFavorite()" id="favBtn" class="px-3 py-1.5 rounded-lg bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-[11px] font-semibold transition-all">
-                                🤍 Favorite
-                            </button>
-                        </div>
-                    </div>
+                    <h2 id="guideShowTitle" class="text-3xl font-black text-white tracking-tight leading-tight">Interactive Guide Mode</h2>
+                    <div id="guideShowTime" class="text-xs font-semibold text-cyan-300/80 font-mono mt-1.5">Use arrow keys or click grid to preview & play</div>
+                    <p id="guideShowDesc" class="text-sm text-slate-300 mt-3 leading-relaxed line-clamp-3">
+                        Welcome to the modernized 2000s set-top box interface. Select any channel row below to view program schedules and instantly stream live television across the master catalog.
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Scrollable Genre-Categorized Content Rows -->
-        <div class="flex-1 flex flex-col px-8 py-6 overflow-y-auto custom-scrollbar space-y-6">
-            <div class="flex items-center justify-between">
-                <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Master Channel Catalog (<span id="channelCount">0</span> Channels)</h3>
-                <div class="text-[11px] text-slate-500">🟢 Primary Working &bull; 🟡 Multiple Streams Available &bull; 🔴 Offline</div>
-            </div>
-            
-            <!-- Dynamic Category Rows Container -->
-            <div id="genreRowsContainer" class="space-y-6 pb-6">
-                <!-- Populated dynamically by script -->
-            </div>
-        </div>
-
-        <!-- Footer Signature -->
-        <footer class="py-3 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913] shrink-0">
-            NEXUS TV v6.0 Engine &bull; Designed by: Daniel Dudek
-        </footer>
-    </main>
-
-    <script>
-        // Combined Channel List including Bites 1, 2, 3, and 4
-        const channels = [
-            // Bite 1 Channels
-            { name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", working: true, alternates: [] },
-            { name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", working: true, alternates: [] },
-            { name: "Bounce XL", category: "Entertainment", icon: "📺", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-bouncexl-tablo/playlist.m3u8", working: true, alternates: [] },
-            { name: "Brat TV", category: "Entertainment", icon: "⭐", url: "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8", working: true, alternates: [] },
-            { name: "CMT", category: "Music", icon: "🎶", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", working: true, alternates: [] },
-            { name: "Comedy Central", category: "Comedy", icon: "😂", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", working: true, alternates: [] },
-            { name: "Comet", category: "Sci-Fi", icon: "☄️", url: "https://fast-channels.sinclairstoryline.com/COMET/index.m3u8", working: true, alternates: [] },
-            { name: "Crime + Investigation", category: "Documentary", icon: "🔍", url: "http://23.237.104.106:8080/USA_CRIME_INVESTIGATION/index.m3u8", working: true, alternates: [] },
-            { name: "Dateline 24/7", category: "Documentary", icon: "🕵️‍♂️", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007", working: true, alternates: [{ label: "Link 2", url: "https://dz59iptwz5rxs.cloudfront.net/live/master.m3u8" }] },
-            { name: "Disney Channel", category: "Family", icon: "🏰", url: "https://gpuserver3.tier1streams.com/Disney_Channel_HD/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://212.5.144.156/disney/index.m3u8" },
-                { label: "Link 3", url: "http://190.14.10.19:16000/play/a06z/index.m3u8" },
-                { label: "Link 4 (576p)", url: "https://tvsen5.aynaott.com/disney/index.m3u8" }
-            ] },
-            { name: "Disney Junior", category: "Family", icon: "🧸", url: "https://gpuserver3.tier1streams.com/Disney_JR/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://212.5.144.156/disneyjr/index.m3u8" },
-                { label: "Link 3", url: "http://tvsen7.aynascope.net/disneyjr/index.m3u8" },
-                { label: "Link 4", url: "http://tvsen5.aynascope.net/disney/index.m3u8" },
-                { label: "Link 5", url: "http://tvsen7.aynascope.net/disney/index.m3u8" },
-                { label: "Link 6 (720p)", url: "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8" }
-            ] },
-            { name: "Disney XD", category: "Family", icon: "🚀", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", working: true, alternates: [
-                { label: "Link 2 (720p)", url: "http://23.237.104.106:8080/USA_DISNEY_XD/index.m3u8" }
-            ] },
-            { name: "Documentary+", category: "Documentary", icon: "🌍", url: "https://ef79b15c8c7c46c7a9de9d33001dbd07.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-859-DOCUMENTARYPLUS-", working: true, alternates: [] },
-            { name: "Fox West", category: "Networks", icon: "📺", url: "http://stream.cammonitorplus.net/1799/index.m3u8", working: true, alternates: [] },
-            { name: "Fuse", category: "Entertainment", icon: "🎵", url: "https://gpuserver3.tier1streams.com/FUSE/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://23.237.104.106:8080/USA_FUSE/index.m3u8" }
-            ] },
-            { name: "FX", category: "Entertainment", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FX/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://23.237.104.106:8080/USA_FX/index.m3u8" },
-                { label: "Link 3", url: "http://tvsen7.aynascope.net/fx/index.m3u8" },
-                { label: "Link 4", url: "http://40.160.24.52/FX/index.m3u8" }
-            ] },
-            { name: "FXX", category: "Comedy", icon: "💬", url: "https://gpuserver3.tier1streams.com/FXX/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://23.237.104.106:8080/USA_FXX/index.m3u8" },
-                { label: "Link 3 (1080p)", url: "http://40.160.24.52/FXX/index.m3u8" }
-            ] },
-            { name: "Hallmark Movies & More", category: "Movies", icon: "💐", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", working: true, alternates: [] },
-            { name: "History", category: "Documentary", icon: "⏳", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://212.5.144.156:8080/history/index.m3u8" }] },
-            { name: "ION Plus", category: "Entertainment", icon: "⚡", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-ionplus-tablo/playlist.m3u8", working: true, alternates: [{ label: "Link 2 (720p)", url: "http://40.160.24.53/ION_PLUS/index.m3u8" }] },
-            { name: "ION TV", category: "Entertainment", icon: "⚡", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://40.160.24.53/ION_TV/index.m3u8" }] },
-
-            // Bite 2 & Bite 3 Channels
-            { name: "Kaloopy TV", category: "Entertainment", icon: "🌴", url: "https://streamingserver000.viewtv.cloud/VIEWTVNETWORK-KALOOPY/index.m3u8", working: true, alternates: [] },
-            { name: "KPVM Movies!", category: "Movies", icon: "🍿", url: "https://2-fss-2.streamhoster.com/pl_120/206858-4412962-1/playlist.m3u8", working: true, alternates: [] },
-            { name: "Lifetime", category: "Entertainment", icon: "💖", url: "http://40.160.24.53/LIFETIME/index.m3u8", working: true, alternates: [] },
-            { name: "Lifetime Movies", category: "Movies", icon: "🎥", url: "http://23.237.104.106:8080/USA_LMN/index.m3u8", working: true, alternates: [{ label: "Link 2 (720p)", url: "http://40.160.24.53/LMN/index.m3u8" }] },
-            { name: "Magnificent Movies Network", category: "Movies", icon: "🎬", url: "https://mmn1-301f.kxcdn.com/hls/MMN-HLS.m3u8", working: true, alternates: [] },
-            { name: "MeTV", category: "Classic", icon: "📺", url: "http://40.160.24.53/METV/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "https://82934cf9c8696bd2.mediapackage.us-east-1.amazonaws.com/out/v1/23685237ffbb4047a8143ac2166ead44/index.m3u8" }] },
-            { name: "MTV", category: "Music", icon: "🎸", url: "http://40.160.24.53/MTV/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv/index.m3u8" }] },
-            { name: "MTV2", category: "Music", icon: "🎧", url: "http://40.160.24.53/MTV2/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv2/index.m3u8" }] },
-            { name: "MTV Classic", category: "Music", icon: "📼", url: "http://40.160.24.53/MTV_CLASSIC/index.m3u8", working: true, alternates: [] },
-            { name: "MTV Live", category: "Music", icon: "🎤", url: "http://40.160.24.53/MTV_LIVE/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_MTV_LIVE/index.m3u8" }] },
-            { name: "Oxygen", category: "Entertainment", icon: "💎", url: "http://40.160.24.55/OXYGEN/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/oxygen/index.m3u8" }] },
-            { name: "PBS Kids", category: "Family", icon: "🎒", url: "https://livestream.pbskids.org/out/v1/14507d931bbe48a69287e4850e53443c/est.m3u8", working: true, alternates: [] },
-            { name: "PBS Kids Hawaii", category: "Family", icon: "🌺", url: "https://livestream.pbskids.org/out/v1/aa31792fee094b24b09045483f04d150/hast.m3u8", working: true, alternates: [] },
-            { name: "Reelz", category: "Entertainment", icon: "🎞️", url: "http://23.237.104.106:8080/USA_REELZ/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "http://40.160.24.55/REELZ/index.m3u8" }] },
-            { name: "Retro TV", category: "Classic", icon: "📻", url: "https://freecast-lukentvlive.vgcdn.net/out/v1/665e9f91614b43b0a0654e9317f1d9f3/index.m3u8", working: true, alternates: [{ label: "Link 2", url: "https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/retro/index.m3u8" }] },
-            { name: "Smithsonian Channel", category: "Documentary", icon: "🦅", url: "http://40.160.24.55/SMITHSONIAN/index.m3u8", working: true, alternates: [] },
-            { name: "Sony Channel Andes", category: "Entertainment", icon: "🌐", url: "http://177.234.249.178:8888/SONY-TV/index.m3u8", working: true, alternates: [] },
-            { name: "Starz", category: "Movies", icon: "✨", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", working: true, alternates: [] },
-            { name: "Starz West", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_WEST/index.m3u8", working: true, alternates: [] },
-            { name: "Starz Edge", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_EDGE/index.m3u8", working: true, alternates: [] },
-            { name: "Starz Cinema", category: "Movies", icon: "🎟️", url: "http://23.237.104.106:8080/USA_STARZ_CINEMA/index.m3u8", working: true, alternates: [] },
-            { name: "Starz Comedy", category: "Comedy", icon: "🎭", url: "http://23.237.104.106:8080/USA_STARZ_COMEDY/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/STARZ_COMEDY/index.m3u8" }
-            ] },
-            { name: "Starz Encore", category: "Movies", icon: "📽️", url: "http://40.160.24.55/STARZ_ENCORE/index.m3u8", working: true, alternates: [] },
-            { name: "Sundance TV", category: "Movies", icon: "📽️", url: "http://40.160.24.55/SUNDANCE/index.m3u8", working: true, alternates: [] },
-            { name: "SYFY", category: "Sci-Fi", icon: "🛸", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/SYFY/index.m3u8" },
-                { label: "Link 3", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" }
-            ] },
-            { name: "TeenNick", category: "Family", icon: "🛹", url: "https://gpuserver5.tier1streams.com/TEEN_NICK/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/TEEN_NICK/index.m3u8" }
-            ] },
-            { name: "theDove TV", category: "Faith", icon: "🕊️", url: "https://thedovetv.bozztv.com/thedovetv/thedovetv/index.m3u8", working: true, alternates: [] },
-            { name: "TNT Novelas Brazil", category: "Drama", icon: "🌹", url: "http://168.197.104.22:80/TNT_NOVELAS/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://45.162.64.114/TNT_NOVELAS/index.m3u8" },
-                { label: "Link 3", url: "http://177.52.24.163/TNT-NOVELAS-HD/index.m3u8" },
-                { label: "Link 4 (1080p)", url: "http://15.204.246.24:8080/TNTNovelasHD/index.m3u8" },
-                { label: "Link 5 (1080p)", url: "http://190.93.224.42/TNT-NOVELAS/index.m3u8" }
-            ] },
-            { name: "Toon Goggles", category: "Family", icon: "🎨", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=37", working: true, alternates: [{ label: "Link 2", url: "https://d1eg24xrsfr6kv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-b4b1bzxkt1uzo-prod/tg/tg/tg.m3u8" }] },
-            { name: "TV Land", category: "Classic", icon: "🛋️", url: "http://40.160.24.55/TV_LAND/index.m3u8", working: true, alternates: [] },
-
-            // Bite 3 & Bite 4 New Channels & Feeds
-            { name: "Univision", category: "Networks", icon: "🌐", url: "http://200.115.120.1:8000/play/ca106/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://190.197.41.183/Univision/index.m3u8" }
-            ] },
-            { name: "USA Network", category: "Entertainment", icon: "📺", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/USA_NETWORK_WEST/index.m3u8" },
-                { label: "Link 3", url: "https://gpuserver5.tier1streams.com/USA_NETWORK/index.m3u8" }
-            ] },
-            { name: "VH1", category: "Music", icon: "🎶", url: "http://40.160.24.55/VH1/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/VH1_WEST/index.m3u8" }
-            ] },
-            { name: "VICE TV", category: "Documentary", icon: "📰", url: "http://23.237.104.106:8080/USA_VICETV/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.55/VICELAND/index.m3u8" }
-            ] },
-            { name: "ESPN Deportes", category: "Sports", icon: "⚽", url: "https://gpuserver7.tier1streams.com/ESPN_DEPORTES/index.m3u8", working: true, alternates: [] },
-            { name: "UniMas Central", category: "Networks", icon: "📡", url: "http://190.197.41.183/Unimas/mono.m3u8", working: true, alternates: [] },
-            { name: "Comedy TV", category: "Comedy", icon: "🎤", url: "https://gpuserver3.tier1streams.com/COMEDY_TV/index.m3u8", working: true, alternates: [] },
-
-            // New Bite 4 Additions
-            { name: "E! Entertainment", category: "Entertainment", icon: "🌟", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_EAST/index.m3u8", working: true, alternates: [
-                { label: "Link 2 (West)", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_WEST/index.m3u8" }
-            ] },
-            { name: "Flix", category: "Movies", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FLIX/index.m3u8", working: true, alternates: [] },
-            { name: "FXM (FX Movie Channel)", category: "Movies", icon: "🎥", url: "https://gpuserver3.tier1streams.com/FXM/index.m3u8", working: true, alternates: [
-                { label: "Link 2", url: "http://40.160.24.52/FXM/index.m3u8" }
-            ] },
-            { name: "The Cowboy Channel", category: "Lifestyle", icon: "🤠", url: "https://gpuserver3.tier1streams.com/THE_COWBOY_CHANNEL/index.m3u8", working: true, alternates: [] },
-            { name: "Discovery Turbo (MotorTrend)", category: "Documentary", icon: "🏎️", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", working: true, alternates: [] },
-            { name: "MGM+ Drive-In (Epix)", category: "Movies", icon: "🚗", url: "https://gpuserver3.tier1streams.com/EPIX_DRIVE-IN/index.m3u8", working: true, alternates: [] },
-            { name: "We TV", category: "Entertainment", icon: "🍿", url: "http://170.254.17.2:80/WE_TV/index.m3u8", working: true, alternates: [] },
-            { name: "Showtime", category: "Premium", icon: "🛡️", url: "http://40.160.24.55/SHOWTIME/index.m3u8", working: true, alternates: [
-                { label: "Link 2 (West)", url: "http://40.160.24.55/SHOWTIME_WEST/index.m3u8" },
-                { label: "Link 3 (2)", url: "http://40.160.24.55/SHOWTIME_2/index.m3u8" },
-                { label: "Link 4 (Next)", url: "http://40.160.24.55/SHOWTIME_NEXT/index.m3u8" },
-                { label: "Link 5 (Extreme)", url: "http://40.160.24.55/SHOWTIME_EXTREME/index.m3u8" }
-            ] },
-            { name: "Nickelodeon", category: "Family", icon: "🟩", url: "https://gpuserver5.tier1streams.com/NICKELODEON/index.m3u8", working: true, alternates: [] },
-            { name: "Nick Jr.", category: "Family", icon: "👶", url: "https://gpuserver5.tier1streams.com/NICK_JR/index.m3u8", working: true, alternates: [] },
-            { name: "Nicktoons", category: "Family", icon: "🌀", url: "https://gpuserver5.tier1streams.com/NICKTOONS/index.m3u8", working: true, alternates: [] }
-        ];
-
-        let currentChannel = channels[0];
-        let currentActiveUrl = channels[0].url;
-        let hlsInstance = null;
-        let isEmbedMode = false;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            try { document.getElementById('channelCount').innerText = channels.length; } catch (e) {}
-            try { renderGenreRows(channels); } catch (e) {}
-            try { selectChannel(channels[0]); } catch (e) {}
-        });
-
-        function renderGenreRows(list) {
-            const container = document.getElementById('genreRowsContainer');
-            container.innerHTML = '';
-
-            const categories = {};
-            list.forEach(ch => {
-                if (!categories[ch.category]) categories[ch.category] = [];
-                categories[ch.category].push(ch);
-            });
-
-            for (const [category, chs] of Object.entries(categories)) {
-                const section = document.createElement('div');
-                section.className = "space-y-2.5";
                 
-                section.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
-                            ${category} <span class="text-[10px] text-slate-500 font-normal">(${chs.length})</span>
-                        </h4>
+                <div class="pt-4 border-t border-cyan-950/80 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 text-xs text-slate-400">
+                        <span>Audio: <strong class="text-slate-200">Stereo CC</strong></span>
+                        <span>&bull;</span>
+                        <span>Resolution: <strong class="text-slate-200" id="guideResTag">HD 1080p</strong></span>
                     </div>
-                    <div class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2" id="row-${category.replace(/[^a-zA-Z0-9]/g, '')}"></div>
-                `;
-                container.appendChild(section);
+                    <div class="flex items-center space-x-2">
+                        <button onclick="togglePiPMode()" id="pipModeBtn" class="px-3.5 py-1.5 rounded-lg bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/40 text-cyan-300 text-xs font-semibold transition-all shadow">
+                            ⚡ Native Engine
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                const rowGrid = section.querySelector('div[id^="row-"]');
-                chs.forEach(ch => {
-                    const isSelected = currentChannel && currentChannel.name === ch.name;
-                    const card = document.createElement('div');
-                    card.onclick = () => selectChannel(ch);
-                    card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
-                        isSelected
-                            ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white'
-                            : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
-                    }`;
-                    
-                    let statusColorClass = ch.working ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50';
-                    if (ch.alternates && ch.alternates.length > 0) {
-                        statusColorClass = 'bg-amber-400 shadow-amber-400/50';
-                    }
-
-                    card.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl">${ch.icon}</span>
-                            <span class="w-2.5 h-2.5 rounded-full shadow-md ${statusColorClass}" title="${ch.alternates && ch.alternates.length > 0 ? 'Multiple streams available' : (ch.working ? 'Working Stream' : 'Offline')}"></span>
-                        </div>
-                        <div>
-                            <div class="text-xs font-bold truncate">${ch.name}</div>
-                            <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.alternates && ch.alternates.length > 0 ? `${ch.alternates.length + 1} streams` : ch.category}</div>
-                        </div>
-                    `;
-                    rowGrid.appendChild(card);
-                });
-            }
-        }
-
-        function filterChannels(query) {
-            const q = query.toLowerCase();
-            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
-            renderGenreRows(filtered);
-            document.getElementById('channelCount').innerText = filtered.length;
-        }
-
-        function selectChannel(ch) {
-            currentChannel = ch;
-            currentActiveUrl = ch.url; 
-            document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Primary Stream`;
-            document.getElementById('activeChannelIcon').innerText = ch.icon;
-            document.getElementById('epgChannelTag').innerText = ch.name.toUpperCase();
-            
-            renderExtraLinksBar();
-            loadPlayerEngine();
-            renderGenreRows(channels);
-        }
-
-        function switchActiveStream(streamUrl, label) {
-            currentActiveUrl = streamUrl;
-            document.getElementById('currentChannelSub').innerText = `Now viewing: ${currentChannel.category} · ${label}`;
-            loadPlayerEngine();
-        }
-
-        function renderExtraLinksBar() {
-            const container = document.getElementById('extraLinksContainer');
-            container.innerHTML = '';
-
-            if (currentChannel.alternates && currentChannel.alternates.length > 0) {
-                container.classList.remove('hidden');
-
-                const primaryBtn = document.createElement('button');
-                primaryBtn.onclick = () => switchActiveStream(currentChannel.url, 'Primary Stream');
-                primaryBtn.className = `px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
-                    currentActiveUrl === currentChannel.url 
-                        ? 'bg-pink-600 text-white border-pink-400 shadow-md' 
-                        : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
-                }`;
-                primaryBtn.innerText = 'Primary Stream';
-                container.appendChild(primaryBtn);
-
-                currentChannel.alternates.forEach((alt, idx) => {
-                    const altBtn = document.createElement('button');
-                    altBtn.onclick = () => switchActiveStream(alt.url, alt.label);
-                    altBtn.className = `px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
-                        currentActiveUrl === alt.url 
-                            ? 'bg-pink-600 text-white border-pink-400 shadow-md' 
-                            : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
-                    }`;
-                    altBtn.innerText = alt.label;
-                    container.appendChild(altBtn);
-                });
-            } else {
-                container.classList.add('hidden');
-            }
-        }
-
-        function loadPlayerEngine() {
-            const container = document.getElementById('playerContainer');
-            
-            if (isEmbedMode) {
-                container.innerHTML = `
-                    <iframe 
-                        src="${currentActiveUrl}" 
-                        class="w-full h-full absolute inset-0 border-0 bg-black" 
-                        allow="autoplay; fullscreen; encrypted-media" 
-                        playsinline>
-                    </iframe>
-                `;
-            } else {
-                container.innerHTML = `
+            <!-- Top-Right: Enlarged Picture-in-Picture Active Stream Monitor -->
+            <div class="lg:col-span-6 bg-black rounded-2xl overflow-hidden border border-cyan-900/50 shadow-2xl relative flex items-center justify-center group h-full">
+                <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-slate-950">
                     <video
                         id="videoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
@@ -435,51 +124,193 @@
                         autoplay
                         playsinline
                     ></video>
+                </div>
+                <!-- Overlay Stream Banner -->
+                <div class="absolute top-4 left-4 bg-slate-950/85 backdrop-blur-md border border-cyan-500/30 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white flex items-center space-x-2.5 pointer-events-none shadow-lg">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span id="pipChannelName">Live Stream Monitor</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Reduced Interactive Time-Grid Guide (~45% Screen Height) -->
+        <div class="flex-1 flex flex-col p-6 overflow-hidden">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center space-x-3">
+                    <h3 class="text-xs font-extrabold uppercase tracking-widest text-cyan-400 font-mono">GUIDE: Master Channel Catalog (All 30 Channels Programmed)</h3>
+                    <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono" id="currentTimeDisplay">Sun 8/9 3:48 AM</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <input type="text" id="guideSearchInput" oninput="filterGuideChannels(this.value)" placeholder="Search all channels..." class="bg-[#091022] border border-cyan-950 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-56 transition-all font-mono">
+                </div>
+            </div>
+
+            <!-- Cable Box Styled Grid Container -->
+            <div class="flex-1 bg-[#050a16] border border-cyan-950/80 rounded-2xl overflow-hidden flex flex-col shadow-2xl">
+                <!-- Timeline Header Row -->
+                <div class="grid grid-cols-12 bg-[#091228] border-b border-cyan-950 text-[11px] font-bold font-mono text-cyan-300 text-center py-2.5 shrink-0 select-none">
+                    <div class="col-span-3 px-4 text-left border-r border-cyan-950/60">CHANNEL / STATION</div>
+                    <div class="col-span-2 border-r border-cyan-950/60">3:00 AM</div>
+                    <div class="col-span-2 border-r border-cyan-950/60 text-cyan-400 bg-cyan-950/30">3:48 AM (NOW)</div>
+                    <div class="col-span-2 border-r border-cyan-950/60">4:30 AM</div>
+                    <div class="col-span-3">5:00 AM</div>
+                </div>
+
+                <!-- Scrollable Channel Rows -->
+                <div id="guideRowsContainer" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-cyan-950/40">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-2.5 px-6 border-t border-cyan-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
+            NEXUS TV v6.2 Guide Engine &bull; Designed by: Daniel Dudek
+        </footer>
+    </main>
+
+    <script>
+        // Master Catalog of all 30 channels with complete guide schedules & alternate streams
+        const channels = [
+            { id: 1, name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", rating: "TV-14", show1: "First 48: Critical Hours", show2: "Storage Wars: Texas Marathon", show3: "Intervention: Special Edition", show4: "Hoarders Uncut" },
+            { id: 2, name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", rating: "TV-G", show1: "B1G Football Classic", show2: "Inside B1G Basketball", show3: "Campus Report Live", show4: "B1G Tailgate Stories" },
+            { id: 3, name: "Bounce XL", category: "Entertainment", icon: "📺", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-bouncexl-tablo/playlist.m3u8", rating: "TV-PG", show1: "Saints & Sinners", show2: "Family Time Rewind", show3: "Living Single Block", show4: "The Bernie Mac Show" },
+            { id: 4, name: "Brat TV", category: "Entertainment", icon: "⭐", url: "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8", rating: "TV-Y7", show1: "Chicken Girls Late Night", show2: "Attaway General", show3: "Total Eclipse", show4: "Mani Season Finale" },
+            { id: 5, name: "CMT", category: "Music", icon: "🎶", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", rating: "TV-PG", show1: "CMT Non-Stop Country Hits", show2: "Hot 20 Countdown Replay", show3: "Southern Rock Sessions", show4: "Party Down South Flashback" },
+            { id: 6, name: "Comedy Central", category: "Comedy", icon: "😂", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", rating: "TV-14", show1: "South Park Late Night Block", show2: "The Office US Marathon", show3: "Stand-Up Presents", show4: "Reno 911! Files" },
+            { id: 7, name: "Comet", category: "Sci-Fi", icon: "☄️", url: "https://fast-channels.sinclairstoryline.com/COMET/index.m3u8", rating: "TV-PG", show1: "Outer Limits Classic", show2: "Stargate SG-1 Late Run", show3: "Sci-Fi Cult Classic Movie", show4: "The Twilight Zone Block" },
+            { id: 8, name: "Crime + Investigation", category: "Documentary", icon: "🔍", url: "http://23.237.104.106:8080/USA_CRIME_INVESTIGATION/index.m3u8", rating: "TV-14", show1: "Cold Case Files Classic", show2: "Forensic Detectives", show3: "American Justice", show4: "Homicide Hunter" },
+            { id: 9, name: "Dateline 24/7", category: "Documentary", icon: "🕵️‍♂️", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007", rating: "TV-14", show1: "Dateline Mystery Marathon", show2: "Secrets Uncovered", show3: "The Motive Investigated", show4: "Point of Origin" },
+            { id: 10, name: "Disney Channel", category: "Family", icon: "🏰", url: "https://gpuserver3.tier1streams.com/Disney_Channel_HD/index.m3u8", rating: "TV-G", show1: "Hannah Montana Midnight", show2: "Wizards of Waverly Place", show3: "Suite Life of Zack & Cody", show4: "Phineas and Ferb Block" },
+            { id: 11, name: "Disney Junior", category: "Family", icon: "🧸", url: "https://gpuserver3.tier1streams.com/Disney_JR/index.m3u8", rating: "TV-Y", show1: "Mickey Mouse Clubhouse", show2: "Doc McStuffins Night Light", show3: "Sofia the First", show4: "Puppy Dog Pals" },
+            { id: 12, name: "Disney XD", category: "Family", icon: "🚀", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", rating: "TV-Y7", show1: "Gravity Falls Late Night", show2: "Kick Buttowski", show3: "Star Wars Rebels", show4: "Ultimate Spider-Man" },
+            { id: 13, name: "Documentary+", category: "Documentary", icon: "🌍", url: "https://ef79b15c8c7c46c7a9de9d33001dbd07.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-859-DOCUMENTARYPLUS-", rating: "TV-PG", show1: "Deep Wilderness Expeditions", show2: "Modern Architecture Icons", show3: "The Ocean Abyss", show4: "Lost Civilizations Uncovered" },
+            { id: 14, name: "Fox West", category: "Networks", icon: "📺", url: "http://stream.cammonitorplus.net/1799/index.m3u8", rating: "TV-PG", show1: "Fox Nightly News Encore", show2: "Late Night Local Report", show3: "Paid Programming Showcase", show4: "Early Morning Weather Desk" },
+            { id: 15, name: "Fuse", category: "Entertainment", icon: "🎵", url: "https://gpuserver3.tier1streams.com/Fuse/index.m3u8", rating: "TV-14", show1: "Underground Music Showcase", show2: "Indie Film Spotlight", show3: "Hip Hop Generations", show4: "Pop Alternative Top 20" },
+            { id: 16, name: "FX", category: "Entertainment", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FX/index.m3u8", rating: "TV-MA", show1: "Sons of Anarchy Late Run", show2: "The Shield Director's Cut", show3: "Justified Block", show4: "FX Late Movie Feature" },
+            { id: 17, name: "FXX", category: "Comedy", icon: "💬", url: "https://gpuserver3.tier1streams.com/FXX/index.m3u8", rating: "TV-14", show1: "It's Always Sunny Marathon", show2: "The Simpsons Late Night Block", show3: "Archer Operations", show4: "Dave Uncut" },
+            { id: 18, name: "Hallmark Movies & More", category: "Movies", icon: "💐", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", rating: "TV-G", show1: "Midnight Romance Classic", show2: "Mystery Woman Feature", show3: "Autumn Dreams Special", show4: "Heartwarming Tales" },
+            { id: 19, name: "History", category: "Documentary", icon: "⏳", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", rating: "TV-PG", show1: "Ancient Aliens Deep Dive", show2: "Modern Marvels Marathon", show3: "Pawn Stars Late Shift", show4: "Mountain Men Wilderness" },
+            { id: 20, name: "ION TV", category: "Entertainment", icon: "⚡", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", rating: "TV-14", show1: "Criminal Minds Replay", show2: "Law & Order: SVU Block", show3: "NCIS Syndicated Run", show4: "Blue Bloods Special" },
+            { id: 21, name: "Lifetime", category: "Entertainment", icon: "💖", url: "http://40.160.24.53/LIFETIME/index.m3u8", rating: "TV-PG", show1: "Movie Thriller of the Week", show2: "Dance Moms Flashback", show3: "Married at First Sight", show4: "The Client List" },
+            { id: 22, name: "MeTV", category: "Classic", icon: "📺", url: "http://40.160.24.53/METV/index.m3u8", rating: "TV-G", show1: "The Andy Griffith Show", show2: "The Twilight Zone Classic", show3: "Hogan's Heroes", show4: "M*A*S*H Midnight Run" },
+            { id: 23, name: "MTV", category: "Music", icon: "🎸", url: "http://40.160.24.53/MTV/index.m3u8", rating: "TV-14", show1: "Ridiculousness Marathon", show2: "Catfish: The TV Show", show3: "Jersey Shore Flashback", show4: "MTV Spankin' New Music" },
+            { id: 24, name: "Nickelodeon", category: "Family", icon: "🟩", url: "https://gpuserver5.tier1streams.com/NICKELODEON/index.m3u8", rating: "TV-Y7", show1: "SpongeBob SquarePants Night", show2: "The Fairly OddParents", show3: "Avatar: The Last Airbender", show4: "Rugrats Retro Block" },
+            { id: 25, name: "Showtime", category: "Premium", icon: "🛡️", url: "http://40.160.24.55/SHOWTIME/index.m3u8", rating: "TV-MA", show1: "Dexter Late Night Special", show2: "Billions Financial Thriller", show3: "Yellowjackets Uncut", show4: "Showtime Championship Boxing" },
+            { id: 26, name: "Starz", category: "Movies", icon: "✨", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", rating: "TV-MA", show1: "Power Book II: Ghost", show2: "Outlander Extended Cut", show3: "Starz Blockbuster Feature", show4: "BMF Underground" },
+            { id: 27, name: "SYFY", category: "Sci-Fi", icon: "🛸", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", rating: "TV-14", show1: "Twilight Zone Marathon", show2: "Syfy Original Creature Feature", show3: "The Ark Deep Space", show4: "Battlestar Galactica Run" },
+            { id: 28, name: "TNT Novelas Brazil", category: "Drama", icon: "🌹", url: "http://168.197.104.22:80/TNT_NOVELAS/index.m3u8", rating: "TV-PG", show1: "Coração Selvagem (Noite)", show2: "Amor Perfeito Edição Especial", show3: "Destinos Cruzados", show4: "Paixão Proibida" },
+            { id: 29, name: "USA Network", category: "Entertainment", icon: "📺", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", rating: "TV-PG", show1: "Law & Order: CI Late Run", show2: "Chicago P.D. Syndicate", show3: "WWE Raw Classic Replay", show4: "NCIS Special Episode" },
+            { id: 30, name: "The Cowboy Channel", category: "Lifestyle", icon: "🤠", url: "https://gpuserver3.tier1streams.com/THE_COWBOY_CHANNEL/index.m3u8", rating: "TV-G", show1: "PRCA Rodeo Classics", show2: "Western Music Roundup", show3: "Cowboy Way Weekend", show4: "Gospel Music Hour" }
+        ];
+
+        let currentChannel = channels[0];
+        let currentActiveUrl = channels[0].url;
+        let hlsInstance = null;
+        let isNativeMode = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGuideRows(channels);
+            selectGuideChannel(channels[0]);
+        });
+
+        function renderGuideRows(list) {
+            const container = document.getElementById('guideRowsContainer');
+            container.innerHTML = '';
+
+            list.forEach(ch => {
+                const isSelected = currentChannel && currentChannel.id === ch.id;
+                const row = document.createElement('div');
+                row.className = `grid grid-cols-12 items-center cursor-pointer transition-all text-xs font-mono py-1.5 ${
+                    isSelected 
+                        ? 'bg-cyan-950/70 border-l-4 border-cyan-400 text-white font-bold shadow' 
+                        : 'hover:bg-[#081026] text-slate-300'
+                }`;
+                row.onclick = () => selectGuideChannel(ch);
+
+                row.innerHTML = `
+                    <div class="col-span-3 px-4 py-1.5 flex items-center space-x-3 border-r border-cyan-950/60 truncate">
+                        <span class="text-cyan-400 font-black w-6 text-right">${ch.id < 10 ? '0' + ch.id : ch.id}</span>
+                        <span class="text-base">${ch.icon}</span>
+                        <div class="truncate">
+                            <div class="font-bold truncate">${ch.name}</div>
+                            <div class="text-[10px] text-slate-400 uppercase">${ch.category}</div>
+                        </div>
+                    </div>
+                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate text-slate-400 text-[11px]">${ch.show4}</div>
+                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate bg-cyan-950/25 text-cyan-200 font-bold text-[11px] shadow-inner">${ch.show1}</div>
+                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate text-slate-300 text-[11px]">${ch.show2}</div>
+                    <div class="col-span-3 px-3 py-1.5 truncate text-slate-400 text-[11px]">${ch.show3}</div>
                 `;
-
-                const video = document.getElementById('videoPlayer');
-                const targetStream = currentActiveUrl;
-
-                if (Hls.isSupported()) {
-                    if (hlsInstance) {
-                        hlsInstance.destroy();
-                    }
-                    hlsInstance = new Hls();
-                    hlsInstance.loadSource(targetStream);
-                    hlsInstance.attachMedia(video);
-                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                        video.play().catch(e => console.log("Autoplay prevented:", e));
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = targetStream;
-                    video.addEventListener('loadedmetadata', () => {
-                        video.play().catch(e => console.log("Autoplay prevented:", e));
-                    });
-                }
-            }
+                container.appendChild(row);
+            });
         }
 
-        function toggleEmbedMode() {
-            isEmbedMode = !isEmbedMode;
-            const btn = document.getElementById('modeToggleBtn');
-            if (isEmbedMode) {
-                btn.className = "px-2.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-[11px] font-semibold transition-all";
-                btn.innerText = "🔄 Native Mode";
-            } else {
-                btn.className = "px-2.5 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-[11px] font-semibold transition-all";
-                btn.innerText = "🔄 Embed Mode";
-            }
+        function filterGuideChannels(query) {
+            const q = query.toLowerCase();
+            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+            renderGuideRows(filtered);
+        }
+
+        function selectGuideChannel(ch) {
+            currentChannel = ch;
+            currentActiveUrl = ch.url;
+
+            // Update Metadata Header Card
+            document.getElementById('guideChannelNumBadge').innerText = ch.id < 10 ? '0' + ch.id : ch.id;
+            document.getElementById('guideNetworkName').innerText = `${ch.name} — ${ch.category}`;
+            document.getElementById('guideShowTitle').innerText = ch.show1;
+            document.getElementById('guideShowTime').innerText = "3:30 am - 4:30 am · Live Broadcast Block";
+            document.getElementById('guideShowDesc').innerText = `Now broadcasting live on ${ch.name}. Enjoy high-definition streaming with integrated multi-source fallback support and electronic program guide synchronization.`;
+            document.getElementById('guideRatingBadge').innerText = ch.rating;
+            document.getElementById('pipChannelName').innerText = `${ch.id}. ${ch.name}`;
+
             loadPlayerEngine();
+            renderGuideRows(channels);
         }
 
-        function toggleFavorite() {
-            const btn = document.getElementById('favBtn');
-            if (btn.classList.contains('text-red-400')) {
-                btn.className = "px-3 py-1.5 rounded-lg bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-[11px] font-semibold transition-all";
-                btn.innerHTML = '🤍 Favorite';
+        function loadPlayerEngine() {
+            const container = document.getElementById('playerContainer');
+            container.innerHTML = `
+                <video
+                    id="videoPlayer"
+                    class="w-full h-full absolute inset-0 object-contain bg-black"
+                    controls
+                    autoplay
+                    playsinline
+                ></video>
+            `;
+
+            const video = document.getElementById('videoPlayer');
+            const targetStream = currentActiveUrl;
+
+            if (Hls.isSupported()) {
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                }
+                hlsInstance = new Hls();
+                hlsInstance.loadSource(targetStream);
+                hlsInstance.attachMedia(video);
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(e => console.log("Autoplay prevented:", e));
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = targetStream;
+                video.addEventListener('loadedmetadata', () => {
+                    video.play().catch(e => console.log("Autoplay prevented:", e));
+                });
+            }
+        }
+
+        function togglePiPMode() {
+            isNativeMode = !isNativeMode;
+            const btn = document.getElementById('pipModeBtn');
+            if (isNativeMode) {
+                btn.className = "px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow";
+                btn.innerText = "⚡ PiP Monitor Active";
             } else {
-                btn.className = "px-3 py-1.5 rounded-lg bg-red-600/20 border border-red-500 text-red-400 text-[11px] font-semibold transition-all shadow-lg";
-                btn.innerHTML = '❤️ Favorited';
+                btn.className = "px-3.5 py-1.5 rounded-lg bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/40 text-cyan-300 text-xs font-semibold transition-all shadow";
+                btn.innerText = "⚡ Native Engine";
             }
         }
     </script>
