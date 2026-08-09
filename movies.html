@@ -151,11 +151,11 @@
             font-size: 1.1rem;
         }
 
-        /* Fixed Top Hero Banner */
+        /* Expanded Top Hero Banner (Artwork size increased to fill the gap) */
         .hero-banner-section {
             flex-shrink: 0;
             width: 100%;
-            height: 44vh;
+            height: 54vh;
             position: relative;
             background: linear-gradient(to right, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, rgba(11, 15, 25, 0.8)), 
                         url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
@@ -235,22 +235,26 @@
             transform: scale(1.02);
         }
 
-        /* Scrollable Lower Section with reduced padding and taller cards */
+        /* Scrollable Lower Section - Adjusted to show exactly one full row touching the bottom */
         .scrollable-rows-section {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 16px 40px;
-            background: linear-gradient(to bottom, rgba(11, 15, 25, 0.6), #0b0f19);
+            padding: 16px 40px 0 40px;
+            background: #0b0f19;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .row-category {
-            margin-bottom: 24px;
+            margin-bottom: 0px;
+            padding-bottom: 16px;
         }
 
         .row-title {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -262,42 +266,45 @@
             font-weight: 600;
         }
 
-        /* Exactly 4 cards across, sized up 25% to fill the bottom viewport */
+        /* Exactly 4 cards across, sized up to fill the lower screen and touch the bottom edge */
         .movie-row-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            padding-bottom: 10px;
         }
 
         .movie-card {
             background-color: #161b26;
-            border-radius: 8px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
             overflow: hidden;
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: none;
         }
 
         .movie-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+            transform: scale(1.02);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
             border-color: rgba(255, 255, 255, 0.15);
         }
 
         .movie-poster {
             width: 100%;
-            height: 225px; /* Increased by ~25% from 180px */
+            height: 245px;
             object-fit: cover;
             background-color: #1e2532;
         }
 
         .movie-info {
-            padding: 14px 16px;
+            padding: 12px 16px;
         }
 
         .movie-name {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -307,7 +314,7 @@
         }
 
         .movie-genre {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #94a3b8;
         }
     </style>
@@ -368,7 +375,7 @@
                 </div>
             </section>
 
-            <!-- Scrollable Rows Section -->
+            <!-- Scrollable Lower Section -->
             <section class="scrollable-rows-section">
                 <!-- Row 1 -->
                 <div class="row-category">
@@ -400,41 +407,6 @@
                             <div class="movie-info">
                                 <div class="movie-name">The Boys</div>
                                 <div class="movie-genre">Action / Superhero</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="row-category">
-                    <h2 class="row-title"><span>Nexus</span> Action &amp; Adventure Movies (1976–1989)</h2>
-                    <div class="movie-row-cards">
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Terminator</div>
-                                <div class="movie-genre">Action • 1984</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Aliens</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Die Hard</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">First Blood</div>
-                                <div class="movie-genre">Action • 1982</div>
                             </div>
                         </div>
                     </div>
