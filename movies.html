@@ -3,199 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus TV - Latest Movies</title>
+    <title>Nexus TV</title>
     <style>
+        :root {
+            --bg-color: #0b0f19;
+            --sidebar-color: #05070c;
+            --accent-red: #8b0000;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --card-bg: #161e2e;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #0b0f19;
-            color: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        .dashboard-container {
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             height: 100vh;
-            width: 100vw;
             overflow: hidden;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar */
         .sidebar {
-            width: 240px;
-            background-color: #070a10;
+            width: 220px;
+            background-color: var(--sidebar-color);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 24px 16px;
+            padding: 20px 0;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .brand {
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
-            margin-bottom: 32px;
-        }
-
-        .brand span {
-            color: #e50914;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        .nav-links li a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            color: #94a3b8;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .nav-links li.active a, .nav-links li a:hover {
-            background-color: rgba(229, 9, 20, 0.15);
-            color: #ffffff;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Top Navigation Bar */
-        .top-nav {
-            height: 60px;
-            background-color: #0b0f19;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            flex-shrink: 0;
             z-index: 10;
         }
 
-        .nav-menu-area {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .app-logo {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #ffffff;
+        .logo-area {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--text-main);
+            padding: 0 20px 20px 20px;
             letter-spacing: 1px;
         }
 
-        .app-logo span {
-            color: #38bdf8;
+        .logo-area span {
+            color: var(--accent-red);
         }
 
-        .menu-items {
-            display: flex;
+        .nav-menu {
             list-style: none;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .menu-items li a {
-            text-decoration: none;
-            color: #94a3b8;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-
-        .menu-items li.active a, .menu-items li a:hover {
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .top-nav-right {
             display: flex;
-            align-items: center;
-            gap: 20px;
-            color: #94a3b8;
-            font-size: 1.2rem;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
-        .search-icon {
-            font-size: 1.1rem;
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(139, 0, 0, 0.2);
+            color: var(--text-main);
+            border-left: 4px solid var(--accent-red);
         }
 
-        /* Expanded Top Hero Banner (Artwork size increased to fill the gap) */
-        /* Top Hero Banner */
-        .hero-banner-section {
-            flex-shrink: 0;
-            width: 100%;
-            height: 54vh;
-            height: 48vh;
-            position: relative;
-            background: linear-gradient(to right, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, rgba(11, 15, 25, 0.8)), 
-                        url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+        /* Main Content Wrapper */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
             display: flex;
             align-items: center;
-            padding: 0 40px;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: linear-gradient(to bottom, rgba(11,15,25,0.9), transparent);
+            position: absolute;
+            width: calc(100% - 220px);
+            z-index: 5;
+        }
+
+        .nav-brand {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .nav-brand span {
+            color: #38bdf8;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 15px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Hero Carousel Section */
+        .hero {
+            position: relative;
+            height: 550px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 60px 40px;
+            transition: background-image 0.8s ease-in-out;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, var(--bg-color) 0%, rgba(11,15,25,0.6) 50%, rgba(11,15,25,0.2) 100%);
+            z-index: 1;
         }
 
         .hero-content {
-            max-width: 600px;
+            position: relative;
             z-index: 2;
+            max-width: 600px;
         }
 
-        .hero-badge {
-            font-size: 0.75rem;
+        .hero-tag {
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 1.5px;
             color: #38bdf8;
-            margin-bottom: 6px;
-            font-weight: 700;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .hero-title {
-            font-size: 3.6rem;
-            font-weight: 900;
+            font-size: 42px;
+            font-weight: 800;
             margin-bottom: 12px;
-            line-height: 1.05;
-            letter-spacing: -1px;
-            color: #ffffff;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
         }
 
-        .hero-description {
-            font-size: 0.9rem;
-            color: #cbd5e1;
-            margin-bottom: 18px;
+        .hero-desc {
+            font-size: 14px;
+            color: var(--text-muted);
             line-height: 1.5;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
         }
 
         .hero-buttons {
@@ -204,276 +187,289 @@
         }
 
         .btn {
-            padding: 10px 24px;
-            border-radius: 6px;
+            padding: 10px 22px;
+            border-radius: 4px;
+            font-size: 14px;
             font-weight: 600;
-            font-size: 0.9rem;
             cursor: pointer;
-            border: none;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.2s ease;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
         }
 
         .btn-primary {
-            background-color: #ffffff;
-            color: #0b0f19;
-        }
-
-        .btn-primary:hover {
-            background-color: #e2e8f0;
-            transform: scale(1.02);
+            background-color: var(--text-main);
+            color: var(--bg-color);
         }
 
         .btn-secondary {
             background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            color: #ffffff;
+            color: var(--text-main);
+            backdrop-filter: blur(5px);
         }
 
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            transform: scale(1.02);
-        }
-
-        /* Scrollable Lower Section - Adjusted to show exactly one full row touching the bottom */
-        /* Scrollable Lower Section with strict single-row vertical snapping */
-        .scrollable-rows-section {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 16px 40px 0 40px;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            padding: 20px 40px;
-            background: #0b0f19;
+        /* Carousel Indicators */
+        .carousel-dots {
+            position: absolute;
+            right: 40px;
+            bottom: 60px;
+            z-index: 3;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            scrollbar-width: none; /* Hide scrollbar for clean look */
-        }
-
-        .scrollable-rows-section::-webkit-scrollbar {
-            display: none;
-        }
-
-        .row-category {
-            margin-bottom: 0px;
-            padding-bottom: 16px;
-            height: 100%;
-            min-height: 100%;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding-bottom: 10px;
-        }
-
-        .row-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            margin-bottom: 16px;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
             gap: 8px;
         }
 
-        .row-title span {
-            color: #38bdf8;
-            font-weight: 600;
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        /* Exactly 4 cards across, sized up to fill the lower screen and touch the bottom edge */
-        /* Exactly 4 cards across, sized up to fill the lower section viewport */
-        .movie-row-cards {
+        .dot.active {
+            background-color: var(--text-main);
+        }
+
+        /* Content Rows Section */
+        .content-section {
+            padding: 20px 40px 40px 40px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .section-title span {
+            color: #38bdf8;
+        }
+
+        .card-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
 
         .movie-card {
-            background-color: #161b26;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            border-bottom-left-radius: 0px;
-            border-bottom-right-radius: 0px;
-            border-radius: 8px;
+            background-color: var(--card-bg);
+            border-radius: 6px;
             overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-bottom: none;
+            display: flex;
+            flex-direction: column;
+            height: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .movie-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.6);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            border-color: rgba(255, 255, 255, 0.15);
+        .card-thumbnail {
+            flex: 1;
+            background-color: #1e293b;
+            background-size: cover;
+            background-position: center;
         }
 
-        .movie-poster {
-            width: 100%;
-            height: 245px;
-            height: 240px;
-            object-fit: cover;
-            background-color: #1e2532;
+        .card-info {
+            padding: 12px;
         }
 
-        .movie-info {
-            padding: 12px 16px;
-        }
-
-        .movie-name {
-            font-size: 1.05rem;
+        .card-title {
+            font-size: 13px;
             font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             margin-bottom: 4px;
-            color: #ffffff;
         }
 
-        .movie-genre {
-            font-size: 0.8rem;
-            color: #94a3b8;
+        .card-genre {
+            font-size: 11px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div>
-                <div class="brand">NEXUS <span>TV</span></div>
-                <ul class="nav-links">
-                    <li><a href="movies.html">Live IPTV</a></li>
-                    <li class="active"><a href="movies.html">Latest Movies</a></li>
-                    <li><a href="#">Archive.org</a></li>
-                    <li><a href="#">Search</a></li>
-                    <li><a href="#">My List</a></li>
-                </ul>
-            </div>
-            <div style="font-size: 0.8rem; color: #64748b;">v4.3 • Quantum</div>
-        </aside>
-
-        <!-- Main Workspace -->
-        <main class="main-content">
-            <!-- Professional Top Navigation Bar -->
-            <nav class="top-nav">
-                <div class="nav-menu-area">
-                    <div class="app-logo">NEXUS <span>ORIGINALS</span></div>
-                    <ul class="menu-items">
-                        <li><a href="#">Home</a></li>
-                        <li class="active"><a href="#">Featured</a></li>
-                        <li><a href="#">Store</a></li>
-                        <li><a href="#">Channels</a></li>
-                        <li><a href="#">Categories</a></li>
-                        <li><a href="#">My Stuff</a></li>
-                    </ul>
-                </div>
-                <div class="top-nav-right">
-                    <span class="search-icon">🔍</span>
-                    <span>⚙️</span>
-                </div>
-            </nav>
-
-            <!-- Fixed Top Hero Banner -->
-            <section class="hero-banner-section">
-                <div class="hero-content">
-                    <div class="hero-badge">Featured Original</div>
-                    <h1 class="hero-title">THE EXPANSE</h1>
-                    <p class="hero-description">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
-                    <div class="hero-buttons">
-                        <button class="btn btn-primary">
-                            ▶ Play Film
-                        </button>
-                        <button class="btn btn-secondary">
-                            + Add to List
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Scrollable Lower Section -->
-            <!-- Scrollable Vertical Snapping Rows Section -->
-            <section class="scrollable-rows-section">
-                <!-- Row 1 -->
-                <div class="row-category">
-                    <h2 class="row-title"><span>Nexus</span> TV shows we think you'll like</h2>
-                    <div class="movie-row-cards">
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Man in the High Castle</div>
-                                <div class="movie-genre">Sci-Fi / Drama</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Modern Love</div>
-                                <div class="movie-genre">Romance / Comedy</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Grand Tour</div>
-                                <div class="movie-genre">Automotive / Talk</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Boys</div>
-                                <div class="movie-genre">Action / Superhero</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="row-category">
-                    <h2 class="row-title"><span>Nexus</span> Action &amp; Adventure Movies (1976–1989)</h2>
-                    <div class="movie-row-cards">
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Terminator</div>
-                                <div class="movie-genre">Action • 1984</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Aliens</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Die Hard</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">First Blood</div>
-                                <div class="movie-genre">Action • 1982</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-area">NEXUS<span>TV</span></div>
+        <ul class="nav-menu">
+            <a href="#" class="nav-item">Live IPTV</a>
+            <a href="#" class="nav-item active">Latest Movies</a>
+            <a href="#" class="nav-item">Archive.org</a>
+            <a href="#" class="nav-item">Search</a>
+            <a href="#" class="nav-item">My List</a>
+        </ul>
     </div>
 
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Top Navigation -->
+        <div class="top-navbar">
+            <div class="nav-brand">NEXUS <span>ORIGINALS</span></div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#" class="active">Featured</a></li>
+                <li><a href="#">Store</a></li>
+                <li><a href="#">Channels</a></li>
+                <li><a href="#">Categories</a></li>
+                <li><a href="#">My Stuff</a></li>
+            </ul>
+            <div class="nav-icons">
+                🔍 ⚙️
+            </div>
+        </div>
+
+        <!-- Upper Auto-Scrolling Hero Section -->
+        <div class="hero" id="heroBanner">
+            <div class="hero-content">
+                <div class="hero-tag" id="heroTag">Featured Original</div>
+                <h1 class="hero-title" id="heroTitle">The Expanse</h1>
+                <p class="hero-desc" id="heroDesc">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="playCurrentMovie()">▶ Play Film</button>
+                    <button class="btn btn-secondary" onclick="addCurrentMovie()">+ Add to List</button>
+                </div>
+            </div>
+            
+            <!-- Carousel Pagination Dots -->
+            <div class="carousel-dots" id="carouselDots">
+                <div class="dot active" onclick="currentSlide(0)"></div>
+                <div class="dot" onclick="currentSlide(1)"></div>
+                <div class="dot" onclick="currentSlide(2)"></div>
+                <div class="dot" onclick="currentSlide(3)"></div>
+                <div class="dot" onclick="currentSlide(4)"></div>
+            </div>
+        </div>
+
+        <!-- Content Rows -->
+        <div class="content-section">
+            <div class="section-title"><span>Nexus</span> TV shows we think you'll like</div>
+            <div class="card-row">
+                <div class="movie-card">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-info">
+                        <div class="card-title">The Man in the High Castle</div>
+                        <div class="card-genre">Sci-Fi / Drama</div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-info">
+                        <div class="card-title">Modern Love</div>
+                        <div class="card-genre">Romance / Comedy</div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-info">
+                        <div class="card-title">The Grand Tour</div>
+                        <div class="card-genre">Automotive / Talk</div>
+                    </div>
+                </div>
+                <div class="movie-card">
+                    <div class="card-thumbnail"></div>
+                    <div class="card-info">
+                        <div class="card-title">The Boys</div>
+                        <div class="card-genre">Action / Superhero</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Array of 5 movies to cycle through in the upper hero section
+        const heroMovies = [
+            {
+                tag: "Featured Original",
+                title: "The Expanse",
+                desc: "A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')"
+            },
+            {
+                tag: "Trending Now",
+                title: "Blade Runner 2049",
+                desc: "A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, who's been missing for thirty years.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop')"
+            },
+            {
+                tag: "Critically Acclaimed",
+                title: "Interstellar",
+                desc: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')"
+            },
+            {
+                tag: "Nexus Exclusive",
+                title: "The Terminator",
+                desc: "A human soldier is sent from 2029 to 1984 to stop an nearly indestructible cyborg killing machine, programmed to execute a young woman whose unborn son is the key to humanity's future.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop')"
+            },
+            {
+                tag: "Fan Favorite",
+                title: "Mad Max: Fury Road",
+                desc: "In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the help of a group of female prisoners, a psychotic worshiper, and a drifter named Max.",
+                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop')"
+            }
+        ];
+
+        let currentIndex = 0;
+        let slideInterval;
+
+        function updateHero(index) {
+            currentIndex = index;
+            const movie = heroMovies[currentIndex];
+            
+            // Update content elements
+            document.getElementById('heroTag').innerText = movie.tag;
+            document.getElementById('heroTitle').innerText = movie.title;
+            document.getElementById('heroDesc').innerText = movie.desc;
+            document.getElementById('heroBanner').style.backgroundImage = movie.bg;
+
+            // Update dots
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % heroMovies.length;
+            updateHero(currentIndex);
+        }
+
+        function currentSlide(index) {
+            updateHero(index);
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 6000); // Auto scrolls every 6 seconds
+        }
+
+        function playCurrentMovie() {
+            const activeMovie = heroMovies[currentIndex].title;
+            alert(`Playing movie: ${activeMovie}`);
+        }
+
+        function addCurrentMovie() {
+            const activeMovie = heroMovies[currentIndex].title;
+            alert(`Added "${activeMovie}" to your List!`);
+        }
+
+        // Initialize auto-scroll timer on load
+        slideInterval = setInterval(nextSlide, 6000);
+    </script>
 </body>
 </html>
