@@ -101,7 +101,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.4 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -192,7 +192,7 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.4 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
@@ -236,7 +236,6 @@
 
     <script>
 const FILMS = [
-    // 1976-1989 Batch (Assigned dedicated distinct direct streams)
     {"id": 1, "title": "The Terminator", "year": 1984, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["action"]},
     {"id": 2, "title": "Aliens", "year": 1986, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["action"]},
     {"id": 3, "title": "Die Hard", "year": 1988, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4", "cats": ["action"]},
@@ -250,7 +249,6 @@ const FILMS = [
     {"id": 131, "title": "The Secret of NIMH", "year": 1982, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4", "cats": ["animation"]},
     {"id": 141, "title": "Koyaanisqatsi", "year": 1982, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4", "cats": ["documentary"]},
 
-    // 1990-1999 Added Batch (Assigned dedicated distinct direct streams)
     {"id": 201, "title": "Terminator 2: Judgment Day", "year": 1991, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["action"]},
     {"id": 202, "title": "The Matrix", "year": 1999, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["action", "scifi"]},
     {"id": 203, "title": "Heat", "year": 1995, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4", "cats": ["action", "drama", "thriller"]},
@@ -337,10 +335,10 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
                         <span>${f.year}</span>
                     </div>
                     <div class="hero-actions">
-                        <button class="btn-play" onclick="playFilm(${f.id})">
+                        <button class="btn-play" type="button" data-film-id="${f.id}">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
                         </button>
-                        <button class="btn-ghost" onclick="toggleSave(${f.id})">
+                        <button class="btn-ghost" type="button" data-save-id="${f.id}">
                             ${saved.has(f.id) ? '✓ In Saved List' : '+ Add to List'}
                         </button>
                     </div>
@@ -367,19 +365,20 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
             if (rotTimer) clearInterval(rotTimer);
         }
 
-        window.playFilm = function (id) {
-            const f = FILMS.find(x => x.id === id);
+        function playFilm(id) {
+            const f = FILMS.find(x => x.id === Number(id));
             if (!f) return;
             openPlayer(f);
-        };
+        }
 
-        window.toggleSave = function (id) {
-            if (saved.has(id)) saved.delete(id); else saved.add(id);
+        function toggleSave(id) {
+            const filmId = Number(id);
+            if (saved.has(filmId)) saved.delete(filmId); else saved.add(filmId);
             localStorage.setItem("aether_saved", JSON.stringify([...saved]));
             renderCollection();
             renderHero();
-            showToast(saved.has(id) ? 'Added to your saved list' : 'Removed from your list');
-        };
+            showToast(saved.has(filmId) ? 'Added to your saved list' : 'Removed from your list');
+        }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -407,10 +406,7 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
                 list.forEach(f => {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.onclick = (e) => {
-                        if (e.target.closest('.bookmark')) return;
-                        playFilm(f.id);
-                    };
+                    card.dataset.filmId = f.id;
 
                     const isSaved = saved.has(f.id);
                     card.innerHTML = `
@@ -420,7 +416,7 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
                         <div class="card-scrim"></div>
                         <div class="card-top">
                             <span class="badge year">${f.year}</span>
-                            <button class="bookmark ${isSaved ? 'saved' : ''}" onclick="toggleSave(${f.id})" title="Save">
+                            <button class="bookmark ${isSaved ? 'saved' : ''}" type="button" data-save-id="${f.id}" title="Save">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                             </button>
                         </div>
@@ -437,6 +433,24 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
                 collectionEl.appendChild(row);
             });
         }
+
+        // Global Event Delegation for Clicks (Guarantees robust routing without inline handler closure mismatches)
+        document.addEventListener('click', (e) => {
+            const playBtn = e.target.closest('[data-film-id]');
+            if (playBtn) {
+                const id = playBtn.getAttribute('data-film-id');
+                playFilm(id);
+                return;
+            }
+
+            const saveBtn = e.target.closest('[data-save-id]');
+            if (saveBtn) {
+                e.stopPropagation();
+                const id = saveBtn.getAttribute('data-save-id');
+                toggleSave(id);
+                return;
+            }
+        });
 
         // Player setup
         const playerEl = document.getElementById('player');
@@ -458,7 +472,8 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
             document.getElementById('pTitle').innerText = f.title;
             document.getElementById('pMeta').innerText = `${f.genreLabel} · ${f.year}`;
             videoEl.src = f.video;
-            videoEl.play().catch(() => {});
+            videoEl.load();
+            videoEl.play().catch((err) => console.error("Playback error:", err));
             setupUI();
         }
 
