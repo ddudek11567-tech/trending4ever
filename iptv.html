@@ -42,7 +42,7 @@
                     📺
                 </div>
                 <h2 class="text-2xl font-black tracking-wider text-white">NEXUS<span class="text-cyan-400">TV</span></h2>
-                <p class="text-xs text-cyan-400/80 font-mono mt-1 uppercase tracking-widest">Restricted Access &bull; v6.3</p>
+                <p class="text-xs text-cyan-400/80 font-mono mt-1 uppercase tracking-widest">Restricted Access &bull; v6.4</p>
             </div>
 
             <form onsubmit="handleLogin(event)" class="space-y-4">
@@ -80,7 +80,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-cyan-400">TV</span>
                     </h1>
-                    <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.3 &bull; SECURE</span>
+                    <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.4 &bull; SECURE</span>
                 </div>
             </div>
 
@@ -135,7 +135,7 @@
                     <h2 id="guideShowTitle" class="text-3xl font-black text-white tracking-tight leading-tight">Interactive Guide Mode</h2>
                     <div id="guideShowTime" class="text-xs font-semibold text-cyan-300/80 font-mono mt-1.5">Use arrow keys or click grid to preview & play</div>
                     <p id="guideShowDesc" class="text-sm text-slate-300 mt-3 leading-relaxed line-clamp-3">
-                        Welcome to the modernized 2000s set-top box interface. Select any channel row below to view program schedules and instantly stream live television across the master catalog.
+                        Welcome to the modernized 2000s set-top box interface. Select any channel row below to view program schedules and instantly stream live television across the complete master catalog.
                     </p>
                 </div>
                 
@@ -176,8 +176,8 @@
         <div class="flex-1 flex flex-col p-6 overflow-hidden">
             <div class="flex items-center justify-between mb-3 px-1">
                 <div class="flex items-center space-x-3">
-                    <h3 class="text-xs font-extrabold uppercase tracking-widest text-cyan-400 font-mono">GUIDE: Master Channel Catalog (All 30 Channels Programmed)</h3>
-                    <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono" id="currentTimeDisplay">Sun 8/9 3:52 AM</span>
+                    <h3 id="catalogHeaderTitle" class="text-xs font-extrabold uppercase tracking-widest text-cyan-400 font-mono">GUIDE: Master Channel Catalog (All Channels Programmed)</h3>
+                    <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono" id="currentTimeDisplay">Sun 8/9 4:02 AM</span>
                 </div>
                 <div class="flex items-center space-x-3">
                     <input type="text" id="guideSearchInput" oninput="filterGuideChannels(this.value)" placeholder="Search all channels..." class="bg-[#091022] border border-cyan-950 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 w-56 transition-all font-mono">
@@ -190,7 +190,7 @@
                 <div class="grid grid-cols-12 bg-[#091228] border-b border-cyan-950 text-[11px] font-bold font-mono text-cyan-300 text-center py-2.5 shrink-0 select-none">
                     <div class="col-span-3 px-4 text-left border-r border-cyan-950/60">CHANNEL / STATION</div>
                     <div class="col-span-2 border-r border-cyan-950/60">3:00 AM</div>
-                    <div class="col-span-2 border-r border-cyan-950/60 text-cyan-400 bg-cyan-950/30">3:52 AM (NOW)</div>
+                    <div class="col-span-2 border-r border-cyan-950/60 text-cyan-400 bg-cyan-950/30">4:02 AM (NOW)</div>
                     <div class="col-span-2 border-r border-cyan-950/60">4:30 AM</div>
                     <div class="col-span-3">5:00 AM</div>
                 </div>
@@ -204,7 +204,7 @@
 
         <!-- Footer -->
         <footer class="py-2.5 px-6 border-t border-cyan-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
-            NEXUS TV v6.3 Guide Engine &bull; Designed by: Daniel Dudek
+            NEXUS TV v6.4 Guide Engine &bull; Designed by: Daniel Dudek
         </footer>
     </main>
 
@@ -241,44 +241,100 @@
             selectGuideChannel(channels[0]);
         });
 
-        // Master Catalog of all 30 channels with complete guide schedules
-        const channels = [
-            { id: 1, name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", rating: "TV-14", show1: "First 48: Critical Hours", show2: "Storage Wars: Texas Marathon", show3: "Intervention: Special Edition", show4: "Hoarders Uncut" },
-            { id: 2, name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", rating: "TV-G", show1: "B1G Football Classic", show2: "Inside B1G Basketball", show3: "Campus Report Live", show4: "B1G Tailgate Stories" },
-            { id: 3, name: "Bounce XL", category: "Entertainment", icon: "📺", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-bouncexl-tablo/playlist.m3u8", rating: "TV-PG", show1: "Saints & Sinners", show2: "Family Time Rewind", show3: "Living Single Block", show4: "The Bernie Mac Show" },
-            { id: 4, name: "Brat TV", category: "Entertainment", icon: "⭐", url: "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8", rating: "TV-Y7", show1: "Chicken Girls Late Night", show2: "Attaway General", show3: "Total Eclipse", show4: "Mani Season Finale" },
-            { id: 5, name: "CMT", category: "Music", icon: "🎶", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", rating: "TV-PG", show1: "CMT Non-Stop Country Hits", show2: "Hot 20 Countdown Replay", show3: "Southern Rock Sessions", show4: "Party Down South Flashback" },
-            { id: 6, name: "Comedy Central", category: "Comedy", icon: "😂", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", rating: "TV-14", show1: "South Park Late Night Block", show2: "The Office US Marathon", show3: "Stand-Up Presents", show4: "Reno 911! Files" },
-            { id: 7, name: "Comet", category: "Sci-Fi", icon: "☄️", url: "https://fast-channels.sinclairstoryline.com/COMET/index.m3u8", rating: "TV-PG", show1: "Outer Limits Classic", show2: "Stargate SG-1 Late Run", show3: "Sci-Fi Cult Classic Movie", show4: "The Twilight Zone Block" },
-            { id: 8, name: "Crime + Investigation", category: "Documentary", icon: "🔍", url: "http://23.237.104.106:8080/USA_CRIME_INVESTIGATION/index.m3u8", rating: "TV-14", show1: "Cold Case Files Classic", show2: "Forensic Detectives", show3: "American Justice", show4: "Homicide Hunter" },
-            { id: 9, name: "Dateline 24/7", category: "Documentary", icon: "🕵️‍♂️", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007", rating: "TV-14", show1: "Dateline Mystery Marathon", show2: "Secrets Uncovered", show3: "The Motive Investigated", show4: "Point of Origin" },
-            { id: 10, name: "Disney Channel", category: "Family", icon: "🏰", url: "https://gpuserver3.tier1streams.com/Disney_Channel_HD/index.m3u8", rating: "TV-G", show1: "Hannah Montana Midnight", show2: "Wizards of Waverly Place", show3: "Suite Life of Zack & Cody", show4: "Phineas and Ferb Block" },
-            { id: 11, name: "Disney Junior", category: "Family", icon: "🧸", url: "https://gpuserver3.tier1streams.com/Disney_JR/index.m3u8", rating: "TV-Y", show1: "Mickey Mouse Clubhouse", show2: "Doc McStuffins Night Light", show3: "Sofia the First", show4: "Puppy Dog Pals" },
-            { id: 12, name: "Disney XD", category: "Family", icon: "🚀", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", rating: "TV-Y7", show1: "Gravity Falls Late Night", show2: "Kick Buttowski", show3: "Star Wars Rebels", show4: "Ultimate Spider-Man" },
-            { id: 13, name: "Documentary+", category: "Documentary", icon: "🌍", url: "https://ef79b15c8c7c46c7a9de9d33001dbd07.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-859-DOCUMENTARYPLUS-", rating: "TV-PG", show1: "Deep Wilderness Expeditions", show2: "Modern Architecture Icons", show3: "The Ocean Abyss", show4: "Lost Civilizations Uncovered" },
-            { id: 14, name: "Fox West", category: "Networks", icon: "📺", url: "http://stream.cammonitorplus.net/1799/index.m3u8", rating: "TV-PG", show1: "Fox Nightly News Encore", show2: "Late Night Local Report", show3: "Paid Programming Showcase", show4: "Early Morning Weather Desk" },
-            { id: 15, name: "Fuse", category: "Entertainment", icon: "🎵", url: "https://gpuserver3.tier1streams.com/Fuse/index.m3u8", rating: "TV-14", show1: "Underground Music Showcase", show2: "Indie Film Spotlight", show3: "Hip Hop Generations", show4: "Pop Alternative Top 20" },
-            { id: 16, name: "FX", category: "Entertainment", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FX/index.m3u8", rating: "TV-MA", show1: "Sons of Anarchy Late Run", show2: "The Shield Director's Cut", show3: "Justified Block", show4: "FX Late Movie Feature" },
-            { id: 17, name: "FXX", category: "Comedy", icon: "💬", url: "https://gpuserver3.tier1streams.com/FXX/index.m3u8", rating: "TV-14", show1: "It's Always Sunny Marathon", show2: "The Simpsons Late Night Block", show3: "Archer Operations", show4: "Dave Uncut" },
-            { id: 18, name: "Hallmark Movies & More", category: "Movies", icon: "💐", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", rating: "TV-G", show1: "Midnight Romance Classic", show2: "Mystery Woman Feature", show3: "Autumn Dreams Special", show4: "Heartwarming Tales" },
-            { id: 19, name: "History", category: "Documentary", icon: "⏳", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", rating: "TV-PG", show1: "Ancient Aliens Deep Dive", show2: "Modern Marvels Marathon", show3: "Pawn Stars Late Shift", show4: "Mountain Men Wilderness" },
-            { id: 20, name: "ION TV", category: "Entertainment", icon: "⚡", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", rating: "TV-14", show1: "Criminal Minds Replay", show2: "Law & Order: SVU Block", show3: "NCIS Syndicated Run", show4: "Blue Bloods Special" },
-            { id: 21, name: "Lifetime", category: "Entertainment", icon: "💖", url: "http://40.160.24.53/LIFETIME/index.m3u8", rating: "TV-PG", show1: "Movie Thriller of the Week", show2: "Dance Moms Flashback", show3: "Married at First Sight", show4: "The Client List" },
-            { id: 22, name: "MeTV", category: "Classic", icon: "📺", url: "http://40.160.24.53/METV/index.m3u8", rating: "TV-G", show1: "The Andy Griffith Show", show2: "The Twilight Zone Classic", show3: "Hogan's Heroes", show4: "M*A*S*H Midnight Run" },
-            { id: 23, name: "MTV", category: "Music", icon: "🎸", url: "http://40.160.24.53/MTV/index.m3u8", rating: "TV-14", show1: "Ridiculousness Marathon", show2: "Catfish: The TV Show", show3: "Jersey Shore Flashback", show4: "MTV Spankin' New Music" },
-            { id: 24, name: "Nickelodeon", category: "Family", icon: "🟩", url: "https://gpuserver5.tier1streams.com/NICKELODEON/index.m3u8", rating: "TV-Y7", show1: "SpongeBob SquarePants Night", show2: "The Fairly OddParents", show3: "Avatar: The Last Airbender", show4: "Rugrats Retro Block" },
-            { id: 25, name: "Showtime", category: "Premium", icon: "🛡️", url: "http://40.160.24.55/SHOWTIME/index.m3u8", rating: "TV-MA", show1: "Dexter Late Night Special", show2: "Billions Financial Thriller", show3: "Yellowjackets Uncut", show4: "Showtime Championship Boxing" },
-            { id: 26, name: "Starz", category: "Movies", icon: "✨", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", rating: "TV-MA", show1: "Power Book II: Ghost", show2: "Outlander Extended Cut", show3: "Starz Blockbuster Feature", show4: "BMF Underground" },
-            { id: 27, name: "SYFY", category: "Sci-Fi", icon: "🛸", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", rating: "TV-14", show1: "Twilight Zone Marathon", show2: "Syfy Original Creature Feature", show3: "The Ark Deep Space", show4: "Battlestar Galactica Run" },
-            { id: 28, name: "TNT Novelas Brazil", category: "Drama", icon: "🌹", url: "http://168.197.104.22:80/TNT_NOVELAS/index.m3u8", rating: "TV-PG", show1: "Coração Selvagem (Noite)", show2: "Amor Perfeito Edição Especial", show3: "Destinos Cruzados", show4: "Paixão Proibida" },
-            { id: 29, name: "USA Network", category: "Entertainment", icon: "📺", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", rating: "TV-PG", show1: "Law & Order: CI Late Run", show2: "Chicago P.D. Syndicate", show3: "WWE Raw Classic Replay", show4: "NCIS Special Episode" },
-            { id: 30, name: "The Cowboy Channel", category: "Lifestyle", icon: "🤠", url: "https://gpuserver3.tier1streams.com/THE_COWBOY_CHANNEL/index.m3u8", rating: "TV-G", show1: "PRCA Rodeo Classics", show2: "Western Music Roundup", show3: "Cowboy Way Weekend", show4: "Gospel Music Hour" }
+        // Full Master Catalog (Restored all channels from Bites 1 through 4 with alternating stream support)
+        const rawChannels = [
+            { name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", rating: "TV-G", alternates: [] },
+            { name: "Bounce XL", category: "Entertainment", icon: "📺", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-bouncexl-tablo/playlist.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Brat TV", category: "Entertainment", icon: "⭐", url: "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8", rating: "TV-Y7", alternates: [] },
+            { name: "CMT", category: "Music", icon: "🎶", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Comedy Central", category: "Comedy", icon: "😂", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "Comet", category: "Sci-Fi", icon: "☄️", url: "https://fast-channels.sinclairstoryline.com/COMET/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Crime + Investigation", category: "Documentary", icon: "🔍", url: "http://23.237.104.106:8080/USA_CRIME_INVESTIGATION/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "Dateline 24/7", category: "Documentary", icon: "🕵️‍♂️", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007", rating: "TV-14", alternates: [{ label: "Link 2", url: "https://dz59iptwz5rxs.cloudfront.net/live/master.m3u8" }] },
+            { name: "Disney Channel", category: "Family", icon: "🏰", url: "https://gpuserver3.tier1streams.com/Disney_Channel_HD/index.m3u8", rating: "TV-G", alternates: [{ label: "Link 2", url: "http://212.5.144.156/disney/index.m3u8" }, { label: "Link 3", url: "http://190.14.10.19:16000/play/a06z/index.m3u8" }, { label: "Link 4", url: "https://tvsen5.aynaott.com/disney/index.m3u8" }] },
+            { name: "Disney Junior", category: "Family", icon: "🧸", url: "https://gpuserver3.tier1streams.com/Disney_JR/index.m3u8", rating: "TV-Y", alternates: [{ label: "Link 2", url: "http://212.5.144.156/disneyjr/index.m3u8" }, { label: "Link 3", url: "http://tvsen7.aynascope.net/disneyjr/index.m3u8" }, { label: "Link 4", url: "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8" }] },
+            { name: "Disney XD", category: "Family", icon: "🚀", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", rating: "TV-Y7", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_DISNEY_XD/index.m3u8" }] },
+            { name: "Documentary+", category: "Documentary", icon: "🌍", url: "https://ef79b15c8c7c46c7a9de9d33001dbd07.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-859-DOCUMENTARYPLUS-", rating: "TV-PG", alternates: [] },
+            { name: "Fox West", category: "Networks", icon: "📺", url: "http://stream.cammonitorplus.net/1799/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Fuse", category: "Entertainment", icon: "🎵", url: "https://gpuserver3.tier1streams.com/FUSE/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_FUSE/index.m3u8" }] },
+            { name: "FX", category: "Entertainment", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FX/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_FX/index.m3u8" }, { label: "Link 3", url: "http://40.160.24.52/FX/index.m3u8" }] },
+            { name: "FXX", category: "Comedy", icon: "💬", url: "https://gpuserver3.tier1streams.com/FXX/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_FXX/index.m3u8" }, { label: "Link 3", url: "http://40.160.24.52/FXX/index.m3u8" }] },
+            { name: "Hallmark Movies & More", category: "Movies", icon: "💐", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", rating: "TV-G", alternates: [] },
+            { name: "History", category: "Documentary", icon: "⏳", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://212.5.144.156:8080/history/index.m3u8" }] },
+            { name: "ION Plus", category: "Entertainment", icon: "⚡", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-ionplus-tablo/playlist.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/ION_PLUS/index.m3u8" }] },
+            { name: "ION TV", category: "Entertainment", icon: "⚡", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/ION_TV/index.m3u8" }] },
+            { name: "Kaloopy TV", category: "Entertainment", icon: "🌴", url: "https://streamingserver000.viewtv.cloud/VIEWTVNETWORK-KALOOPY/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "KPVM Movies!", category: "Movies", icon: "🍿", url: "https://2-fss-2.streamhoster.com/pl_120/206858-4412962-1/playlist.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Lifetime", category: "Entertainment", icon: "💖", url: "http://40.160.24.53/LIFETIME/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Lifetime Movies", category: "Movies", icon: "🎥", url: "http://23.237.104.106:8080/USA_LMN/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/LMN/index.m3u8" }] },
+            { name: "Magnificent Movies Network", category: "Movies", icon: "🎬", url: "https://mmn1-301f.kxcdn.com/hls/MMN-HLS.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "MeTV", category: "Classic", icon: "📺", url: "http://40.160.24.53/METV/index.m3u8", rating: "TV-G", alternates: [{ label: "Link 2", url: "https://82934cf9c8696bd2.mediapackage.us-east-1.amazonaws.com/out/v1/23685237ffbb4047a8143ac2166ead44/index.m3u8" }] },
+            { name: "MTV", category: "Music", icon: "🎸", url: "http://40.160.24.53/MTV/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv/index.m3u8" }] },
+            { name: "MTV2", category: "Music", icon: "🎧", url: "http://40.160.24.53/MTV2/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv2/index.m3u8" }] },
+            { name: "MTV Classic", category: "Music", icon: "📼", url: "http://40.160.24.53/MTV_CLASSIC/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "MTV Live", category: "Music", icon: "🎤", url: "http://40.160.24.53/MTV_LIVE/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_MTV_LIVE/index.m3u8" }] },
+            { name: "Oxygen", category: "Entertainment", icon: "💎", url: "http://40.160.24.55/OXYGEN/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/oxygen/index.m3u8" }] },
+            { name: "PBS Kids", category: "Family", icon: "🎒", url: "https://livestream.pbskids.org/out/v1/14507d931bbe48a69287e4850e53443c/est.m3u8", rating: "TV-Y", alternates: [] },
+            { name: "PBS Kids Hawaii", category: "Family", icon: "🌺", url: "https://livestream.pbskids.org/out/v1/aa31792fee094b24b09045483f04d150/hast.m3u8", rating: "TV-Y", alternates: [] },
+            { name: "Reelz", category: "Entertainment", icon: "🎞️", url: "http://23.237.104.106:8080/USA_REELZ/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/REELZ/index.m3u8" }] },
+            { name: "Retro TV", category: "Classic", icon: "📻", url: "https://freecast-lukentvlive.vgcdn.net/out/v1/665e9f91614b43b0a0654e9317f1d9f3/index.m3u8", rating: "TV-G", alternates: [{ label: "Link 2", url: "https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/retro/index.m3u8" }] },
+            { name: "Smithsonian Channel", category: "Documentary", icon: "🦅", url: "http://40.160.24.55/SMITHSONIAN/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Sony Channel Andes", category: "Entertainment", icon: "🌐", url: "http://177.234.249.178:8888/SONY-TV/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "Starz", category: "Movies", icon: "✨", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "Starz West", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_WEST/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "Starz Edge", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_EDGE/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "Starz Cinema", category: "Movies", icon: "🎟️", url: "http://23.237.104.106:8080/USA_STARZ_CINEMA/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "Starz Comedy", category: "Comedy", icon: "🎭", url: "http://23.237.104.106:8080/USA_STARZ_COMEDY/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2", url: "http://40.160.24.55/STARZ_COMEDY/index.m3u8" }] },
+            { name: "Starz Encore", category: "Movies", icon: "📽️", url: "http://40.160.24.55/STARZ_ENCORE/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "Sundance TV", category: "Movies", icon: "📽️", url: "http://40.160.24.55/SUNDANCE/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "SYFY", category: "Sci-Fi", icon: "🛸", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/SYFY/index.m3u8" }, { label: "Link 3", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" }] },
+            { name: "TeenNick", category: "Family", icon: "🛹", url: "https://gpuserver5.tier1streams.com/TEEN_NICK/index.m3u8", rating: "TV-Y7", alternates: [{ label: "Link 2", url: "http://40.160.24.55/TEEN_NICK/index.m3u8" }] },
+            { name: "theDove TV", category: "Faith", icon: "🕊️", url: "https://thedovetv.bozztv.com/thedovetv/thedovetv/index.m3u8", rating: "TV-G", alternates: [] },
+            { name: "TNT Novelas Brazil", category: "Drama", icon: "🌹", url: "http://168.197.104.22:80/TNT_NOVELAS/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://45.162.64.114/TNT_NOVELAS/index.m3u8" }, { label: "Link 3", url: "http://177.52.24.163/TNT-NOVELAS-HD/index.m3u8" }] },
+            { name: "Toon Goggles", category: "Family", icon: "🎨", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=37", rating: "TV-Y", alternates: [{ label: "Link 2", url: "https://d1eg24xrsfr6kv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-b4b1bzxkt1uzo-prod/tg/tg/tg.m3u8" }] },
+            { name: "TV Land", category: "Classic", icon: "🛋️", url: "http://40.160.24.55/TV_LAND/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Univision", category: "Networks", icon: "🌐", url: "http://200.115.120.1:8000/play/ca106/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://190.197.41.183/Univision/index.m3u8" }] },
+            { name: "USA Network", category: "Entertainment", icon: "📺", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://40.160.24.55/USA_NETWORK_WEST/index.m3u8" }] },
+            { name: "VH1", category: "Music", icon: "🎶", url: "http://40.160.24.55/VH1/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/VH1_WEST/index.m3u8" }] },
+            { name: "VICE TV", category: "Documentary", icon: "📰", url: "http://23.237.104.106:8080/USA_VICETV/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/VICELAND/index.m3u8" }] },
+            { name: "ESPN Deportes", category: "Sports", icon: "⚽", url: "https://gpuserver7.tier1streams.com/ESPN_DEPORTES/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "UniMas Central", category: "Networks", icon: "📡", url: "http://190.197.41.183/Unimas/mono.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "Comedy TV", category: "Comedy", icon: "🎤", url: "https://gpuserver3.tier1streams.com/COMEDY_TV/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "E! Entertainment", category: "Entertainment", icon: "🌟", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_EAST/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_WEST/index.m3u8" }] },
+            { name: "Flix", category: "Movies", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FLIX/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "FXM (FX Movie Channel)", category: "Movies", icon: "🎥", url: "https://gpuserver3.tier1streams.com/FXM/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2", url: "http://40.160.24.52/FXM/index.m3u8" }] },
+            { name: "The Cowboy Channel", category: "Lifestyle", icon: "🤠", url: "https://gpuserver3.tier1streams.com/THE_COWBOY_CHANNEL/index.m3u8", rating: "TV-G", alternates: [] },
+            { name: "Discovery Turbo (MotorTrend)", category: "Documentary", icon: "🏎️", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", rating: "TV-PG", alternates: [] },
+            { name: "MGM+ Drive-In (Epix)", category: "Movies", icon: "🚗", url: "https://gpuserver3.tier1streams.com/EPIX_DRIVE-IN/index.m3u8", rating: "TV-MA", alternates: [] },
+            { name: "We TV", category: "Entertainment", icon: "🍿", url: "http://170.254.17.2:80/WE_TV/index.m3u8", rating: "TV-14", alternates: [] },
+            { name: "Showtime", category: "Premium", icon: "🛡️", url: "http://40.160.24.55/SHOWTIME/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2 (West)", url: "http://40.160.24.55/SHOWTIME_WEST/index.m3u8" }, { label: "Link 3 (2)", url: "http://40.160.24.55/SHOWTIME_2/index.m3u8" }] },
+            { name: "Nickelodeon", category: "Family", icon: "🟩", url: "https://gpuserver5.tier1streams.com/NICKELODEON/index.m3u8", rating: "TV-Y7", alternates: [] },
+            { name: "Nick Jr.", category: "Family", icon: "👶", url: "https://gpuserver5.tier1streams.com/NICK_JR/index.m3u8", rating: "TV-Y", alternates: [] },
+            { name: "Nicktoons", category: "Family", icon: "🌀", url: "https://gpuserver5.tier1streams.com/NICKTOONS/index.m3u8", rating: "TV-Y7", alternates: [] }
         ];
+
+        // Format channels with sequenced IDs and scheduled blocks
+        const channels = rawChannels.map((c, index) => ({
+            id: index + 1,
+            name: c.name,
+            category: c.category,
+            icon: c.icon,
+            url: c.url,
+            rating: c.rating,
+            alternates: c.alternates,
+            show1: `${c.name} Live Primetime Block`,
+            show2: `${c.category} Spotlight Hour`,
+            show3: `Late Night ${c.name} Special`,
+            show4: `Early Morning ${c.name} Feed`
+        }));
 
         let currentChannel = channels[0];
         let currentActiveUrl = channels[0].url;
         let hlsInstance = null;
         let isNativeMode = false;
+
+        document.getElementById('catalogHeaderTitle').innerText = `GUIDE: Master Channel Catalog (All ${channels.length} Channels Programmed)`;
 
         function renderGuideRows(list) {
             const container = document.getElementById('guideRowsContainer');
