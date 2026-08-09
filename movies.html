@@ -29,12 +29,13 @@
             overflow: hidden;
         }
 
-        /* App Sidebar */
-        .app-sidebar {
-            width: 320px;
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
             background-color: var(--sidebar-color);
             display: flex;
             flex-direction: column;
+            padding: 20px 0;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 10;
         }
@@ -43,9 +44,8 @@
             font-size: 22px;
             font-weight: bold;
             color: var(--text-main);
-            padding: 20px;
+            padding: 0 20px 20px 20px;
             letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo-area span {
@@ -55,32 +55,35 @@
         .sidebar-library {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding: 0 15px;
         }
 
         .sidebar-library h3 {
             margin-top: 0;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #e50914;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .movie-item {
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
             background: #161e2e;
             cursor: pointer;
             border-radius: 4px;
-            font-size: 13px;
+            font-size: 12px;
             word-break: break-word;
             border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
         }
 
         .movie-item:hover {
-            background: rgba(139, 0, 0, 0.3);
+            background-color: rgba(139, 0, 0, 0.2);
+            color: var(--text-main);
+            border-left: 4px solid var(--accent-red);
         }
 
         /* Main Content Wrapper */
@@ -99,7 +102,7 @@
             padding: 20px 40px;
             background: linear-gradient(to bottom, rgba(11,15,25,0.9), transparent);
             position: absolute;
-            width: calc(100% - 320px);
+            width: calc(100% - 260px);
             z-index: 5;
         }
 
@@ -164,7 +167,7 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 650px;
+            max-width: 600px;
         }
 
         .hero-tag {
@@ -184,7 +187,7 @@
         }
 
         .hero-desc {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-muted);
             line-height: 1.5;
             margin-bottom: 20px;
@@ -248,29 +251,30 @@
 
         /* Video Player Section */
         .player-section {
-            padding: 30px 40px;
+            padding: 25px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: rgba(0,0,0,0.2);
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
         .player-section h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
+            font-size: 15px;
+            margin-bottom: 12px;
             color: #e50914;
+            font-weight: 600;
         }
 
         video {
             width: 100%;
-            max-width: 900px;
-            max-height: 500px;
+            max-width: 850px;
+            max-height: 450px;
             background: #000;
             border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Category Rows Section */
+        /* Content Rows */
         .content-section {
             padding: 20px 40px 40px 40px;
         }
@@ -298,7 +302,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 180px;
+            height: 200px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
@@ -310,30 +314,30 @@
         }
 
         .card-info {
-            padding: 10px;
+            padding: 12px;
         }
 
         .card-title {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .card-genre {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar with Dynamic Movie Archive List -->
-    <div class="app-sidebar">
+    <!-- Sidebar with dynamic archive movie items -->
+    <div class="sidebar">
         <div class="logo-area">NEXUS<span>TV</span></div>
         <div class="sidebar-library">
             <h3>Library Archive</h3>
             <div id="list">
-                <!-- Archive movie items populated dynamically -->
+                <!-- Populated dynamically by JavaScript -->
             </div>
         </div>
     </div>
@@ -361,8 +365,8 @@
         <div class="hero" id="heroBanner">
             <div class="hero-content">
                 <div class="hero-tag" id="heroTag">Featured Original</div>
-                <h1 class="hero-title" id="heroTitle">The Expanse</h1>
-                <p class="hero-desc" id="heroDesc">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
+                <h1 class="hero-title" id="heroTitle">Interstellar</h1>
+                <p class="hero-desc" id="heroDesc">When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft to find a new planet for humans.</p>
                 <div class="hero-buttons">
                     <button class="btn btn-primary" onclick="playCurrentHeroMovie()">▶ Play Film</button>
                     <button class="btn btn-secondary" onclick="addCurrentHeroMovie()">+ Add to List</button>
@@ -387,7 +391,7 @@
             </video>
         </div>
 
-        <!-- Recommendation Rows -->
+        <!-- Content Rows -->
         <div class="content-section">
             <div class="section-title"><span>Nexus</span> TV shows we think you'll like</div>
             <div class="card-row">
@@ -425,7 +429,7 @@
     </div>
 
     <script>
-        // Full verified list of media URLs mapping to your archive
+        // Full verified archive link list
         const mediaLinks = [
             "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4",
             "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4",
@@ -473,10 +477,10 @@
             "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
         ];
 
-        // 5 Auto-Scrolling Featured Movies mapped directly to actual working stream items where available
+        // Array of 5 hero movies mapped directly to working media streams and custom backgrounds
         const heroMovies = [
             {
-                tag: "Featured Original",
+                tag: "Critically Acclaimed",
                 title: "Interstellar",
                 desc: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft to find a new planet for humans.",
                 bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')",
@@ -490,9 +494,9 @@
                 url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4"
             },
             {
-                tag: "Critically Acclaimed",
-                title: "Dune: Part Two",
-                desc: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
+                tag: "Featured Original",
+                title: "The Expanse",
+                desc: "A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.",
                 bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')",
                 url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
             },
