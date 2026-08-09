@@ -1,459 +1,521 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus TV - Latest Movies</title>
+    <title>NEXUS TV — Latest Movies</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #060913; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
+        
+        .aether-cinema-root { position: relative; }
+        .vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%); z-index: 2; }
+        .grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); z-index: 3; }
 
-        body {
-            background-color: #0b0f19;
-            color: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-        }
+        .aether-hero { position: relative; width: 100%; height: 520px; display: flex; align-items: flex-end; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .backdrops { position: absolute; inset: 0; z-index: 1; }
+        .bd { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; justify-content: flex-end; padding-right: 10%; }
+        .bd.active { opacity: 1; }
+        .bd-icon { font-size: 14rem; opacity: 0.15; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); user-select: none; }
+        
+        .glow { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+        .blob { position: absolute; filter: blur(80px); opacity: 0.4; border-radius: 50%; }
+        .blob.a { width: 300px; height: 300px; background: var(--accent, #db2777); top: -50px; left: -50px; }
+        .blob.b { width: 400px; height: 400px; background: #4f46e5; bottom: -100px; right: 10%; }
+        
+        .scrim { position: absolute; inset: 0; z-index: 3; background: linear-gradient(0deg, #060913 0%, rgba(6,9,19,0.8) 30%, transparent 100%), linear-gradient(90deg, #060913 15%, rgba(6,9,19,0.6) 50%, transparent 100%); pointer-events: none; }
+        
+        .hero-content { position: relative; z-index: 4; padding: 0 4rem 3rem 4rem; max-width: 800px; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .hero-content.switching { opacity: 0; transform: translateY(10px); }
+        .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent, #f472b6); margin-bottom: 0.75rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .hero-title { font-family: 'Playfair Display', serif; font-size: 3.25rem; font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 1rem; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .hero-title em { font-style: italic; color: var(--accent, #f472b6); }
+        .hero-meta { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #94a3b8; margin-bottom: 1.5rem; font-weight: 500; }
+        .rating-pill { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; color: #fff; font-size: 0.75rem; font-weight: 700; }
+        .sep { width: 4px; height: 4px; border-radius: 50%; background: #475569; }
+        
+        .hero-actions { display: flex; align-items: center; gap: 1rem; }
+        .btn-play { background: #fff; color: #060913; font-weight: 700; padding: 0.75rem 1.75rem; border-radius: 12px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 20px rgba(255,255,255,0.2); cursor: pointer; border: none; }
+        .btn-play:hover { background: var(--accent, #f472b6); color: #fff; transform: translateY(-2px); }
+        .btn-ghost { background: rgba(255,255,255,0.08); color: #fff; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px); transition: all 0.2s; cursor: pointer; }
+        .btn-ghost:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
 
-        .dashboard-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
+        .dots { position: absolute; right: 3rem; bottom: 3rem; z-index: 5; display: flex; flex-direction: column; gap: 8px; }
+        .dot { width: 8px; height: 24px; border-radius: 4px; background: rgba(255,255,255,0.2); border: none; cursor: pointer; transition: all 0.3s; }
+        .dot.active { background: var(--accent, #f472b6); height: 36px; box-shadow: 0 0 10px var(--accent, #f472b6); }
 
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 240px;
-            background-color: #070a10;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 24px 16px;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-            z-index: 20;
-        }
+        .collection { padding: 3rem 4rem; display: flex; flex-direction: column; gap: 3rem; z-index: 4; position: relative; }
+        .row { display: flex; flex-direction: column; gap: 1rem; }
+        .row-head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.75rem; }
+        .row-title { font-size: 1.25rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5s; font-family: 'Playfair Display', serif; }
+        .row-title .num { color: #64748b; font-size: 0.875rem; font-family: 'Inter', sans-serif; font-weight: 600; }
+        
+        .row-track { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; width: 100%; }
+        
+        .card { position: relative; height: 280px; border-radius: 16px; overflow: hidden; background: #0f172a; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; justify-content: flex-end; }
+        .card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        .card-img { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transition: transform 0.5s; }
+        .card:hover .card-img { transform: scale(1.05); }
+        .card-icon { font-size: 5rem; opacity: 0.35; user-select: none; }
+        .card-scrim { position: absolute; inset: 0; background: linear-gradient(0deg, #060913 0%, rgba(6,9,19,0.8) 40%, transparent 100%); pointer-events: none; }
+        
+        .card-top { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+        .badge { background: rgba(0,0,0,0.6); backdrop-blur: blur(8px); border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; color: #cbd5e1; }
+        .bookmark { background: rgba(0,0,0,0.6); backdrop-blur: blur(8px); border: 1px solid rgba(255,255,255,0.1); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #cbd5e1; cursor: pointer; transition: all 0.2s; }
+        .bookmark:hover, .bookmark.saved { background: #f472b6; color: #fff; border-color: #f472b6; }
 
-        .brand {
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
-            margin-bottom: 32px;
-        }
+        .card-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; background: rgba(6,9,19,0.4); backdrop-filter: blur(2px); transition: opacity 0.2s; z-index: 2; }
+        .card:hover .card-play { opacity: 1; }
+        .card-play svg { width: 48px; height: 48px; background: #fff; color: #060913; padding: 12px; border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); transform: scale(0.8); transition: transform 0.2s; }
+        .card:hover .card-play svg { transform: scale(1); }
 
-        .brand span {
-            color: #e50914;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1;
-        }
-
-        .nav-links li a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            color: #94a3b8;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .nav-links li.active a, .nav-links li a:hover {
-            background-color: rgba(229, 9, 20, 0.15);
-            color: #ffffff;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Top Navigation Bar */
-        .top-nav {
-            height: 60px;
-            background-color: #0b0f19;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        .nav-menu-area {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .app-logo {
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: 1px;
-        }
-
-        .app-logo span {
-            color: #38bdf8;
-        }
-
-        .menu-items {
-            display: flex;
-            list-style: none;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .menu-items li a {
-            text-decoration: none;
-            color: #94a3b8;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-
-        .menu-items li.active a, .menu-items li a:hover {
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .top-nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: #94a3b8;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .search-icon {
-            font-size: 1.1rem;
-        }
-
-        /* Top Hero Banner */
-        .hero-banner-section {
-            flex-shrink: 0;
-            width: 100%;
-            height: 48vh;
-            position: relative;
-            background: linear-gradient(to right, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, rgba(11, 15, 25, 0.8)), 
-                        url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
-            display: flex;
-            align-items: center;
-            padding: 0 40px;
-        }
-
-        .hero-content {
-            max-width: 600px;
-            z-index: 2;
-        }
-
-        .hero-badge {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #38bdf8;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-
-        .hero-title {
-            font-size: 3.6rem;
-            font-weight: 900;
-            margin-bottom: 12px;
-            line-height: 1.05;
-            letter-spacing: -1px;
-            color: #ffffff;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-
-        .hero-description {
-            font-size: 0.9rem;
-            color: #cbd5e1;
-            margin-bottom: 18px;
-            line-height: 1.5;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background-color: #ffffff;
-            color: #0b0f19;
-        }
-
-        .btn-primary:hover {
-            background-color: #e2e8f0;
-            transform: scale(1.02);
-        }
-
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            color: #ffffff;
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.25);
-            transform: scale(1.02);
-        }
-
-        /* Scrollable Lower Section with strict single-row vertical snapping */
-        .scrollable-rows-section {
-            flex-grow: 1;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            padding: 20px 40px;
-            background: #0b0f19;
-            scrollbar-width: none; /* Hide scrollbar for clean look */
-        }
-
-        .scrollable-rows-section::-webkit-scrollbar {
-            display: none;
-        }
-
-        .row-category {
-            height: 100%;
-            min-height: 100%;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding-bottom: 10px;
-        }
-
-        .row-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .row-title span {
-            color: #38bdf8;
-            font-weight: 600;
-        }
-
-        /* Exactly 4 cards across, sized up to fill the lower section viewport */
-        .movie-row-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .movie-card {
-            background-color: #161b26;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .movie-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .movie-poster {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            background-color: #1e2532;
-        }
-
-        .movie-info {
-            padding: 12px 16px;
-        }
-
-        .movie-name {
-            font-size: 1.05rem;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 4px;
-            color: #ffffff;
-        }
-
-        .movie-genre {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
+        .card-info { position: relative; z-index: 2; padding: 16px; }
+        .card-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info p { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-    <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div>
-                <div class="brand">NEXUS <span>TV</span></div>
-                <ul class="nav-links">
-                    <li><a href="movies.html">Live IPTV</a></li>
-                    <li class="active"><a href="movies.html">Latest Movies</a></li>
-                    <li><a href="#">Archive.org</a></li>
-                    <li><a href="#">Search</a></li>
-                    <li><a href="#">My List</a></li>
-                </ul>
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                </div>
             </div>
-            <div style="font-size: 0.8rem; color: #64748b;">v4.3 • Quantum</div>
-        </aside>
 
-        <!-- Main Workspace -->
-        <main class="main-content">
-            <!-- Professional Top Navigation Bar -->
-            <nav class="top-nav">
-                <div class="nav-menu-area">
-                    <div class="app-logo">NEXUS <span>ORIGINALS</span></div>
-                    <ul class="menu-items">
-                        <li><a href="#">Home</a></li>
-                        <li class="active"><a href="#">Featured</a></li>
-                        <li><a href="#">Store</a></li>
-                        <li><a href="#">Channels</a></li>
-                        <li><a href="#">Categories</a></li>
-                        <li><a href="#">My Stuff</a></li>
-                    </ul>
-                </div>
-                <div class="top-nav-right">
-                    <span class="search-icon">🔍</span>
-                    <span>⚙️</span>
-                </div>
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </a>
+
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-400 border-pink-500/30 shadow-lg shadow-pink-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
+                </a>
+
+                <a href="archive.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🏛️</span>
+                        <span>Archive.org Stream</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="generic.html?section=search" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </a>
+
+                <a href="generic.html?section=mylist" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </a>
+
+                <a href="generic.html?section=guide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </a>
             </nav>
+        </div>
 
-            <!-- Fixed Top Hero Banner -->
-            <section class="hero-banner-section">
-                <div class="hero-content">
-                    <div class="hero-badge">Featured Original</div>
-                    <h1 class="hero-title">THE EXPANSE</h1>
-                    <p class="hero-description">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
-                    <div class="hero-buttons">
-                        <button class="btn btn-primary">
-                            ▶ Play Film
-                        </button>
-                        <button class="btn btn-secondary">
-                            + Add to List
-                        </button>
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3">
+            <a href="generic.html?section=settings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
+
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
                     </div>
                 </div>
+            </div>
+        </div>
+    </aside>
+
+
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+        <div class="flex-1 flex flex-col overflow-y-auto custom-scrollbar aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
+
+            <!-- Aether Hero Section -->
+            <section class="aether-hero" id="hero">
+                <div class="backdrops" id="backdrops"></div>
+                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
+                <div class="scrim"></div>
+                <div class="hero-content" id="heroContent"></div>
+                <div class="dots" id="dots"></div>
             </section>
 
-            <!-- Scrollable Vertical Snapping Rows Section -->
-            <section class="scrollable-rows-section">
-                <!-- Row 1 -->
-                <div class="row-category">
-                    <h2 class="row-title"><span>Nexus</span> TV shows we think you'll like</h2>
-                    <div class="movie-row-cards">
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Man in the High Castle</div>
-                                <div class="movie-genre">Sci-Fi / Drama</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Modern Love</div>
-                                <div class="movie-genre">Romance / Comedy</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Grand Tour</div>
-                                <div class="movie-genre">Automotive / Talk</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Boys</div>
-                                <div class="movie-genre">Action / Superhero</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Aether Collection Rows -->
+            <section class="collection" id="collection"></section>
+        </div>
 
-                <!-- Row 2 -->
-                <div class="row-category">
-                    <h2 class="row-title"><span>Nexus</span> Action &amp; Adventure Movies (1976–1989)</h2>
-                    <div class="movie-row-cards">
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">The Terminator</div>
-                                <div class="movie-genre">Action • 1984</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Aliens</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">Die Hard</div>
-                                <div class="movie-genre">Action • 1988</div>
-                            </div>
-                        </div>
-                        <div class="movie-card">
-                            <div class="movie-poster"></div>
-                            <div class="movie-info">
-                                <div class="movie-name">First Blood</div>
-                                <div class="movie-genre">Action • 1982</div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
+            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+        </footer>
+    </main>
+
+    <!-- Aether Video Player Overlay Modal -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
+        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
+            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
+                <div class="t-meta min-w-0">
+                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
+                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
                 </div>
-            </section>
-        </main>
+                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
+                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
+                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <div class="vol flex items-center gap-2">
+                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
+                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </button>
+                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
+                    </div>
+                    <div class="spacer flex-1"></div>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
+
+    <script>
+const FILMS = [
+    // 1976-1989 Batch
+    {"id": 1, "title": "The Terminator", "year": 1984, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["action"]},
+    {"id": 2, "title": "Aliens", "year": 1986, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["action"]},
+    {"id": 3, "title": "Die Hard", "year": 1988, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["action"]},
+    {"id": 21, "title": "Star Wars: A New Hope", "year": 1977, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["scifi"]},
+    {"id": 22, "title": "Star Wars: The Empire Strikes Back", "year": 1980, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["scifi"]},
+    {"id": 41, "title": "Halloween", "year": 1978, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["horror"]},
+    {"id": 61, "title": "Taxi Driver", "year": 1976, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["drama"]},
+    {"id": 81, "title": "Jaws", "year": 1975, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["thriller"]},
+    {"id": 101, "title": "Ghostbusters", "year": 1984, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["comedy"]},
+    {"id": 121, "title": "Dirty Dancing", "year": 1987, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["romance"]},
+    {"id": 131, "title": "The Secret of NIMH", "year": 1982, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["animation"]},
+    {"id": 141, "title": "Koyaanisqatsi", "year": 1982, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["documentary"]},
+
+    // 1990-1999 Added Batch
+    {"id": 201, "title": "Terminator 2: Judgment Day", "year": 1991, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["action"]},
+    {"id": 202, "title": "The Matrix", "year": 1999, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["action", "scifi"]},
+    {"id": 203, "title": "Heat", "year": 1995, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["action", "drama", "thriller"]},
+    {"id": 204, "title": "Total Recall", "year": 1990, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["scifi"]},
+    {"id": 205, "title": "Jurassic Park", "year": 1993, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["scifi"]},
+    {"id": 206, "title": "Scream", "year": 1996, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["horror"]},
+    {"id": 207, "title": "The Sixth Sense", "year": 1999, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["horror"]},
+    {"id": 208, "title": "Goodfellas", "year": 1990, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["drama"]},
+    {"id": 209, "title": "The Shawshank Redemption", "year": 1994, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["drama"]},
+    {"id": 210, "title": "Pulp Fiction", "year": 1994, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["drama"]},
+    {"id": 211, "title": "Fight Club", "year": 1999, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["drama"]},
+    {"id": 212, "title": "Se7en", "year": 1995, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["thriller", "horror"]},
+    {"id": 213, "title": "The Silence of the Lambs", "year": 1991, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["thriller"]},
+    {"id": 214, "title": "The Usual Suspects", "year": 1995, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["thriller"]},
+    {"id": 215, "title": "Dumb and Dumber", "year": 1994, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["comedy"]},
+    {"id": 216, "title": "Groundhog Day", "year": 1993, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["comedy"]},
+    {"id": 217, "title": "The Big Lebowski", "year": 1998, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["comedy"]},
+    {"id": 218, "title": "Pretty Woman", "year": 1990, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["romance"]},
+    {"id": 219, "title": "Ghost", "year": 1990, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["romance"]},
+    {"id": 220, "title": "Jerry Maguire", "year": 1996, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["romance"]}
+];
+
+const ROWS = [
+    {"key": "action", "label": "Action Master List"},
+    {"key": "scifi", "label": "Sci-Fi Master List"},
+    {"key": "horror", "label": "Horror Master List"},
+    {"key": "drama", "label": "Drama Master List"},
+    {"key": "thriller", "label": "Thriller Master List"},
+    {"key": "comedy", "label": "Comedy Master List"},
+    {"key": "romance", "label": "Romance Master List"},
+    {"key": "animation", "label": "Animation Master List"},
+    {"key": "documentary", "label": "Documentary Master List"}
+];
+
+const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
+
+        let saved = new Set(JSON.parse(localStorage.getItem("aether_saved") || "[]"));
+        let activeIdx = 0, rotTimer = null;
+
+        const backdropsEl = document.getElementById('backdrops');
+        const heroContentEl = document.getElementById('heroContent');
+        const dotsEl = document.getElementById('dots');
+        const collectionEl = document.getElementById('collection');
+
+        function renderHero() {
+            backdropsEl.innerHTML = '';
+            dotsEl.innerHTML = '';
+            SPOTLIGHT_IDS.forEach((id, i) => {
+                const f = FILMS.find(x => x.id === id);
+                if (!f) return;
+                const bd = document.createElement('div');
+                bd.className = `bd ${i === 0 ? 'active' : ''}`;
+                bd.style.background = `radial-gradient(circle at 32% 22%, rgba(${f.rgb},.45), transparent 60%), linear-gradient(160deg, rgba(${f.rgb},.28), #060608 78%)`;
+                bd.innerHTML = `<span class="bd-icon">${f.icon}</span>`;
+                backdropsEl.appendChild(bd);
+
+                const dot = document.createElement('button');
+                dot.className = `dot ${i === 0 ? 'active' : ''}`;
+                dot.onclick = () => setSpotlight(i);
+                dotsEl.appendChild(dot);
+            });
+            updateHeroContent(0);
+            startRot();
+        }
+
+        function updateHeroContent(idx) {
+            activeIdx = idx;
+            const f = FILMS.find(x => x.id === SPOTLIGHT_IDS[idx]);
+            if (!f) return;
+            document.documentElement.style.setProperty('--accent', f.accent);
+            document.documentElement.style.setProperty('--accent-rgb', f.rgb);
+
+            document.querySelectorAll('.bd').forEach((b, i) => b.classList.toggle('active', i === idx));
+            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+
+            heroContentEl.classList.add('switching');
+            setTimeout(() => {
+                heroContentEl.innerHTML = `
+                    <div class="eyebrow">${f.icon} ${f.genreLabel} Feature</div>
+                    <h2 class="hero-title">${f.title.split(' ').map((w, wi) => wi === 1 ? `<em>${w}</em>` : w).join(' ')}</h2>
+                    <div class="hero-meta">
+                        <span class="rating-pill">${f.genreLabel}</span>
+                        <span class="sep"></span>
+                        <span>${f.year}</span>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-play" onclick="playFilm(${f.id})">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
+                        </button>
+                        <button class="btn-ghost" onclick="toggleSave(${f.id})">
+                            ${saved.has(f.id) ? '✓ In Saved List' : '+ Add to List'}
+                        </button>
+                    </div>
+                `;
+                heroContentEl.classList.remove('switching');
+            }, 220);
+        }
+
+        function setSpotlight(idx) {
+            stopRot();
+            updateHeroContent(idx);
+            startRot();
+        }
+
+        function startRot() {
+            stopRot();
+            rotTimer = setInterval(() => {
+                activeIdx = (activeIdx + 1) % SPOTLIGHT_IDS.length;
+                updateHeroContent(activeIdx);
+            }, 8000);
+        }
+
+        function stopRot() {
+            if (rotTimer) clearInterval(rotTimer);
+        }
+
+        window.playFilm = function (id) {
+            const f = FILMS.find(x => x.id === id);
+            if (!f) return;
+            openPlayer(f);
+        };
+
+        window.toggleSave = function (id) {
+            if (saved.has(id)) saved.delete(id); else saved.add(id);
+            localStorage.setItem("aether_saved", JSON.stringify([...saved]));
+            renderCollection();
+            renderHero();
+            showToast(saved.has(id) ? 'Added to your saved list' : 'Removed from your list');
+        };
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
+            t.classList.add('opacity-100');
+            setTimeout(() => t.classList.remove('opacity-100'), 2600);
+        }
+
+        function renderCollection() {
+            collectionEl.innerHTML = '';
+            ROWS.forEach((r, ri) => {
+                let list = FILMS.filter(f => f.cats.includes(r.key));
+                if (list.length === 0) return;
+
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `
+                    <div class="row-head">
+                        <h3 class="row-title"><span class="num">${String(ri + 1).padStart(2, '0')}.</span> ${r.label}</h3>
+                        <span class="row-count text-xs text-slate-500">${list.length} films</span>
+                    </div>
+                    <div class="row-track" id="track-${r.key}"></div>
+                `;
+                const track = row.querySelector('.row-track');
+                list.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = (e) => {
+                        if (e.target.closest('.bookmark')) return;
+                        playFilm(f.id);
+                    };
+
+                    const isSaved = saved.has(f.id);
+                    card.innerHTML = `
+                        <div class="card-img" style="background:linear-gradient(160deg, rgba(${f.rgb},.55), #0b0b10 80%)">
+                            <span class="card-icon">${f.icon}</span>
+                        </div>
+                        <div class="card-scrim"></div>
+                        <div class="card-top">
+                            <span class="badge year">${f.year}</span>
+                            <button class="bookmark ${isSaved ? 'saved' : ''}" onclick="toggleSave(${f.id})" title="Save">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            </button>
+                        </div>
+                        <div class="card-play">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>${f.title}</h3>
+                            <p>${f.genreLabel}</p>
+                        </div>
+                    `;
+                    track.appendChild(card);
+                });
+                collectionEl.appendChild(row);
+            });
+        }
+
+        // Player setup
+        const playerEl = document.getElementById('player');
+        const videoEl = document.getElementById('video');
+        const loaderEl = document.getElementById('loader');
+        const stageEl = document.getElementById('stage');
+        const seekEl = document.getElementById('seek');
+        const curTimeEl = document.getElementById('curTime');
+        const durTimeEl = document.getElementById('durTime');
+        const ppBtn = document.getElementById('ppBtn');
+        const ppIcon = document.getElementById('ppIcon');
+        const muteBtn = document.getElementById('muteBtn');
+        const volEl = document.getElementById('vol');
+        const fsBtn = document.getElementById('fsBtn');
+
+        function openPlayer(f) {
+            playerEl.style.display = 'flex';
+            setTimeout(() => playerEl.classList.add('opacity-100'), 10);
+            document.getElementById('pTitle').innerText = f.title;
+            document.getElementById('pMeta').innerText = `${f.genreLabel} · ${f.year}`;
+            videoEl.src = f.video;
+            videoEl.play().catch(() => {});
+            setupUI();
+        }
+
+        function closePlayer() {
+            videoEl.pause();
+            videoEl.src = "";
+            playerEl.classList.remove('opacity-100');
+            setTimeout(() => playerEl.style.display = 'none', 300);
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        }
+
+        document.getElementById('closeBtn').onclick = closePlayer;
+
+        ppBtn.onclick = () => {
+            if (videoEl.paused) videoEl.play(); else videoEl.pause();
+        };
+
+        muteBtn.onclick = () => {
+            videoEl.muted = !videoEl.muted;
+            volEl.value = videoEl.muted ? 0 : (videoEl.volume * 100);
+        };
+
+        fsBtn.onclick = () => {
+            if (!document.fullscreenElement) stageEl.requestFullscreen().catch(() => {});
+            else document.exitFullscreen().catch(() => {});
+        };
+
+        function setupUI() {
+            videoEl.onwaiting = () => loaderEl.style.display = 'flex';
+            videoEl.onplaying = () => loaderEl.style.display = 'none';
+            videoEl.ontimeupdate = () => {
+                if (!videoEl.duration) return;
+                const p = (videoEl.currentTime / videoEl.duration) * 1000;
+                seekEl.value = p;
+                curTimeEl.innerText = fmtTime(videoEl.currentTime);
+                durTimeEl.innerText = fmtTime(videoEl.duration);
+            };
+            videoEl.onplay = () => ppIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            videoEl.onpause = () => ppIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        }
+
+        function fmtTime(s) {
+            if (!isFinite(s)) return "0:00";
+            s = Math.floor(s);
+            const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+            return h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
+        }
+
+        seekEl.oninput = (e) => {
+            if (!videoEl.duration) return;
+            videoEl.currentTime = (e.target.value / 1000) * videoEl.duration;
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try { renderHero(); } catch (e) { console.error('Hero render failed:', e); }
+            try { renderCollection(); } catch (e) { console.error('Collection render failed:', e); }
+        });
+    </script>
 </body>
 </html>
