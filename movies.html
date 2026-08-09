@@ -101,7 +101,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.4 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.5 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -192,14 +192,14 @@
 
         <!-- Footer Signature -->
         <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.4 Engine &bull; Webpage Designed by: Daniel Dudek
+            NEXUS TV v4.5 Engine &bull; Webpage Designed by: Daniel Dudek
         </footer>
     </main>
 
     <!-- Aether Video Player Overlay Modal -->
     <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
         <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
-            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <video id="video" playsinline crossorigin="anonymous" class="w-full h-full block bg-black object-contain"></video>
             <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
             <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
                 <div class="t-meta min-w-0">
@@ -434,8 +434,17 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
             });
         }
 
-        // Global Event Delegation for Clicks (Guarantees robust routing without inline handler closure mismatches)
+        // Global Event Delegation for Clicks
         document.addEventListener('click', (e) => {
+            const cardEl = e.target.closest('.card');
+            if (cardEl && !e.target.closest('[data-save-id]')) {
+                const id = cardEl.getAttribute('data-film-id');
+                if (id) {
+                    playFilm(id);
+                    return;
+                }
+            }
+
             const playBtn = e.target.closest('[data-film-id]');
             if (playBtn) {
                 const id = playBtn.getAttribute('data-film-id');
@@ -471,9 +480,20 @@ const SPOTLIGHT_IDS = [201, 202, 204, 206, 208, 212, 215, 218, 1];
             setTimeout(() => playerEl.classList.add('opacity-100'), 10);
             document.getElementById('pTitle').innerText = f.title;
             document.getElementById('pMeta').innerText = `${f.genreLabel} · ${f.year}`;
-            videoEl.src = f.video;
+            
+            videoEl.pause();
+            videoEl.removeAttribute('src');
             videoEl.load();
-            videoEl.play().catch((err) => console.error("Playback error:", err));
+            
+            setTimeout(() => {
+                videoEl.src = f.video;
+                videoEl.load();
+                videoEl.play().catch((err) => {
+                    console.error("Playback error:", err);
+                    showToast("Playback error: check stream source");
+                });
+            }, 50);
+
             setupUI();
         }
 
