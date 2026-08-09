@@ -21,7 +21,7 @@
 <body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
     <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30 sticky top-0 h-screen">
         <div>
             <!-- Logo Header -->
             <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
@@ -102,31 +102,33 @@
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
-        <div class="flex-1 flex flex-col p-8 overflow-y-auto custom-scrollbar">
-            <!-- Top Bar -->
-            <div class="flex items-center justify-between mb-6">
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c] custom-scrollbar">
+        
+        <!-- STICKY TOP: Player & Active Header Section -->
+        <div class="sticky top-0 z-25 bg-[#060913]/95 backdrop-blur-md px-8 pt-8 pb-4 border-b border-slate-800/60 shadow-xl">
+            <!-- Top Bar Header -->
+            <div class="flex items-center justify-between mb-4">
                 <div>
                     <div class="flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
                         <span class="text-[10px] font-bold tracking-widest text-red-500 uppercase">Live Master Bank</span>
                     </div>
-                    <h2 class="text-3xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
-                    <p class="text-xs text-slate-400 mt-1">Multi-Source 125-Channel Master Catalog &bull; Dual-Mode Native/Embed Engine</p>
+                    <h2 class="text-2xl font-black text-white tracking-tight mt-0.5">Live Television</h2>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search 125 channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
+                        <input type="text" id="iptvSearchInput" oninput="filterChannels(this.value)" placeholder="Search channels..." class="bg-[#11182d] border border-slate-800 rounded-xl px-4 py-2 pl-10 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-64 transition-all">
                         <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Grid (Player + Info) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[460px]">
+            <!-- Content Grid (Player + Info Sidebar) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Video Stream Section -->
                 <div class="lg:col-span-2 flex flex-col">
-                    <div id="playerContainer" class="relative flex-1 bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 min-h-[380px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
+                    <div id="playerContainer" class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-800/80 h-[280px] sm:h-[340px] flex items-center justify-center bg-gradient-to-tr from-slate-900 to-indigo-950">
                         <video
                             id="videoPlayer"
                             class="w-full h-full absolute inset-0 object-contain bg-black"
@@ -137,21 +139,21 @@
                     </div>
 
                     <!-- Active Stream Info Bar -->
-                    <div class="mt-4 bg-[#0d1326] border border-slate-800/80 rounded-2xl p-4 flex items-center justify-between shadow-lg">
-                        <div class="flex items-center space-x-4">
-                            <div id="activeChannelIcon" class="w-12 h-12 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-xl shadow-inner">
+                    <div class="mt-3 bg-[#0d1326] border border-slate-800/80 rounded-xl p-3 flex items-center justify-between shadow-lg">
+                        <div class="flex items-center space-x-3">
+                            <div id="activeChannelIcon" class="w-10 h-10 rounded-xl bg-pink-600/20 border border-pink-500/40 flex items-center justify-center text-lg shadow-inner">
                                 🌟
                             </div>
                             <div>
-                                <h3 id="currentChannelName" class="text-base font-bold text-white">Select a Channel</h3>
-                                <p id="currentChannelSub" class="text-xs text-slate-400 mt-0.5">Choose a feed from the 125 catalog below</p>
+                                <h3 id="currentChannelName" class="text-sm font-bold text-white">Select a Channel</h3>
+                                <p id="currentChannelSub" class="text-[11px] text-slate-400">Choose a feed below</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="toggleEmbedMode()" id="modeToggleBtn" class="px-3 py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold transition-all">
-                                🔄 Switch to Embed Mode
+                        <div class="flex items-center space-x-2">
+                            <button onclick="toggleEmbedMode()" id="modeToggleBtn" class="px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-[11px] font-semibold transition-all">
+                                🔄 Embed Mode
                             </button>
-                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all">
+                            <button onclick="toggleFavorite()" id="favBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-[11px] font-semibold transition-all">
                                 <span>🤍</span>
                                 <span>Favorite</span>
                             </button>
@@ -160,39 +162,43 @@
                 </div>
 
                 <!-- Channel Info Sidebar -->
-                <div class="bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex flex-col shadow-xl">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800/60 mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm">ℹ️</span>
-                            <span class="text-xs font-bold tracking-wider uppercase text-slate-300">Channel Info</span>
+                <div class="hidden lg:flex bg-[#0d1326]/90 border border-slate-800/80 rounded-2xl p-4 flex-col shadow-xl h-[340px] justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-800/60 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs">ℹ️</span>
+                                <span class="text-[11px] font-bold tracking-wider uppercase text-slate-300">Channel Info</span>
+                            </div>
+                            <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">—</span>
                         </div>
-                        <span id="epgChannelTag" class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-950 text-pink-300 border border-pink-800">—</span>
+
+                        <div id="epgList" class="space-y-2 overflow-y-auto max-h-[200px] custom-scrollbar pr-1 text-xs text-slate-300">
+                            <!-- Populated dynamically -->
+                        </div>
                     </div>
 
-                    <div id="epgList" class="space-y-2.5 overflow-y-auto flex-1 custom-scrollbar pr-1 text-sm text-slate-300">
-                        <!-- Populated dynamically -->
-                    </div>
-
-                    <div class="mt-3 pt-3 border-t border-slate-800/60">
-                        <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-3 text-[11px] text-cyan-300 flex items-start space-x-2">
+                    <div class="pt-2 border-t border-slate-800/60">
+                        <div class="bg-cyan-950/20 border border-cyan-900/30 rounded-xl p-2.5 text-[10px] text-cyan-300 flex items-start space-x-2">
                             <span>⚡</span>
-                            <span>Loaded with the full 125-channel catalog. Toggle Embed Mode if direct CORS policies restrict native HLS parsing.</span>
+                            <span>Scroll down to browse all channels organized by category rows.</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Multi-Row Channel Selector Sliders -->
-            <div class="mt-6 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Complete Master Channel List (<span id="channelCount">0</span>)</h3>
-                    <div class="text-[11px] text-slate-500">Scroll horizontally across all rows below</div>
+        <!-- SCROLLABLE BOTTOM: Categories & Horizontal Rows -->
+        <div class="p-8 flex-1 space-y-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-black text-white">Master Channel Categories</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Showing <span id="channelCount">0</span> channels across genre rows. Scroll horizontally within each category.</p>
                 </div>
-                
-                <div id="channelsGridRow1" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-                <div id="channelsGridRow2" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-                <div id="channelsGridRow3" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
-                <div id="channelsGridRow4" class="grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
+            </div>
+
+            <!-- Dynamic Category Rows Container -->
+            <div id="categoryRowsContainer" class="space-y-6">
+                <!-- Rendered dynamically by JavaScript -->
             </div>
         </div>
 
@@ -204,138 +210,79 @@
 
     <script>
         const channels = [
-            // US Networks & Local Feeds (1-15)
+            // US Networks & Local Feeds
             { name: "US: ABC HD", category: "Networks", icon: "📺", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8", desc: "American Broadcasting Company live network stream." },
             { name: "US: CBS News Live", category: "Networks", icon: "📰", url: "https://cbsn-us.cbsnstream.cbsnews.com/out/v1/55a8648e9f1344effaa9133630f4d368/master.m3u8", desc: "CBS 24/7 digital streaming news service." },
             { name: "US: NBC News Now", category: "Networks", icon: "📡", url: "https://nbcnews.akamaized.net/hls/live/1013753/nbcnews/master.m3u8", desc: "NBC live news and original reporting." },
             { name: "US: ABC News Live", category: "Networks", icon: "📺", url: "https://abcnews.kanopy.com/hls/live/203482/abcnews/master.m3u8", desc: "ABC breaking news and live global coverages." },
             { name: "US: PBS NewsHour", category: "Networks", icon: "🏛️", url: "https://pbshls.akamaized.net/hls/live/510204/pbsnews/master.m3u8", desc: "In-depth analysis and evening news broadcast." },
-            { name: "US: Fox Weather", category: "Weather", icon: "⛅", url: "https://fox-weather.akamaized.net/hls/live/2056260/foxweather_us/master.m3u8", desc: "24/7 comprehensive weather coverage across America." },
             { name: "The CW New York", category: "Networks", icon: "🗽", url: "https://cw-livetv.akamaized.net/hls/live/2023910/cwnewyork/master.m3u8", desc: "CW affiliate entertainment and primetime lineup." },
-            { name: "Bloomberg TV US", category: "News", icon: "📈", url: "https://bloomberg.map.fastly.net/net/liveout/index.m3u8", desc: "Financial markets and economic reports." },
-            { name: "C-SPAN Live", category: "Government", icon: "🏛️", url: "https://cspan.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan/live/playlist.m3u8", desc: "United States public affairs government proceedings." },
-            { name: "C-SPAN 2 Live", category: "Government", icon: "🏛️", url: "https://cspan2.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan2/live/playlist.m3u8", desc: "Senate hearings and public policy events." },
-            { name: "C-SPAN 3 Live", category: "Government", icon: "🏛️", url: "https://cspan3.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan3/live/playlist.m3u8", desc: "American history and committee hearings." },
+
+            // Weather
+            { name: "US: Fox Weather", category: "Weather", icon: "⛅", url: "https://fox-weather.akamaized.net/hls/live/2056260/foxweather_us/master.m3u8", desc: "24/7 comprehensive weather coverage across America." },
             { name: "AccuWeather NOW", category: "Weather", icon: "🌪️", url: "https://accuweather-accuweather-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Severe weather updates and live forecasts." },
+
+            // News & Commentary
+            { name: "Bloomberg TV US", category: "News", icon: "📈", url: "https://bloomberg.map.fastly.net/net/liveout/index.m3u8", desc: "Financial markets and economic reports." },
             { name: "The First TV", category: "News", icon: "🎙️", url: "https://thefirst.akamaized.net/hls/live/2053912/thefirst/master.m3u8", desc: "Conservative commentary and current affairs." },
             { name: "Newsmax TV", category: "News", icon: "📊", url: "https://nmxlive.akamaized.net/hls/live/529965/live_1/index.m3u8", desc: "Breaking headlines and political debate." },
-            { name: "Law & Crime Trial Network", category: "Crime", icon: "⚖️", url: "https://live.lawandcrime.com/hls/live/2034988/lawandcrime/master.m3u8", desc: "Live courtroom trials and legal analysis." },
-
-            // Global News & International (16-45)
-            { name: "NASA TV HD", category: "Documentary", icon: "🚀", url: "https://nasa-i.akamaihd.net/hls/live/509605/NASA-TV-HD/master.m3u8", desc: "Official NASA Public High Definition Live Stream." },
-            { name: "Red Bull TV", category: "Sports", icon: "🏎️", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbulltv-web/master.m3u8", desc: "Action sports, events, and lifestyle entertainment." },
             { name: "France 24 English", category: "News", icon: "🌍", url: "https://static.france24.com/live/F24_EN_HI_HLS/live_web.m3u8", desc: "International news and current affairs broadcast." },
             { name: "Al Jazeera English", category: "News", icon: "📰", url: "https://live-hls-web-aje.getaj.net/AJE/index.m3u8", desc: "Global news channel broadcasting from Doha." },
             { name: "Sky News", category: "News", icon: "📡", url: "https://skynews.live.bisp.live/skynews/index.m3u8", desc: "Breaking UK and international news coverage." },
             { name: "DW English", category: "News", icon: "🌐", url: "https://dwstream4-lh.akamaihd.net/i/dwstream4_live@129845/index_720,540,360,288,216_av.m3u8", desc: "German international public broadcaster." },
             { name: "Euronews English", category: "News", icon: "🇪🇺", url: "https://euronews-euronews-english-1-de.rakuten.wurl.tv/playlist.m3u8", desc: "Pan-European multilingual news channel." },
             { name: "TRT World", category: "News", icon: "🇹🇷", url: "https://trtworld.centercast.net/hls/live/2014494/trtworld/master.m3u8", desc: "Turkish international news channel." },
+            { name: "WION News", category: "News", icon: "🇮🇳", url: "https://wion-live.zee5.com/hls/live/2034988/wion/master.m3u8", desc: "World is One News from India." },
+            { name: "India Today", category: "News", icon: "📰", url: "https://indiatodaylive.akamaized.net/hls/live/2015065/indiatoday/master.m3u8", desc: "Indian premier news and current affairs." },
+
+            // Government & Public Affairs
+            { name: "C-SPAN Live", category: "Government", icon: "🏛️", url: "https://cspan.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan/live/playlist.m3u8", desc: "United States public affairs government proceedings." },
+            { name: "C-SPAN 2 Live", category: "Government", icon: "🏛️", url: "https://cspan2.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan2/live/playlist.m3u8", desc: "Senate hearings and public policy events." },
+            { name: "C-SPAN 3 Live", category: "Government", icon: "🏛️", url: "https://cspan3.live-s.cdn.bitgravity.com/cdn-live/_definst_/cspan3/live/playlist.m3u8", desc: "American history and committee hearings." },
+
+            // Crime & Legal
+            { name: "Law & Crime Trial Network", category: "Crime", icon: "⚖️", url: "https://live.lawandcrime.com/hls/live/2034988/lawandcrime/master.m3u8", desc: "Live courtroom trials and legal analysis." },
+            { name: "Forensic Files", category: "Crime", icon: "🔍", url: "https://forensicfiles-amagi.amagi.tv/playlist/amagi-forensicfiles/playlist.m3u8", desc: "True crime investigations and forensic science." },
+            { name: "Unsolved Mysteries", category: "Crime", icon: "🕵️", url: "https://unsolvedmysteries-amagi.amagi.tv/playlist/amagi-unsolvedmysteries/playlist.m3u8", desc: "Classic unsolved cases and paranormal mysteries." },
+
+            // International & World
             { name: "CGTN English", category: "International", icon: "🏮", url: "https://live.cgtn.com/1000/prog_index.m3u8", desc: "China Global Television Network feed." },
             { name: "NHK World Japan", category: "International", icon: "🇯🇵", url: "https://nhkworld.nhk.or.jp/hls/live/2003684/nhkworld/index.m3u8", desc: "English-language international service of Japan's public broadcaster." },
             { name: "Arirang TV", category: "International", icon: "🇰🇷", url: "https://live.arirang.com/arirang_1ch/index.m3u8", desc: "South Korean international broadcaster." },
-            { name: "WION News", category: "News", icon: "🇮🇳", url: "https://wion-live.zee5.com/hls/live/2034988/wion/master.m3u8", desc: "World is One News from India." },
-            { name: "India Today", category: "News", icon: "📰", url: "https://indiatodaylive.akamaized.net/hls/live/2015065/indiatoday/master.m3u8", desc: "Indian premier news and current affairs." },
-            { name: "Republic World", category: "News", icon: "📺", url: "https://republicworld.akamaized.net/hls/live/2034988/republic/master.m3u8", desc: "Indo-centric breaking news channel." },
-            { name: "NDTV 24x7", category: "News", icon: "📡", url: "https://ndtv24x7.live.zee5.com/hls/live/2034988/ndtv/master.m3u8", desc: "English news channel from New Delhi." },
             { name: "ABC Australia", category: "International", icon: "🦘", url: "https://abclive.akamaized.net/hls/live/2034988/abc24/master.m3u8", desc: "Australian Broadcasting Corporation international feed." },
-            { name: "Sky News Australia", category: "News", icon: "🇦🇺", url: "https://skynewsaus.akamaized.net/hls/live/2034988/skynews/master.m3u8", desc: "Australian political and world news." },
             { name: "CBC News", category: "International", icon: "🇨🇦", url: "https://cbcunlimited-f.akamaihd.net/i/cbc_stream01@365451/master.m3u8", desc: "Canadian Broadcasting Corporation live news." },
-            { name: "Global News Canada", category: "News", icon: "🍁", url: "https://globalnews.akamaized.net/hls/live/2034988/globalnews/master.m3u8", desc: "Canadian national headlines and local updates." },
-            { name: "CP24 Toronto", category: "News", icon: "🌆", url: "https://cp24.akamaized.net/hls/live/2034988/cp24/master.m3u8", desc: "Toronto's breaking news and traffic feed." },
+            { name: "Global News Canada", category: "International", icon: "🍁", url: "https://globalnews.akamaized.net/hls/live/2034988/globalnews/master.m3u8", desc: "Canadian national headlines and local updates." },
             { name: "TVP World Poland", category: "International", icon: "🇵🇱", url: "https://tvpworld.live.tvp.pl/hls/live/2034988/tvpworld/master.m3u8", desc: "Polish international news service." },
-            { name: "France 24 French", category: "News", icon: "🇫🇷", url: "https://static.france24.com/live/F24_FR_HI_HLS/live_web.m3u8", desc: "French language global affairs channel." },
-            { name: "RTE News Ireland", category: "International", icon: "☘️", url: "https://rte.akamaized.net/hls/live/2034988/rtenews/master.m3u8", desc: "Irish public service broadcaster news feed." },
-            { name: "TeleSur English", category: "News", icon: "🌎", url: "https://video.telesur.tv/hls/live/2034988/telesur/master.m3u8d", desc: "Latin American perspective news network." },
-            { name: "Channel NewsAsia Singapore", category: "International", icon: "🇸🇬", url: "https://cna-hls-live.akamaized.net/hls/live/2034988/cna/master.m3u8", desc: "Asian business, finance, and regional reports." },
-            { name: "Al Arabiya English", category: "News", icon: "🌐", url: "https://live.alarabiya.net/alarabiya/smil:alarabiya.smil/playlist.m3u8", desc: "Middle Eastern news network broadcasting in English." },
-            { name: "i24 News English", category: "News", icon: "🕊️", url: "https://i24news-en.akamaized.net/hls/live/2034988/i24en/master.m3u8", desc: "International news channel based in Tel Aviv." },
-            { name: "Euronews German", category: "News", icon: "🇩🇪", url: "https://euronews-euronews-german-1-de.rakuten.wurl.tv/playlist.m3u8", desc: "German language European news service." },
-            { name: "Euronews French", category: "News", icon: "🇫🇷", url: "https://euronews-euronews-french-1-fr.rakuten.wurl.tv/playlist.m3u8", desc: "French language European news service." },
-            { name: "Euronews Spanish", category: "News", icon: "🇪🇸", url: "https://euronews-euronews-spanish-1-es.rakuten.wurl.tv/playlist.m3u8", desc: "Spanish language European news service." },
 
-            // Entertainment, Movies & FAST Channels (46-85)
-            { name: "Tastemade", category: "Lifestyle", icon: "🍳", url: "https://tastemade-tastemade-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Food, travel, and home design inspiration." },
-            { name: "FailArmy", category: "Entertainment", icon: "💥", url: "https://failarmy-failarmy-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Viral epic fails and humorous home videos." },
-            { name: "People TV", category: "Entertainment", icon: "✨", url: "https://people-peopletv-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Celebrity news, human interest, and pop culture." },
+            // Movies & Entertainment
             { name: "MovieSphere", category: "Movies", icon: "🎬", url: "https://moviesphere-amagi.amagi.tv/playlist/amagi-moviesphere/playlist.m3u8", desc: "Blockbusters, indie cinema, and timeless film classics." },
             { name: "Runtime Movie Channel", category: "Movies", icon: "🍿", url: "https://runtime-amagi.amagi.tv/playlist/amagi-runtime/playlist.m3u8", desc: "Action, thriller, and drama feature films." },
             { name: "Rotten Tomatoes TV", category: "Entertainment", icon: "🍅", url: "https://rottentomatoes-rakuten.amagi.tv/playlist/amagi-rottentomatoes/playlist.m3u8", desc: "Movie reviews, trailers, and Hollywood insider lists." },
             { name: "ion Television", category: "Entertainment", icon: "📺", url: "https://ion.akamaized.net/hls/live/2034988/ion/master.m3u8", desc: "Popular television series and syndicated dramas." },
             { name: "Game Show Central", category: "Entertainment", icon: "🎲", url: "https://gsn-amagi.amagi.tv/playlist/amagi-gsn/playlist.m3u8", desc: "Classic and modern interactive game shows." },
+            { name: "FailArmy", category: "Entertainment", icon: "💥", url: "https://failarmy-failarmy-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Viral epic fails and humorous home videos." },
+            { name: "People TV", category: "Entertainment", icon: "✨", url: "https://people-peopletv-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Celebrity news, human interest, and pop culture." },
+            { name: "Hell's Kitchen", category: "Reality", icon: "🔥", url: "https://hellskitchen-amagi.amagi.tv/playlist/amagi-hellskitchen/playlist.m3u8", desc: "Gordon Ramsay culinary challenges and reality chaos." },
+
+            // Lifestyle & Nature
+            { name: "Tastemade", category: "Lifestyle", icon: "🍳", url: "https://tastemade-tastemade-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Food, travel, and home design inspiration." },
             { name: "The Pet Collective", category: "Lifestyle", icon: "🐾", url: "https://thepetcollective-thepetcollective-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Adorable animal compilations and rescue stories." },
-            { name: "Chive TV", category: "Entertainment", icon: "🍻", url: "https://chive-amagi.amagi.tv/playlist/amagi-chive/playlist.m3u8", desc: "Viral internet videos and bar entertainment." },
-            { name: "Hell's Kitchen / Kitchen Nightmares", category: "Reality", icon: "🔥", url: "https://hellskitchen-amagi.amagi.tv/playlist/amagi-hellskitchen/playlist.m3u8", desc: "Gordon Ramsay culinary challenges and reality chaos." },
-            { name: "Forensic Files", category: "Crime", icon: "🔍", url: "https://forensicfiles-amagi.amagi.tv/playlist/amagi-forensicfiles/playlist.m3u8", desc: "True crime investigations and forensic science." },
-            { name: "Unsolved Mysteries", category: "Crime", icon: "🕵️", url: "https://unsolvedmysteries-amagi.amagi.tv/playlist/amagi-unsolvedmysteries/playlist.m3u8", desc: "Classic unsolved cases and paranormal mysteries." },
-            { name: "Deal or No Deal", category: "Entertainment", icon: "💼", url: "https://dealornodeal-amagi.amagi.tv/playlist/amagi-dealornodeal/playlist.m3u8", desc: "High stakes briefcase elimination game show." },
-            { name: "Family Feud Classic", category: "Entertainment", icon: "👥", url: "https://familyfeud-amagi.amagi.tv/playlist/amagi-familyfeud/playlist.m3u8", desc: "Survey answers and family rivalry game show." },
-            { name: "Baywatch Channel", category: "Drama", icon: "🏖️", url: "https://baywatch-amagi.amagi.tv/playlist/amagi-baywatch/playlist.m3u8", desc: "Classic lifeguard action and California drama." },
-            { name: "FailArmy Latino", category: "Entertainment", icon: "💥", url: "https://failarmy-latino-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Humorous clips with Spanish commentary." },
-            { name: "People Are Awesome", category: "Sports", icon: "🛹", url: "https://peopleareawesome-amagi.amagi.tv/playlist/amagi-peopleareawesome/playlist.m3u8", desc: "Extreme stunts, athletics, and incredible human feats." },
-            { name: "FailArmy UK", category: "Entertainment", icon: "🇬🇧", url: "https://failarmy-uk-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "UK-curated humorous fails and mishap videos." },
-            { name: "RetroCrush Anime", category: "Animation", icon: "🎌", url: "https://retrocrush-amagi.amagi.tv/playlist/amagi-retrocrush/playlist.m3u8", desc: "Classic retro anime series and movies." },
-            { name: "Midnight Pulp", category: "Horror", icon: "💀", url: "https://midnightpulp-amagi.amagi.tv/playlist/amagi-midnightpulp/playlist.m3u8", desc: "Cult films, horror, sci-fi, and grindhouse cinema." },
-            { name: "CONtv", category: "Geek", icon: "🦸", url: "https://contv-amagi.amagi.tv/playlist/amagi-contv/playlist.m3u8", desc: "Comic-con culture, sci-fi, horror, and martial arts." },
-            { name: "Docurama", category: "Documentary", icon: "📚", url: "https://docurama-amagi.amagi.tv/playlist/amagi-docurama/playlist.m3u8", desc: "Award-winning non-fiction films and deep-dive docs." },
-            { name: "ION Plus", category: "Entertainment", icon: "⭐", url: "https://ionplus.akamaized.net/hls/live/2034988/ionplus/master.m3u8", desc: "Extended television programming and drama series." },
-            { name: "Circle TV", category: "Music", icon: "🎸", url: "https://circletv.akamaized.net/hls/live/2034988/circle/master.m3u8", desc: "Country music culture, lifestyle, and entertainment." },
-            { name: "AXS TV", category: "Entertainment", icon: "🎤", url: "https://axstv.akamaized.net/hls/live/2034988/axstv/master.m3u8", desc: "Live concerts, music festivals, and entertainment." },
-            { name: "HDNet Movies", category: "Movies", icon: "🎥", url: "https://hdnetmovies.akamaized.net/hls/live/2034988/hdnetmovies/master.m3u8", desc: "Independent cinema and cinematic classics in high def." },
-            { name: "Cleo TV", category: "Lifestyle", icon: "👑", url: "https://cleotv.akamaized.net/hls/live/2034988/cleotv/master.m3u8", desc: "Modern lifestyle and culture for women of color." },
-            { name: "TV One", category: "Entertainment", icon: "🌟", url: "https://tvone.akamaized.net/hls/live/2034988/tvone/master.m3u8", desc: "Black culture, entertainment, and lifestyle shows." },
-            { name: "Bounce TV", category: "Entertainment", icon: "🏀", url: "https://bouncetv.akamaized.net/hls/live/2034988/bounce/master.m3u8", desc: "African American targeted entertainment network." },
-            { name: "Heartland", category: "Family", icon: "🐎", url: "https://heartland-amagi.amagi.tv/playlist/amagi-heartland/playlist.m3u8", desc: "Family drama series and ranch life adventures." },
             { name: "WildEarth", category: "Nature", icon: "🦁", url: "https://wildearth-amagi.amagi.tv/playlist/amagi-wildearth/playlist.m3u8", desc: "Live guided safaris and African wildlife streaming." },
             { name: "Love Nature", category: "Nature", icon: "🌿", url: "https://lovenature-amagi.amagi.tv/playlist/amagi-lovenature/playlist.m3u8", desc: "High-definition wildlife and nature documentaries." },
-            { name: "Stingray Naturescape", category: "Relaxation", icon: "🌊", url: "https://stingray-naturescape-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Peaceful natural environments and calming music." },
-            { name: "Stingray Greatest Hits", category: "Music", icon: "🎵", url: "https://stingray-greatesthits-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Timeless pop, rock, and classic music video hits." },
-            { name: "Stingray Rock Alternative", category: "Music", icon: "🎸", url: "https://stingray-rockalternative-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Alternative rock music videos and live sessions." },
-            { name: "Stingray Hip Hop", category: "Music", icon: "🎧", url: "https://stingray-hiphop-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Rap, hip hop culture, and modern music videos." },
-            { name: "Stingray Country", category: "Music", icon: "🤠", url: "https://stingray-country-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Country music hits and contemporary artist spotlights." },
-            { name: "Stingray Hot Country", category: "Music", icon: "🪕", url: "https://stingray-hotcountry-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Top chart country music videos." },
-            { name: "Stingray Classica", category: "Classical", icon: "🎻", url: "https://stingray-classica-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Classical masterpieces, opera, and orchestral performances." },
 
-            // Sports, Webcams & Specialty (86-125)
-            { name: "Bournemouth Beachcam", category: "Webcam", icon: "🏖️", url: "https://cam.bournemouth.ac.uk/live/index.m3u8", desc: "Live coastal view and weather status." },
-            { name: "EarthCam Live", category: "Webcam", icon: "🏙️", url: "https://hd-auth.earthcam.com/api/playlist/index.m3u8", desc: "Public panoramic camera live stream." },
+            // Sports & Automotive
+            { name: "NASA TV HD", category: "Documentary", icon: "🚀", url: "https://nasa-i.akamaihd.net/hls/live/509605/NASA-TV-HD/master.m3u8", desc: "Official NASA Public High Definition Live Stream." },
+            { name: "Red Bull TV", category: "Sports", icon: "🏎️", url: "https://rbmn-live.akamaized.net/hls/live/590964/redbulltv-web/master.m3u8", desc: "Action sports, events, and lifestyle entertainment." },
             { name: "ESTV eSports TV", category: "Sports", icon: "🎮", url: "https://estv-amagi.amagi.tv/playlist/amagi-estv/playlist.m3u8", desc: "Competitive gaming, tournaments, and eSports lifestyle." },
             { name: "World Poker Tour", category: "Sports", icon: "♠️", url: "https://wpt-amagi.amagi.tv/playlist/amagi-wpt/playlist.m3u8", desc: "High stakes poker tournaments and professional play." },
-            { name: "ACL Cornhole TV", category: "Sports", icon: "🎯", url: "https://acl-amagi.amagi.tv/playlist/amagi-acl/playlist.m3u8", desc: "American Cornhole League professional tournaments." },
-            { name: "PGA Tour Live", category: "Sports", icon: "⛳", url: "https://pgatour-amagi.amagi.tv/playlist/amagi-pgatour/playlist.m3u8", desc: "Professional golf highlights, archives, and coverage." },
             { name: "Motorsport.tv", category: "Sports", icon: "🏎️", url: "https://motorsport-amagi.amagi.tv/playlist/amagi-motorsport/playlist.m3u8", desc: "Racing championships, endurance testing, and car culture." },
-            { name: "Surf World TV", category: "Sports", icon: "🏄", url: "https://surfworld-amagi.amagi.tv/playlist/amagi-surfworld/playlist.m3u8", desc: "Big wave surfing, board culture, and coastal sports." },
-            { name: "Ski World TV", category: "Sports", icon: "⛷️", url: "https://skiworld-amagi.amagi.tv/playlist/amagi-skiworld/playlist.m3u8", desc: "Alpine skiing, winter sports, and mountain films." },
-            { name: "Combat Sports Network", category: "Sports", icon: "🥊", url: "https://combatsports-amagi.amagi.tv/playlist/amagi-combatsports/playlist.m3u8", desc: "MMA, boxing, and martial arts tournaments." },
-            { name: "Origin Sports", category: "Sports", icon: "🏀", url: "https://originsports-amagi.amagi.tv/playlist/amagi-originsports/playlist.m3u8", desc: "Amateur and collegiate sports highlights." },
-            { name: "Outside TV", category: "Sports", icon: "⛺", url: "https://outsidetv-amagi.amagi.tv/playlist/amagi-outside/playlist.m3u8", desc: "Adventure sports, climbing, backpacking, and films." },
-            { name: "SportsGrid", category: "Sports", icon: "📊", url: "https://sportsgrid-amagi.amagi.tv/playlist/amagi-sportsgrid/playlist.m3u8", desc: "Sports betting analytics, odds, and live commentary." },
-            { name: "MAVTV Select", category: "Sports", icon: "🔧", url: "https://mavtv-amagi.amagi.tv/playlist/amagi-mavtv/playlist.m3u8", desc: "Automotive builds, mechanics, and motorsports." },
-            { name: "Stadium", category: "Sports", icon: "🏈", url: "https://stadium-amagi.amagi.tv/playlist/amagi-stadium/playlist.m3u8", desc: "College sports highlights and professional analysis." },
             { name: "PowerNation TV", category: "Sports", icon: "🚗", url: "https://powernation-amagi.amagi.tv/playlist/amagi-powernation/playlist.m3u8", desc: "Engine building, truck restorations, and gearhead projects." },
-            { name: "TRT Spor", category: "Sports", icon: "🇹🇷", url: "https://trtspor1.centercast.net/hls/live/2014494/trtspor1/master.m3u8", desc: "Turkish sports news and live match broadcasts." },
-            { name: "Sport Italia", category: "Sports", icon: "🇮🇹", url: "https://sportitalia-hls.akamaized.net/hls/live/2034988/sportitalia/master.m3u8", desc: "Italian sports network and soccer updates." },
-            { name: "L'Equipe Live France", category: "Sports", icon: "🇫🇷", url: "https://lequipe-live.akamaized.net/hls/live/2034988/lequipe/master.m3u8", desc: "French sports daily television broadcast." },
-            { name: "Super Tennis TV", category: "Sports", icon: "🎾", url: "https://supertennis-hls.akamaized.net/hls/live/2034988/supertennis/master.m3u8", desc: "Professional tennis matches and training analysis." },
-            { name: "Billiards TV", category: "Sports", icon: "🎱", url: "https://billiardstv-amagi.amagi.tv/playlist/amagi-billiardstv/playlist.m3u8", desc: "Professional pool, snooker, and trick-shot championships." },
-            { name: "PickleTV", category: "Sports", icon: "🏓", url: "https://pickletv-amagi.amagi.tv/playlist/amagi-pickletv/playlist.m3u8", desc: "Pickleball tournaments, tips, and professional matches." },
-            { name: "Lacrosse TV", category: "Sports", icon: "🥍", url: "https://lacrossetv-amagi.amagi.tv/playlist/amagi-lacrosse/playlist.m3u8", desc: "Collegiate and professional lacrosse coverage." },
-            { name: "Rugby Network", category: "Sports", icon: "🏉", url: "https://rugbynetwork-amagi.amagi.tv/playlist/amagi-rugby/playlist.m3u8", desc: "International rugby union matches and highlights." },
-            { name: "Drone TV", category: "Tech", icon: "🛸", url: "https://dronetv-amagi.amagi.tv/playlist/amagi-dronetv/playlist.m3u8", desc: "Aerial cinematography, drone racing, and tech reviews." },
-            { name: "Insight TV", category: "Tech", icon: "💡", url: "https://insighttv-amagi.amagi.tv/playlist/amagi-insighttv/playlist.m3u8", desc: "Global adventure, technology, and lifestyle shows." },
-            { name: "Fashion TV", category: "Lifestyle", icon: "👗", url: "https://fashiontv-amagi.amagi.tv/playlist/amagi-fashiontv/playlist.m3u8", desc: "Global runway shows, model profiles, and style news." },
-            { name: "TRACE Urban", category: "Music", icon: "🎧", url: "https://traceurban-amagi.amagi.tv/playlist/amagi-traceurban/playlist.m3u8", desc: "Hip hop, R&B, and urban music culture." },
-            { name: "TRACE Sport Stars", category: "Sports", icon: "🌟", url: "https://tracesportstars-amagi.amagi.tv/playlist/amagi-tracesportstars/playlist.m3u8", desc: "Behind the scenes with top athletic superstars." },
-            { name: "Clubbing TV", category: "Music", icon: "🪩", url: "https://clubbingtv-amagi.amagi.tv/playlist/amagi-clubbingtv/playlist.m3u8", desc: "Electronic music, DJs, and international club culture." },
-            { name: "Qwest TV Mix", category: "Music", icon: "🎷", url: "https://qwesttv-amagi.amagi.tv/playlist/amagi-qwesttv/playlist.m3u8", desc: "Jazz, soul, funk, and global groove concerts." },
-            { name: "Stingray Karaoke", category: "Music", icon: "🎤", url: "https://stingray-karaoke-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Sing along lyric music tracks." },
-            { name: "Revry", category: "LGBTQ+", icon: "🏳️‍🌈", url: "https://revry-amagi.amagi.tv/playlist/amagi-revry/playlist.m3u8", desc: "Queer culture, films, series, and music videos." },
-            { name: "Pride TV", category: "LGBTQ+", icon: "🌈", url: "https://pridetv-amagi.amagi.tv/playlist/amagi-pridetv/playlist.m3u8", desc: "LGBTQ+ lifestyle, entertainment, and pride events." },
-            { name: "The Archive", category: "Movies", icon: "📽️", url: "https://thearchive-amagi.amagi.tv/playlist/amagi-thearchive/playlist.m3u8", desc: "Retro cult classics, sci-fi, and action movies." },
-            { name: "Midnight Pulp Cult", category: "Horror", icon: "🦇", url: "https://midnightpulp-amagi.amagi.tv/playlist/amagi-midnightpulp/playlist.m3u8", desc: "Midnight movies and indie psychological thrillers." },
-            { name: "Dark Matter TV", category: "Sci-Fi", icon: "👽", url: "https://darkmattertv-amagi.amagi.tv/playlist/amagi-darkmattertv/playlist.m3u8", desc: "Sci-fi, horror, and action cinema." },
-            { name: "Terror TV", category: "Horror", icon: "👻", url: "https://terrortv-amagi.amagi.tv/playlist/amagi-terrortv/playlist.m3u8", desc: "Horror movies and fright-night features." },
-            { name: "Horror Machine", category: "Horror", icon: "🔪", url: "https://horrormachine-amagi.amagi.tv/playlist/amagi-horrormachine/playlist.m3u8", desc: "Gore, suspense, and thriller movie streams." },
-            { name: "NEXUS TV Stream Alpha", category: "Core", icon: "⚡", url: "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/us.m3u", desc: "Direct master verification pool from open index." }
+
+            // Music & Audio
+            { name: "Circle TV", category: "Music", icon: "🎸", url: "https://circletv.akamaized.net/hls/live/2034988/circle/master.m3u8", desc: "Country music culture, lifestyle, and entertainment." },
+            { name: "AXS TV", category: "Music", icon: "🎤", url: "https://axstv.akamaized.net/hls/live/2034988/axstv/master.m3u8", desc: "Live concerts, music festivals, and entertainment." },
+            { name: "Stingray Greatest Hits", category: "Music", icon: "🎵", url: "https://stingray-greatesthits-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Timeless pop, rock, and classic music video hits." },
+            { name: "Stingray Hip Hop", category: "Music", icon: "🎧", url: "https://stingray-hiphop-1-us.rakuten.wurl.tv/playlist.m3u8", desc: "Rap, hip hop culture, and modern music videos." }
         ];
 
         let currentChannel = channels[0];
@@ -344,59 +291,70 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             try { document.getElementById('channelCount').innerText = channels.length; } catch (e) { console.error(e); }
-            try { renderChannels(channels); } catch (e) { console.error(e); }
+            try { renderCategoryRows(channels); } catch (e) { console.error(e); }
             try { selectChannel(channels[0]); } catch (e) { console.error(e); }
         });
 
-        function renderChannels(list) {
-            const grid1 = document.getElementById('channelsGridRow1');
-            const grid2 = document.getElementById('channelsGridRow2');
-            const grid3 = document.getElementById('channelsGridRow3');
-            const grid4 = document.getElementById('channelsGridRow4');
-            
-            grid1.innerHTML = '';
-            grid2.innerHTML = '';
-            grid3.innerHTML = '';
-            grid4.innerHTML = '';
+        function renderCategoryRows(list) {
+            const container = document.getElementById('categoryRowsContainer');
+            container.innerHTML = '';
 
-            const chunkSize = Math.ceil(list.length / 4);
-            const row1List = list.slice(0, chunkSize);
-            const row2List = list.slice(chunkSize, chunkSize * 2);
-            const row3List = list.slice(chunkSize * 2, chunkSize * 3);
-            const row4List = list.slice(chunkSize * 3);
+            // Group channels by category
+            const categories = {};
+            list.forEach(ch => {
+                const cat = ch.category || "General";
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(ch);
+            });
 
-            const createCard = (ch) => {
-                const isSelected = currentChannel && currentChannel.name === ch.name;
-                const card = document.createElement('div');
-                card.onclick = () => selectChannel(ch);
-                card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
-                    isSelected
-                        ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white'
-                        : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
-                }`;
-                card.innerHTML = `
+            // Build section for each category
+            for (const [catName, catChannels] of Object.entries(categories)) {
+                const section = document.createElement('div');
+                section.className = "space-y-3";
+                
+                section.innerHTML = `
                     <div class="flex items-center justify-between">
-                        <span class="text-xl">${ch.icon}</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">LIVE</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold truncate">${ch.name}</div>
-                        <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                        <h4 class="text-xs font-bold tracking-wider uppercase text-slate-300 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
+                            ${catName} <span class="text-slate-500 font-normal">(${catChannels.length})</span>
+                        </h4>
                     </div>
                 `;
-                return card;
-            };
 
-            row1List.forEach(ch => grid1.appendChild(createCard(ch)));
-            row2List.forEach(ch => grid2.appendChild(createCard(ch)));
-            row3List.forEach(ch => grid3.appendChild(createCard(ch)));
-            row4List.forEach(ch => grid4.appendChild(createCard(ch)));
+                const rowGrid = document.createElement('div');
+                rowGrid.className = "grid grid-flow-col auto-cols-[160px] sm:auto-cols-[180px] gap-3 overflow-x-auto custom-scrollbar pb-2";
+
+                catChannels.forEach(ch => {
+                    const isSelected = currentChannel && currentChannel.name === ch.name;
+                    const card = document.createElement('div');
+                    card.onclick = () => selectChannel(ch);
+                    card.className = `p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between h-24 shrink-0 ${
+                        isSelected
+                            ? 'bg-red-600/20 border-red-500 shadow-lg shadow-red-950/50 text-white ring-2 ring-red-500/40'
+                            : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
+                    }`;
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl">${ch.icon}</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">LIVE</span>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold truncate">${ch.name}</div>
+                            <div class="text-[10px] text-slate-400 truncate mt-0.5">${ch.category}</div>
+                        </div>
+                    `;
+                    rowGrid.appendChild(card);
+                });
+
+                section.appendChild(rowGrid);
+                container.appendChild(section);
+            }
         }
 
         function filterChannels(query) {
             const q = query.toLowerCase();
             const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
-            renderChannels(filtered);
+            renderCategoryRows(filtered);
             document.getElementById('channelCount').innerText = filtered.length;
         }
 
@@ -409,16 +367,16 @@
             
             const hasUrl = ch.url && ch.url.trim() !== "";
             document.getElementById('epgList').innerHTML = `
-                <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
+                <div class="p-2.5 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
                     <p>${ch.desc}</p>
                 </div>
-                <div class="p-3 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
-                    <p class="text-slate-400 font-mono text-[11px] break-all">Stream URL: ${hasUrl ? ch.url : '<span class="text-amber-400">Not provided yet</span>'}</p>
+                <div class="p-2.5 rounded-xl border border-slate-800/60 bg-[#11182d]/60">
+                    <p class="text-slate-400 font-mono text-[10px] break-all">Stream URL: ${hasUrl ? ch.url : '<span class="text-amber-400">Not provided yet</span>'}</p>
                 </div>
             `;
 
             loadPlayerEngine();
-            renderChannels(channels);
+            renderCategoryRows(channels);
         }
 
         function loadPlayerEngine() {
@@ -461,11 +419,9 @@
                         if (data.fatal) {
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    console.log("A network error occurred. Attempting recovery...");
                                     hlsInstance.startLoad();
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
-                                    console.log("A media error occurred. Attempting recovery...");
                                     hlsInstance.recoverMediaError();
                                     break;
                                 default:
@@ -487,22 +443,22 @@
             isEmbedMode = !isEmbedMode;
             const btn = document.getElementById('modeToggleBtn');
             if (isEmbedMode) {
-                btn.className = "px-3 py-2 rounded-xl bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all";
-                btn.innerText = "🔄 Switch to Native Player";
+                btn.className = "px-3 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-[11px] font-semibold transition-all";
+                btn.innerText = "🔄 Native Player";
             } else {
-                btn.className = "px-3 py-2 rounded-xl bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-xs font-semibold transition-all";
-                btn.innerText = "🔄 Switch to Embed Mode";
+                btn.className = "px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/40 text-indigo-300 text-[11px] font-semibold transition-all";
+                btn.innerText = "🔄 Embed Mode";
             }
             loadPlayerEngine();
         }
 
         function toggleFavorite() {
-            const btn = document.getElementByIdStr ? document.getElementById('favBtn') : document.getElementById('favBtn');
+            const btn = document.getElementById('favBtn');
             if (btn.classList.contains('text-red-400')) {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-xs font-semibold transition-all";
+                btn.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#161f38] border border-slate-700/60 hover:border-pink-500 text-[11px] font-semibold transition-all";
                 btn.innerHTML = '<span>🤍</span><span>Favorite</span>';
             } else {
-                btn.className = "flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600/20 border border-red-500 text-red-400 text-xs font-semibold transition-all shadow-lg";
+                btn.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-red-600/20 border border-red-500 text-red-400 text-[11px] font-semibold transition-all shadow-lg";
                 btn.innerHTML = '<span>❤️</span><span>Favorited</span>';
             }
         }
