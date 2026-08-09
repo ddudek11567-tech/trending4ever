@@ -68,6 +68,38 @@
         </div>
     </div>
 
+    <!-- Movies VOD Catalog Modal -->
+    <div id="moviesModal" class="fixed inset-0 z-40 bg-[#030712]/80 backdrop-blur-md hidden flex items-center justify-center p-6">
+        <div class="bg-[#060b19] border border-cyan-900/70 rounded-3xl w-full max-w-4xl h-[85vh] flex flex-col shadow-2xl cable-glow overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-cyan-950/80 flex items-center justify-between bg-[#091022]">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow">
+                        🎬
+                    </div>
+                    <div>
+                        <h3 class="font-black text-white text-lg tracking-wide">VOD Feature Film Library</h3>
+                        <p class="text-xs text-cyan-400 font-mono">Linked directly from movies.txt source archive</p>
+                    </div>
+                </div>
+                <button onclick="toggleMoviesModal(false)" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-mono transition-all">
+                    ✕
+                </button>
+            </div>
+            <!-- Search & Filters -->
+            <div class="p-4 bg-[#050a16] border-b border-cyan-950/60 flex items-center justify-between gap-4">
+                <input type="text" id="movieSearchInput" oninput="filterMoviesList(this.value)" placeholder="Search movie titles in library..." class="flex-1 bg-[#091022] border border-cyan-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono">
+                <div id="movieCountBadge" class="text-xs font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-900/50 px-3 py-2 rounded-xl">
+                    Loading movies...
+                </div>
+            </div>
+            <!-- Movies Grid Container -->
+            <div id="moviesGridContainer" class="flex-1 overflow-y-auto p-5 custom-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                <!-- Dynamically populated from movies.txt -->
+            </div>
+        </div>
+    </div>
+
     <!-- Sidebar Navigation -->
     <aside class="w-64 bg-[#060b19] border-r border-cyan-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
         <div>
@@ -93,6 +125,13 @@
                     </div>
                     <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">SECURED</span>
                 </a>
+                <button onclick="toggleMoviesModal(true)" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-[#091022] hover:bg-cyan-950/30 text-slate-300 hover:text-cyan-300 border border-cyan-950/80 hover:border-cyan-500/40 group">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base group-hover:scale-110 transition-transform">🎬</span>
+                        <span>Movies Library</span>
+                    </div>
+                    <span class="text-[10px] bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded font-mono">TXT</span>
+                </button>
             </nav>
         </div>
 
@@ -213,6 +252,8 @@
         const AUTH_USER = "admin";
         const AUTH_PASS = "nexus2026";
 
+        let loadedMovies = [];
+
         function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('loginUser').value;
@@ -232,16 +273,125 @@
             location.reload();
         }
 
-        // Check active session on load
+        // Check active session on load & fetch movies.txt
         document.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('nexus_auth') === 'true') {
                 document.getElementById('authModal').style.display = 'none';
             }
             renderGuideRows(channels);
             selectGuideChannel(channels[0]);
+            fetchMoviesTxt();
         });
 
-        // Full Master Catalog (Restored all channels from Bites 1 through 4 with alternating stream support)
+        async function fetchMoviesTxt() {
+            try {
+                const response = await fetch('movies.txt');
+                if (!response.ok) throw new Error('Failed to load movies.txt');
+                const text = await response.text();
+                
+                // Parse lines (handles standard URLs or M3U format if present)
+                const lines = text.split('\n');
+                loadedMovies = [];
+                
+                let currentTitle = "";
+                lines.forEach(line => {
+                    const l = line.trim();
+                    if (!l) return;
+                    if (l.startsWith('#EXTINF:')) {
+                        const parts = l.split(',');
+                        if (parts.length > 1) currentTitle = parts[1].trim();
+                    } else if (l.startsWith('http://') || l.startsWith('https://')) {
+                        if (!currentTitle) {
+                            try {
+                                const urlObj = new URL(l);
+                                currentTitle = urlObj.pathname.split('/').pop().replace(/_/g, ' ') || 'Untitled Feature';
+                            } catch(e) {
+                                currentTitle = 'Feature Film Stream';
+                            }
+                        }
+                        loadedMovies.push({ title: currentTitle, url: l });
+                        currentTitle = "";
+                    } else if (!l.startsWith('#')) {
+                        // Plain text fallback or title line
+                        currentTitle = l;
+                    }
+                });
+
+                document.getElementById('movieCountBadge').innerText = `${loadedMovies.length} Titles Available`;
+                renderMoviesGrid(loadedMovies);
+            } catch (err) {
+                console.warn("Could not auto-load movies.txt via fetch (CORS or missing file), loading fallback sample set.", err);
+                // Fallback demo array if file is local/unreachable via direct fetch without local server
+                loadedMovies = [
+                    { title: "Classic Feature Sample 1", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8" }
+                ];
+                document.getElementById('movieCountBadge').innerText = `${loadedMovies.length} Titles (Demo Mode)`;
+                renderMoviesGrid(loadedMovies);
+            }
+        }
+
+        function toggleMoviesModal(show) {
+            const modal = document.getElementById('moviesModal');
+            if (show) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderMoviesGrid(list) {
+            const container = document.getElementById('moviesGridContainer');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 font-mono text-xs">No matching movie titles found.</div>`;
+                return;
+            }
+
+            list.forEach((movie, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-[#091022] border border-cyan-950 hover:border-cyan-500/50 rounded-xl p-3.5 flex items-center justify-between transition-all group cursor-pointer shadow";
+                card.onclick = () => playMovieStream(movie);
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3 truncate">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-950/60 border border-cyan-900 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform shrink-0 font-bold text-xs">
+                            🎬
+                        </div>
+                        <div class="truncate">
+                            <div class="text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition-colors truncate">${movie.title}</div>
+                            <div class="text-[10px] text-slate-500 font-mono truncate">VOD Stream #${index + 1}</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-lg font-mono font-bold group-hover:bg-cyan-600 group-hover:text-white transition-all shrink-0 ml-2">
+                        Play ➔
+                    </span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterMoviesList(query) {
+            const q = query.toLowerCase();
+            const filtered = loadedMovies.filter(m => m.title.toLowerCase().includes(q));
+            renderMoviesGrid(filtered);
+        }
+
+        function playMovieStream(movie) {
+            currentActiveUrl = movie.url;
+            document.getElementById('guideChannelNumBadge').innerText = "VOD";
+            document.getElementById('guideNetworkName').innerText = "Feature Film Library";
+            document.getElementById('guideShowTitle').innerText = movie.title;
+            document.getElementById('guideShowTime').innerText = "On-Demand Playback · Movies Catalog";
+            document.getElementById('guideShowDesc').innerText = `Now streaming feature film: ${movie.title}. Loaded dynamically from movies.txt source archive.`;
+            document.getElementById('guideRatingBadge').innerText = "VOD";
+            document.getElementById('pipChannelName').innerText = `🎬 ${movie.title}`;
+
+            toggleMoviesModal(false);
+            loadPlayerEngine();
+        }
+
+        // Full Master Catalog
         const rawChannels = [
             { name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", rating: "TV-14", alternates: [] },
             { name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", rating: "TV-G", alternates: [] },
