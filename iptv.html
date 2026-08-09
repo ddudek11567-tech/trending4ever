@@ -37,7 +37,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-500">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v5.0 &bull; QUANTUM</span>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v5.2 &bull; QUANTUM</span>
                 </div>
             </div>
 
@@ -113,7 +113,7 @@
                         </div>
                         <div class="overflow-hidden">
                             <h3 id="currentChannelName" class="text-sm font-bold text-white truncate">Select a Channel</h3>
-                            <p id="currentChannelSub" class="text-[11px] text-slate-400 truncate mt-0.5">Master Catalog Stream Feed</p>
+                            <p id="currentChannelSub" class="text-[11px] text-slate-400 truncate mt-0.5">Individual Stream Feed</p>
                         </div>
                     </div>
 
@@ -135,7 +135,7 @@
         <!-- Scrollable Genre-Categorized Content Rows -->
         <div class="flex-1 flex flex-col px-8 py-6 overflow-y-auto custom-scrollbar space-y-6">
             <div class="flex items-center justify-between">
-                <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Master Channel Catalog (<span id="channelCount">0</span> Channels)</h3>
+                <h3 class="text-xs font-bold tracking-wider uppercase text-slate-400">Master Channel Catalog (<span id="channelCount">0</span> Entries)</h3>
                 <div class="text-[11px] text-slate-500">🟢 Verified Working &bull; 🔴 Offline / Unverified</div>
             </div>
             
@@ -147,15 +147,15 @@
 
         <!-- Footer Signature -->
         <footer class="py-3 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913] shrink-0">
-            NEXUS TV v5.0 Engine &bull; Designed by: Daniel Dudek
+            NEXUS TV v5.2 Engine &bull; Designed by: Daniel Dudek
         </footer>
     </main>
 
     <script>
-        // Master Playlist with locked working URLs and persistent green status flags
+        // Individual explicit stream listing with side-by-side duplicate entries for testing/deletion
         const channels = [
             { name: "48 Hours (1080p)", category: "Documentary", icon: "📺", url: "https://dai.google.com/linear/hls/event/JUr94WL2QAiVpGNHY5n5dA/master.m3u8", working: true },
-            { name: "A&E (720p)", category: "Entertainment", icon: "🎬", url: "http://23.239.31.26:8989/aande/index.m3u8", working: false },
+            { name: "A&E (720p) [Link 1]", category: "Entertainment", icon: "🎬", url: "http://23.239.31.26:8989/aande/index.m3u8", working: false },
             { name: "ABC West (720p)", category: "Networks", icon: "📺", url: "http://stream.cammonitorplus.net/1797/index.m3u8", working: false },
             { name: "AccuWeather NOW (720p)", category: "Weather", icon: "⛅", url: "http://23.239.31.26:8989/accuweather/index.m3u8", working: false },
             { name: "Ace TV (480p)", category: "Entertainment", icon: "🎥", url: "https://c.streamhoster.com/link/hls/W5s3fS/inLo5pcsHjo/iqg9wps0m1x_5/playlist.m3u8", working: true },
@@ -168,34 +168,34 @@
             { name: "Better Health TV (480p)", category: "Lifestyle", icon: "🍏", url: "https://tgn.bozztv.com/betterlife/betterhealth/betterhealth/index.m3u8", working: true },
             { name: "Better Life Nature Channel", category: "Nature", icon: "🌿", url: "https://tgn.bozztv.com/betterlife/betternature/betternature/index.m3u8", working: true },
             { name: "Better Life TV (720p)", category: "Lifestyle", icon: "✨", url: "https://tgn.bozztv.com/betterlife/betterlife/betterlife/index.m3u8", working: true },
-            { name: "Big Ten Network (720p)", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", working: false },
+            { name: "Big Ten Network (720p) [Link 1]", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", working: false },
             { name: "Binge", category: "Movies", icon: "🍿", url: "https://videostack1.cdnstream1.com:1936/binge-tv/binge-tv/playlist.m3u8", working: true },
             { name: "Biz TV (1080p)", category: "News", icon: "📈", url: "https://2-fss-1.streamhoster.com/pl_154/205722-2251224-1/playlist.m3u8", working: true },
             { name: "Bloomberg Originals (1080p)", category: "News", icon: "📰", url: "https://86fdc85a.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfQmxvb21iZXJnT3JpZ2luYWxzX0hMUw/playlist.m3u8", working: true },
             { name: "Bloomberg TV US (720p)", category: "News", icon: "📊", url: "https://bloomberg.com/media-manifest/streams/us.m3u8", working: true },
-            { name: "Bounce (1080p)", category: "Entertainment", icon: "📺", url: "http://40.160.24.58/BOUNCE_TV/index.m3u8", working: false },
+            { name: "Bounce (1080p) [Link 1]", category: "Entertainment", icon: "📺", url: "http://40.160.24.58/BOUNCE_TV/index.m3u8", working: false },
             { name: "Brat TV (1080p)", category: "Entertainment", icon: "⭐", url: "https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/04072b68-dc6a-4d5e-98af-f356ba8d5063/playlist.m3u8", working: true },
-            { name: "Buzzr (1080p)", category: "Entertainment", icon: "🎲", url: "http://23.237.104.106:8080/USA_BUZZR/index.m3u8", working: false },
+            { name: "Buzzr (1080p) [Link 1]", category: "Entertainment", icon: "🎲", url: "http://23.237.104.106:8080/USA_BUZZR/index.m3u8", working: false },
             { name: "CAN TV19 (1080p)", category: "Government", icon: "🏛️", url: "https://cantv.streamguys1.com/cantv/cantv19hls/playlist.m3u8", working: true },
             { name: "CBN News Channel (1080p)", category: "News", icon: "📡", url: "https://fastly.live.brightcove.com/6380396819112/us-east-1/734546207001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiczFpM3ZpLmVncmVzcy50N2M3emwiLCJhY2NvdW50X2lkIjoiNzM0NTQ2MjA3MDAxIiwiZWhuIjoiZmFzdGx5LmxpdmUuYnJpZ2h0Y292ZS5jb20iLCJpc3MiOiJibGl2ZS1wbGF5YmFjay1zb3VyY2UtYXBpIiwic3ViIjoicGF0aG1hcHRva2VuIiwiYXVkIjpbIjczNDU0NjIwNzAwMSJdLCJqdGkiOiI2MzgwMzk2ODE5MTEyIn0.GDYp4IWtzwPkupEWeeOavnioVknO-Ev3UGlHvM1rE6I/playlist-hls.m3u8", working: true },
-            { name: "CBS News 24/7 (720p)", category: "News", icon: "📰", url: "http://40.160.24.56/CBS_NEWS/index.m3u8", working: false },
+            { name: "CBS News 24/7 (720p) [Link 1]", category: "News", icon: "📰", url: "http://40.160.24.56/CBS_NEWS/index.m3u8", working: false },
             { name: "Celebrity Scene TV (720p)", category: "Entertainment", icon: "✨", url: "https://rpn.bozztv.com/gusa/gusa-celebrityscene/index.m3u8", working: true },
             { name: "Cloudflare TV (720p)", category: "Tech", icon: "💡", url: "https://cloudflare.tv/hls/live.m3u8", working: true },
             { name: "CMC-USA Country Music Channel", category: "Music", icon: "🎸", url: "https://hwlive.streamingmediahosting.com/14215-live/0_obd393sh/playlist.m3u8", working: true },
-            { name: "CMT (720p)", category: "Music", icon: "🎵", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", working: false },
+            { name: "CMT (720p) [Link 1]", category: "Music", icon: "🎵", url: "http://23.237.104.106:8080/USA_CMT/index.m3u8", working: false },
             { name: "CNBC Indonesia (720p)", category: "News", icon: "📈", url: "https://live.cnbcindonesia.com/livecnbc/smil:cnbctv.smil/playlist.m3u8", working: true },
-            { name: "Comedy Central (1080p)", category: "Entertainment", icon: "🤣", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", working: false },
+            { name: "Comedy Central (1080p) [Link 1]", category: "Entertainment", icon: "🤣", url: "http://23.237.104.106:8080/USA_COMEDY_CENTRAL/index.m3u8", working: false },
             { name: "Comet (1080p)", category: "Sci-Fi", icon: "🛸", url: "https://fast-channels.sinclairstoryline.com/COMET/index.m3u8", working: true },
             { name: "Cooking Panda (576p)", category: "Lifestyle", icon: "🍳", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=46", working: true },
             { name: "Cornerstone TV (720p)", category: "Lifestyle", icon: "⛪", url: "https://2-fss-1.themediacdn.com/pl_122/206280-3059514-1/playlist.m3u8", working: true },
             { name: "Dateline 24/7 (1080p)", category: "Crime", icon: "🔍", url: "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007", working: true },
-            { name: "Disney XD (720p)", category: "Family", icon: "🎮", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", working: false },
+            { name: "Disney XD (720p) [Link 1]", category: "Family", icon: "🎮", url: "http://40.160.24.52/DISNEY_XD_HD/index.m3u8", working: false },
             { name: "Documentary+ (1080p)", category: "Documentary", icon: "📚", url: "https://ef79b15c8c7c46c7a9de9d33001dbd07.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-859-DOCUMENTARYPLUS-DOCUMENTARYPLUS/mt/documentaryplus/859/hls/master/playlist.m3u8", working: true },
             { name: "DraftKings Network (1080p)", category: "Sports", icon: "🎲", url: "https://na.linear.zype.com/e0bd0e23-a958-4e43-8164-4f2fef8876a8/fd3614bd-90bf-4530-a277-65ae3a1720c8-zype/live.m3u8", working: true },
             { name: "Duck Hunting TV (1080p)", category: "Sports", icon: "🦆", url: "https://main.duckhunting.playout.vju.tv/duckhuntingtv/main.m3u8", working: true },
             { name: "Dungeon TV (720p)", category: "Geek", icon: "🛡️", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=2226", working: true },
-            { name: "E! (1080p)", category: "Entertainment", icon: "🌟", url: "http://23.237.104.106:8080/USA_E/index.m3u8", working: false },
-            { name: "ESPNU (720p)", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_ESPNU/index.m3u8", working: false },
+            { name: "E! (1080p) [Link 1]", category: "Entertainment", icon: "🌟", url: "http://23.237.104.106:8080/USA_E/index.m3u8", working: false },
+            { name: "ESPNU (720p) [Link 1]", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_ESPNU/index.m3u8", working: false },
             { name: "Everyday Refresh (720p)", category: "Lifestyle", icon: "🛍️", url: "https://qvc-amd-live.akamaized.net/hls/live/2034113/lsqvc6us/master.m3u8", working: true },
             { name: "FilmRise Classic TV (720p)", category: "Classic", icon: "🎞️", url: "https://d2tv4k5moji5m7.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-lu4pzh9l4b57p/master.m3u8", working: true },
             { name: "Fox Business Network (480p)", category: "News", icon: "📈", url: "https://247preview.foxbusiness.com/hls/live/2020026/fbnv3preview/primary.m3u8", working: true },
@@ -203,50 +203,50 @@
             { name: "Fox Weather (720p)", category: "Weather", icon: "⛅", url: "https://247wlive.foxweather.com/stream/index.m3u8", working: true },
             { name: "FTF Sports (720p)", category: "Sports", icon: "🏆", url: "https://1593604785.rsc.cdn77.org/FTF/FTF_SCTE.m3u8", working: true },
             { name: "Fun Roads (720p)", category: "Travel", icon: "🚗", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=978", working: true },
-            { name: "Fuse (1080p)", category: "Music", icon: "🎸", url: "http://23.237.104.106:8080/USA_FUSE/index.m3u8", working: false },
-            { name: "FX (1080p)", category: "Entertainment", icon: "🎬", url: "http://23.237.104.106:8080/USA_FX/index.m3u8", working: false },
-            { name: "FXX (1080p)", category: "Entertainment", icon: "📺", url: "http://23.237.104.106:8080/USA_FXX/index.m3u8", working: false },
+            { name: "Fuse (1080p) [Link 1]", category: "Music", icon: "🎸", url: "http://23.237.104.106:8080/USA_FUSE/index.m3u8", working: false },
+            { name: "FX (1080p) [Link 1]", category: "Entertainment", icon: "🎬", url: "http://23.237.104.106:8080/USA_FX/index.m3u8", working: false },
+            { name: "FXX (1080p) [Link 1]", category: "Entertainment", icon: "📺", url: "http://23.237.104.106:8080/USA_FXX/index.m3u8", working: false },
             { name: "Ganj e Hozour TV (1080p)", category: "Culture", icon: "📖", url: "https://media.parvizshahbazi.com/ganjehozour/Main_tv/playlist.m3u8", working: true },
-            { name: "Hallmark Channel (1080p)", category: "Drama", icon: "💝", url: "http://23.237.104.106:8080/USA_HALLMARK/index.m3u8", working: false },
+            { name: "Hallmark Channel (1080p) [Link 1]", category: "Drama", icon: "💝", url: "http://23.237.104.106:8080/USA_HALLMARK/index.m3u8", working: false },
             { name: "Hallmark Movies & More", category: "Movies", icon: "🎥", url: "https://dbrb49pjoymg4.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod_default_xumo-ams-aws/master.m3u8?ads.xumo_channelId=99991709", working: true },
             { name: "Heartland (720p)", category: "Drama", icon: "🐎", url: "https://2-fss-2.streamhoster.com/pl_120/201950-2724904-1/playlist.m3u8", working: true },
-            { name: "History (720p)", category: "Documentary", icon: "🏛️", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", working: false },
-            { name: "ION TV (720p)", category: "Entertainment", icon: "📺", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", working: false },
+            { name: "History (720p) [Link 1]", category: "Documentary", icon: "🏛️", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", working: false },
+            { name: "ION TV (720p) [Link 1]", category: "Entertainment", icon: "📺", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", working: false },
             { name: "Kaloopy TV (1080p)", category: "Lifestyle", icon: "🌴", url: "https://streamingserver000.viewtv.cloud/VIEWTVNETWORK-KALOOPY/index.m3u8", working: true },
-            { name: "Kids Street (1080p)", category: "Family", icon: "🧸", url: "http://181.78.121.15:8000/play/a00a/index.m3u8", working: false },
+            { name: "Kids Street (1080p) [Link 1]", category: "Family", icon: "🧸", url: "http://181.78.121.15:8000/play/a00a/index.m3u8", working: false },
             { name: "LiveNOW from FOX (720p)", category: "News", icon: "📡", url: "https://fox-foxnewsnow-vizio.amagi.tv/playlist.m3u8", working: true },
             { name: "LiveXLive (1080p)", category: "Music", icon: "🎧", url: "https://livestream.liveone.com/lc1/p1.m3u8", working: true },
             { name: "Magnificent Movies Network", category: "Movies", icon: "🎬", url: "https://mmn1-301f.kxcdn.com/hls/MMN-HLS.m3u8", working: true },
             { name: "MeTV (720p)", category: "Classic", icon: "📺", url: "https://82934cf9c8696bd2.mediapackage.us-east-1.amazonaws.com/out/v1/23685237ffbb4047a8143ac2166ead44/index.m3u8", working: true },
-            { name: "MLB Strike Zone (720p)", category: "Sports", icon: "⚾", url: "http://23.237.104.106:8080/USA_MLB_STRIKE_ZONE/index.m3u8", working: false },
-            { name: "MTV (720p)", category: "Music", icon: "🎵", url: "http://40.160.24.53/MTV/index.m3u8", working: false },
-            { name: "National Geographic (720p)", category: "Nature", icon: "🌍", url: "http://40.160.24.53/NAT_GEO/index.m3u8", working: false },
-            { name: "NBA TV (720p)", category: "Sports", icon: "🏀", url: "http://23.237.104.106:8080/USA_NBA/index.m3u8", working: false },
+            { name: "MLB Strike Zone (720p) [Link 1]", category: "Sports", icon: "⚾", url: "http://23.237.104.106:8080/USA_MLB_STRIKE_ZONE/index.m3u8", working: false },
+            { name: "MTV (720p) [Link 1]", category: "Music", icon: "🎵", url: "http://40.160.24.53/MTV/index.m3u8", working: false },
+            { name: "National Geographic (720p) [Link 1]", category: "Nature", icon: "🌍", url: "http://40.160.24.53/NAT_GEO/index.m3u8", working: false },
+            { name: "NBA TV (720p) [Link 1]", category: "Sports", icon: "🏀", url: "http://23.237.104.106:8080/USA_NBA/index.m3u8", working: false },
             { name: "NBC News NOW (1080p)", category: "News", icon: "📰", url: "https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99984003", working: true },
             { name: "Newsmax 2 (720p)", category: "News", icon: "📊", url: "https://nmxlive.akamaized.net/hls/live/529965/Live_1/index.m3u8", working: true },
-            { name: "NewsNation (720p)", category: "News", icon: "📡", url: "http://40.160.24.58/NEWSNATION/index.m3u8", working: false },
-            { name: "NFL Network (720p)", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_NFL_NETWORK/index.m3u8", working: false },
-            { name: "Nickelodeon (720p)", category: "Family", icon: "🎨", url: "http://40.160.24.55/NICKELODEON/index.m3u8", working: false },
+            { name: "NewsNation (720p) [Link 1]", category: "News", icon: "📡", url: "http://40.160.24.58/NEWSNATION/index.m3u8", working: false },
+            { name: "NFL Network (720p) [Link 1]", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_NFL_NETWORK/index.m3u8", working: false },
+            { name: "Nickelodeon (720p) [Link 1]", category: "Family", icon: "🎨", url: "http://40.160.24.55/NICKELODEON/index.m3u8", working: false },
             { name: "NowMedia Television (1080p)", category: "News", icon: "📺", url: "https://stream-204968.castr.net/64e0c91d08bff3041638aee3/live_a4243540d4b911f0b624bda5e9a32aa9/index.m3u8", working: true },
             { name: "OAN Plus (720p)", category: "News", icon: "📺", url: "https://a-cdn.herringnetwork.com/affiliate/oane/playlist.m3u8", working: true },
-            { name: "Outdoor Channel HD (1080p)", category: "Sports", icon: "🎣", url: "http://40.160.24.55/OUTDOOR_CHANNEL/index.m3u8", working: false },
+            { name: "Outdoor Channel HD (1080p) [Link 1]", category: "Sports", icon: "🎣", url: "http://40.160.24.55/OUTDOOR_CHANNEL/index.m3u8", working: false },
             { name: "PBS Kids (720p)", category: "Family", icon: "🎒", url: "https://livestream.pbskids.org/out/v1/14507d931bbe48a69287e4850e53443c/est.m3u8", working: true },
             { name: "Rally TV (1080p)", category: "Sports", icon: "🏎️", url: "https://rally-tv-live.akamaized.net/hls/live/2117704/RallyTV-Pri/master.m3u8", working: true },
-            { name: "Reelz (720p)", category: "Entertainment", icon: "🎥", url: "http://23.237.104.106:8080/USA_REELZ/index.m3u8", working: false },
+            { name: "Reelz (720p) [Link 1]", category: "Entertainment", icon: "🎥", url: "http://23.237.104.106:8080/USA_REELZ/index.m3u8", working: false },
             { name: "Retro TV (720p)", category: "Classic", icon: "📼", url: "https://freecast-lukentvlive.vgcdn.net/out/v1/665e9f91614b43b0a0654e9317f1d9f3/index.m3u8", working: true },
             { name: "Shemaroo Bollywood (1080p)", category: "Movies", icon: "💃", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00864-shemarooenterta-shemabollywood-ono/playlist.m3u8", working: true },
             { name: "Sonic TV (720p)", category: "Music", icon: "🎵", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=16764", working: true },
             { name: "Sony KAL Hindi (1080p)", category: "International", icon: "🇮🇳", url: "https://wurlsonypicturestv.global.transmit.live/hls/68deeb1c0238cda82df543dd/v1/spt_sonykal_1/lg_us/latest/main/hls/playlist.m3u8", working: true },
-            { name: "Starz (1080p)", category: "Movies", icon: "⭐", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", working: false },
-            { name: "SYFY (720p)", category: "Sci-Fi", icon: "👽", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", working: false },
+            { name: "Starz (1080p) [Link 1]", category: "Movies", icon: "⭐", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", working: false },
+            { name: "SYFY (720p) [Link 1]", category: "Sci-Fi", icon: "👽", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", working: false },
             { name: "The Country Network (1080p)", category: "Music", icon: "🤠", url: "https://amg00600-amg00600c1-thecountrynetwork-us-5497.playouts.now.amagi.tv/playlist.m3u8", working: true },
             { name: "The First TV (1080p)", category: "News", icon: "🎙️", url: "https://thefirst-oando.amagi.tv/playlist.m3u8", working: true },
             { name: "The Nest (1080p)", category: "Lifestyle", icon: "🏡", url: "https://fast-channels.sinclairstoryline.com/THENEST/index.m3u8", working: true },
             { name: "theDove TV (720p)", category: "Lifestyle", icon: "🕊️", url: "https://thedovetv.bozztv.com/thedovetv/thedovetv/index.m3u8", working: true },
             { name: "Timeless TV", category: "Classic", icon: "⌛", url: "https://timelesstv1-301f.kxcdn.com/hls/TimelessTV.m3u8", working: true },
             { name: "Toon Goggles (720p)", category: "Family", icon: "🎈", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=37", working: true },
-            { name: "TV Land (720p)", category: "Classic", icon: "📺", url: "http://40.160.24.55/TV_LAND/index.m3u8", working: false },
-            { name: "TV One (1080p)", category: "Entertainment", icon: "🌟", url: "http://40.160.24.55/TV_ONE/index.m3u8", working: false },
+            { name: "TV Land (720p) [Link 1]", category: "Classic", icon: "📺", url: "http://40.160.24.55/TV_LAND/index.m3u8", working: false },
+            { name: "TV One (1080p) [Link 1]", category: "Entertainment", icon: "🌟", url: "http://40.160.24.55/TV_ONE/index.m3u8", working: false },
             { name: "TVS Bowling Network (720p)", category: "Sports", icon: "🎳", url: "https://rpn.bozztv.com/gusa/gusa-tvsbowling/index.m3u8", working: true }
         ];
 
@@ -301,7 +301,7 @@
                     card.innerHTML = `
                         <div class="flex items-center justify-between">
                             <span class="text-xl">${ch.icon}</span>
-                            <span class="w-2.5 h-2.5 rounded-full shadow-md ${statusColorClass}" title="${ch.working ? 'Working Channel (Locked Green)' : 'Offline / Unverified'}"></span>
+                            <span class="w-2.5 h-2.5 rounded-full shadow-md ${statusColorClass}" title="${ch.working ? 'Working Stream (Locked Green)' : 'Offline / Unverified'}"></span>
                         </div>
                         <div>
                             <div class="text-xs font-bold truncate">${ch.name}</div>
@@ -323,7 +323,7 @@
         function selectChannel(ch) {
             currentChannel = ch;
             document.getElementById('currentChannelName').innerText = ch.name;
-            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Master Stream Feed`;
+            document.getElementById('currentChannelSub').innerText = `Now viewing: ${ch.category} · Individual Stream Feed`;
             document.getElementById('activeChannelIcon').innerText = ch.icon;
             document.getElementById('epgChannelTag').innerText = ch.name.toUpperCase();
             
