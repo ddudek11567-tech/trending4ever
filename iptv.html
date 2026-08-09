@@ -152,7 +152,7 @@
     </main>
 
     <script>
-        // Master Playlist integrated with verification status indicators (Green/Red)
+        // Master Playlist with locked working URLs and persistent green status flags
         const channels = [
             { name: "48 Hours (1080p)", category: "Documentary", icon: "📺", url: "https://dai.google.com/linear/hls/event/JUr94WL2QAiVpGNHY5n5dA/master.m3u8", working: true },
             { name: "A&E (720p)", category: "Entertainment", icon: "🎬", url: "http://23.239.31.26:8989/aande/index.m3u8", working: false },
@@ -264,7 +264,6 @@
             const container = document.getElementById('genreRowsContainer');
             container.innerHTML = '';
 
-            // Group channels by category
             const categories = {};
             list.forEach(ch => {
                 if (!categories[ch.category]) categories[ch.category] = [];
@@ -297,13 +296,12 @@
                             : 'bg-[#0d1326]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#131b35] text-slate-300'
                     }`;
                     
-                    // Logo color indicator: Green if working, Red if not working
                     const statusColorClass = ch.working ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50';
 
                     card.innerHTML = `
                         <div class="flex items-center justify-between">
                             <span class="text-xl">${ch.icon}</span>
-                            <span class="w-2.5 h-2.5 rounded-full shadow-md ${statusColorClass}" title="${ch.working ? 'Working Channel' : 'Offline / Unverified'}"></span>
+                            <span class="w-2.5 h-2.5 rounded-full shadow-md ${statusColorClass}" title="${ch.working ? 'Working Channel (Locked Green)' : 'Offline / Unverified'}"></span>
                         </div>
                         <div>
                             <div class="text-xs font-bold truncate">${ch.name}</div>
