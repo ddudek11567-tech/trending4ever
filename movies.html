@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexus TV - Latest Movies</title>
     <style>
-        /* Reset and Base Styles */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,7 +19,6 @@
             height: 100vh;
         }
 
-        /* Dashboard Container Layout */
         .dashboard-container {
             display: flex;
             height: 100vh;
@@ -38,6 +36,7 @@
             padding: 24px 16px;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
             flex-shrink: 0;
+            z-index: 20;
         }
 
         .brand {
@@ -87,121 +86,132 @@
             overflow: hidden;
         }
 
-        /* Prime Video Top Navigation Bar */
-        .prime-top-nav {
-            height: 60px;
+        /* Top Navigation Bar */
+        .top-nav {
+            height: 64px;
             background-color: #0b0f19;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             flex-shrink: 0;
             z-index: 10;
         }
 
-        .prime-logo-area {
+        .nav-menu-area {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 40px;
         }
 
-        .prime-logo {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #00a8e1;
-            letter-spacing: 0.5px;
-            text-transform: lowercase;
+        .app-logo {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 1px;
         }
 
-        .prime-menu {
+        .app-logo span {
+            color: #38bdf8;
+        }
+
+        .menu-items {
             display: flex;
             list-style: none;
-            gap: 24px;
+            gap: 8px;
+            align-items: center;
         }
 
-        .prime-menu li a {
+        .menu-items li a {
             text-decoration: none;
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 20px;
             transition: all 0.2s;
         }
 
-        .prime-menu li.active a, .prime-menu li a:hover {
+        .menu-items li.active a, .menu-items li a:hover {
             color: #ffffff;
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        .prime-right-nav {
+        .top-nav-right {
             display: flex;
             align-items: center;
             gap: 20px;
             color: #94a3b8;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             cursor: pointer;
         }
 
-        /* Fixed Top Hero Banner (Prime Style) */
+        .search-icon {
+            font-size: 1.1rem;
+        }
+
+        /* Fixed Top Hero Banner */
         .hero-banner-section {
             flex-shrink: 0;
             width: 100%;
-            height: 52vh;
+            height: 55vh;
             position: relative;
-            background: linear-gradient(to right, rgba(11, 15, 25, 0.9), rgba(11, 15, 25, 0.2)), 
+            background: linear-gradient(to right, rgba(11, 15, 25, 0.95) 15%, rgba(11, 15, 25, 0.4) 60%, rgba(11, 15, 25, 0.8)), 
                         url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
             display: flex;
             align-items: center;
-            padding: 0 60px;
+            padding: 0 50px;
         }
 
         .hero-content {
-            max-width: 600px;
+            max-width: 650px;
             z-index: 2;
         }
 
         .hero-badge {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #00a8e1;
-            margin-bottom: 8px;
+            letter-spacing: 3px;
+            color: #38bdf8;
+            margin-bottom: 10px;
             font-weight: 700;
         }
 
         .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
+            font-size: 4.2rem;
+            font-weight: 900;
             margin-bottom: 16px;
-            line-height: 1.1;
+            line-height: 1.05;
             letter-spacing: -1px;
+            color: #ffffff;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .hero-description {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: #cbd5e1;
-            margin-bottom: 24px;
-            line-height: 1.5;
+            margin-bottom: 28px;
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .hero-buttons {
             display: flex;
-            gap: 12px;
+            gap: 16px;
         }
 
         .btn {
-            padding: 10px 24px;
-            border-radius: 4px;
+            padding: 12px 28px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: opacity 0.2s;
+            gap: 10px;
+            transition: all 0.2s ease;
         }
 
         .btn-primary {
@@ -210,51 +220,53 @@
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            background-color: #e2e8f0;
+            transform: scale(1.02);
         }
 
         .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             color: #ffffff;
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
         }
 
         /* Scrollable Lower Section */
         .scrollable-rows-section {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 30px 60px;
+            padding: 35px 50px;
             background: linear-gradient(to bottom, rgba(11, 15, 25, 0.6), #0b0f19);
         }
 
         .row-category {
-            margin-bottom: 40px;
+            margin-bottom: 45px;
         }
 
         .row-title {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 700;
-            margin-bottom: 16px;
-            color: #f8fafc;
+            margin-bottom: 18px;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .row-title span {
-            color: #00a8e1;
+            color: #38bdf8;
             font-weight: 600;
         }
 
         .movie-row-cards {
             display: flex;
-            gap: 16px;
+            gap: 18px;
             overflow-x: auto;
-            padding-bottom: 12px;
+            padding-bottom: 15px;
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
         }
@@ -269,43 +281,44 @@
         }
 
         .movie-card {
-            flex: 0 0 210px;
+            flex: 0 0 230px;
             background-color: #161b26;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .movie-card:hover {
-            transform: scale(1.04);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .movie-poster {
             width: 100%;
-            height: 120px;
+            height: 135px;
             object-fit: cover;
             background-color: #1e2532;
         }
 
         .movie-info {
-            padding: 12px;
+            padding: 14px;
         }
 
         .movie-name {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            color: #ffffff;
         }
 
         .movie-genre {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #94a3b8;
         }
     </style>
@@ -330,21 +343,22 @@
 
         <!-- Main Workspace -->
         <main class="main-content">
-            <!-- Prime Video Top Sub-Navigation Bar -->
-            <nav class="prime-top-nav">
-                <div class="prime-logo-area">
-                    <div class="prime-logo">prime video</div>
-                    <ul class="prime-menu">
+            <!-- Professional Top Navigation Bar -->
+            <nav class="top-nav">
+                <div class="nav-menu-area">
+                    <div class="app-logo">NEXUS <span>ORIGINALS</span></div>
+                    <ul class="menu-items">
                         <li><a href="#">Home</a></li>
-                        <li class="active"><a href="#">Prime</a></li>
+                        <li class="active"><a href="#">Featured</a></li>
                         <li><a href="#">Store</a></li>
                         <li><a href="#">Channels</a></li>
                         <li><a href="#">Categories</a></li>
                         <li><a href="#">My Stuff</a></li>
                     </ul>
                 </div>
-                <div class="prime-right-nav">
-                    ⚙️
+                <div class="top-nav-right">
+                    <span class="search-icon">🔍</span>
+                    <span>⚙️</span>
                 </div>
             </nav>
 
@@ -352,7 +366,7 @@
             <section class="hero-banner-section">
                 <div class="hero-content">
                     <div class="hero-badge">Amazon Original</div>
-                    <h1 class="hero-title">The Expanse</h1>
+                    <h1 class="hero-title">THE EXPANSE</h1>
                     <p class="hero-description">A hardened detective and a rogue captain pull together a desperate interplanetary crew to track a missing woman and unearth a solar-system-wide conspiracy.</p>
                     <div class="hero-buttons">
                         <button class="btn btn-primary">
@@ -369,7 +383,7 @@
             <section class="scrollable-rows-section">
                 <!-- Row 1 -->
                 <div class="row-category">
-                    <h2 class="row-title"><span>prime</span> TV shows we think you'll like</h2>
+                    <h2 class="row-title"><span>Nexus</span> TV shows we think you'll like</h2>
                     <div class="movie-row-cards">
                         <div class="movie-card">
                             <div class="movie-poster"></div>
@@ -411,7 +425,7 @@
 
                 <!-- Row 2 -->
                 <div class="row-category">
-                    <h2 class="row-title"><span>prime</span> Action &amp; Adventure Movies (1976–1989)</h2>
+                    <h2 class="row-title"><span>Nexus</span> Action &amp; Adventure Movies (1976–1989)</h2>
                     <div class="movie-row-cards">
                         <div class="movie-card">
                             <div class="movie-poster"></div>
