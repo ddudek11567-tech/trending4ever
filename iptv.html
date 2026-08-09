@@ -33,63 +33,20 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 <body class="min-h-screen bg-[#030712] text-slate-100 flex font-sans selection:bg-cyan-600 selection:text-white overflow-hidden">
 
-    <!-- Authentication Overlay Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-[#030712]/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="bg-[#060b19] border border-cyan-900/60 rounded-3xl p-8 max-w-md w-full shadow-2xl cable-glow relative overflow-hidden">
-            <div class="absolute -right-12 -top-12 w-40 h-40 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            
-            <div class="text-center mb-6">
-                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 text-white font-black text-2xl mx-auto mb-3">
-                    📺
-                </div>
-                <h2 class="text-2xl font-black tracking-wider text-white">NEXUS<span class="text-cyan-400">TV</span></h2>
-                <p class="text-xs text-cyan-400/80 font-mono mt-1 uppercase tracking-widest">Restricted Access &bull; v6.4</p>
-            </div>
-
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 font-mono">Username</label>
-                    <input type="text" id="loginUser" required placeholder="Enter username..." class="w-full bg-[#091022] border border-cyan-950 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition-all font-mono">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5 font-mono">Password</label>
-                    <input type="password" id="loginPass" required placeholder="Enter password..." class="w-full bg-[#091022] border border-cyan-950 rounded-xl px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 transition-all font-mono">
-                </div>
-                <div id="loginError" class="text-xs text-red-400 font-mono hidden text-center bg-red-950/40 border border-red-900/50 py-2 rounded-lg">
-                    Invalid username or password. Please try again.
-                </div>
-                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-950/50 transition-all tracking-wider uppercase font-mono">
-                    Authenticate Stream
-                </button>
-            </form>
-
-            <div class="mt-6 text-center text-[10px] text-slate-500 font-mono">
-                Authorized Personnel Only &bull; Architecture by Daniel Dudek
-            </div>
-        </div>
-    </div>
-
     <!-- Sidebar Navigation -->
-    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
     <aside class="w-64 bg-[#060b19] border-r border-cyan-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
         <div>
             <!-- Logo Header -->
-            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
-                    ⚡
             <div class="p-6 flex items-center space-x-3 border-b border-cyan-950/40">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-xl">
                     📺
                 </div>
                 <div>
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-pink-500">TV</span>
                         NEXUS<span class="text-cyan-400">TV</span>
                     </h1>
-                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
                     <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.4 &bull; SECURE</span>
                 </div>
             </div>
@@ -112,11 +69,8 @@
                     <span class="text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold">NEW</span>
                 </a>
 
-                <a href="archive.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                 <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-cyan-600/20 to-blue-600/10 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-950/40">
                     <div class="flex items-center space-x-3">
-                        <span class="text-base">🏛️</span>
-                        <span>Archive.org Stream</span>
                         <span class="text-base">📅</span>
                         <span>Interactive Guide</span>
                     </div>
@@ -143,15 +97,6 @@
             </nav>
         </div>
 
-        <!-- Sidebar Footer / Profile & Settings -->
-        <div class="p-4 border-t border-slate-800/40 space-y-3">
-            <a href="generic.html?section=settings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
-                <span>⚙️</span>
-                <span>Settings</span>
-            </a>
-
-            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
         <!-- Sidebar Footer / Profile -->
         <div class="p-4 border-t border-cyan-950/40 space-y-3">
             <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-[#091022] border border-cyan-950/80">
@@ -160,52 +105,14 @@
                 </div>
                 <div class="overflow-hidden flex-1">
                     <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
-                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
                     <div class="text-[10px] text-cyan-400 font-medium flex items-center gap-1">
                         <span>★</span> Lead Architect
                     </div>
                 </div>
             </div>
-            <button onclick="logout()" class="w-full py-1.5 rounded-lg bg-slate-900 hover:bg-red-950/40 border border-slate-800 hover:border-red-900/50 text-slate-400 hover:text-red-300 text-xs font-mono transition-all">
-                Lock Session
-            </button>
         </div>
     </aside>
 
-
-    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
-        <div class="flex-1 flex flex-col overflow-y-auto custom-scrollbar aether-cinema-root">
-            <div class="vignette"></div>
-            <div class="grain"></div>
-
-            <!-- Aether Hero Section -->
-            <section class="aether-hero" id="hero">
-                <div class="backdrops" id="backdrops"></div>
-                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
-                <div class="scrim"></div>
-                <div class="hero-content" id="heroContent"></div>
-                <div class="dots" id="dots"></div>
-            </section>
-
-            <!-- Aether Collection Rows -->
-            <section class="collection" id="collection"></section>
-        </div>
-
-        <!-- Footer Signature -->
-        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
-            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
-        </footer>
-    </main>
-
-    <!-- Aether Video Player Overlay Modal -->
-    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
-        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
-            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
-            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
-            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
-                <div class="t-meta min-w-0">
-                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
-                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
     <!-- Main Content Area -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden guide-grid-bg">
         
@@ -229,20 +136,6 @@
                         Welcome to the modernized 2000s set-top box interface. Select any channel row below to view program schedules and instantly stream live television across the complete master catalog.
                     </p>
                 </div>
-                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
-                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
-                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
-                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
-                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <div class="vol flex items-center gap-2">
-                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
-                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                 
                 <div class="pt-4 border-t border-cyan-950/80 flex items-center justify-between">
                     <div class="flex items-center space-x-2 text-xs text-slate-400">
@@ -254,18 +147,10 @@
                         <button onclick="togglePiPMode()" id="pipModeBtn" class="px-3.5 py-1.5 rounded-lg bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/40 text-cyan-300 text-xs font-semibold transition-all shadow">
                             ⚡ Native Engine
                         </button>
-                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
                     </div>
-                    <div class="spacer flex-1"></div>
-                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-                    </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
             <!-- Top-Right: Enlarged Picture-in-Picture Active Stream Monitor -->
             <div class="lg:col-span-6 bg-black rounded-2xl overflow-hidden border border-cyan-900/50 shadow-2xl relative flex items-center justify-center group h-full">
                 <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-slate-950">
@@ -285,39 +170,6 @@
             </div>
         </div>
 
-    <script>
-const FILMS=[{"id": 1, "title": "The Terminator", "year": 1984, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["action"]}, {"id": 2, "title": "Aliens", "year": 1986, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["action"]}, {"id": 3, "title": "Die Hard", "year": 1988, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["action"]}, {"id": 4, "title": "First Blood", "year": 1982, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["action"]}, {"id": 5, "title": "Mad Max", "year": 1979, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["action"]}, {"id": 6, "title": "Mad Max 2: The Road Warrior", "year": 1981, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["action"]}, {"id": 7, "title": "Escape from New York", "year": 1981, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["action"]}, {"id": 8, "title": "Lethal Weapon", "year": 1987, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["action"]}, {"id": 9, "title": "Beverly Hills Cop", "year": 1984, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["action"]}, {"id": 10, "title": "Robocop", "year": 1987, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["action"]}, {"id": 11, "title": "Conan the Barbarian", "year": 1982, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["action"]}, {"id": 12, "title": "Predator", "year": 1987, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["action"]}, {"id": 13, "title": "Commando", "year": 1985, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["action"]}, {"id": 14, "title": "Red Dawn", "year": 1984, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["action"]}, {"id": 15, "title": "Big Trouble in Little China", "year": 1986, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["action"]}, {"id": 16, "title": "The Running Man", "year": 1987, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["action"]}, {"id": 17, "title": "Rocky II", "year": 1979, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["action"]}, {"id": 18, "title": "Rocky III", "year": 1982, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["action"]}, {"id": 19, "title": "Rocky IV", "year": 1985, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["action"]}, {"id": 20, "title": "Enter the Dragon", "year": 1973, "genreKey": "action", "genreLabel": "Action", "icon": "🔥", "accent": "#c0392b", "rgb": "192,57,43", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["action"]}, {"id": 21, "title": "Star Wars: A New Hope", "year": 1977, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["scifi"]}, {"id": 22, "title": "Star Wars: The Empire Strikes Back", "year": 1980, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["scifi"]}, {"id": 23, "title": "Star Wars: Return of the Jedi", "year": 1983, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["scifi"]}, {"id": 24, "title": "Blade Runner", "year": 1982, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["scifi"]}, {"id": 25, "title": "E.T. the Extra-Terrestrial", "year": 1982, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["scifi"]}, {"id": 26, "title": "Close Encounters of the Third Kind", "year": 1977, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["scifi"]}, {"id": 27, "title": "The Thing", "year": 1982, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["scifi"]}, {"id": 28, "title": "Tron", "year": 1982, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["scifi"]}, {"id": 29, "title": "The Fly", "year": 1986, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["scifi"]}, {"id": 30, "title": "Back to the Future", "year": 1985, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["scifi"]}, {"id": 31, "title": "Back to the Future Part II", "year": 1989, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["scifi"]}, {"id": 32, "title": "Back to the Future Part III", "year": 1990, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["scifi"]}, {"id": 33, "title": "Dune", "year": 1984, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["scifi"]}, {"id": 34, "title": "The Last Starfighter", "year": 1984, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["scifi"]}, {"id": 35, "title": "The Abyss", "year": 1989, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["scifi"]}, {"id": 36, "title": "Short Circuit", "year": 1986, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["scifi"]}, {"id": 37, "title": "WarGames", "year": 1983, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["scifi"]}, {"id": 38, "title": "Invasion of the Body Snatchers", "year": 1978, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["scifi"]}, {"id": 39, "title": "Superman", "year": 1978, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["scifi"]}, {"id": 40, "title": "Superman II", "year": 1980, "genreKey": "scifi", "genreLabel": "Sci-Fi", "icon": "🚀", "accent": "#6f8fd6", "rgb": "111,143,214", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["scifi"]}, {"id": 41, "title": "Halloween", "year": 1978, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["horror"]}, {"id": 42, "title": "Friday the 13th", "year": 1980, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["horror"]}, {"id": 43, "title": "A Nightmare on Elm Street", "year": 1984, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["horror"]}, {"id": 44, "title": "The Shining", "year": 1980, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["horror"]}, {"id": 45, "title": "The Exorcist II", "year": 1977, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["horror"]}, {"id": 46, "title": "The Howling", "year": 1981, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["horror"]}, {"id": 47, "title": "Poltergeist", "year": 1982, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["horror"]}, {"id": 48, "title": "The Evil Dead", "year": 1981, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["horror"]}, {"id": 49, "title": "Evil Dead II", "year": 1987, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["horror"]}, {"id": 50, "title": "The Texas Chainsaw Massacre", "year": 1974, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["horror"]}, {"id": 51, "title": "The Fog", "year": 1980, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["horror"]}, {"id": 52, "title": "Creepshow", "year": 1982, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["horror"]}, {"id": 53, "title": "The Changeling", "year": 1980, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["horror"]}, {"id": 54, "title": "Hellraiser", "year": 1987, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["horror"]}, {"id": 55, "title": "The Hitcher", "year": 1986, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["horror"]}, {"id": 56, "title": "Child's Play", "year": 1988, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["horror"]}, {"id": 57, "title": "The Blob", "year": 1988, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["horror"]}, {"id": 58, "title": "Videodrome", "year": 1983, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["horror"]}, {"id": 59, "title": "Scanners", "year": 1981, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["horror"]}, {"id": 60, "title": "The Serpent and the Rainbow", "year": 1988, "genreKey": "horror", "genreLabel": "Horror", "icon": "👻", "accent": "#7d2e46", "rgb": "125,46,70", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["horror"]}, {"id": 61, "title": "Taxi Driver", "year": 1976, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["drama"]}, {"id": 62, "title": "Apocalypse Now", "year": 1979, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["drama"]}, {"id": 63, "title": "Raging Bull", "year": 1980, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["drama"]}, {"id": 64, "title": "The Deer Hunter", "year": 1978, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["drama"]}, {"id": 65, "title": "Platoon", "year": 1986, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["drama"]}, {"id": 66, "title": "Full Metal Jacket", "year": 1987, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["drama"]}, {"id": 67, "title": "The Godfather Part II", "year": 1974, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["drama"]}, {"id": 68, "title": "The Godfather Part III", "year": 1990, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["drama"]}, {"id": 69, "title": "Scarface", "year": 1983, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["drama"]}, {"id": 70, "title": "The Color Purple", "year": 1985, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["drama"]}, {"id": 71, "title": "Ordinary People", "year": 1980, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["drama"]}, {"id": 72, "title": "Amadeus", "year": 1984, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["drama"]}, {"id": 73, "title": "The Elephant Man", "year": 1980, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["drama"]}, {"id": 74, "title": "Gandhi", "year": 1982, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["drama"]}, {"id": 75, "title": "The Killing Fields", "year": 1984, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["drama"]}, {"id": 76, "title": "The Untouchables", "year": 1987, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["drama"]}, {"id": 77, "title": "Rain Man", "year": 1988, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["drama"]}, {"id": 78, "title": "The Right Stuff", "year": 1983, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["drama"]}, {"id": 79, "title": "The Mission", "year": 1986, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["drama"]}, {"id": 80, "title": "Sophie's Choice", "year": 1982, "genreKey": "drama", "genreLabel": "Drama", "icon": "🎭", "accent": "#4f7d8a", "rgb": "79,125,138", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["drama"]}, {"id": 81, "title": "Jaws", "year": 1975, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["thriller"]}, {"id": 82, "title": "Jaws 2", "year": 1978, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["thriller"]}, {"id": 83, "title": "Blue Velvet", "year": 1986, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["thriller"]}, {"id": 84, "title": "The Silence of the Lambs", "year": 1991, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["thriller"]}, {"id": 85, "title": "Fatal Attraction", "year": 1987, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["thriller"]}, {"id": 86, "title": "The Vanishing", "year": 1988, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["thriller"]}, {"id": 87, "title": "Blow Out", "year": 1981, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["thriller"]}, {"id": 88, "title": "The Conversation", "year": 1974, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["thriller"]}, {"id": 89, "title": "Witness", "year": 1985, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["thriller"]}, {"id": 90, "title": "The French Connection II", "year": 1975, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["thriller"]}, {"id": 91, "title": "The Terminator", "year": 1984, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["thriller"]}, {"id": 92, "title": "Manhunter", "year": 1986, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["thriller"]}, {"id": 93, "title": "Angel Heart", "year": 1987, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["thriller"]}, {"id": 94, "title": "The Hitcher", "year": 1986, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["thriller"]}, {"id": 95, "title": "To Live and Die in L.A.", "year": 1985, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["thriller"]}, {"id": 96, "title": "The Running Man", "year": 1987, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["thriller"]}, {"id": 97, "title": "The Dead Zone", "year": 1983, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["thriller"]}, {"id": 98, "title": "The Killing Fields", "year": 1984, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["thriller"]}, {"id": 99, "title": "The Falcon and the Snowman", "year": 1985, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["thriller"]}, {"id": 100, "title": "The Bedroom Window", "year": 1987, "genreKey": "thriller", "genreLabel": "Thriller", "icon": "🔪", "accent": "#8a5a0a", "rgb": "138,90,10", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["thriller"]}, {"id": 101, "title": "Ghostbusters", "year": 1984, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["comedy"]}, {"id": 102, "title": "Ghostbusters II", "year": 1989, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["comedy"]}, {"id": 103, "title": "Caddyshack", "year": 1980, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["comedy"]}, {"id": 104, "title": "National Lampoon's Vacation", "year": 1983, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["comedy"]}, {"id": 105, "title": "Ferris Bueller's Day Off", "year": 1986, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["comedy"]}, {"id": 106, "title": "Trading Places", "year": 1983, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["comedy"]}, {"id": 107, "title": "Coming to America", "year": 1988, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["comedy"]}, {"id": 108, "title": "Beverly Hills Cop", "year": 1984, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["comedy"]}, {"id": 109, "title": "Airplane!", "year": 1980, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["comedy"]}, {"id": 110, "title": "The Blues Brothers", "year": 1980, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["comedy"]}, {"id": 111, "title": "Stripes", "year": 1981, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["comedy"]}, {"id": 112, "title": "Police Academy", "year": 1984, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["comedy"]}, {"id": 113, "title": "Police Academy 2", "year": 1985, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["comedy"]}, {"id": 114, "title": "Police Academy 3", "year": 1986, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["comedy"]}, {"id": 115, "title": "Police Academy 4", "year": 1987, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["comedy"]}, {"id": 116, "title": "Police Academy 5", "year": 1988, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["comedy"]}, {"id": 117, "title": "Police Academy 6", "year": 1989, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["comedy"]}, {"id": 118, "title": "The Naked Gun", "year": 1988, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["comedy"]}, {"id": 119, "title": "Spaceballs", "year": 1987, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["comedy"]}, {"id": 120, "title": "Three Amigos!", "year": 1986, "genreKey": "comedy", "genreLabel": "Comedy", "icon": "😂", "accent": "#c9a23c", "rgb": "201,162,60", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["comedy"]}, {"id": 121, "title": "Dirty Dancing", "year": 1987, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["romance"]}, {"id": 122, "title": "The Blue Lagoon", "year": 1980, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["romance"]}, {"id": 123, "title": "An Officer and a Gentleman", "year": 1982, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["romance"]}, {"id": 124, "title": "The Last Emperor", "year": 1987, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["romance"]}, {"id": 125, "title": "The French Lieutenant's Woman", "year": 1981, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["romance"]}, {"id": 126, "title": "Somewhere in Time", "year": 1980, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["romance"]}, {"id": 127, "title": "The Thorn Birds", "year": 1983, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["romance"]}, {"id": 128, "title": "Out of Africa", "year": 1985, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["romance"]}, {"id": 129, "title": "The Year of Living Dangerously", "year": 1982, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["romance"]}, {"id": 130, "title": "The Lover", "year": 1992, "genreKey": "romance", "genreLabel": "Romance", "icon": "❤️", "accent": "#c8546b", "rgb": "200,84,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["romance"]}, {"id": 131, "title": "The Secret of NIMH", "year": 1982, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["animation"]}, {"id": 132, "title": "The Black Cauldron", "year": 1985, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["animation"]}, {"id": 133, "title": "Heavy Metal", "year": 1981, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["animation"]}, {"id": 134, "title": "Watership Down", "year": 1978, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["animation"]}, {"id": 135, "title": "The Last Unicorn", "year": 1982, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["animation"]}, {"id": 136, "title": "The Land Before Time", "year": 1988, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["animation"]}, {"id": 137, "title": "The Fox and the Hound", "year": 1981, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["animation"]}, {"id": 138, "title": "The Great Mouse Detective", "year": 1986, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["animation"]}, {"id": 139, "title": "The Rescuers", "year": 1977, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["animation"]}, {"id": 140, "title": "The Rescuers Down Under", "year": 1990, "genreKey": "animation", "genreLabel": "Animation", "icon": "🎨", "accent": "#4fae7d", "rgb": "79,174,125", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["animation"]}, {"id": 141, "title": "Koyaanisqatsi", "year": 1982, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", "cats": ["documentary"]}, {"id": 142, "title": "Powaqqatsi", "year": 1988, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", "cats": ["documentary"]}, {"id": 143, "title": "The Thin Blue Line", "year": 1988, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "cats": ["documentary"]}, {"id": 144, "title": "Shoah", "year": 1985, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4", "cats": ["documentary"]}, {"id": 145, "title": "Burden of Dreams", "year": 1982, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "cats": ["documentary"]}, {"id": 146, "title": "The Decline of Western Civilization", "year": 1981, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4", "cats": ["documentary"]}, {"id": 147, "title": "The Decline of Western Civilization II", "year": 1988, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4", "cats": ["documentary"]}, {"id": 148, "title": "Streetwise", "year": 1984, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "cats": ["documentary"]}, {"id": 149, "title": "Harlan County, USA", "year": 1976, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "cats": ["documentary"]}, {"id": 150, "title": "The Times of Harvey Milk", "year": 1984, "genreKey": "documentary", "genreLabel": "Documentary", "icon": "📚", "accent": "#6b6b6b", "rgb": "107,107,107", "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4", "cats": ["documentary"]}];
-const ROWS=[{"key": "action", "label": "Action (1976–1989)"}, {"key": "scifi", "label": "Sci-Fi (1976–1989)"}, {"key": "horror", "label": "Horror (1976–1989)"}, {"key": "drama", "label": "Drama (1976–1989)"}, {"key": "thriller", "label": "Thriller (1976–1989)"}, {"key": "comedy", "label": "Comedy (1976–1989)"}, {"key": "romance", "label": "Romance (1976–1989)"}, {"key": "animation", "label": "Animation (1976–1989)"}, {"key": "documentary", "label": "Documentary (1976–1989)"}];
-const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
-
-        let saved = new Set(JSON.parse(localStorage.getItem("aether_saved") || "[]"));
-        let activeIdx = 0, rotTimer = null;
-
-        const backdropsEl = document.getElementById('backdrops');
-        const heroContentEl = document.getElementById('heroContent');
-        const dotsEl = document.getElementById('dots');
-        const collectionEl = document.getElementById('collection');
-
-        function renderHero() {
-            backdropsEl.innerHTML = '';
-            dotsEl.innerHTML = '';
-            SPOTLIGHT_IDS.forEach((id, i) => {
-                const f = FILMS.find(x => x.id === id);
-                if (!f) return;
-                const bd = document.createElement('div');
-                bd.className = `bd ${i === 0 ? 'active' : ''}`;
-                bd.style.background = `radial-gradient(circle at 32% 22%, rgba(${f.rgb},.45), transparent 60%), linear-gradient(160deg, rgba(${f.rgb},.28), #060608 78%)`;
-                bd.innerHTML = `<span class="bd-icon">${f.icon}</span>`;
-                backdropsEl.appendChild(bd);
-
-                const dot = document.createElement('button');
-                dot.className = `dot ${i === 0 ? 'active' : ''}`;
-                dot.onclick = () => setSpotlight(i);
-                dotsEl.appendChild(dot);
-            });
-            updateHeroContent(0);
-            startRot();
-        }
         <!-- Bottom Section: Reduced Interactive Time-Grid Guide -->
         <div class="flex-1 flex flex-col p-6 overflow-hidden">
             <div class="flex items-center justify-between mb-3 px-1">
@@ -330,38 +182,6 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
                 </div>
             </div>
 
-        function updateHeroContent(idx) {
-            activeIdx = idx;
-            const f = FILMS.find(x => x.id === SPOTLIGHT_IDS[idx]);
-            if (!f) return;
-            document.documentElement.style.setProperty('--accent', f.accent);
-            document.documentElement.style.setProperty('--accent-rgb', f.rgb);
-
-            document.querySelectorAll('.bd').forEach((b, i) => b.classList.toggle('active', i === idx));
-            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-
-            heroContentEl.classList.add('switching');
-            setTimeout(() => {
-                heroContentEl.innerHTML = `
-                    <div class="eyebrow">${f.icon} ${f.genreLabel} Feature</div>
-                    <h2 class="hero-title">${f.title.split(' ').map((w, wi) => wi === 1 ? `<em>${w}</em>` : w).join(' ')}</h2>
-                    <div class="hero-meta">
-                        <span class="rating-pill">${f.genreLabel}</span>
-                        <span class="sep"></span>
-                        <span>${f.year}</span>
-                    </div>
-                    <div class="hero-actions">
-                        <button class="btn-play" onclick="playFilm(${f.id})">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
-                        </button>
-                        <button class="btn-ghost" onclick="toggleSave(${f.id})">
-                            ${saved.has(f.id) ? '✓ In Saved List' : '+ Add to List'}
-                        </button>
-                    </div>
-                `;
-                heroContentEl.classList.remove('switching');
-            }, 220);
-        }
             <!-- Cable Box Styled Grid Container -->
             <div class="flex-1 bg-[#050a16] border border-cyan-950/80 rounded-2xl overflow-hidden flex flex-col shadow-2xl">
                 <!-- Timeline Header Row -->
@@ -373,11 +193,6 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
                     <div class="col-span-3">5:00 AM</div>
                 </div>
 
-        function setSpotlight(idx) {
-            stopRot();
-            updateHeroContent(idx);
-            startRot();
-        }
                 <!-- Scrollable Channel Rows -->
                 <div id="guideRowsContainer" class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-cyan-950/40">
                     <!-- Populated dynamically -->
@@ -385,80 +200,19 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
             </div>
         </div>
 
-        function startRot() {
-            stopRot();
-            rotTimer = setInterval(() => {
-                activeIdx = (activeIdx + 1) % SPOTLIGHT_IDS.length;
-                updateHeroContent(activeIdx);
-            }, 8000);
-        }
         <!-- Footer -->
         <footer class="py-2.5 px-6 border-t border-cyan-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
             NEXUS TV v6.4 Guide Engine &bull; Designed by: Daniel Dudek
         </footer>
     </main>
 
-        function stopRot() {
-            if (rotTimer) clearInterval(rotTimer);
     <script>
-        // CHANGE YOUR USERNAME AND PASSWORD HERE
-        const AUTH_USER = "admin";
-        const AUTH_PASS = "nexus2026";
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
-            const err = document.getElementById('loginError');
-
-            if (u === AUTH_USER && p === AUTH_PASS) {
-                document.getElementById('authModal').style.display = 'none';
-                sessionStorage.setItem('nexus_auth', 'true');
-            } else {
-                err.classList.remove('hidden');
-            }
-        }
-
-        window.playFilm = function (id) {
-            const f = FILMS.find(x => x.id === Number(id));
-            if (!f) return;
-            openPlayer(f);
-        };
-
-        window.toggleSave = function (id) {
-            const filmId = Number(id);
-            if (saved.has(filmId)) saved.delete(filmId); else saved.add(filmId);
-            localStorage.setItem("aether_saved", JSON.stringify([...saved]));
-            renderCollection();
-            renderHero();
-            showToast(saved.has(filmId) ? 'Added to your saved list' : 'Removed from your list');
-        };
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
-            t.classList.add('opacity-100');
-            setTimeout(() => t.classList.remove('opacity-100'), 2600);
-        function logout() {
-            sessionStorage.removeItem('nexus_auth');
-            location.reload();
-        }
-
-        function renderCollection() {
-            collectionEl.innerHTML = '';
-            ROWS.forEach((r, ri) => {
-                let list = FILMS.filter(f => f.cats.includes(r.key));
-                if (list.length === 0) return;
-        // Check active session on load
         document.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('nexus_auth') === 'true') {
-                document.getElementById('authModal').style.display = 'none';
-            }
             renderGuideRows(channels);
             selectGuideChannel(channels[0]);
         });
 
-        // Full Master Catalog (Restored all channels from Bites 1 through 4 with alternating stream support)
+        // Full Master Catalog
         const rawChannels = [
             { name: "A&E", category: "Entertainment", icon: "📺", url: "http://23.239.31.26:8989/aande/index.m3u8", rating: "TV-14", alternates: [] },
             { name: "Big Ten Network", category: "Sports", icon: "🏈", url: "http://23.237.104.106:8080/USA_BTN/index.m3u8", rating: "TV-G", alternates: [] },
@@ -481,285 +235,67 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
             { name: "History", category: "Documentary", icon: "⏳", url: "http://40.160.24.53/HISTORY_CHANNEL/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://212.5.144.156:8080/history/index.m3u8" }] },
             { name: "ION Plus", category: "Entertainment", icon: "⚡", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-ionplus-tablo/playlist.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/ION_PLUS/index.m3u8" }] },
             { name: "ION TV", category: "Entertainment", icon: "⚡", url: "http://23.237.104.106:8080/USA_ION/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/ION_TV/index.m3u8" }] },
-            { name: "Kaloopy TV", category: "Entertainment", icon: "🌴", url: "https://streamingserver000.viewtv.cloud/VIEWTVNETWORK-KALOOPY/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "KPVM Movies!", category: "Movies", icon: "🍿", url: "https://2-fss-2.streamhoster.com/pl_120/206858-4412962-1/playlist.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "Lifetime", category: "Entertainment", icon: "💖", url: "http://40.160.24.53/LIFETIME/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "Lifetime Movies", category: "Movies", icon: "🎥", url: "http://23.237.104.106:8080/USA_LMN/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.53/LMN/index.m3u8" }] },
-            { name: "Magnificent Movies Network", category: "Movies", icon: "🎬", url: "https://mmn1-301f.kxcdn.com/hls/MMN-HLS.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "MeTV", category: "Classic", icon: "📺", url: "http://40.160.24.53/METV/index.m3u8", rating: "TV-G", alternates: [{ label: "Link 2", url: "https://82934cf9c8696bd2.mediapackage.us-east-1.amazonaws.com/out/v1/23685237ffbb4047a8143ac2166ead44/index.m3u8" }] },
-            { name: "MTV", category: "Music", icon: "🎸", url: "http://40.160.24.53/MTV/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv/index.m3u8" }] },
-            { name: "MTV2", category: "Music", icon: "🎧", url: "http://40.160.24.53/MTV2/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/mtv2/index.m3u8" }] },
-            { name: "MTV Classic", category: "Music", icon: "📼", url: "http://40.160.24.53/MTV_CLASSIC/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "MTV Live", category: "Music", icon: "🎤", url: "http://40.160.24.53/MTV_LIVE/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://23.237.104.106:8080/USA_MTV_LIVE/index.m3u8" }] },
-            { name: "Oxygen", category: "Entertainment", icon: "💎", url: "http://40.160.24.55/OXYGEN/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://198.58.104.90:8989/oxygen/index.m3u8" }] },
-            { name: "PBS Kids", category: "Family", icon: "🎒", url: "https://livestream.pbskids.org/out/v1/14507d931bbe48a69287e4850e53443c/est.m3u8", rating: "TV-Y", alternates: [] },
-            { name: "PBS Kids Hawaii", category: "Family", icon: "🌺", url: "https://livestream.pbskids.org/out/v1/aa31792fee094b24b09045483f04d150/hast.m3u8", rating: "TV-Y", alternates: [] },
-            { name: "Reelz", category: "Entertainment", icon: "🎞️", url: "http://23.237.104.106:8080/USA_REELZ/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/REELZ/index.m3u8" }] },
-            { name: "Retro TV", category: "Classic", icon: "📻", url: "https://freecast-lukentvlive.vgcdn.net/out/v1/665e9f91614b43b0a0654e9317f1d9f3/index.m3u8", rating: "TV-G", alternates: [{ label: "Link 2", url: "https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/retro/index.m3u8" }] },
-            { name: "Smithsonian Channel", category: "Documentary", icon: "🦅", url: "http://40.160.24.55/SMITHSONIAN/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "Sony Channel Andes", category: "Entertainment", icon: "🌐", url: "http://177.234.249.178:8888/SONY-TV/index.m3u8", rating: "TV-14", alternates: [] },
-            { name: "Starz", category: "Movies", icon: "✨", url: "http://23.237.104.106:8080/USA_STARZ/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "Starz West", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_WEST/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "Starz Edge", category: "Movies", icon: "✨", url: "http://40.160.24.55/STARZ_EDGE/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "Starz Cinema", category: "Movies", icon: "🎟️", url: "http://23.237.104.106:8080/USA_STARZ_CINEMA/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "Starz Comedy", category: "Comedy", icon: "🎭", url: "http://23.237.104.106:8080/USA_STARZ_COMEDY/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2", url: "http://40.160.24.55/STARZ_COMEDY/index.m3u8" }] },
-            { name: "Starz Encore", category: "Movies", icon: "📽️", url: "http://40.160.24.55/STARZ_ENCORE/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "Sundance TV", category: "Movies", icon: "📽️", url: "http://40.160.24.55/SUNDANCE/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "SYFY", category: "Sci-Fi", icon: "🛸", url: "http://23.237.104.106:8080/USA_SYFY/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/SYFY/index.m3u8" }, { label: "Link 3", url: "https://gpuserver5.tier1streams.com/SYFY/index.m3u8" }] },
-            { name: "TeenNick", category: "Family", icon: "🛹", url: "https://gpuserver5.tier1streams.com/TEEN_NICK/index.m3u8", rating: "TV-Y7", alternates: [{ label: "Link 2", url: "http://40.160.24.55/TEEN_NICK/index.m3u8" }] },
-            { name: "theDove TV", category: "Faith", icon: "🕊️", url: "https://thedovetv.bozztv.com/thedovetv/thedovetv/index.m3u8", rating: "TV-G", alternates: [] },
-            { name: "TNT Novelas Brazil", category: "Drama", icon: "🌹", url: "http://168.197.104.22:80/TNT_NOVELAS/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://45.162.64.114/TNT_NOVELAS/index.m3u8" }, { label: "Link 3", url: "http://177.52.24.163/TNT-NOVELAS-HD/index.m3u8" }] },
-            { name: "Toon Goggles", category: "Family", icon: "🎨", url: "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=37", rating: "TV-Y", alternates: [{ label: "Link 2", url: "https://d1eg24xrsfr6kv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-b4b1bzxkt1uzo-prod/tg/tg/tg.m3u8" }] },
-            { name: "TV Land", category: "Classic", icon: "🛋️", url: "http://40.160.24.55/TV_LAND/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "Univision", category: "Networks", icon: "🌐", url: "http://200.115.120.1:8000/play/ca106/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://190.197.41.183/Univision/index.m3u8" }] },
-            { name: "USA Network", category: "Entertainment", icon: "📺", url: "http://40.160.24.55/USA_NETWORK/index.m3u8", rating: "TV-PG", alternates: [{ label: "Link 2", url: "http://40.160.24.55/USA_NETWORK_WEST/index.m3u8" }] },
-            { name: "VH1", category: "Music", icon: "🎶", url: "http://40.160.24.55/VH1/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/VH1_WEST/index.m3u8" }] },
-            { name: "VICE TV", category: "Documentary", icon: "📰", url: "http://23.237.104.106:8080/USA_VICETV/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "http://40.160.24.55/VICELAND/index.m3u8" }] },
-            { name: "ESPN Deportes", category: "Sports", icon: "⚽", url: "https://gpuserver7.tier1streams.com/ESPN_DEPORTES/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "UniMas Central", category: "Networks", icon: "📡", url: "http://190.197.41.183/Unimas/mono.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "Comedy TV", category: "Comedy", icon: "🎤", url: "https://gpuserver3.tier1streams.com/COMEDY_TV/index.m3u8", rating: "TV-14", alternates: [] },
-            { name: "E! Entertainment", category: "Entertainment", icon: "🌟", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_EAST/index.m3u8", rating: "TV-14", alternates: [{ label: "Link 2", url: "https://gpuserver3.tier1streams.com/E_ENTERTAINMENT_WEST/index.m3u8" }] },
-            { name: "Flix", category: "Movies", icon: "🎬", url: "https://gpuserver3.tier1streams.com/FLIX/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "FXM (FX Movie Channel)", category: "Movies", icon: "🎥", url: "https://gpuserver3.tier1streams.com/FXM/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2", url: "http://40.160.24.52/FXM/index.m3u8" }] },
-            { name: "The Cowboy Channel", category: "Lifestyle", icon: "🤠", url: "https://gpuserver3.tier1streams.com/THE_COWBOY_CHANNEL/index.m3u8", rating: "TV-G", alternates: [] },
-            { name: "Discovery Turbo (MotorTrend)", category: "Documentary", icon: "🏎️", url: "https://gpuserver3.tier1streams.com/MOTORTREND/index.m3u8", rating: "TV-PG", alternates: [] },
-            { name: "MGM+ Drive-In (Epix)", category: "Movies", icon: "🚗", url: "https://gpuserver3.tier1streams.com/EPIX_DRIVE-IN/index.m3u8", rating: "TV-MA", alternates: [] },
-            { name: "We TV", category: "Entertainment", icon: "🍿", url: "http://170.254.17.2:80/WE_TV/index.m3u8", rating: "TV-14", alternates: [] },
-            { name: "Showtime", category: "Premium", icon: "🛡️", url: "http://40.160.24.55/SHOWTIME/index.m3u8", rating: "TV-MA", alternates: [{ label: "Link 2 (West)", url: "http://40.160.24.55/SHOWTIME_WEST/index.m3u8" }, { label: "Link 3 (2)", url: "http://40.160.24.55/SHOWTIME_2/index.m3u8" }] },
-            { name: "Nickelodeon", category: "Family", icon: "🟩", url: "https://gpuserver5.tier1streams.com/NICKELODEON/index.m3u8", rating: "TV-Y7", alternates: [] },
-            { name: "Nick Jr.", category: "Family", icon: "👶", url: "https://gpuserver5.tier1streams.com/NICK_JR/index.m3u8", rating: "TV-Y", alternates: [] },
-            { name: "Nicktoons", category: "Family", icon: "🌀", url: "https://gpuserver5.tier1streams.com/NICKTOONS/index.m3u8", rating: "TV-Y7", alternates: [] }
+            { name: "Kaloopy TV", category: "Entertainment", icon: "🌴", url: "https://kaloopy.cincopa.stream/hls/live/index.m3u8", rating: "TV-MA", alternates: [] }
         ];
 
-        // Format channels with sequenced IDs and scheduled blocks
-        const channels = rawChannels.map((c, index) => ({
-            id: index + 1,
-            name: c.name,
-            category: c.category,
-            icon: c.icon,
-            url: c.url,
-            rating: c.rating,
-            alternates: c.alternates,
-            show1: `${c.name} Live Primetime Block`,
-            show2: `${c.category} Spotlight Hour`,
-            show3: `Late Night ${c.name} Special`,
-            show4: `Early Morning ${c.name} Feed`
+        let channels = rawChannels.map((ch, idx) => ({
+            ...ch,
+            number: String(idx + 1).padStart(2, '0')
         }));
 
-        let currentChannel = channels[0];
-        let currentActiveUrl = channels[0].url;
-        let hlsInstance = null;
-        let isNativeMode = false;
-
-        document.getElementById('catalogHeaderTitle').innerText = `GUIDE: Master Channel Catalog (All ${channels.length} Channels Programmed)`;
-
-        function renderGuideRows(list) {
+        function renderGuideRows(data) {
             const container = document.getElementById('guideRowsContainer');
             container.innerHTML = '';
-
-            list.forEach(ch => {
-                const isSelected = currentChannel && currentChannel.id === ch.id;
+            
+            data.forEach((ch) => {
                 const row = document.createElement('div');
-                row.className = 'row';
-                row.className = `grid grid-cols-12 items-center cursor-pointer transition-all text-xs font-mono py-1.5 ${
-                    isSelected 
-                        ? 'bg-cyan-950/70 border-l-4 border-cyan-400 text-white font-bold shadow' 
-                        : 'hover:bg-[#081026] text-slate-300'
-                }`;
+                row.className = "grid grid-cols-12 hover:bg-cyan-950/20 transition-all cursor-pointer select-none group";
                 row.onclick = () => selectGuideChannel(ch);
 
                 row.innerHTML = `
-                    <div class="row-head">
-                        <h3 class="row-title"><span class="num">${String(ri + 1).padStart(2, '0')}.</span> ${r.label}</h3>
-                        <span class="row-count text-xs text-slate-500">${list.length} films</span>
-                    <div class="col-span-3 px-4 py-1.5 flex items-center space-x-3 border-r border-cyan-950/60 truncate">
-                        <span class="text-cyan-400 font-black w-6 text-right">${ch.id < 10 ? '0' + ch.id : ch.id}</span>
+                    <div class="col-span-3 px-4 py-3 flex items-center space-x-3 border-r border-cyan-950/40">
+                        <span class="font-mono text-xs font-bold text-cyan-400 bg-cyan-950/60 px-2 py-1 rounded">${ch.number}</span>
                         <span class="text-base">${ch.icon}</span>
                         <div class="truncate">
-                            <div class="font-bold truncate">${ch.name}</div>
-                            <div class="text-[10px] text-slate-400 uppercase">${ch.category}</div>
+                            <div class="text-xs font-extrabold text-white group-hover:text-cyan-300 transition-colors">${ch.name}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">${ch.category} &bull; ${ch.rating}</div>
                         </div>
                     </div>
-                    <div class="row-track" id="track-${r.key}"></div>
-                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate text-slate-400 text-[11px]">${ch.show4}</div>
-                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate bg-cyan-950/25 text-cyan-200 font-bold text-[11px] shadow-inner">${ch.show1}</div>
-                    <div class="col-span-2 px-3 py-1.5 border-r border-cyan-950/60 truncate text-slate-300 text-[11px]">${ch.show2}</div>
-                    <div class="col-span-3 px-3 py-1.5 truncate text-slate-400 text-[11px]">${ch.show3}</div>
+                    <div class="col-span-2 px-3 py-3 text-xs text-slate-400 font-mono truncate flex items-center border-r border-cyan-950/30">Previous Block Show</div>
+                    <div class="col-span-2 px-3 py-3 text-xs text-cyan-200 font-semibold font-mono truncate flex items-center bg-cyan-950/20 border-r border-cyan-950/30">Live Stream Feed (${ch.name})</div>
+                    <div class="col-span-2 px-3 py-3 text-xs text-slate-400 font-mono truncate flex items-center border-r border-cyan-950/30">Upcoming Segment</div>
+                    <div class="col-span-3 px-3 py-3 text-xs text-slate-500 font-mono truncate flex items-center">Late Night Broadcast</div>
                 `;
-                const track = row.querySelector('.row-track');
-                list.forEach(f => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.onclick = (e) => {
-                        if (e.target.closest('.bookmark')) return;
-                        playFilm(f.id);
-                    };
-
-                    const isSaved = saved.has(f.id);
-                    card.innerHTML = `
-                        <div class="card-img" style="background:linear-gradient(160deg, rgba(${f.rgb},.55), #0b0b10 80%)">
-                            <span class="card-icon">${f.icon}</span>
-                        </div>
-                        <div class="card-scrim"></div>
-                        <div class="card-top">
-                            <span class="badge year">${f.year}</span>
-                            <button class="bookmark ${isSaved ? 'saved' : ''}" onclick="toggleSave(${f.id})" title="Save">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            </button>
-                        </div>
-                        <div class="card-play">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                        <div class="card-info">
-                            <h3>${f.title}</h3>
-                            <p>${f.genreLabel}</p>
-                        </div>
-                    `;
-                    track.appendChild(card);
-                });
-                collectionEl.appendChild(row);
                 container.appendChild(row);
             });
         }
 
-        // Player setup
-        const playerEl = document.getElementById('player');
-        const videoEl = document.getElementById('video');
-        const loaderEl = document.getElementById('loader');
-        const stageEl = document.getElementById('stage');
-        const seekEl = document.getElementById('seek');
-        const curTimeEl = document.getElementById('curTime');
-        const durTimeEl = document.getElementById('durTime');
-        const ppBtn = document.getElementById('ppBtn');
-        const ppIcon = document.getElementById('ppIcon');
-        const muteBtn = document.getElementById('muteBtn');
-        const volEl = document.getElementById('vol');
-        const fsBtn = document.getElementById('fsBtn');
-
-        function openPlayer(f) {
-            playerEl.style.display = 'flex';
-            setTimeout(() => playerEl.classList.add('opacity-100'), 10);
-            document.getElementById('pTitle').innerText = f.title;
-            document.getElementById('pMeta').innerText = `${f.genreLabel} · ${f.year}`;
-            videoEl.src = f.video;
-            videoEl.play().catch(() => {});
-            setupUI();
-        function filterGuideChannels(query) {
-            const q = query.toLowerCase();
-            const filtered = channels.filter(c => c.name.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
-            renderGuideRows(filtered);
-        }
-
-        function closePlayer() {
-            videoEl.pause();
-            videoEl.src = "";
-            playerEl.classList.remove('opacity-100');
-            setTimeout(() => playerEl.style.display = 'none', 300);
-            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         function selectGuideChannel(ch) {
-            currentChannel = ch;
-            currentActiveUrl = ch.url;
-
-            // Update Metadata Header Card
-            document.getElementById('guideChannelNumBadge').innerText = ch.id < 10 ? '0' + ch.id : ch.id;
-            document.getElementById('guideNetworkName').innerText = `${ch.name} — ${ch.category}`;
-            document.getElementById('guideShowTitle').innerText = ch.show1;
-            document.getElementById('guideShowTime').innerText = "3:30 am - 4:30 am · Live Broadcast Block";
-            document.getElementById('guideShowDesc').innerText = `Now broadcasting live on ${ch.name}. Enjoy high-definition streaming with integrated multi-source fallback support and electronic program guide synchronization.`;
+            document.getElementById('guideChannelNumBadge').innerText = ch.number;
+            document.getElementById('guideNetworkName').innerText = ch.name;
+            document.getElementById('guideShowTitle').innerText = `${ch.name} Live Broadcast`;
             document.getElementById('guideRatingBadge').innerText = ch.rating;
-            document.getElementById('pipChannelName').innerText = `${ch.id}. ${ch.name}`;
-
-            loadPlayerEngine();
-            renderGuideRows(channels);
-        }
-
-        document.getElementById('closeBtn').onclick = closePlayer;
-
-        ppBtn.onclick = () => {
-            if (videoEl.paused) videoEl.play(); else videoEl.pause();
-        };
-
-        muteBtn.onclick = () => {
-            videoEl.muted = !videoEl.muted;
-            volEl.value = videoEl.muted ? 0 : (videoEl.volume * 100);
-        };
-
-        fsBtn.onclick = () => {
-            if (!document.fullscreenElement) stageEl.requestFullscreen().catch(() => {});
-            else document.exitFullscreen().catch(() => {});
-        };
-
-        function setupUI() {
-            videoEl.onwaiting = () => loaderEl.style.display = 'flex';
-            videoEl.onplaying = () => loaderEl.style.display = 'none';
-            videoEl.ontimeupdate = () => {
-                if (!videoEl.duration) return;
-                const p = (videoEl.currentTime / videoEl.duration) * 1000;
-                seekEl.value = p;
-                curTimeEl.innerText = fmtTime(videoEl.currentTime);
-                durTimeEl.innerText = fmtTime(videoEl.duration);
-            };
-            videoEl.onplay = () => ppIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-            videoEl.onpause = () => ppIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-        function loadPlayerEngine() {
-            const container = document.getElementById('playerContainer');
-            container.innerHTML = `
-                <video
-                    id="videoPlayer"
-                    class="w-full h-full absolute inset-0 object-contain bg-black"
-                    controls
-                    autoplay
-                    playsinline
-                ></video>
-            `;
+            document.getElementById('pipChannelName').innerText = `${ch.number} - ${ch.name}`;
 
             const video = document.getElementById('videoPlayer');
-            const targetStream = currentActiveUrl;
-
-            if (Hls.isSupported()) {
-                if (hlsInstance) {
-                    hlsInstance.destroy();
-                }
-                hlsInstance = new Hls();
-                hlsInstance.loadSource(targetStream);
-                hlsInstance.attachMedia(video);
-                hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(e => console.log("Autoplay prevented:", e));
+            if (Hls.isSupported() && ch.url.includes('.m3u8')) {
+                const hls = new Hls();
+                hls.loadSource(ch.url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(() => {});
                 });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = targetStream;
-                video.addEventListener('loadedmetadata', () => {
-                    video.play().catch(e => console.log("Autoplay prevented:", e));
-                });
-            }
-        }
-
-        function fmtTime(s) {
-            if (!isFinite(s)) return "0:00";
-            s = Math.floor(s);
-            const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
-            return h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
-        function togglePiPMode() {
-            isNativeMode = !isNativeMode;
-            const btn = document.getElementById('pipModeBtn');
-            if (isNativeMode) {
-                btn.className = "px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow";
-                btn.innerText = "⚡ PiP Monitor Active";
             } else {
-                btn.className = "px-3.5 py-1.5 rounded-lg bg-cyan-600/20 border border-cyan-500/40 hover:bg-cyan-600/40 text-cyan-300 text-xs font-semibold transition-all shadow";
-                btn.innerText = "⚡ Native Engine";
+                video.src = ch.url;
+                video.play().catch(() => {});
             }
         }
 
-        seekEl.oninput = (e) => {
-            if (!videoEl.duration) return;
-            videoEl.currentTime = (e.target.value / 1000) * videoEl.duration;
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            try { renderHero(); } catch (e) { console.error('Hero render failed:', e); }
-            try { renderCollection(); } catch (e) { console.error('Collection render failed:', e); }
-        });
+        function filterGuideChannels(query) {
+            const q = query.toLowerCase();
+            const filtered = channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q));
+            renderGuideRows(filtered);
+        }
     </script>
 </body>
 </html>
