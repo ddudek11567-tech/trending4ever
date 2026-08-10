@@ -41,28 +41,9 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-pink-400">SERIES</span>
                         NEXUS<span class="text-pink-400">VOD</span>
                     </h1>
-                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; TOP SHOWS</span>
                     <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; 46 MOVIES</span>
-                </div>
-            </div>
-
-            <!-- Navigation Links (Corrected to movies.html & tv-series.html to resolve 404s) -->
-            <!-- Navigation Links -->
-            <aside class="w-64 bg-[#060b19] border-r border-cyan-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
-        <div>
-            <!-- Logo Header -->
-            <div class="p-6 flex items-center space-x-3 border-b border-cyan-950/40">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-xl">
-                    📺
-                </div>
-                <div>
-                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-cyan-400">TV</span>
-                    </h1>
-                    <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.4 &bull; 68 CHANNELS RESTORED</span>
                 </div>
             </div>
 
@@ -76,18 +57,17 @@
                     <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
                 </a>
 
-                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-pink-300 bg-pink-950/30 border-pink-800/50 shadow-inner">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
                         <span>VOD Movies</span>
                     </div>
                     <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
                 </a>
-
                
                 <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
-                        <span class="text-base">🎬</span>
+                        <span class="text-base">📺</span>
                         <span>VOD TV Series</span>
                     </div>
                     <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
@@ -135,7 +115,6 @@
                 <p class="text-xs text-pink-300/80 font-mono mt-0.5">High-definition feature films extracted directly from Archive.org repository sources with dynamic Google & OMDb poster art integration.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 45 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
                 <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 46 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
@@ -266,7 +245,6 @@
                 card.innerHTML = `
                     <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
                         <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"><span></span></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
