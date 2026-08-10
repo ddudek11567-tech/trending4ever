@@ -51,41 +51,56 @@
 
             <!-- Navigation Links (Corrected to movies.html & tv-series.html to resolve 404s) -->
             <!-- Navigation Links -->
+            <aside class="w-64 bg-[#060b19] border-r border-cyan-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-cyan-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-black text-xl">
+                    📺
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-cyan-400">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-cyan-400/80 font-bold tracking-widest uppercase font-mono">v6.4 &bull; 68 CHANNELS RESTORED</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
             <nav class="p-4 space-y-1.5">
                 <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">📡</span>
                         <span>Live IPTV</span>
                     </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
                 </a>
 
-                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
-                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
                         <span>VOD Movies</span>
-                        <span>Latest Movies</span>
                     </div>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Catalog</span>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">VOD</span>
+                    <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
                 </a>
 
-                      <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+               
+                <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
                         <span>VOD TV Series</span>
                     </div>
                     <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
                 </a>
-              
-                    <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
 
-                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="generic.html?section=search" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
                     <span class="text-base">🔍</span>
-                    <span>Search Catalog</span>
+                    <span>Search</span>
                 </a>
 
-                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <a href="generic.html?section=mylist" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
                     <span class="text-base">🔖</span>
                     <span>My List</span>
                 </a>
