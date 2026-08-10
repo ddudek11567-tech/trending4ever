@@ -298,6 +298,8 @@
                         ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
                         : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
                 }`;
+                
+                // Clicking poster card selects series in the right preview panel
                 card.onclick = () => selectSeries(s);
 
                 card.innerHTML = `
@@ -305,7 +307,7 @@
                         <img src="${s.poster}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${s.years}</span>
-                        ${s.hasEpisodes ? '<span class="absolute bottom-2 left-2 bg-pink-600 text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold shadow">Select Seasons</span>' : ''}
+                        ${s.hasEpisodes ? '<span onclick="event.stopPropagation(); openEpisodePage();" class="absolute bottom-2 left-2 bg-pink-600 hover:bg-pink-500 text-white text-[10px] font-mono px-2 py-1 rounded font-bold shadow transition-all">Open Seasons →</span>' : ''}
                     </div>
                     <div class="p-3">
                         <h4 class="text-xs font-bold text-white truncate">${s.title}</h4>
