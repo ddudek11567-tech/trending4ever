@@ -41,13 +41,13 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
-                        NEXUS<span class="text-pink-400">SERIES</span>
+                        NEXUS<span class="text-pink-400">VOD</span>
                     </h1>
-                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; TOP SHOWS</span>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; 46 MOVIES</span>
                 </div>
             </div>
 
-            <!-- Navigation Links (Corrected to movies.html & tv-series.html to resolve 404s) -->
+            <!-- Navigation Links -->
             <nav class="p-4 space-y-1.5">
                 <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
@@ -56,19 +56,31 @@
                     </div>
                 </a>
 
-                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">🎬</span>
-                        <span>VOD Movies</span>
+                        <span>Latest Movies</span>
                     </div>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Catalog</span>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">VOD</span>
                 </a>
 
-                <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                <a href="guide.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
                     <div class="flex items-center space-x-3">
-                        <span class="text-base">📺</span>
-                        <span>VOD TV Series</span>
+                        <span class="text-base">📅</span>
+                        <span>Interactive Guide</span>
                     </div>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search Catalog</span>
+                </a>
+
+                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
                 </a>
             </nav>
         </div>
@@ -101,7 +113,7 @@
                 <p class="text-xs text-pink-300/80 font-mono mt-0.5">High-definition feature films extracted directly from Archive.org repository sources with dynamic Google & OMDb poster art integration.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 45 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 46 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
 
@@ -125,6 +137,7 @@
                         id="movieVideoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
                         controls
+                        autoplay
                         playsinline
                     ></video>
                 </div>
@@ -201,6 +214,7 @@
             { title: "The Batman", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyMzQwMTIzOQ@@._V1_SX300.jpg" },
             { title: "The Prestige", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA4NDI0MTIxF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg" },
             { title: "Top Gun: Maverick", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_SX300.jpg" },
+            { title: "Toy Story 5", year: "2026", url: "https://trove.josephx.com/vid/Toy%20Story%205%20(2026).mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
             { title: "Whiplash", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BOTA5NDZlZGUtMjAxOS00YTRkLTkwYWYtYWQ0NWExZDZiNzEzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
             { title: "Zodiac", year: "2007", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2JkMDc5MGQtZjg3YS00NmFiLWIyZmQtZTJmNTM5MjVmYTQ4XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" }
         ];
@@ -229,7 +243,7 @@
                 card.innerHTML = `
                     <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
                         <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"><span></span></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
                     <div class="p-3">
@@ -260,6 +274,9 @@
             const video = document.getElementById('movieVideoPlayer');
             video.src = m.url;
             video.load();
+            video.play().catch(e => console.log("Autoplay blocked:", e));
+
+            renderMovieGrid(movies);
         }
     </script>
 </body>
