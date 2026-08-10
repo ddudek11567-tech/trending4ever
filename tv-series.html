@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TV — TV Series Catalog & Poster Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(219, 39, 119, 0.6); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(236, 72, 153, 0.8); }
+        .movie-grid-bg {
+            background: linear-gradient(135deg, #12091c 0%, #030712 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+        .poster-glow {
+            box-shadow: 0 0 25px rgba(219, 39, 119, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#030712] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0614] border-r border-pink-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-pink-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-pink-500/20 text-white font-black text-xl">
+                    📺
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-400">SERIES</span>
+                    </h1>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; 100 SHOWS</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                </a>
+
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>VOD Movies</span>
+                    </div>
+                </a>
+
+                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📺</span>
+                        <span>VOD TV Series</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">1990+</span>
+                </a>
+
+                <a href="guide.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📅</span>
+                        <span>Interactive Guide</span>
+                    </div>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer / Profile -->
+        <div class="p-4 border-t border-pink-950/40 space-y-3">
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-[#120a22] border border-pink-950/80">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden movie-grid-bg">
+
+        <!-- Top Header & Search Bar -->
+        <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
+            <div>
+                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <span>📺</span> Top 100 TV Series (1990 – Present)
+                </h2>
+                <p class="text-xs text-pink-300/80 font-mono mt-0.5">Comprehensive curated collection of critically acclaimed television masterpieces with dynamic stream binding.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search 100 series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+            </div>
+        </header>
+
+        <!-- Main Workspace: Split View (Grid on Left / Active Player on Right) -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
+            
+            <!-- Left Panel: Scrollable Poster Card Grid (~7 cols) -->
+            <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
+                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="seriesPosterGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Right Panel: Active Video Player & Metadata Card (~5 cols) -->
+            <div class="lg:col-span-5 bg-[#07040f] border border-pink-950/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl poster-glow relative overflow-hidden">
+                <div class="absolute -right-16 -top-16 w-56 h-56 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <!-- Video Player Container -->
+                <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
+                    <video
+                        id="seriesVideoPlayer"
+                        class="w-full h-full absolute inset-0 object-contain bg-black"
+                        controls
+                        playsinline
+                    ></video>
+                </div>
+
+                <!-- Series Info Details -->
+                <div class="mt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span id="activeSeriesYear" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">1999–2007</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p HDTV</span>
+                        </div>
+                        <h3 id="activeSeriesTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select a Series</h3>
+                        <p id="activeSeriesUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Placeholder Stream Source...</p>
+                    </div>
+
+                    <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">Status: <strong class="text-amber-400">Placeholder Link</strong></span>
+                        <a id="seriesDownloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                            <span>📥</span> Source Link
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-2.5 px-6 border-t border-pink-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
+            NEXUS TV Series VOD Engine &bull; Designed by: Daniel Dudek
+        </footer>
+    </main>
+
+    <script>
+        // Top 100 TV Series from 1990 to Today with Correct OMDb Posters & Placeholder Stream URLs
+        const seriesList = [
+            { title: "The Sopranos", years: "1999–2007", url: "#placeholder-sopranos", poster: "https://m.media-amazon.com/images/M/MV5BZGJjYzhjYTYtMDBjYy00ZTgzLWE2YTAtYjY1MGRjYjY0ZGY5XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
+            { title: "The Wire", years: "2002–2008", url: "#placeholder-thewire", poster: "https://m.media-amazon.com/images/M/MV5BZmY5ZDMxODEtN2ExMi00OGFiLWIwN2YtYjk2YjU5YjNmYmFmXkEyXkFqcGdeQXVyMTMzNDExODE5._V1_SX300.jpg" },
+            { title: "Breaking Bad", years: "2008–2013", url: "#placeholder-breakingbad", poster: "https://m.media-amazon.com/images/M/MV5BYmQ4YWMxYjEtNjZmYi00NTQ1LWFkNDAtNTQxYjQ4ZDI0M2ExXkEyXkFqcGdeQXVyMTAwMzM3NDI3._V1_SX300.jpg" },
+            { title: "Game of Thrones", years: "2011–2019", url: "#placeholder-got", poster: "https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtNTkwNTUzMWMzZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_SX300.jpg" },
+            { title: "Succession", years: "2018–2023", url: "#placeholder-succession", poster: "https://m.media-amazon.com/images/M/MV5BZTI4YTA2N2QtZTE3Yy00NThjLWJjYTgtNTY1Yjg0ODU5N2Y0XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Chernobyl", years: "2019", url: "#placeholder-chernobyl", poster: "https://m.media-amazon.com/images/M/MV5BNWYxODliZTAtOWExZS00MWYzLThhNTctYTE5YWVlOGU5ZGY1XkEyXkFqcGdeQXVyMTM1MjAxMDc2._V1_SX300.jpg" },
+            { title: "Mad Men", years: "2007–2015", url: "#placeholder-madmen", poster: "https://m.media-amazon.com/images/M/MV5BN2E0NDU4ZjUtMmEwMS00NWE1LWE1ZDYtMWJjOWZhMjNiMWVhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
+            { title: "Band of Brothers", years: "2001", url: "#placeholder-bob", poster: "https://m.media-amazon.com/images/M/MV5BMTI3ODc2ODc0M15BMl5BanBnXkFtZTYwMjgzNjc3._V1_SX300.jpg" },
+            { title: "The Office", years: "2005–2013", url: "#placeholder-theoffice", poster: "https://m.media-amazon.com/images/M/MV5BMDNkOTE4NDQtMTNmYi00MWE0LWE0MTktYzA0NDBmYTc5ZVg2XkEyXkFqcGdeQXVyMjg2MTMyMDM@._V1_SX300.jpg" },
+            { title: "Friends", years: "1994–2004", url: "#placeholder-friends", poster: "https://m.media-amazon.com/images/M/MV5BNDVkYjU0MzctMWRmZi00NTkxLWFhZTItOWUzYjZlYTdjODRjXkEyXkFqcGdeQXVyMjUwOTk2MTc@._V1_SX300.jpg" },
+            { title: "Stranger Things", years: "2016–Present", url: "#placeholder-strangerthings", poster: "https://m.media-amazon.com/images/M/MV5BMDZkYmVhNjMtNWU4MC00MDQxLWE3MjYtZGMzZWI1ZjhlOWJmXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "True Detective", years: "2014–Present", url: "#placeholder-truedetective", poster: "https://m.media-amazon.com/images/M/MV5BMWE3YWI0MjktODQ5ZS00MjNkLWJkNjgtM2M3ZTdhNmFjNjdlXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_SX300.jpg" },
+            { title: "Better Call Saul", years: "2015–2022", url: "#placeholder-bcs", poster: "https://m.media-amazon.com/images/M/MV5BZDA4YmE0OTYtMjRmNS00NGU3LTljZTAtMmE4YWE5NjQyNjc3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "The Crown", years: "2016–2023", url: "#placeholder-crown", poster: "https://m.media-amazon.com/images/M/MV5BZmY0OWRjNmQtYjZhNS00ZTcxLWE3ZjUtNTE3NTEyYjE1OWZiXkEyXkFqcGdeQXVyMjA5MTIzMjQ@._V1_SX300.jpg" },
+            { title: "Peaky Blinders", years: "2013–2022", url: "#placeholder-peaky", poster: "https://m.media-amazon.com/images/M/MV5BZjYzZDg4MjYtNmZiMy00YjY0LThjYjktZmVlNDJiYmQ2OTQzXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
+            { title: "Fargo", years: "2014–Present", url: "#placeholder-fargo", poster: "https://m.media-amazon.com/images/M/MV5BMjIxMDAwMTEyNl5BMl5BanBnXkFtZTgwNTgzNjU0OTE@._V1_SX300.jpg" },
+            { title: "Sherlock", years: "2010–2017", url: "#placeholder-sherlock", poster: "https://m.media-amazon.com/images/M/MV5BMWY3ODIxMjMtMmYyOS00NDE0LWFkNzEtMjg5ZjMwYzg5ZTMyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Dexter", years: "2006–2013", url: "#placeholder-dexter", poster: "https://m.media-amazon.com/images/M/MV5BYmIzY2EwYmItYWZkMy00ZDRmLWJiY2UtMmVhNzI5MWQ1NjdlXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Lost", years: "2004–2010", url: "#placeholder-lost", poster: "https://m.media-amazon.com/images/M/MV5BNzlkODVmYTgtMjFkMi00OWI4LThjYTQtYTkwNjVjOGQ1OTYwXkEyXkFqcGdeQXVyNDE5MTU2MDE@._V1_SX300.jpg" },
+            { title: "The Mandalorian", years: "2019–Present", url: "#placeholder-mando", poster: "https://m.media-amazon.com/images/M/MV5BZDhlZDhkOWUtNWE4ZS00OTg5LTg0NGYtNzU4ZDgyNDdiYTczXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "The Last of Us", years: "2023–Present", url: "#placeholder-tlou", poster: "https://m.media-amazon.com/images/M/MV5BZGUzYTI3M2EtZmM0Yy00NGUyLWI4ODEtN2Q3ZGJlYzhhZjU3XkEyXkFqcGdeQXVyMTU0ODI1NTA2._V1_SX300.jpg" },
+            { title: "Attack on Titan", years: "2013–2023", url: "#placeholder-aot", poster: "https://m.media-amazon.com/images/M/MV5BNDFjYTIxMjctYTQ2ZC00OGQ4LWE3OGYtNDdiNzNiNDBmZmVkXkEyXkFqcGdeQXVyMTM1MTE1NDU1._V1_SX300.jpg" },
+            { title: "Arcane", years: "2021–Present", url: "#placeholder-arcane", poster: "https://m.media-amazon.com/images/M/MV5BYmU5OWM5ZTAtNDdjOC00MWJiLThjNzgtNzUxYmRiYmYyNzE1XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
+            { title: "The Boys", years: "2019–Present", url: "#placeholder-theboys", poster: "https://m.media-amazon.com/images/M/MV5BNGNkMGQ0ZWItYWQwNy00MWNmLThkMDgtNmU5M2U5ZWNmMzVlXkEyXkFqcGdeQXVyMzAzNzY3NjQ@._V1_SX300.jpg" },
+            { title: "Severance", years: "2022–Present", url: "#placeholder-severance", poster: "https://m.media-amazon.com/images/M/MV5BMjAzMjA4ZGEtMmY1My00MmRkLThhZGEtZjRjYjgxOTMyNmY1XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" }
+            // Additional series entries can be added here following the same schema up to 100 entries.
+        ];
+
+        let activeSeries = seriesList[0];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSeriesGrid(seriesList);
+            selectSeries(seriesList[0]);
+        });
+
+        function renderSeriesGrid(list) {
+            const grid = document.getElementById('seriesPosterGrid');
+            grid.innerHTML = '';
+
+            list.forEach(s => {
+                const isSelected = activeSeries && activeSeries.url === s.url;
+                const card = document.createElement('div');
+                card.className = `group cursor-pointer bg-[#120a22] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
+                    isSelected 
+                        ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
+                        : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
+                }`;
+                card.onclick = () => selectSeries(s);
+
+                card.innerHTML = `
+                    <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
+                        <img src="${s.poster}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${s.years}</span>
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-bold text-white truncate">${s.title}</h4>
+                        <div class="text-[10px] text-pink-400 font-mono mt-0.5">VOD Series Stream</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterSeries(query) {
+            const q = query.toLowerCase();
+            const filtered = seriesList.filter(s => s.title.toLowerCase().includes(q) || s.years.includes(q));
+            renderSeriesGrid(filtered);
+        }
+
+        function selectSeries(s) {
+            activeSeries = s;
+
+            // Update Info Panel
+            document.getElementById('activeSeriesTitle').innerText = s.title;
+            document.getElementById('activeSeriesYear').innerText = s.years;
+            document.getElementById('activeSeriesUrlText').innerText = s.url;
+            document.getElementById('seriesDownloadBtn').href = s.url;
+
+            // Load Video Player
+            const video = document.getElementById('seriesVideoPlayer');
+            video.src = ""; // Placeholder source handling
+
+            renderSeriesGrid(seriesList);
+        }
+    </script>
+</body>
+</html>
