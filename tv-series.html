@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TV — TV Series Catalog & Episode Engine</title>
     <title>NEXUS TV — TV Series Catalog & Poster Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -43,6 +44,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-400">SERIES</span>
                     </h1>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; EPISODE VIEWER</span>
                     <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; TOP SHOWS</span>
                 </div>
             </div>
@@ -63,11 +65,13 @@
                     </div>
                 </a>
 
+                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
                 <a href="#" onclick="showMainCatalog()" id="navCatalogBtn" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">📺</span>
                         <span>VOD TV Series</span>
                     </div>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Squid Game</span>
                     <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Catalog</span>
                 </a>
 
@@ -102,20 +106,30 @@
         <!-- Top Header & Search Bar -->
         <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
             <div>
+                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <span>🎮</span> Squid Game: Complete Series Streams (S01–S03)
                 <h2 id="viewHeaderTitle" class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
                     <span>📺</span> TV Series Catalog (1990 to Severance)
                 </h2>
+                <p class="text-xs text-pink-300/80 font-mono mt-0.5">Select an episode below to load its direct archive media stream into the active player.</p>
                 <p id="viewHeaderSubtitle" class="text-xs text-pink-300/80 font-mono mt-0.5">Curated television collection ranging from 1990 up through Squid Game and Severance.</p>
             </div>
+            <div class="flex items-center space-x-3">
+                <input type="text" id="episodeSearchInput" oninput="filterEpisodes(this.value)" placeholder="Search episodes..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             <div class="flex items-center space-x-3" id="headerSearchContainer">
                 <input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
 
+        <!-- Main Workspace: Split View (List on Left / Active Player on Right) -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
+            
+            <!-- Left Panel: Scrollable Episode List (~7 cols) -->
         <!-- VIEW 1: Main Grid + Split Video Player View -->
         <div id="mainCatalogView" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
             <!-- Left Panel: Scrollable Poster Card Grid (~7 cols) -->
             <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
+                <div class="space-y-2.5" id="episodeListContainer">
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="seriesPosterGrid">
                     <!-- Populated dynamically -->
                 </div>
@@ -124,10 +138,11 @@
             <!-- Right Panel: Active Video Player & Metadata Card (~5 cols) -->
             <div class="lg:col-span-5 bg-[#07040f] border border-pink-950/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl poster-glow relative overflow-hidden">
                 <div class="absolute -right-16 -top-16 w-56 h-56 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
-                
+
                 <!-- Video Player Container -->
                 <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
                     <video
+                        id="episodeVideoPlayer"
                         id="seriesVideoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
                         controls
@@ -135,18 +150,27 @@
                     ></video>
                 </div>
 
+                <!-- Episode Info Details -->
                 <!-- Series Info Details -->
                 <div class="mt-4 flex-1 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
+                            <span id="activeEpisodeBadge" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">Season 1</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p MP4</span>
                             <span id="activeSeriesYear" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">1999–2007</span>
                             <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p HDTV</span>
                         </div>
+                        <h3 id="activeEpisodeTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select an Episode</h3>
+                        <p id="activeEpisodeUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Stream Source URL...</p>
                         <h3 id="activeSeriesTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select a Series</h3>
                         <p id="activeSeriesUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Placeholder Stream Source...</p>
                     </div>
 
                     <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
+                        <a id="episodeDownloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                            <span>📥</span> Direct Stream Link
+                        </a>
                         <span id="seriesStatusText" class="text-xs text-slate-400">Status: <strong class="text-amber-400">Placeholder Link</strong></span>
                         <button id="seriesActionBtn" onclick="handleSeriesAction()" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
                             <span>📥</span> Source Link
@@ -221,6 +245,7 @@
     </main>
 
     <script>
+        // Squid Game Episodes Dataset (Seasons 1, 2, and 3)
         // TV Series collection
         const seriesList = [
             { title: "Squid Game", years: "2021–Present", url: "episodes", poster: "https://upload.wikimedia.org/wikipedia/en/e/e8/Squid_Game.png", hasEpisodes: true },
@@ -282,6 +307,8 @@
         let currentSeasonFilter = 'All';
 
         document.addEventListener('DOMContentLoaded', () => {
+            renderEpisodeList(episodesList);
+            selectEpisode(episodesList[0]);
             renderSeriesGrid(seriesList);
             selectSeries(seriesList[0]);
         });
@@ -298,8 +325,6 @@
                         ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
                         : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
                 }`;
-                
-                // Clicking poster card selects series in the right preview panel
                 card.onclick = () => selectSeries(s);
 
                 card.innerHTML = `
@@ -307,7 +332,7 @@
                         <img src="${s.poster}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${s.years}</span>
-                        ${s.hasEpisodes ? '<span onclick="event.stopPropagation(); openEpisodePage();" class="absolute bottom-2 left-2 bg-pink-600 hover:bg-pink-500 text-white text-[10px] font-mono px-2 py-1 rounded font-bold shadow transition-all">Open Seasons →</span>' : ''}
+                        ${s.hasEpisodes ? '<span class="absolute bottom-2 left-2 bg-pink-600 text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold shadow">Select Seasons</span>' : ''}
                     </div>
                     <div class="p-3">
                         <h4 class="text-xs font-bold text-white truncate">${s.title}</h4>
@@ -447,6 +472,7 @@
 
         function filterEpisodes(query) {
             const q = query.toLowerCase();
+            const filtered = episodesList.filter(ep => ep.title.toLowerCase().includes(q) || ep.filename.toLowerCase().includes(q) || ep.season.toLowerCase().includes(q));
             const sourceList = currentSeasonFilter === 'All' 
                 ? episodesList 
                 : episodesList.filter(ep => ep.season === currentSeasonFilter);
@@ -468,8 +494,10 @@
             const video = document.getElementById('episodeVideoPlayer');
             video.src = ep.video;
             video.load();
+            video.play().catch(e => console.log("Autoplay blocked/waiting for user interaction:", e));
             video.play().catch(e => console.log("Autoplay waiting for user interaction:", e));
 
+            renderEpisodeList(episodesList);
             const currentFiltered = currentSeasonFilter === 'All' 
                 ? episodesList 
                 : episodesList.filter(e => e.season === currentSeasonFilter);
