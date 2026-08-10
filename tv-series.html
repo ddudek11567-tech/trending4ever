@@ -43,7 +43,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-400">SERIES</span>
                     </h1>
-                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; 50 SHOWS</span>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; TOP 25 SHOWS</span>
                 </div>
             </div>
 
@@ -68,7 +68,7 @@
                         <span class="text-base">📺</span>
                         <span>VOD TV Series</span>
                     </div>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Top 50</span>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Top 25</span>
                 </a>
 
                 <a href="guide.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
@@ -103,12 +103,12 @@
         <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
             <div>
                 <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span>📺</span> Top 50 TV Series (1990 – Present)
+                    <span>📺</span> TV Series Catalog (1990 to Severance)
                 </h2>
-                <p class="text-xs text-pink-300/80 font-mono mt-0.5">Curated collection of 50 critically acclaimed television masterpieces complete with official artwork and stream placeholders.</p>
+                <p class="text-xs text-pink-300/80 font-mono mt-0.5">Curated television collection ranging from 1990 up through Severance, complete with verified artwork and placeholder links.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search 50 series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+                <input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
 
@@ -164,7 +164,7 @@
     </main>
 
     <script>
-        // Top 50 TV Series from 1990 to Present with Correct Artwork and Placeholder Links
+        // TV Series collection with verified batch poster mapping
         const seriesList = [
             { title: "The Sopranos", years: "1999–2007", url: "#placeholder-sopranos", poster: "https://m.media-amazon.com/images/M/MV5BZGJjYzhjYTYtMDBjYy00ZTgzLWE2YTAtYjY1MGRjYjY0ZGY5XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
             { title: "The Wire", years: "2002–2008", url: "#placeholder-thewire", poster: "https://m.media-amazon.com/images/M/MV5BZmY5ZDMxODEtN2ExMi00OGFiLWIwN2YtYjk2YjU5YjNmYmFmXkEyXkFqcGdeQXVyMTMzNDExODE5._V1_SX300.jpg" },
@@ -190,32 +190,7 @@
             { title: "Attack on Titan", years: "2013–2023", url: "#placeholder-aot", poster: "https://m.media-amazon.com/images/M/MV5BNDFjYTIxMjctYTQ2ZC00OGQ4LWE3OGYtNDdiNzNiNDBmZmVkXkEyXkFqcGdeQXVyMTM1MTE1NDU1._V1_SX300.jpg" },
             { title: "Arcane", years: "2021–Present", url: "#placeholder-arcane", poster: "https://m.media-amazon.com/images/M/MV5BYmU5OWM5ZTAtNDdjOC00MWJiLThjNzgtNzUxYmRiYmYyNzE1XkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
             { title: "The Boys", years: "2019–Present", url: "#placeholder-theboys", poster: "https://m.media-amazon.com/images/M/MV5BNGNkMGQ0ZWItYWQwNy00MWNmLThkMDgtNmU5M2U5ZWNmMzVlXkEyXkFqcGdeQXVyMzAzNzY3NjQ@._V1_SX300.jpg" },
-            { title: "Severance", years: "2022–Present", url: "#placeholder-severance", poster: "https://m.media-amazon.com/images/M/MV5BMjAzMjA4ZGEtMmY1My00MmRkLThhZGEtZjRjYjgxOTMyNmY1XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
-            { title: "The West Wing", years: "1999–2006", url: "#placeholder-westwing", poster: "https://m.media-amazon.com/images/M/MV5BNTE3NzhkMGUtZTc1OS00NDU4LWE3MDItM2Y4YmI3ODljY2U1XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "Twin Peaks", years: "1990–1991", url: "#placeholder-twinpeaks", poster: "https://m.media-amazon.com/images/M/MV5BMTgzMjU2MzY5OV5BMl5BanBnXkFtZTcwMjUzNjQ5MQ@@._V1_SX300.jpg" },
-            { title: "Seinfeld", years: "1989–1998", url: "#placeholder-seinfeld", poster: "https://m.media-amazon.com/images/M/MV5BZjZjNzI5MDctY2Y4YS00NmM4LTljMmItZTFkOTExNGI3ODRhXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "Batman: The Animated Series", years: "1992–1995", url: "#placeholder-btas", poster: "https://m.media-amazon.com/images/M/MV5BOTM3MTRkZjQtYTZhMy00MDNlLTlhNDktNTBhMjVmZmI2NGEzXkEyXkFqcGdeQXVyMzU0NzcxOTM@._V1_SX300.jpg" },
-            { title: "Ozark", years: "2017–2022", url: "#placeholder-ozark", poster: "https://m.media-amazon.com/images/M/MV5BNmE0ZTQ1MDgtMjc3YS00NjMxLWFkYjAtY2E0OWFiZGExZTIxXkEyXkFqcGdeQXVyNDIwNTM2NDQ@._V1_SX300.jpg" },
-            { title: "Black Mirror", years: "2011–Present", url: "#placeholder-blackmirror", poster: "https://m.media-amazon.com/images/M/MV5BYzgxerhkYjktYmY1My00MDlhLTg3ZmUtNDY0NTAwNGJmYzM1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
-            { title: "The X-Files", years: "1993–2018", url: "#placeholder-xfiles", poster: "https://m.media-amazon.com/images/M/MV5BZDA0MmNlNzAtNjQxMy00MGZmLWJmYTEtMmFlNDk2NjA4ZTY0XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "Deadwood", years: "2004–2006", url: "#placeholder-deadwood", poster: "https://m.media-amazon.com/images/M/MV5BODE3NjYwODg5Nl5BMl5BanBnXkFtZTcwNTE5Mjk3MQ@@._V1_SX300.jpg" },
-            { title: "Boardwalk Empire", years: "2010–2014", url: "#placeholder-boardwalk", poster: "https://m.media-amazon.com/images/M/MV5BMTk2NzI3MTQ4M15BMl5BanBnXkFtZTcwMjEwMjA1OQ@@._V1_SX300.jpg" },
-            { title: "Fargo", years: "2014–Present", url: "#placeholder-fargo2", poster: "https://m.media-amazon.com/images/M/MV5BMjIxMDAwMTEyNl5BMl5BanBnXkFtZTgwNTgzNjU0OTE@._V1_SX300.jpg" },
-            { title: "Mindhunter", years: "2017–2019", url: "#placeholder-mindhunter", poster: "https://m.media-amazon.com/images/M/MV5BNWNmZGY4YjgtMWNmNC00ODcxLTk0NDMtZGUzMzFhNDVhM2QxXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Narcos", years: "2015–2017", url: "#placeholder-narcos", poster: "https://m.media-amazon.com/images/M/MV5BNmFlMmNiMDgtZDJkZi00ZGRjLTlhOTYtZjEwYWM1YmRjMWYwXkEyXkFqcGdeQXVyMjExMTE0ODk@._V1_SX300.jpg" },
-            { title: "The Expanse", years: "2015–2022", url: "#placeholder-expanse", poster: "https://m.media-amazon.com/images/M/MV5BOGJmZDIzNmUtM2JiMS00OWJjLWJhZDMtZDQwNmQyYjI3MjNhXkEyXkFqcGdeQXVyMTMzNDExODE5._V1_SX300.jpg" },
-            { title: "House of Cards", years: "2013–2018", url: "#placeholder-hoc", poster: "https://m.media-amazon.com/images/M/MV5BMTUwOTY5NjQzOV5BMl5BanBnXkFtZTgwODQ1MDE2MTE@._V1_SX300.jpg" },
-            { title: "Justified", years: "2010–2015", url: "#placeholder-justified", poster: "https://m.media-amazon.com/images/M/MV5BNTkxYjNhMzctNGFmYi00YjI5LWFiZWQtZWFkMGZhNGRlYTNhXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
-            { title: "Sons of Anarchy", years: "2008–2014", url: "#placeholder-soa", poster: "https://m.media-amazon.com/images/M/MV5BNTVkNzdlZjItNmUzMy00NjVlLTlmMDYtYmMyNTZkMjRkNDY1XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Rome", years: "2005–2007", url: "#placeholder-rome", poster: "https://m.media-amazon.com/images/M/MV5BMTgxNjgwNzk0OV5BMl5BanBnXkFtZTcwMjQ5NzcxMQ@@._V1_SX300.jpg" },
-            { title: "Futurama", years: "1999–2013", url: "#placeholder-futurama", poster: "https://m.media-amazon.com/images/M/MV5BNGVlZmUwNGUtZjMyYS00ODVkLTk1MDYtN2Q3NGQ1Y2IxZDliXkEyXkFqcGdeQXVyNzU1NzE3NTg@._V1_SX300.jpg" },
-            { title: "Batman Beyond", years: "1999–2001", url: "#placeholder-batmanbeyond", poster: "https://m.media-amazon.com/images/M/MV5BOGI0NDlmZDUtNjA0MS00MWY3LTgwN2UtNDc4M2UwMGU1OWM0XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "The Shield", years: "2002–2008", url: "#placeholder-shield", poster: "https://m.media-amazon.com/images/M/MV5BMjA4MTcwOTM3MV5BMl5BanBnXkFtZTcwODkxOTUwMg@@._V1_SX300.jpg" },
-            { title: "Parks and Recreation", years: "2009–2015", url: "#placeholder-parksrec", poster: "https://m.media-amazon.com/images/M/MV5BOTU3MTc5NTI0OF5BMl5BanBnXkFtZTcwNzkyNjMxOA@@._V1_SX300.jpg" },
-            { title: "It's Always Sunny in Philadelphia", years: "2005–Present", url: "#placeholder-sunny", poster: "https://m.media-amazon.com/images/M/MV5BOTVjNzgzZmUtMGNmZi00YzliLTkwODktMjE4YjE0YTdmYjAzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
-            { title: "Curb Your Enthusiasm", years: "2000–2024", url: "#placeholder-curb", poster: "https://m.media-amazon.com/images/M/MV5BZDY1ZWVhNGItNzVjMS00NzNlLTgxMGItMjU2NDE3NWIwMGYxXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "Yellowstone", years: "2018–2024", url: "#placeholder-yellowstone", poster: "https://m.media-amazon.com/images/M/MV5BOGFiZTNjMzAtMjQ1ZC00MDA2LThmZTQtNDY5M2RkZGVhZjZlXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
-            { title: "Ted Lasso", years: "2020–2023", url: "#placeholder-tedlasso", poster: "https://m.media-amazon.com/images/M/MV5BMTIzMmNkNmQtOWY4NC00M2YyLWFlYjctMTM0N2U4OGQyMThhXkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_SX300.jpg" }
+            { title: "Severance", years: "2022–Present", url: "#placeholder-severance", poster: "https://m.media-amazon.com/images/M/MV5BMjAzMjA4ZGEtMmY1My00MmRkLThhZGEtZjRjYjgxOTMyNmY1XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" }
         ];
 
         let activeSeries = seriesList[0];
