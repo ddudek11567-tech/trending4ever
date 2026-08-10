@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS TV — TV Series Catalog & Episode Engine</title>
+    <title>NEXUS TV — TV Series Catalog & Poster Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -43,7 +43,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-400">SERIES</span>
                     </h1>
-                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; EPISODE VIEWER</span>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">VOD ENGINE &bull; TOP SHOWS</span>
                 </div>
             </div>
 
@@ -63,12 +63,12 @@
                     </div>
                 </a>
 
-                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                <a href="#" onclick="showMainCatalog()" id="navCatalogBtn" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
                     <div class="flex items-center space-x-3">
                         <span class="text-base">📺</span>
                         <span>VOD TV Series</span>
                     </div>
-                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Squid Game</span>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">Catalog</span>
                 </a>
 
                 <a href="guide.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
@@ -102,22 +102,21 @@
         <!-- Top Header & Search Bar -->
         <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
             <div>
-                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                    <span>🎮</span> Squid Game: Complete Series Streams (S01–S03)
+                <h2 id="viewHeaderTitle" class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <span>📺</span> TV Series Catalog (1990 to Severance)
                 </h2>
-                <p class="text-xs text-pink-300/80 font-mono mt-0.5">Select an episode below to load its direct archive media stream into the active player.</p>
+                <p id="viewHeaderSubtitle" class="text-xs text-pink-300/80 font-mono mt-0.5">Curated television collection ranging from 1990 up through Squid Game and Severance.</p>
             </div>
-            <div class="flex items-center space-x-3">
-                <input type="text" id="episodeSearchInput" oninput="filterEpisodes(this.value)" placeholder="Search episodes..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+            <div class="flex items-center space-x-3" id="headerSearchContainer">
+                <input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
 
-        <!-- Main Workspace: Split View (List on Left / Active Player on Right) -->
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
-            
-            <!-- Left Panel: Scrollable Episode List (~7 cols) -->
+        <!-- VIEW 1: Main Grid + Split Video Player View -->
+        <div id="mainCatalogView" class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
+            <!-- Left Panel: Scrollable Poster Card Grid (~7 cols) -->
             <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
-                <div class="space-y-2.5" id="episodeListContainer">
+                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="seriesPosterGrid">
                     <!-- Populated dynamically -->
                 </div>
             </div>
@@ -129,29 +128,87 @@
                 <!-- Video Player Container -->
                 <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
                     <video
-                        id="episodeVideoPlayer"
+                        id="seriesVideoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
                         controls
                         playsinline
                     ></video>
                 </div>
 
-                <!-- Episode Info Details -->
+                <!-- Series Info Details -->
                 <div class="mt-4 flex-1 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <span id="activeEpisodeBadge" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">Season 1</span>
-                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p MP4</span>
+                            <span id="activeSeriesYear" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">1999–2007</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p HDTV</span>
                         </div>
-                        <h3 id="activeEpisodeTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select an Episode</h3>
-                        <p id="activeEpisodeUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Stream Source URL...</p>
+                        <h3 id="activeSeriesTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select a Series</h3>
+                        <p id="activeSeriesUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Placeholder Stream Source...</p>
                     </div>
 
                     <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
-                        <span class="text-xs text-slate-400">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
-                        <a id="episodeDownloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
-                            <span>📥</span> Direct Stream Link
-                        </a>
+                        <span id="seriesStatusText" class="text-xs text-slate-400">Status: <strong class="text-amber-400">Placeholder Link</strong></span>
+                        <button id="seriesActionBtn" onclick="handleSeriesAction()" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                            <span>📥</span> Source Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: Season & Episode Selector Page (Opens when clicking Squid Game or specialized series) -->
+        <div id="episodePageContainer" class="flex-1 flex-col p-6 overflow-hidden hidden">
+            <!-- Back button bar -->
+            <div class="mb-4 flex items-center justify-between shrink-0">
+                <button onclick="showMainCatalog()" class="px-3 py-1.5 rounded-xl bg-[#120a22] border border-pink-950 hover:border-pink-600 text-xs font-semibold text-pink-300 flex items-center gap-2 transition-all shadow">
+                    <span>←</span> Back to Series Catalog
+                </button>
+                <div class="flex items-center space-x-2">
+                    <button onclick="filterSeason('All')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-pink-600 text-white transition-all" data-season="All">All Episodes</button>
+                    <button onclick="filterSeason('Season 1')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 1">Season 1</button>
+                    <button onclick="filterSeason('Season 2')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 2">Season 2</button>
+                    <button onclick="filterSeason('Season 3')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 3">Season 3</button>
+                </div>
+            </div>
+
+            <!-- Split view for episodes and player -->
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+                <!-- Episode list (7 cols) -->
+                <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
+                    <div class="space-y-2.5" id="episodeListContainer">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Episode Player (5 cols) -->
+                <div class="lg:col-span-5 bg-[#07040f] border border-pink-950/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl poster-glow relative overflow-hidden">
+                    <div class="absolute -right-16 -top-16 w-56 h-56 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
+                        <video
+                            id="episodeVideoPlayer"
+                            class="w-full h-full absolute inset-0 object-contain bg-black"
+                            controls
+                            playsinline
+                        ></video>
+                    </div>
+
+                    <div class="mt-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span id="activeEpisodeBadge" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">Season 1</span>
+                                <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p MP4</span>
+                            </div>
+                            <h3 id="activeEpisodeTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select an Episode</h3>
+                            <p id="activeEpisodeUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">Stream Source URL...</p>
+                        </div>
+
+                        <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
+                            <span class="text-xs text-slate-400">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
+                            <a id="episodeDownloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                                <span>📥</span> Direct Stream Link
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -164,7 +221,37 @@
     </main>
 
     <script>
-        // Squid Game Episodes Dataset (Seasons 1, 2, and 3)
+        // TV Series collection
+        const seriesList = [
+            { title: "Squid Game", years: "2021–Present", url: "episodes", poster: "https://upload.wikimedia.org/wikipedia/en/e/e8/Squid_Game.png", hasEpisodes: true },
+            { title: "The Sopranos", years: "1999–2007", url: "#placeholder-sopranos", poster: "https://upload.wikimedia.org/wikipedia/en/b/b6/The_Sopranos_title_card.png" },
+            { title: "The Wire", years: "2002–2008", url: "#placeholder-thewire", poster: "https://upload.wikimedia.org/wikipedia/en/4/4c/The_Wire_Title_Card.jpg" },
+            { title: "Breaking Bad", years: "2008–2013", url: "#placeholder-breakingbad", poster: "https://upload.wikimedia.org/wikipedia/en/6/61/Breaking_Bad_title_card.png" },
+            { title: "Game of Thrones", years: "2011–2019", url: "#placeholder-got", poster: "https://upload.wikimedia.org/wikipedia/en/d/d8/Game_of_Thrones_title_card.jpg" },
+            { title: "Succession", years: "2018–2023", url: "#placeholder-succession", poster: "https://upload.wikimedia.org/wikipedia/en/a/a2/Succession_logo.jpg" },
+            { title: "Chernobyl", years: "2019", url: "#placeholder-chernobyl", poster: "https://upload.wikimedia.org/wikipedia/en/a/a7/Chernobyl_2019_setMiniseries_poster.jpg" },
+            { title: "Mad Men", years: "2007–2015", url: "#placeholder-madmen", poster: "https://upload.wikimedia.org/wikipedia/en/c/cbb/Mad_Men_Title_Card.png" },
+            { title: "Band of Brothers", years: "2001", url: "#placeholder-bob", poster: "https://upload.wikimedia.org/wikipedia/en/f/f3/Band_of_brothers_title_card.jpg" },
+            { title: "The Office (US)", years: "2005–2013", url: "#placeholder-theoffice", poster: "https://upload.wikimedia.org/wikipedia/en/c/c9/The_Office_US_Logo.svg" },
+            { title: "Friends", years: "1994–2004", url: "#placeholder-friends", poster: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Friends_logo.svg" },
+            { title: "Stranger Things", years: "2016–Present", url: "#placeholder-strangerthings", poster: "https://upload.wikimedia.org/wikipedia/en/3/38/Stranger_Things_season_4.jpg" },
+            { title: "True Detective", years: "2014–Present", url: "#placeholder-truedetective", poster: "https://upload.wikimedia.org/wikipedia/en/e/e6/True_Detective_season_1_poster.jpg" },
+            { title: "Better Call Saul", years: "2015–2022", url: "#placeholder-bcs", poster: "https://upload.wikimedia.org/wikipedia/en/c/cc/Better_Call_Saul_logo.png" },
+            { title: "The Crown", years: "2016–2023", url: "#placeholder-crown", poster: "https://upload.wikimedia.org/wikipedia/en/1/1b/The_Crown_season_1.png" },
+            { title: "Peaky Blinders", years: "2013–2022", url: "#placeholder-peaky", poster: "https://upload.wikimedia.org/wikipedia/en/5/52/Peaky_Blinders_title_card.png" },
+            { title: "Fargo", years: "2014–Present", url: "#placeholder-fargo", poster: "https://upload.wikimedia.org/wikipedia/en/e/eb/Fargo_season_1.png" },
+            { title: "Sherlock", years: "2010–2017", url: "#placeholder-sherlock", poster: "https://upload.wikimedia.org/wikipedia/en/1/1c/Sherlock_intertitle.jpg" },
+            { title: "Dexter", years: "2006–2013", url: "#placeholder-dexter", poster: "https://upload.wikimedia.org/wikipedia/en/6/6f/Dexter_Season_1_DVD.jpg" },
+            { title: "Lost", years: "2004–2010", url: "#placeholder-lost", poster: "https://upload.wikimedia.org/wikipedia/en/e/e7/Lost_season_1.jpg" },
+            { title: "The Mandalorian", years: "2019–Present", url: "#placeholder-mando", poster: "https://upload.wikimedia.org/wikipedia/en/e/ed/The_Mandalorian_season_1_poster.jpg" },
+            { title: "The Last of Us", years: "2023–Present", url: "#placeholder-tlou", poster: "https://upload.wikimedia.org/wikipedia/en/7/77/The_Last_of_Us_logo.png" },
+            { title: "Attack on Titan", years: "2013–2023", url: "#placeholder-aot", poster: "https://upload.wikimedia.org/wikipedia/en/d/d6/Shingeki_no_Kyojin_manga_volume_1.jpg" },
+            { title: "Arcane", years: "2021–Present", url: "#placeholder-arcane", poster: "https://upload.wikimedia.org/wikipedia/en/c/cd/Arcane_animated_series_logo.jpg" },
+            { title: "The Boys", years: "2019–Present", url: "#placeholder-theboys", poster: "https://upload.wikimedia.org/wikipedia/en/1/1b/The_Boys_Logo.png" },
+            { title: "Severance", years: "2022–Present", url: "#placeholder-severance", poster: "https://upload.wikimedia.org/wikipedia/en/a/a2/Severance_title_card.png" }
+        ];
+
+        // Squid Game Episodes Dataset
         const episodesList = [
             { title: "S01E01 - Red Light, Green Light", season: "Season 1", filename: "Squid Game - S01E01 - Red Light, Green Light.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20-%20S01E01%20-%20Red%20Light%2C%20Green%20Light.mp4" },
             { title: "S01E02 - Hell", season: "Season 1", filename: "Squid Game - S01E02 - Hell.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20-%20S01E02%20-%20Hell.mp4" },
@@ -190,16 +277,145 @@
             { title: "S03E06 1080p", season: "Season 3", filename: "Squid Game S03E06 1080p.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E06%201080p.mp4" }
         ];
 
+        let activeSeries = seriesList[0];
         let activeEpisode = episodesList[0];
+        let currentSeasonFilter = 'All';
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderEpisodeList(episodesList);
-            selectEpisode(episodesList[0]);
+            renderSeriesGrid(seriesList);
+            selectSeries(seriesList[0]);
         });
+
+        function renderSeriesGrid(list) {
+            const grid = document.getElementById('seriesPosterGrid');
+            grid.innerHTML = '';
+
+            list.forEach(s => {
+                const isSelected = activeSeries && activeSeries.title === s.title;
+                const card = document.createElement('div');
+                card.className = `group cursor-pointer bg-[#120a22] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
+                    isSelected 
+                        ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
+                        : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
+                }`;
+                card.onclick = () => selectSeries(s);
+
+                card.innerHTML = `
+                    <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden flex items-center justify-center">
+                        <img src="${s.poster}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${s.years}</span>
+                        ${s.hasEpisodes ? '<span class="absolute bottom-2 left-2 bg-pink-600 text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold shadow">Select Seasons</span>' : ''}
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-bold text-white truncate">${s.title}</h4>
+                        <div class="text-[10px] text-pink-400 font-mono mt-0.5">${s.hasEpisodes ? 'Multi-Season Episodes' : 'VOD Series Stream'}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterSeries(query) {
+            const q = query.toLowerCase();
+            const filtered = seriesList.filter(s => s.title.toLowerCase().includes(q) || s.years.includes(q));
+            renderSeriesGrid(filtered);
+        }
+
+        function selectSeries(s) {
+            activeSeries = s;
+
+            // Update Info Panel
+            document.getElementById('activeSeriesTitle').innerText = s.title;
+            document.getElementById('activeSeriesYear').innerText = s.years;
+            document.getElementById('activeSeriesUrlText').innerText = s.url;
+            
+            const btn = document.getElementById('seriesActionBtn');
+            const status = document.getElementById('seriesStatusText');
+            const video = document.getElementById('seriesVideoPlayer');
+
+            if (s.hasEpisodes) {
+                status.innerHTML = 'Status: <strong class="text-emerald-400">Episodes Available</strong>';
+                btn.innerHTML = '<span>📺</span> Choose Season & Episodes';
+                video.src = "";
+            } else {
+                status.innerHTML = 'Status: <strong class="text-amber-400">Placeholder Link</strong>';
+                btn.innerHTML = '<span>📥</span> Source Link';
+                video.src = "";
+            }
+
+            renderSeriesGrid(seriesList);
+        }
+
+        function handleSeriesAction() {
+            if (activeSeries && activeSeries.hasEpisodes) {
+                openEpisodePage();
+            } else {
+                window.open(activeSeries.url, '_blank');
+            }
+        }
+
+        function openEpisodePage() {
+            document.getElementById('mainCatalogView').classList.add('hidden');
+            document.getElementById('mainCatalogView').classList.remove('flex');
+            
+            const epPage = document.getElementById('episodePageContainer');
+            epPage.classList.remove('hidden');
+            epPage.classList.add('flex');
+
+            // Update Header for Episode View
+            document.getElementById('viewHeaderTitle').innerHTML = `<span>🎮</span> ${activeSeries.title}: Season & Episode Selection`;
+            document.getElementById('viewHeaderSubtitle').innerText = `Select your preferred season and episode to start instant playback.`;
+            document.getElementById('headerSearchContainer').innerHTML = `<input type="text" id="episodeSearchInput" oninput="filterEpisodes(this.value)" placeholder="Search episodes..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">`;
+
+            filterSeason('All');
+            selectEpisode(episodesList[0]);
+        }
+
+        function showMainCatalog() {
+            const epPage = document.getElementById('episodePageContainer');
+            epPage.classList.remove('flex');
+            epPage.classList.add('hidden');
+
+            const mainView = document.getElementById('mainCatalogView');
+            mainView.classList.remove('hidden');
+            mainView.classList.add('flex');
+
+            // Restore Header for Main Catalog
+            document.getElementById('viewHeaderTitle').innerHTML = `<span>📺</span> TV Series Catalog (1990 to Severance)`;
+            document.getElementById('viewHeaderSubtitle').innerText = `Curated television collection ranging from 1990 up through Squid Game and Severance.`;
+            document.getElementById('headerSearchContainer').innerHTML = `<input type="text" id="seriesSearchInput" oninput="filterSeries(this.value)" placeholder="Search series..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">`;
+
+            renderSeriesGrid(seriesList);
+        }
+
+        function filterSeason(season) {
+            currentSeasonFilter = season;
+
+            // Highlight active season button
+            document.querySelectorAll('.season-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-season') === season) {
+                    btn.className = "season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-pink-600 text-white transition-all";
+                } else {
+                    btn.className = "season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all";
+                }
+            });
+
+            const filtered = season === 'All' 
+                ? episodesList 
+                : episodesList.filter(ep => ep.season === season);
+            
+            renderEpisodeList(filtered);
+        }
 
         function renderEpisodeList(list) {
             const container = document.getElementById('episodeListContainer');
             container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-500 font-mono text-xs">No episodes found.</div>`;
+                return;
+            }
 
             list.forEach(ep => {
                 const isSelected = activeEpisode && activeEpisode.video === ep.video;
@@ -229,7 +445,11 @@
 
         function filterEpisodes(query) {
             const q = query.toLowerCase();
-            const filtered = episodesList.filter(ep => ep.title.toLowerCase().includes(q) || ep.filename.toLowerCase().includes(q) || ep.season.toLowerCase().includes(q));
+            const sourceList = currentSeasonFilter === 'All' 
+                ? episodesList 
+                : episodesList.filter(ep => ep.season === currentSeasonFilter);
+
+            const filtered = sourceList.filter(ep => ep.title.toLowerCase().includes(q) || ep.filename.toLowerCase().includes(q));
             renderEpisodeList(filtered);
         }
 
@@ -246,9 +466,12 @@
             const video = document.getElementById('episodeVideoPlayer');
             video.src = ep.video;
             video.load();
-            video.play().catch(e => console.log("Autoplay blocked/waiting for user interaction:", e));
+            video.play().catch(e => console.log("Autoplay waiting for user interaction:", e));
 
-            renderEpisodeList(episodesList);
+            const currentFiltered = currentSeasonFilter === 'All' 
+                ? episodesList 
+                : episodesList.filter(e => e.season === currentSeasonFilter);
+            renderEpisodeList(currentFiltered);
         }
     </script>
 </body>
