@@ -170,13 +170,13 @@
     </main>
 
     <script>
-        // Master Catalog with Direct Archive.org URLs and Custom Poster Art
+        // Master Catalog with Direct Archive.org URLs and Validated OMDb Poster Art
         const movies = [
-            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "image_8c611a.jpg" },
-            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "image_8c6040.jpg" },
-            { title: "Avatar", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "image_8c5991.jpg" },
-            { title: "Avatar: The Way of Water", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "image_8c5cbc.jpg" },
-            { title: "Captain America: Brave New World", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "image_8c587e.jpg" },
+            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZTM2ZGJkMGQtNTIyNC00NmNmLThhNzUtOWRjZmQ0ZjBlMjA2XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk2Mjc2NjYwMl5BMl5BanBnXkFtZTgwMTA2OTE1NDM@._V1_SX300.jpg" },
+            { title: "Avatar", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzAtYTJmZjI3N2E3N2E3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
+            { title: "Avatar: The Way of Water", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxMTE1MDA@._V1_SX300.jpg" },
+            { title: "Captain America: Brave New World", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYmRlOWY4YTItYmViMC00MTc4LThkY2UtNzU2YTg4Njg4MTA5XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
             { title: "2012", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTY0MjEyODQzMF5BMl5BanBnXkFtZTcwMTczMjQ4Mg@@._V1_SX300.jpg" },
             { title: "Blade Runner 2049", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_SX300.jpg" },
             { title: "The Dark Knight", year: "2008", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg" },
