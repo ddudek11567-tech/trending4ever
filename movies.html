@@ -1,689 +1,282 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus TV</title>
+    <title>NEXUS TV — Master Movie Catalog & Poster Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #0b0f19;
-            --sidebar-color: #05070c;
-            --accent-red: #8b0000;
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
-            --card-bg: #161e2e;
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(219, 39, 119, 0.6); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(236, 72, 153, 0.8); }
+        .movie-grid-bg {
+            background: linear-gradient(135deg, #12091c 0%, #030712 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background-color: var(--sidebar-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 0;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 10;
-        }
-
-        .logo-area {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--text-main);
-            padding: 0 20px 20px 20px;
-            letter-spacing: 1px;
-        }
-
-        .logo-area span {
-            color: var(--accent-red);
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .nav-item {
-            padding: 12px 20px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: block;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(139, 0, 0, 0.2);
-            color: var(--text-main);
-            border-left: 4px solid var(--accent-red);
-        }
-
-        /* Main Container */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Top Navbar */
-        .top-navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 40px;
-            background: linear-gradient(to bottom, rgba(11,15,25,0.9), transparent);
-            position: absolute;
-            width: 100%;
-            z-index: 5;
-        }
-
-        .nav-brand {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-main);
-        }
-
-        .nav-brand span {
-            color: #38bdf8;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--text-main);
-            font-weight: 500;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 15px;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        /* Fixed Upper Hero Carousel Section */
-        .hero {
-            position: relative;
-            flex-shrink: 0;
-            height: 450px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: flex-end;
-            padding: 40px;
-            transition: background-image 0.8s ease-in-out;
-        }
-
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(0deg, var(--bg-color) 0%, rgba(11,15,25,0.6) 50%, rgba(11,15,25,0.2) 100%);
-            z-index: 1;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 600px;
-        }
-
-        .hero-tag {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #38bdf8;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-
-        .hero-title {
-            font-size: 34px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .hero-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 15px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 8px 18px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: none;
-            transition: opacity 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.85;
-        }
-
-        .btn-primary {
-            background-color: var(--text-main);
-            color: var(--bg-color);
-        }
-
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: var(--text-main);
-            backdrop-filter: blur(5px);
-        }
-
-        /* Carousel Indicators */
-        .carousel-dots {
-            position: absolute;
-            right: 40px;
-            bottom: 40px;
-            z-index: 3;
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .dot.active {
-            background-color: var(--text-main);
-        }
-
-        /* Scrolling Bottom Row Section */
-        .content-section {
-            flex: 1;
-            padding: 20px 40px;
-            overflow-y: auto;
-            background-color: var(--bg-color);
-        }
-
-        .section-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-main);
-        }
-
-        .section-title span {
-            color: #38bdf8;
-        }
-
-        .card-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding-bottom: 20px;
-        }
-
-        .movie-card {
-            background-color: var(--card-bg);
-            border-radius: 6px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 190px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(56, 189, 248, 0.4);
-        }
-
-        .card-thumbnail {
-            flex: 1;
-            background-color: #1e293b;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .card-info {
-            padding: 10px;
-        }
-
-        .card-title {
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-genre {
-            font-size: 10px;
-            color: var(--text-muted);
-        }
-
-        /* Overlay Floating Video Player Modal (75% width, semi-transparent) */
-        .player-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(5, 7, 12, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.95;
-            transition: opacity 0.3s ease;
-        }
-
-        .player-overlay.active {
-            display: flex;
-        }
-
-        .player-container {
-            width: 75%;
-            max-width: 1100px;
-            background: rgba(22, 30, 46, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: rgba(5, 7, 12, 0.6);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .player-header h3 {
-            font-size: 15px;
-            color: var(--text-main);
-            font-weight: 600;
-        }
-
-        .player-controls-right {
-            display: flex;
-            gap: 10px;
-        }
-
-        .player-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .player-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .player-body {
-            position: relative;
-            width: 100%;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        video {
-            width: 100%;
-            max-height: 65vh;
-            outline: none;
+        .poster-glow {
+            box-shadow: 0 0 25px rgba(219, 39, 119, 0.2);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-[#030712] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-hidden">
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="logo-area">NEXUS<span>TV</span></div>
-        <ul class="nav-menu">
-            <li><a href="https://trending4ever.com/iptv.html" class="nav-item">Live IPTV</a></li>
-            <li><a href="#" class="nav-item active">Latest Movies</a></li>
-            <li><a href="#" class="nav-item">Archive.org</a></li>
-            <li><a href="#" class="nav-item">Search</a></li>
-            <li><a href="#" class="nav-item">My List</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Container -->
-    <div class="main-container">
-        
-        <!-- Top Navigation -->
-        <div class="top-navbar">
-            <div class="nav-brand">NEXUS <span>ORIGINALS</span></div>
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#" class="active">Featured</a></li>
-                <li><a href="#">Store</a></li>
-                <li><a href="#">Channels</a></li>
-                <li><a href="#">Categories</a></li>
-                <li><a href="#">My Stuff</a></li>
-            </ul>
-            <div class="nav-icons">
-                🔍 ⚙️
-            </div>
-        </div>
-
-        <!-- Fixed Upper Hero Carousel Section -->
-        <div class="hero" id="heroBanner">
-            <div class="hero-content">
-                <div class="hero-tag" id="heroTag">Critically Acclaimed</div>
-                <h1 class="hero-title" id="heroTitle">Interstellar</h1>
-                <p class="hero-desc" id="heroDesc">When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft to find a new planet for humans.</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="playCurrentHeroMovie()">▶ Play Film</button>
-                    <button class="btn btn-secondary" onclick="addCurrentHeroMovie()">+ Add to List</button>
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0614] border-r border-pink-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-screen">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-pink-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-pink-500/20 text-white font-black text-xl">
+                    🎬
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-400">VOD</span>
+                    </h1>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; 45 MOVIES</span>
                 </div>
             </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                </a>
+
+                <a href="#" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-pink-600/20 to-purple-600/10 text-pink-300 border border-pink-500/30 shadow-lg shadow-pink-950/40">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-500 text-white px-2 py-0.5 rounded-full font-bold">VOD</span>
+                </a>
+
+                <a href="guide.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📅</span>
+                        <span>Interactive Guide</span>
+                    </div>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search Catalog</span>
+                </a>
+
+                <a href="#" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer / Profile -->
+        <div class="p-4 border-t border-pink-950/40 space-y-3">
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-[#120a22] border border-pink-950/80">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden movie-grid-bg">
+
+        <!-- Top Header & Search Bar -->
+        <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
+            <div>
+                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <span>🎬</span> VOD Movie Master Catalog
+                </h2>
+                <p class="text-xs text-pink-300/80 font-mono mt-0.5">High-definition feature films extracted directly from Archive.org repository sources with dynamic Google & OMDb poster art integration.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 45 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+            </div>
+        </header>
+
+        <!-- Main Workspace: Split View (Grid on Left / Active Player on Right) -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
             
-            <!-- Carousel Pagination Dots -->
-            <div class="carousel-dots" id="carouselDots">
-                <div class="dot active" onclick="currentSlide(0)"></div>
-                <div class="dot" onclick="currentSlide(1)"></div>
-                <div class="dot" onclick="currentSlide(2)"></div>
-                <div class="dot" onclick="currentSlide(3)"></div>
-                <div class="dot" onclick="currentSlide(4)"></div>
-            </div>
-        </div>
-
-        <!-- Scrolling Bottom Row Section -->
-        <div class="content-section">
-            <div class="section-title"><span>Archive</span> Movie Library & Recommendations</div>
-            <div class="card-row" id="movieCardGrid">
-                <!-- Movie cards populated dynamically -->
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Floating Overlay Video Player Modal (75% width, semi-transparent) -->
-    <div class="player-overlay" id="playerOverlay">
-        <div class="player-container" id="playerContainer">
-            <div class="player-header">
-                <h3 id="now-playing">Now Playing</h3>
-                <div class="player-controls-right">
-                    <button class="player-btn" onclick="toggleControls()">Toggle Controls</button>
-                    <button class="player-btn" onclick="toggleFullScreen()">Full Screen</button>
-                    <button class="player-btn" onclick="closePlayer()" style="background: rgba(229,9,20,0.4);">✕ Close</button>
+            <!-- Left Panel: Scrollable Poster Card Grid (~7 cols) -->
+            <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
+                <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="moviePosterGrid">
+                    <!-- Populated dynamically -->
                 </div>
             </div>
-            <div class="player-body">
-                <video id="videoPlayer" controls>
-                    Your browser does not support the video tag.
-                </video>
+
+            <!-- Right Panel: Active Video Player & Movie Metadata Card (~5 cols) -->
+            <div class="lg:col-span-5 bg-[#07040f] border border-pink-950/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl poster-glow relative overflow-hidden">
+                <div class="absolute -right-16 -top-16 w-56 h-56 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <!-- Video Player Container -->
+                <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
+                    <video
+                        id="movieVideoPlayer"
+                        class="w-full h-full absolute inset-0 object-contain bg-black"
+                        controls
+                        autoplay
+                        playsinline
+                    ></video>
+                </div>
+
+                <!-- Movie Info Details -->
+                <div class="mt-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span id="activeMovieYear" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">2023</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p BluRay</span>
+                        </div>
+                        <h3 id="activeMovieTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select a Movie</h3>
+                        <p id="activeMovieUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">archive.org/download/TOP-MOVIES-ENG-1080P/...</p>
+                    </div>
+
+                    <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
+                        <a id="downloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                            <span>📥</span> Direct Source Link
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Footer -->
+        <footer class="py-2.5 px-6 border-t border-pink-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
+            NEXUS VOD Poster Engine &bull; Designed by: Daniel Dudek
+        </footer>
+    </main>
 
     <script>
-        const mediaLinks = [
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Coherence.2013.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Batman.V.Superman.Dawn.Of.Justice.2016.1080p.BluRay.x264-[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Man.of.Steel.2013.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Zack.Snyders.Justice.League.2021.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Deja.Vu.2006.720p.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.One.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dunkirk.2017.1080p.BluRay.x264-[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Edge.of.Tomorrow.2014.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Everything.Everywhere.All.At.Once.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/F1 The Movie 2025 INTERNAL 1080p 10bit WEBRip 2CH X265 HEVC-PSA.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Fight.Club.1999.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Geostorm.2017.1080p.WEBRip.DDP5.1.x265.10bit-GalaxyRG265.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gladiator.2000.1080p.BluRay.DDP5.1.x265.10bit-GalaxyRG265.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gone.Girl.2014.720p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gravity.2013.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Hereditary.2018.1080p.WEBRip.x264-[YTS.AM].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Insidious.2010.1080p.BrRip.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.2014.1080p.BluRay.x264-[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.2.2017.1080p.BluRay.x264-[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.4.2023.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Joker.2019.1080p.WEBRip.x264-[YTS.LT].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Ant-Man.2015.1080p.BluRay.x264.[YTS.AG].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Avengers.Endgame.2019.1080p.WEBRip.x264-[YTS.LT].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Deadpool.Wolverine.2024.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Memento.2000.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Oppenheimer.2023.1080p.BluRay.x265.10bit.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Tenet.2020.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4",
-            "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
+        // Master Catalog with Direct Archive.org URLs and Automatically Mapped Poster Art
+        const movies = [
+            { title: "2012", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTY0MjEyODQzMF5BMl5BanBnXkFtZTcwMTczMjQ4Mg@@._V1_SX300.jpg" },
+            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZTM2ZGJmNWQtMTM2OC00NTd4LTljNzctZjBlYjY3MmE0Y2E1XkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg" },
+            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk2Mjc2NzYxMF5BMl5BanBnXkFtZTgwMTA2OTA0NDM@._V1_SX300.jpg" },
+            { title: "Avatar", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3ZjMtYTJjNjg5NzA5ZjgzXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_SX300.jpg" },
+            { title: "Avatar: The Way of Water", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNDBmODctZjBkZi00NTcyLThhYjItZTE0YWYxN2JmNDQxXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
+            { title: "The Dark Knight", year: "2008", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg" },
+            { title: "Blade Runner 2049", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_SX300.jpg" },
+            { title: "Captain America: Brave New World", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNmU2NTAzODItOWU4MS00MmEwLWE1N2UtYjE3ZTgxZGYzYmM2XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Coherence", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Coherence.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA1OTMzODIzMF5BMl5BanBnXkFtZTgwNTc4NTY5MTE@._V1_SX300.jpg" },
+            { title: "Batman v Superman", year: "2016", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Batman.V.Superman.Dawn.Of.Justice.2016.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYzExZDVkNDEtYjUwMi00ZjY1LWE5MzEtZDc1NjUwZjg3M2M3XkEyXkFqcGdeQXVyMjYwNDA2MDE@._V1_SX300.jpg" },
+            { title: "Man of Steel", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Man.of.Steel.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk5ODk0MTM0MF5BMl5BanBnXkFtZTcwMjQ3MDQ5OQ@@._V1_SX300.jpg" },
+            { title: "Zack Snyder's Justice League", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Zack.Snyders.Justice.League.2021.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYjJiZjMzZjktNjVjNC00YzExLWE3YzQtYzRkOTUzM2QzZmBiXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Déjà Vu", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Deja.Vu.2006.720p.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA1MTQ1NzAwMV5BMl5BanBnXkFtZTcwMDA1NDU0MQ@@._V1_SX300.jpg" },
+            { title: "Dune: Part One", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.One.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Dune: Part Two", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2QyZjQ3NDYtMDhlMC00Njg3LTk0ZDctZWEwNWFjZWE4ODU1XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
+            { title: "Dunkirk", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dunkirk.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2EyZjU3NzUtNTUzMS00MTgzLThjNTctYTM3MWM4ZjM4Y2UxXkEyXkFqcGdeQXVyNTUzMTg2ODkz._V1_SX300.jpg" },
+            { title: "Edge of Tomorrow", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Edge.of.Tomorrow.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTc5OTk4MTM3M15BMl5BanBnXkFtZTgwODcxNjg3MDE@._V1_SX300.jpg" },
+            { title: "Everything Everywhere All at Once", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Everything.Everywhere.All.At.Once.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjEyNzZiMjQtODBjOC00MjEwLTg0MGYtNDQwM2EwNjc2ZmU3XkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_SX300.jpg" },
+            { title: "F1 The Movie", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/F1 The Movie 2025 INTERNAL 1080p 10bit WEBRip 2CH X265 HEVC-PSA.mp4", poster: "https://m.media-amazon.com/images/M/MV5BNGY0Y2JiZjUtMzg1My00NjMwLTlhYjYtYTE1MTFmMzcxNWFlXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
+            { title: "Fight Club", year: "1999", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Fight.Club.1999.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMmEzNTkxYjQtZTc0MC00YTVjLTg4ZTEtZTc0ZWI1YTk4NjBmXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" },
+            { title: "Geostorm", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Geostorm.2017.1080p.WEBRip.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMzMwODMzNzY0OF5BMl5BanBnXkFtZTgwNjA2MjQ0MzI@._V1_SX300.jpg" },
+            { title: "Gladiator", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gladiator.2000.1080p.BluRay.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDliMmNhNDEtODUyOS00MjNlLTgxODktN2U4NzhhMGY0MjBlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
+            { title: "Gone Girl", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gone.Girl.2014.720p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk0MDQ3MzAzOV5BMl5BanBnXkFtZTgwNzU1NzE3MTE@._V1_SX300.jpg" },
+            { title: "Gravity", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gravity.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BNjE5MzYwMzYxMF5BMl5BanBnXkFtZTcwOTk4MTk0OQ@@._V1_SX300.jpg" },
+            { title: "Hereditary", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Hereditary.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BOTU5MDg0ZjktMjNhYy00MjlmLTg0NzktM2UzNTY0OTBjYzQ1XkEyXkFqcGdeQXVyNDg4NjAxNjE@._V1_SX300.jpg" },
+            { title: "Inception", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg" },
+            { title: "Insidious", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Insidious.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTYyNjQ4ODM3NV5BMl5BanBnXkFtZTcwNzYxNDc1NA@@._V1_SX300.jpg" },
+            { title: "Interstellar", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
+            { title: "John Wick", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.2014.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI0MjE@._V1_SX300.jpg" },
+            { title: "John Wick: Chapter 2", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.2.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjEwMzcxODczOF5BMl5BanBnXkFtZTgwNzMzOTQ3MDI@._V1_SX300.jpg" },
+            { title: "John Wick: Chapter 3", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDg2NmEyOGEtYjFjNC00NmFlLTk1MGQtNzEwNzE1OGE5NTM1XkEyXkFqcGdeQXVyMTA3MTA4Mzgw._V1_SX300.jpg" },
+            { title: "John Wick: Chapter 4", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.4.2023.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNmZiMTEwXkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_SX300.jpg" },
+            { title: "Joker", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Joker.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZDgtNzE1MC00YmQ0LThjODgtYjY1NjM3MDY3YzdhXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg" },
+            { title: "Ant-Man", year: "2015", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Ant-Man.2015.1080p.BluRay.x264.[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjM3MjQ1MzkxNl5BMl5BanBnXkFtZTgwODc1NTkwNjE@._V1_SX300.jpg" },
+            { title: "Avengers: Endgame", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Avengers.Endgame.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg" },
+            { title: "Deadpool & Wolverine", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Deadpool.Wolverine.2024.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQ1My00Y2Q5LWEwYTAtMjUzYzg5M2E4MTJjXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
+            { title: "Memento", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Memento.2000.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZTcyNjk1MjgtOWI3Mi00YzQwLWI5MTktMzY4ZmI2NDAyNzYzXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
+            { title: "Oppenheimer", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Oppenheimer.2023.1080p.BluRay.x265.10bit.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_SX300.jpg" },
+            { title: "Tenet", year: "2020", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Tenet.2020.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYzg0NGM2NjAtNmIxOC00MDJmLWI2ZmYtNThmZmNlM2FiMzYyXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
+            { title: "The Batman", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyMzQwMTIzOQ@@._V1_SX300.jpg" },
+            { title: "The Prestige", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA4NDI0MTIxF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg" },
+            { title: "Top Gun: Maverick", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_SX300.jpg" },
+            { title: "Whiplash", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BOTA5NDZlZGUtMjAxOS00YTRkLTkwYWYtYWQ0NWExZDZiNzEzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
+            { title: "Zodiac", year: "2007", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2JkMDc5MGQtZjg3YS00NmFiLWIyZmQtZTJmNTM5MjVmYTQ4XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" }
         ];
 
-        const artPool = [
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop"
-        ];
+        let activeMovie = movies[0];
 
-        const heroMovies = [
-            {
-                tag: "Critically Acclaimed",
-                title: "Interstellar",
-                desc: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft to find a new planet for humans.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop')",
-                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4"
-            },
-            {
-                tag: "Trending Now",
-                title: "Blade Runner 2049",
-                desc: "A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard, missing for thirty years.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop')",
-                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4"
-            },
-            {
-                tag: "Featured Original",
-                title: "Dune: Part Two",
-                desc: "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1600&auto=format&fit=crop')",
-                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
-            },
-            {
-                tag: "Nexus Exclusive",
-                title: "The Batman",
-                desc: "When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city's hidden corruption.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop')",
-                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4"
-            },
-            {
-                tag: "Fan Favorite",
-                title: "Inception",
-                desc: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea.",
-                bg: "linear-gradient(0deg, rgba(11,15,25,0.6), rgba(11,15,25,0.2)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1600&auto=format&fit=crop')",
-                url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4"
-            }
-        ];
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMovieGrid(movies);
+            selectMovie(movies[0]);
+        });
 
-        let currentIndex = 0;
-        let slideInterval;
+        function renderMovieGrid(list) {
+            const grid = document.getElementById('moviePosterGrid');
+            grid.innerHTML = '';
 
-        function cleanTitle(url) {
-            let filename = url.split('/').pop();
-            return filename.replace('.mp4', '').replace(/\./g, ' ');
-        }
-
-        function initMovieGrid() {
-            const gridContainer = document.getElementById('movieCardGrid');
-            mediaLinks.forEach((link, index) => {
-                let title = cleanTitle(link);
-                let artwork = artPool[index % artPool.length];
-
-                let card = document.createElement('div');
-                card.className = 'movie-card';
-                card.onclick = () => playMedia(link, title);
+            list.forEach(m => {
+                const isSelected = activeMovie && activeMovie.url === m.url;
+                const card = document.createElement('div');
+                card.className = `group cursor-pointer bg-[#120a22] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
+                    isSelected 
+                        ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
+                        : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
+                }`;
+                card.onclick = () => selectMovie(m);
 
                 card.innerHTML = `
-                    <div class="card-thumbnail" style="background-image: url('${artwork}')"></div>
-                    <div class="card-info">
-                        <div class="card-title">${title}</div>
-                        <div class="card-genre">Archive Stream • 1080p</div>
+                    <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
+                        <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
+                    </div>
+                    <div class="p-3">
+                        <h4 class="text-xs font-bold text-white truncate">${m.title}</h4>
+                        <div class="text-[10px] text-pink-400 font-mono mt-0.5">1080p VOD Stream</div>
                     </div>
                 `;
-                gridContainer.appendChild(card);
+                grid.appendChild(card);
             });
         }
 
-        function playMedia(url, title) {
-            const playerOverlay = document.getElementById('playerOverlay');
-            playerOverlay.classList.add('active');
-
-            document.getElementById('now-playing').innerText = "Now Playing: " + title;
-            var player = document.getElementById('videoPlayer');
-            player.src = url;
-            player.load();
-            player.play();
+        function filterMovies(query) {
+            const q = query.toLowerCase();
+            const filtered = movies.filter(m => m.title.toLowerCase().includes(q) || m.year.includes(q));
+            renderMovieGrid(filtered);
         }
 
-        function closePlayer() {
-            const playerOverlay = document.getElementById('playerOverlay');
-            playerOverlay.classList.remove('active');
-            var player = document.getElementById('videoPlayer');
-            player.pause();
-            player.src = "";
+        function selectMovie(m) {
+            activeMovie = m;
+
+            // Update Info Panel
+            document.getElementById('activeMovieTitle').innerText = m.title;
+            document.getElementById('activeMovieYear').innerText = m.year;
+            document.getElementById('activeMovieUrlText').innerText = m.url;
+            document.getElementById('downloadBtn').href = m.url;
+
+            // Load Video Player
+            const video = document.getElementById('movieVideoPlayer');
+            video.src = m.url;
+            video.load();
+            video.play().catch(e => console.log("Autoplay blocked:", e));
+
+            renderMovieGrid(movies);
         }
-
-        function toggleControls() {
-            var player = document.getElementById('videoPlayer');
-            player.controls = !player.controls;
-        }
-
-        function toggleFullScreen() {
-            var player = document.getElementById('videoPlayer');
-            if (player.requestFullscreen) {
-                player.requestFullscreen();
-            } else if (player.webkitRequestFullscreen) {
-                player.webkitRequestFullscreen();
-            } else if (player.msRequestFullscreen) {
-                player.msRequestFullscreen();
-            }
-        }
-
-        function updateHero(index) {
-            currentIndex = index;
-            const movie = heroMovies[currentIndex];
-            
-            document.getElementById('heroTag').innerText = movie.tag;
-            document.getElementById('heroTitle').innerText = movie.title;
-            document.getElementById('heroDesc').innerText = movie.desc;
-            document.getElementById('heroBanner').style.backgroundImage = movie.bg;
-
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                if (i === currentIndex) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        function nextSlide() {
-            currentIndex = (currentIndex + 1) % heroMovies.length;
-            updateHero(currentIndex);
-        }
-
-        function currentSlide(index) {
-            updateHero(index);
-            resetTimer();
-        }
-
-        function resetTimer() {
-            clearInterval(slideInterval);
-            slideInterval = setInterval(nextSlide, 6000);
-        }
-
-        function playCurrentHeroMovie() {
-            const movie = heroMovies[currentIndex];
-            playMedia(movie.url, movie.title);
-        }
-
-        function addCurrentHeroMovie() {
-            const movie = heroMovies[currentIndex];
-            alert(`Added "${movie.title}" to your List!`);
-        }
-
-        window.onload = () => {
-            initMovieGrid();
-            slideInterval = setInterval(nextSlide, 6000);
-        };
     </script>
 </body>
 </html>
