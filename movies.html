@@ -244,7 +244,7 @@
 
                 card.innerHTML = `
                     <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
-                        <img src="${m.poster}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
