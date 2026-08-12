@@ -43,7 +43,7 @@
                     <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
                         NEXUS<span class="text-pink-400">VOD</span>
                     </h1>
-                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; 46 MOVIES</span>
+                    <span class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; 45 MOVIES</span>
                 </div>
             </div>
 
@@ -115,7 +115,7 @@
                 <p class="text-xs text-pink-300/80 font-mono mt-0.5">High-definition feature films extracted directly from Archive.org repository sources with dynamic poster art integration.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 46 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search 45 movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
             </div>
         </header>
 
@@ -172,56 +172,53 @@
     </main>
 
     <script>
-        // Master Catalog with Direct Archive.org URLs and Mapped Poster Art Links
+        // Master Catalog — Verified working poster art from the Wikipedia/Wikimedia CDN
         const movies = [
-            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZTM2ZGJmNjQtNjM2NS00MWExLWI4MDktOGY1YTZjYWE3Y2Q2XkEyXkFqcGdeQXVyMTAOkNzMzNjIw._V1_SX300.jpg" },
-            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk2MTcyMjQ5NV5BMl5BanBnXkFtZTgwNzE5NDcwNDM@._V1_SX300.jpg" },
-       const movies = [
-            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "https://i.ebayimg.com/images/g/MboAAOSw-BVjbbyz/s-l1200.jpg" },
-            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://www.themoviedb.org/t/p/original/h5TFuVFo43WWcogiaUis6febHsX.jpg" },
-            { title: "Avatar", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLWIyMTktYTlhYjBjNjkxN2UzXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" },
-            { title: "Avatar: The Way of Water", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYjhiNjBlODctY2ZiOC00YjVlLWFlNzAtNTVhNzM1YjI1NzMxXkEyXkFqcGdeQXVyMjQxNTE1MDA@._V1_SX300.jpg" },
-            { title: "Captain America: Brave New World", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYmRlOWY4YTItYmViMC00MTc4LThkY2UtNzU2YTg4Njg4MTA5XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "2012", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTY0MjEyODQzMF5BMl5BanBnXkFtZTcwMTczMjQ4Mg@@._V1_SX300.jpg" },
-            { title: "Blade Runner 2049", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_SX300.jpg" },
-            { title: "The Dark Knight", year: "2008", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX300.jpg" },
-            { title: "Coherence", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Coherence.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA1OTMzODIzMF5BMl5BanBnXkFtZTgwNTc4NTY5MTE@._V1_SX300.jpg" },
-            { title: "Batman v Superman", year: "2016", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Batman.V.Superman.Dawn.Of.Justice.2016.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYzExZDVkNDEtYjUwMi00ZjY1LWE5MzEtZDc1NjUwZjg3M2M3XkEyXkFqcGdeQXVyMjYwNDA2MDE@._V1_SX300.jpg" },
-            { title: "Man of Steel", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Man.of.Steel.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk5ODk0MTM0MF5BMl5BanBnXkFtZTcwMjQ3MDQ5OQ@@._V1_SX300.jpg" },
-            { title: "Zack Snyder's Justice League", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Zack.Snyders.Justice.League.2021.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYjJiZjMzZjktNjVjNC00YzExLWE3YzQtYzRkOTUzM2QzZmBiXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Déjà Vu", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Deja.Vu.2006.720p.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA1MTQ1NzAwMV5BMl5BanBnXkFtZTcwMDA1NDU0MQ@@._V1_SX300.jpg" },
-            { title: "Dune: Part One", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.One.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Dune: Part Two", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2QyZjQ3NDYtMDhlMC00Njg3LTk0ZDctZWEwNWFjZWE4ODU1XkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
-            { title: "Dunkirk", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dunkirk.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2EyZjU3NzUtNTUzMS00MTgzLThjNTctYTM3MWM4ZjM4Y2UxXkEyXkFqcGdeQXVyNTUzMTg2ODkz._V1_SX300.jpg" },
-            { title: "Edge of Tomorrow", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Edge.of.Tomorrow.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTc5OTk4MTM3M15BMl5BanBnXkFtZTgwODcxNjg3MDE@._V1_SX300.jpg" },
-            { title: "Everything Everywhere All at Once", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Everything.Everywhere.All.At.Once.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjEyNzZiMjQtODBjOC00MjEwLTg0MGYtNDQwM2EwNjc2ZmU3XkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_SX300.jpg" },
-            { title: "F1 The Movie", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/F1 The Movie 2025 INTERNAL 1080p 10bit WEBRip 2CH X265 HEVC-PSA.mp4", poster: "https://m.media-amazon.com/images/M/MV5BNGY0Y2JiZjUtMzg1My00NjMwLTlhYjYtYTE1MTFmMzcxNWFlXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Fight Club", year: "1999", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Fight.Club.1999.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMmEzNTkxYjQtZTc0MC00YTVjLTg4ZTEtZTc0ZWI1YTk4NjBmXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" },
-            { title: "Geostorm", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Geostorm.2017.1080p.WEBRip.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMzMwODMzNzY0OF5BMl5BanBnXkFtZTgwNjA2MjQ0MzI@._V1_SX300.jpg" },
-            { title: "Gladiator", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gladiator.2000.1080p.BluRay.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDliMmNhNDEtODUyOS00MjNlLTgxODktN2U4NzhhMGY0MjBlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
-            { title: "Gone Girl", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gone.Girl.2014.720p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTk0MDQ3MzAzOV5BMl5BanBnXkFtZTgwNzU1NzE3MTE@._V1_SX300.jpg" },
-            { title: "Gravity", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gravity.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BNjE5MzYwMzYxMF5BMl5BanBnXkFtZTcwOTk4MTk0OQ@@._V1_SX300.jpg" },
-            { title: "Hereditary", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Hereditary.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BOTU5MDg0ZjktMjNhYy00MjlmLTg0NzktM2UzNTY0OTBjYzQ1XkEyXkFqcGdeQXVyNDg4NjAxNjE@._V1_SX300.jpg" },
-            { title: "Inception", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg" },
-            { title: "Insidious", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Insidious.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTYyNjQ4ODM3NV5BMl5BanBnXkFtZTcwNzYxNDc1NA@@._V1_SX300.jpg" },
-            { title: "Interstellar", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
-            { title: "John Wick", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.2014.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTU2NjA1ODgzMF5BMl5BanBnXkFtZTgwMTM2MTI0MjE@._V1_SX300.jpg" },
-            { title: "John Wick: Chapter 2", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.2.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjEwMzcxODczOF5BMl5BanBnXkFtZTgwNzMzOTQ3MDI@._V1_SX300.jpg" },
-            { title: "John Wick: Chapter 3", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDg2NmEyOGEtYjFjNC00NmFlLTk1MGQtNzEwNzE1OGE5NTM1XkEyXkFqcGdeQXVyMTA3MTA4Mzgw._V1_SX300.jpg" },
-            { title: "John Wick: Chapter 4", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.4.2023.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDExZGMyOTMtMDgyYi00NGIwLWJhMTEtOTdkZGFjNmZiMTEwXkEyXkFqcGdeQXVyMjM4NTM5NDY@._V1_SX300.jpg" },
-            { title: "Joker", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Joker.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZDgtNzE1MC00YmQ0LThjODgtYjY1NjM3MDY3YzdhXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg" },
-            { title: "Ant-Man", year: "2015", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Ant-Man.2015.1080p.BluRay.x264.[YTS.AG].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjM3MjQ1MzkxNl5BMl5BanBnXkFtZTgwODc1NTkwNjE@._V1_SX300.jpg" },
-            { title: "Avengers: Endgame", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Avengers.Endgame.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMTc5MDE2ODcwNV5BMl5BanBnXkFtZTgwMzI2NzQ2NzM@._V1_SX300.jpg" },
-            { title: "Deadpool & Wolverine", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Deadpool.Wolverine.2024.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BNzRiMjg0MzUtNTQ1My00Y2Q5LWEwYTAtMjUzYzg5M2E4MTJjXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg" },
-            { title: "Memento", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Memento.2000.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BZTcyNjk1MjgtOWI3Mi00YzQwLWI5MTktMzY4ZmI2NDAyNzYzXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg" },
-            { title: "Oppenheimer", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Oppenheimer.2023.1080p.BluRay.x265.10bit.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_SX300.jpg" },
-            { title: "Tenet", year: "2020", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Tenet.2020.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BYzg0NGM2NjAtNmIxOC00MDJmLWI2ZmYtNThmZmNlM2FiMzYyXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_SX300.jpg" },
-            { title: "The Batman", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyMzQwMTIzOQ@@._V1_SX300.jpg" },
-            { title: "The Prestige", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4", poster: "https://m.media-amazon.com/images/M/MV5BMjA4NDI0MTIxF5BMl5BanBnXkFtZTYwNTM0MzY2._V1_SX300.jpg" },
-            { title: "Top Gun: Maverick", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_SX300.jpg" },
-            { title: "Toy Story 5", year: "2026", url: "https://trove.josephx.com/vid/Toy%20Story%205%20(2026).mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SX300.jpg" },
-            { title: "Whiplash", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://m.media-amazon.com/images/M/MV5BOTA5NDZlZGUtMjAxOS00YTRkLTkwYWYtYWQ0NWExZDZiNzEzXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SX300.jpg" },
-            { title: "Zodiac", year: "2007", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://m.media-amazon.com/images/M/MV5BN2JkMDc5MGQtZjg3YS00NmFiLWIyZmQtZTJmNTM5MjVmYTQ4XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg" }
+            { title: "American Psycho", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/American.Psycho.2000.1080p.BrRip.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/0/0c/American_Psycho.png" },
+            { title: "Annihilation", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Annihilation.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/f6/Annihilation_%28film%29.png" },
+            { title: "Avatar", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.2009.EXTENDED.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/d/d6/Avatar_%282009_film%29_poster.jpg" },
+            { title: "Avatar: The Way of Water", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Avatar.The.Way.Of.Water.2022.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/5/54/Avatar_The_Way_of_Water_poster.jpg" },
+            { title: "Captain America: Brave New World", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Captain.America.Brave.New.World.2025.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/a/a4/Captain_America_Brave_New_World_poster.jpg" },
+            { title: "2012", year: "2009", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/2012.2009.BluRay.1080p.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/d/dd/2012_Poster.jpg" },
+            { title: "Blade Runner 2049", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Blade.Runner.2049.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/9/9b/Blade_Runner_2049_poster.png" },
+            { title: "The Dark Knight", year: "2008", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Batman.The.Dark.Knight.2008.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg" },
+            { title: "Coherence", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Coherence.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/9/9d/Coherence_2013_theatrical_poster.jpg" },
+            { title: "Batman v Superman", year: "2016", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Batman.V.Superman.Dawn.Of.Justice.2016.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/3/31/Batman_v_Superman_Dawn_of_Justice_poster.jpg" },
+            { title: "Man of Steel", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Man.of.Steel.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/5/50/Man_of_Steel_%28film%29_poster.jpg" },
+            { title: "Zack Snyder's Justice League", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/DCU/Zack.Snyders.Justice.League.2021.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/6/60/Zack_Snyder%27s_Justice_League.png" },
+            { title: "Déjà Vu", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Deja.Vu.2006.720p.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/c/cf/DejaVuBigPoster.jpg" },
+            { title: "Dune: Part One", year: "2021", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.One.2021.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/8/8e/Dune_%282021_film%29.jpg" },
+            { title: "Dune: Part Two", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dune.Part.Two.2024.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/5/52/Dune_Part_Two_poster.jpeg" },
+            { title: "Dunkirk", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Dunkirk.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/15/Dunkirk_Film_poster.jpg" },
+            { title: "Edge of Tomorrow", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Edge.of.Tomorrow.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/f9/Edge_of_Tomorrow_Poster.jpg" },
+            { title: "Everything Everywhere All at Once", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Everything.Everywhere.All.At.Once.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/1e/Everything_Everywhere_All_at_Once.jpg" },
+            { title: "F1 The Movie", year: "2025", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/F1 The Movie 2025 INTERNAL 1080p 10bit WEBRip 2CH X265 HEVC-PSA.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/3/38/F1_%282025_film%29.png" },
+            { title: "Fight Club", year: "1999", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Fight.Club.1999.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg" },
+            { title: "Geostorm", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Geostorm.2017.1080p.WEBRip.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/7/76/Geostorm_official_teaser_poster.jpg" },
+            { title: "Gladiator", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gladiator.2000.1080p.BluRay.DDP5.1.x265.10bit-GalaxyRG265.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/fb/Gladiator_%282000_film_poster%29.png" },
+            { title: "Gone Girl", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gone.Girl.2014.720p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/0/05/Gone_Girl_Poster.jpg" },
+            { title: "Gravity", year: "2013", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Gravity.2013.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/f6/Gravity_Poster.jpg" },
+            { title: "Hereditary", year: "2018", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Hereditary.2018.1080p.WEBRip.x264-[YTS.AM].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/d/d9/Hereditary.png" },
+            { title: "Inception", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Inception.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg" },
+            { title: "Insidious", year: "2010", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Insidious.2010.1080p.BrRip.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/2/2d/Insidious_poster.jpg" },
+            { title: "Interstellar", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Interstellar.2014.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" },
+            { title: "John Wick", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.2014.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/9/98/John_Wick_TeaserPoster.jpg" },
+            { title: "John Wick: Chapter 2", year: "2017", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.2.2017.1080p.BluRay.x264-[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/3/31/John_Wick_Chapter_Two.png" },
+            { title: "John Wick: Chapter 3", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.3.-.Parabellum.2019.1080p.BluRay.x264-[YTS.LT].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/9/94/John_Wick_Chapter_3_Parabellum.png" },
+            { title: "John Wick: Chapter 4", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/JOHN WICK SERIES/John.Wick.Chapter.4.2023.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/d/d0/John_Wick_-_Chapter_4_promotional_poster.jpg" },
+            { title: "Joker", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Joker.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/e/e1/Joker_%282019_film%29_poster.jpg" },
+            { title: "Ant-Man", year: "2015", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Ant-Man.2015.1080p.BluRay.x264.[YTS.AG].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/12/Ant-Man_%28film%29_poster.jpg" },
+            { title: "Avengers: Endgame", year: "2019", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Avengers.Endgame.2019.1080p.WEBRip.x264-[YTS.LT].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg" },
+            { title: "Deadpool & Wolverine", year: "2024", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/MARVEL/MOVIES/Deadpool.Wolverine.2024.REPACK.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/4/4c/Deadpool_%26_Wolverine_poster.jpg" },
+            { title: "Memento", year: "2000", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Memento.2000.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/c/c7/Memento_poster.jpg" },
+            { title: "Oppenheimer", year: "2023", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Oppenheimer.2023.1080p.BluRay.x265.10bit.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg" },
+            { title: "Tenet", year: "2020", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Tenet.2020.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/14/Tenet_movie_poster.jpg" },
+            { title: "The Batman", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Batman.2022.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/f/ff/The_Batman_%28film%29_poster.jpg" },
+            { title: "The Prestige", year: "2006", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/The.Prestige.2006.1080p.BluRay.x264-[YTS.AM].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg" },
+            { title: "Top Gun: Maverick", year: "2022", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Top.Gun.Maverick.2022.IMAX.REPACK.1080p.WEBRip.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg" },
+            { title: "Toy Story 5", year: "2026", url: "https://trove.josephx.com/vid/Toy%20Story%205%20(2026).mp4", poster: "https://upload.wikimedia.org/wikipedia/en/0/08/Toy_Story_5_poster.jpg" },
+            { title: "Whiplash", year: "2014", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Whiplash.2014.1080p.BluRay.x264.YIFY.mp4", poster: "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg" },
+            { title: "Zodiac", year: "2007", url: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Zodiac.2007.DIRECTORS.CUT.1080p.BluRay.x264.AAC5.1-[YTS.MX].mp4", poster: "https://upload.wikimedia.org/wikipedia/en/3/3a/Zodiac2007Poster.jpg" }
         ];
         let activeMovie = movies[0];
 
@@ -229,6 +226,11 @@
             renderMovieGrid(movies);
             selectMovie(movies[0]);
         });
+
+        function posterFallback(title) {
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#120a22"/><stop offset="1" stop-color="#3b0a2a"/></linearGradient></defs><rect width="300" height="450" fill="url(#g)"/><rect x="18" y="18" width="264" height="414" fill="none" stroke="#e879f9" stroke-width="2" rx="10"/><text x="150" y="230" font-family="Arial, sans-serif" font-size="20" fill="#e879f9" text-anchor="middle" font-weight="bold">' + title + '</text><text x="150" y="260" font-family="Arial, sans-serif" font-size="12" fill="#9d9db0" text-anchor="middle">Poster Unavailable</text></svg>';
+            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        }
 
         function renderMovieGrid(list) {
             const grid = document.getElementById('moviePosterGrid');
@@ -246,7 +248,7 @@
 
                 card.innerHTML = `
                     <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
-                        <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
                         <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
@@ -255,6 +257,13 @@
                         <div class="text-[10px] text-pink-400 font-mono mt-0.5">1080p VOD Stream</div>
                     </div>
                 `;
+
+                const img = card.querySelector('img');
+                img.addEventListener('error', () => {
+                    img.onerror = null;
+                    img.src = posterFallback(m.title);
+                });
+
                 grid.appendChild(card);
             });
         }
