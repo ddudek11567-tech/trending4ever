@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -156,11 +156,8 @@
                 <button onclick="showMainCatalog()" class="px-3 py-1.5 rounded-xl bg-[#120a22] border border-pink-950 hover:border-pink-600 text-xs font-semibold text-pink-300 flex items-center gap-2 transition-all shadow">
                     <span>←</span> Back to Series Catalog
                 </button>
-                <div class="flex items-center space-x-2">
-                    <button onclick="filterSeason('All')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-pink-600 text-white transition-all" data-season="All">All Episodes</button>
-                    <button onclick="filterSeason('Season 1')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 1">Season 1</button>
-                    <button onclick="filterSeason('Season 2')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 2">Season 2</button>
-                    <button onclick="filterSeason('Season 3')" class="season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all" data-season="Season 3">Season 3</button>
+                <div class="flex items-center space-x-2" id="seasonFiltersContainer">
+                    <!-- Generated dynamically from seriesEpisodes -->
                 </div>
             </div>
 
@@ -242,14 +239,15 @@
             { title: "Arcane", years: "2021–Present", url: "#placeholder-arcane", poster: "posters/arcane.png" },
             { title: "The Boys", years: "2019–Present", url: "#placeholder-theboys", poster: "posters/the-boys.jpg" },
             { title: "Severance", years: "2022–Present", url: "#placeholder-severance", poster: "posters/severance.jpg" },
-            { title: "Baretta", years: "1975–1978", url: "#placeholder-baretta", poster: "posters/baretta.jpg" },
-            { title: "The Dukes of Hazzard", years: "1979–1985", url: "#placeholder-dukes", poster: "posters/dukes-of-hazzard.jpg" },
-            { title: "Knight Rider", years: "1982–1986", url: "#placeholder-knightrider", poster: "posters/knight-rider.jpg" },
-            { title: "Miami Vice", years: "1984–1990", url: "#placeholder-miamivice", poster: "posters/miami-vice.jpg" }
+            { title: "Baretta", years: "1975–1978", url: "#placeholder-baretta", poster: "posters/baretta.jpg", hasEpisodes: true },
+            { title: "The Dukes of Hazzard", years: "1979–1985", url: "#placeholder-dukes", poster: "posters/dukes-of-hazzard.jpg", hasEpisodes: true },
+            { title: "Knight Rider", years: "1982–1986", url: "#placeholder-knightrider", poster: "posters/knight-rider.jpg", hasEpisodes: true },
+            { title: "Miami Vice", years: "1984–1990", url: "#placeholder-miamivice", poster: "posters/miami-vice.jpg", hasEpisodes: true },
         ];
 
-        // Squid Game Episodes Dataset
-        const episodesList = [
+        // Series Episodes Dataset (per-show)
+        const seriesEpisodes = {
+            "Squid Game": [
             { title: "S01E01 - Red Light, Green Light", season: "Season 1", filename: "Squid Game - S01E01 - Red Light, Green Light.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20-%20S01E01%20-%20Red%20Light%2C%20Green%20Light.mp4" },
             { title: "S01E02 - Hell", season: "Season 1", filename: "Squid Game - S01E02 - Hell.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20-%20S01E02%20-%20Hell.mp4" },
             { title: "S01E03 - The Man with the Umbrella", season: "Season 1", filename: "Squid Game - S01E03 - The Man with the Umbrella.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20-%20S01E03%20-%20The%20Man%20with%20the%20Umbrella.mp4" },
@@ -271,11 +269,252 @@
             { title: "S03E03", season: "Season 3", filename: "Squid Game S03E03.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E03.mp4" },
             { title: "S03E04", season: "Season 3", filename: "Squid Game S03E04.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E04.mp4" },
             { title: "S03E05", season: "Season 3", filename: "Squid Game S03E05.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E05.mp4" },
-            { title: "S03E06 1080p", season: "Season 3", filename: "Squid Game S03E06 1080p.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E06%201080p.mp4" }
-        ];
+            { title: "S03E06 1080p", season: "Season 3", filename: "Squid Game S03E06 1080p.mp4", video: "https://archive.org/download/TOP-MOVIES-ENG-1080P/Squid%20Game%20S03E06%201080p.mp4" },
+            ],
+            "Knight Rider": [
+            { title: "S01E01 - Knight Of The Phoenix Part 01", season: "Season 1", filename: "Knight Rider S01E01 Knight Of The Phoenix Part 01.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E01%20Knight%20Of%20The%20Phoenix%20Part%2001.mp4" },
+            { title: "S01E02 - Knight Of The Phoenix Part 02", season: "Season 1", filename: "Knight Rider S01E02 Knight Of The Phoenix Part 02.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E02%20Knight%20Of%20The%20Phoenix%20Part%2002.mp4" },
+            { title: "S01E03 - Deadly Maneuvers", season: "Season 1", filename: "Knight Rider S01E03 Deadly Maneuvers.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E03%20Deadly%20Maneuvers.mp4" },
+            { title: "S01E04 - Good Day at White Rock", season: "Season 1", filename: "Knight Rider S01E04 Good Day at White Rock.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E04%20Good%20Day%20at%20White%20Rock.mp4" },
+            { title: "S01E05 - Slammin' Sammy's Stunt Show Spectacular", season: "Season 1", filename: "Knight Rider S01E05 Slammin' Sammy's Stunt Show Spectacular.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E05%20Slammin'%20Sammy's%20Stunt%20Show%20Spectacular.mp4" },
+            { title: "S01E06 - Just My Bill", season: "Season 1", filename: "Knight Rider S01E06 Just My Bill.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E06%20Just%20My%20Bill.mp4" },
+            { title: "S01E07 - Not a Drop to Drink", season: "Season 1", filename: "Knight Rider S01E07 Not a Drop to Drink.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E07%20Not%20a%20Drop%20to%20Drink.mp4" },
+            { title: "S01E08 - No Big Thing", season: "Season 1", filename: "Knight Rider S01E08 No Big Thing.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E08%20No%20Big%20Thing.mp4" },
+            { title: "S01E09 - Trust Doesn't Rust", season: "Season 1", filename: "Knight Rider S01E09 Trust Doesn't Rust.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E09%20Trust%20Doesn't%20Rust.mp4" },
+            { title: "S01E10 - Inside Out", season: "Season 1", filename: "Knight Rider S01E10 Inside Out.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E10%20Inside%20Out.mp4" },
+            { title: "S01E11 - The Final Verdict", season: "Season 1", filename: "Knight Rider S01E11 The Final Verdict.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E11%20The%20Final%20Verdict.mp4" },
+            { title: "S01E12 - A Plush Ride", season: "Season 1", filename: "Knight Rider S01E12 A Plush Ride.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E12%20A%20Plush%20Ride.mp4" },
+            { title: "S01E13 - Forget Me Not", season: "Season 1", filename: "Knight Rider S01E13 Forget Me Not.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E13%20Forget%20Me%20Not.mp4" },
+            { title: "S01E14 - Hearts of Stone", season: "Season 1", filename: "Knight Rider S01E14 Hearts of Stone.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E14%20Hearts%20of%20Stone.mp4" },
+            { title: "S01E15 - Give Me Liberty...or Give Me Death", season: "Season 1", filename: "Knight Rider S01E15 Give Me Liberty...or Give Me Death.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E15%20Give%20Me%20Liberty...or%20Give%20Me%20Death.mp4" },
+            { title: "S01E16 - The Topaz Connection", season: "Season 1", filename: "Knight Rider S01E16 The Topaz Connection.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E16%20The%20Topaz%20Connection.mp4" },
+            { title: "S01E17 - A Nice, Indecent Little Town", season: "Season 1", filename: "Knight Rider S01E17 A Nice, Indecent Little Town.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E17%20A%20Nice%2C%20Indecent%20Little%20Town.mp4" },
+            { title: "S01E18 - Chariot of Gold", season: "Season 1", filename: "Knight Rider S01E18 Chariot of Gold.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E18%20Chariot%20of%20Gold.mp4" },
+            { title: "S01E19 - White Bird", season: "Season 1", filename: "Knight Rider S01E19 White Bird.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E19%20White%20Bird.mp4" },
+            { title: "S01E20 - Knight Moves", season: "Season 1", filename: "Knight Rider S01E20 Knight Moves.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E20%20Knight%20Moves.mp4" },
+            { title: "S01E21 - Nobody Does It Better", season: "Season 1", filename: "Knight Rider S01E21 Nobody Does It Better.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E21%20Nobody%20Does%20It%20Better.mp4" },
+            { title: "S01E22 - Short Notice", season: "Season 1", filename: "Knight Rider S01E22 Short Notice.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S01E22%20Short%20Notice.mp4" },
+            { title: "S02E01-E02 - Goliath", season: "Season 2", filename: "Knight Rider S02E01-E02 Goliath.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E01-E02%20Goliath.mp4" },
+            { title: "S02E03 - Brother's Keeper", season: "Season 2", filename: "Knight Rider S02E03 Brother's Keeper.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E03%20Brother's%20Keeper.mp4" },
+            { title: "S02E04 - Merchants of Death", season: "Season 2", filename: "Knight Rider S02E04 Merchants of Death.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E04%20Merchants%20of%20Death.mp4" },
+            { title: "S02E05 - Blind Spot", season: "Season 2", filename: "Knight Rider S02E05 Blind Spot.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E05%20Blind%20Spot.mp4" },
+            { title: "S02E06 - Return to Cadiz", season: "Season 2", filename: "Knight Rider S02E06 Return to Cadiz.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E06%20Return%20to%20Cadiz.mp4" },
+            { title: "S02E07 - K.I.T.T. the Cat", season: "Season 2", filename: "Knight Rider S02E07 K.I.T.T. the Cat.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E07%20K.I.T.T.%20the%20Cat.mp4" },
+            { title: "S02E08 - Custom K.I.T.T.", season: "Season 2", filename: "Knight Rider S02E08 Custom K.I.T.T..mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E08%20Custom%20K.I.T.T..mp4" },
+            { title: "S02E09 - Soul Survivor", season: "Season 2", filename: "Knight Rider S02E09 Soul Survivor.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E09%20Soul%20Survivor.mp4" },
+            { title: "S02E10 - Ring of Fire", season: "Season 2", filename: "Knight Rider S02E10 Ring of Fire.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E10%20Ring%20of%20Fire.mp4" },
+            { title: "S02E11 - Knightmares", season: "Season 2", filename: "Knight Rider S02E11 Knightmares.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E11%20Knightmares.mp4" },
+            { title: "S02E12 - Silent Knight", season: "Season 2", filename: "Knight Rider S02E12 Silent Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E12%20Silent%20Knight.mp4" },
+            { title: "S02E13 - A Knight in Shining Armor", season: "Season 2", filename: "Knight Rider S02E13 A Knight in Shining Armor.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E13%20A%20Knight%20in%20Shining%20Armor.mp4" },
+            { title: "S02E14 - Diamonds Aren't a Girl's Best Friend", season: "Season 2", filename: "Knight Rider S02E14 Diamonds Aren't a Girl's Best Friend.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E14%20Diamonds%20Aren't%20a%20Girl's%20Best%20Friend.mp4" },
+            { title: "S02E15 - White-Line Warriors", season: "Season 2", filename: "Knight Rider S02E15 White-Line Warriors.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E15%20White-Line%20Warriors.mp4" },
+            { title: "S02E16 - Race for Life", season: "Season 2", filename: "Knight Rider S02E16 Race for Life.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E16%20Race%20for%20Life.mp4" },
+            { title: "S02E17 - Speed Demons", season: "Season 2", filename: "Knight Rider S02E17 Speed Demons.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E17%20Speed%20Demons.mp4" },
+            { title: "S02E18-E19 - Goliath Returns", season: "Season 2", filename: "Knight Rider S02E18-E19 Goliath Returns.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E18-E19%20Goliath%20Returns.mp4" },
+            { title: "S02E20 - A Good Knight's Work", season: "Season 2", filename: "Knight Rider S02E20 A Good Knight's Work.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E20%20A%20Good%20Knight's%20Work.mp4" },
+            { title: "S02E21-E22 - Mouth of the Snake [a.k.a. All That Glitters]", season: "Season 2", filename: "Knight Rider S02E21-E22 Mouth of the Snake [a.k.a. All That Glitters].mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E21-E22%20Mouth%20of%20the%20Snake%20%5Ba.k.a.%20All%20That%20Glitters%5D.mp4" },
+            { title: "S02E23 - Let It Be Me", season: "Season 2", filename: "Knight Rider S02E23 Let It Be Me.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E23%20Let%20It%20Be%20Me.mp4" },
+            { title: "S02E24 - Big Iron", season: "Season 2", filename: "Knight Rider S02E24 Big Iron.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S02E24%20Big%20Iron.mp4" },
+            { title: "S03E01 - Knight Of The Drones (Part 1)", season: "Season 3", filename: "Knight Rider S03E01 Knight Of The Drones (Part 1).mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E01%20Knight%20Of%20The%20Drones%20(Part%201).mp4" },
+            { title: "S03E02 - Knight Of The Drones (Part 2)", season: "Season 3", filename: "Knight Rider S03E02 Knight Of The Drones (Part 2).mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E02%20Knight%20Of%20The%20Drones%20(Part%202).mp4" },
+            { title: "S03E03 - The Ice Bandits", season: "Season 3", filename: "Knight Rider S03E03 The Ice Bandits.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E03%20The%20Ice%20Bandits.mp4" },
+            { title: "S03E04 - Knights of the Fast Lane", season: "Season 3", filename: "Knight Rider S03E04 Knights of the Fast Lane.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E04%20Knights%20of%20the%20Fast%20Lane.mp4" },
+            { title: "S03E05 - Halloween Knight", season: "Season 3", filename: "Knight Rider S03E05 Halloween Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E05%20Halloween%20Knight.mp4" },
+            { title: "S03E06 - K.I.T.T. vs. K.A.R.R.", season: "Season 3", filename: "Knight Rider S03E06 K.I.T.T. vs. K.A.R.R..mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E06%20K.I.T.T.%20vs.%20K.A.R.R..mp4" },
+            { title: "S03E07 - The Rotten Apples", season: "Season 3", filename: "Knight Rider S03E07 The Rotten Apples.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E07%20The%20Rotten%20Apples.mp4" },
+            { title: "S03E08 - Knight in Disgrace", season: "Season 3", filename: "Knight Rider S03E08 Knight in Disgrace.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E08%20Knight%20in%20Disgrace.mp4" },
+            { title: "S03E09 - Dead of Knight", season: "Season 3", filename: "Knight Rider S03E09 Dead of Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E09%20Dead%20of%20Knight.mp4" },
+            { title: "S03E10 - Lost Knight", season: "Season 3", filename: "Knight Rider S03E10 Lost Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E10%20Lost%20Knight.mp4" },
+            { title: "S03E11 - Knight of the Chameleon", season: "Season 3", filename: "Knight Rider S03E11 Knight of the Chameleon.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E11%20Knight%20of%20the%20Chameleon.mp4" },
+            { title: "S03E12 - Custom Made Killer", season: "Season 3", filename: "Knight Rider S03E12 Custom Made Killer.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E12%20Custom%20Made%20Killer.mp4" },
+            { title: "S03E13 - Knight by a Nose", season: "Season 3", filename: "Knight Rider S03E13 Knight by a Nose.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E13%20Knight%20by%20a%20Nose.mp4" },
+            { title: "S03E14 - Junk Yard Dog", season: "Season 3", filename: "Knight Rider S03E14 Junk Yard Dog.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E14%20Junk%20Yard%20Dog.mp4" },
+            { title: "S03E15 - Buy Out", season: "Season 3", filename: "Knight Rider S03E15 Buy Out.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E15%20Buy%20Out.mp4" },
+            { title: "S03E17 - The Nineteenth Hole", season: "Season 3", filename: "Knight Rider S03E17 The Nineteenth Hole.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E17%20The%20Nineteenth%20Hole.mp4" },
+            { title: "S03E18 - Knight & Knerd", season: "Season 3", filename: "Knight Rider S03E18 Knight & Knerd.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E18%20Knight%20%26%20Knerd.mp4" },
+            { title: "S03E19 - Ten Wheel Trouble", season: "Season 3", filename: "Knight Rider S03E19 Ten Wheel Trouble.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E19%20Ten%20Wheel%20Trouble.mp4" },
+            { title: "S03E20 - Knight in Retreat", season: "Season 3", filename: "Knight Rider S03E20 Knight in Retreat.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E20%20Knight%20in%20Retreat.mp4" },
+            { title: "S03E21 - Knight Strike", season: "Season 3", filename: "Knight Rider S03E21 Knight Strike.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E21%20Knight%20Strike.mp4" },
+            { title: "S03E22 - Circus Knights", season: "Season 3", filename: "Knight Rider S03E22 Circus Knights.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S03E22%20Circus%20Knights.mp4" },
+            { title: "S04E01-E02 - Knight of the Juggernaut", season: "Season 4", filename: "Knight Rider S04E01-E02 Knight of the Juggernaut.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E01-E02%20Knight%20of%20the%20Juggernaut.mp4" },
+            { title: "S04E03 - KITTnap", season: "Season 4", filename: "Knight Rider S04E03 KITTnap.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E03%20KITTnap.mp4" },
+            { title: "S04E04 - Sky Knight", season: "Season 4", filename: "Knight Rider S04E04 Sky Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E04%20Sky%20Knight.mp4" },
+            { title: "S04E05 - Burial Ground", season: "Season 4", filename: "Knight Rider S04E05 Burial Ground.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E05%20Burial%20Ground.mp4" },
+            { title: "S04E06 - The Wrong Crowd", season: "Season 4", filename: "Knight Rider S04E06 The Wrong Crowd.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E06%20The%20Wrong%20Crowd.mp4" },
+            { title: "S04E07 - Knight Sting", season: "Season 4", filename: "Knight Rider S04E07 Knight Sting.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E07%20Knight%20Sting.mp4" },
+            { title: "S04E08 - Many Happy Returns", season: "Season 4", filename: "Knight Rider S04E08 Many Happy Returns.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E08%20Many%20Happy%20Returns.mp4" },
+            { title: "S04E09 - Knight Racer", season: "Season 4", filename: "Knight Rider S04E09 Knight Racer.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E09%20Knight%20Racer.mp4" },
+            { title: "S04E10 - Knight Behind Bars", season: "Season 4", filename: "Knight Rider S04E10 Knight Behind Bars.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E10%20Knight%20Behind%20Bars.mp4" },
+            { title: "S04E11 - Knight Song", season: "Season 4", filename: "Knight Rider S04E11 Knight Song.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E11%20Knight%20Song.mp4" },
+            { title: "S04E12 - The Scent of Roses", season: "Season 4", filename: "Knight Rider S04E12 The Scent of Roses.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E12%20The%20Scent%20of%20Roses.mp4" },
+            { title: "S04E13 - Killer K.I.T.T.", season: "Season 4", filename: "Knight Rider S04E13 Killer K.I.T.T..mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E13%20Killer%20K.I.T.T..mp4" },
+            { title: "S04E14 - Out of the Woods", season: "Season 4", filename: "Knight Rider S04E14 Out of the Woods.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E14%20Out%20of%20the%20Woods.mp4" },
+            { title: "S04E15 - Deadly Knightshade", season: "Season 4", filename: "Knight Rider S04E15 Deadly Knightshade.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E15%20Deadly%20Knightshade.mp4" },
+            { title: "S04E16 - Redemption of a Champion", season: "Season 4", filename: "Knight Rider S04E16 Redemption of a Champion.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E16%20Redemption%20of%20a%20Champion.mp4" },
+            { title: "S04E17 - Knight of a Thousand Devils", season: "Season 4", filename: "Knight Rider S04E17 Knight of a Thousand Devils.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E17%20Knight%20of%20a%20Thousand%20Devils.mp4" },
+            { title: "S04E18 - Hills of Fire", season: "Season 4", filename: "Knight Rider S04E18 Hills of Fire.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E18%20Hills%20of%20Fire.mp4" },
+            { title: "S04E19 - Knight Flight to Freedom", season: "Season 4", filename: "Knight Rider S04E19 Knight Flight to Freedom.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E19%20Knight%20Flight%20to%20Freedom.mp4" },
+            { title: "S04E20 - Fright Knight", season: "Season 4", filename: "Knight Rider S04E20 Fright Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E20%20Fright%20Knight.mp4" },
+            { title: "S04E21 - Knight of the Rising Sun", season: "Season 4", filename: "Knight Rider S04E21 Knight of the Rising Sun.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E21%20Knight%20of%20the%20Rising%20Sun.mp4" },
+            { title: "S04E22 - Voo Doo Knight", season: "Season 4", filename: "Knight Rider S04E22 Voo Doo Knight.mp4", video: "https://archive.org/download/knight-rider-tv-series-1982-1986-complete-series-tv-pg/Knight%20Rider%20S04E22%20Voo%20Doo%20Knight.mp4" },
+            ],
+            "The Dukes of Hazzard": [
+            { title: "S04E15 - The Sound Of Music Hazzard Style", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E15_The Sound Of Music Hazzard Style.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-15-the-sound-of-music-hazzard-style/The.Dukes.Of.Hazzard_S04E15_The%20Sound%20Of%20Music%20Hazzard%20Style.mp4" },
+            { title: "S01E01 - One Armed Bandits", season: "Season 1", filename: "The Dukes of Hazzard S01E01 One Armed Bandits.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-01-one-armed-bandits/The%20Dukes%20of%20Hazzard%20S01E01%20One%20Armed%20Bandits.mp4" },
+            { title: "S02E06 - The Ghost Of General Lee", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E06_The Ghost Of General Lee.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-06-the-ghost-of-general-lee/The.Dukes.Of.Hazzard_S02E06_The%20Ghost%20Of%20General%20Lee.mp4" },
+            { title: "S04E16 - Shine On Hazzard Moon", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E16_Shine On Hazzard Moon.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-16-shine-on-hazzard-moon/The.Dukes.Of.Hazzard_S04E16_Shine%20On%20Hazzard%20Moon.mp4" },
+            { title: "S02E08 - Hazzard Connection", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E08_Hazzard Connection.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-08-hazzard-connection/The.Dukes.Of.Hazzard_S02E08_Hazzard%20Connection.mp4" },
+            { title: "S03E21 - The Great Hazzard Hijack", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E21_The Great Hazzard Hijack.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-21-the-great-hazzard-hijack/The.Dukes.Of.Hazzard_S03E21_The%20Great%20Hazzard%20Hijack.mp4" },
+            { title: "S04E22 - Birds Gotta Fly", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E22_Birds Gotta Fly.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-22-birds-gotta-fly/The.Dukes.Of.Hazzard_S04E22_Birds%20Gotta%20Fly.mp4" },
+            { title: "S03E22 - The Hack Of Hazzard", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E22_The Hack Of Hazzard.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-22-the-hack-of-hazzard/The.Dukes.Of.Hazzard_S03E22_The%20Hack%20Of%20Hazzard.mp4" },
+            { title: "S04E21 - New Deputy In Town", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E21_New Deputy In Town.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-21-new-deputy-in-town/The.Dukes.Of.Hazzard_S04E21_New%20Deputy%20In%20Town.mp4" },
+            { title: "S04E05 - The Fugitive", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E05_The Fugitive.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-05-the-fugitive/The.Dukes.Of.Hazzard_S04E05_The%20Fugitive.mp4" },
+            { title: "S01E06 - Swamp Molly", season: "Season 1", filename: "The Dukes of Hazzard S01E06  Swamp Molly.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-06-swamp-molly/The%20Dukes%20of%20Hazzard%20S01E06%20%20Swamp%20Molly.mp4" },
+            { title: "S03E16 - To Catch A Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E16_To Catch A Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-16-to-catch-a-duke/The.Dukes.Of.Hazzard_S03E16_To%20Catch%20A%20Duke.mp4" },
+            { title: "S02E03 - The Rustlers", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E03_The Rustlers.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-03-the-rustlers/The.Dukes.Of.Hazzard_S02E03_The%20Rustlers.mp4" },
+            { title: "S04E13 - Hughie Hogg Strikes Again", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E13_Hughie Hogg Strikes Again.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-13-hughie-hogg-strikes-again/The.Dukes.Of.Hazzard_S04E13_Hughie%20Hogg%20Strikes%20Again.mp4" },
+            { title: "S04E14 - The Dukescam Scam", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E14_The Dukescam Scam.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-14-the-dukescam-scam/The.Dukes.Of.Hazzard_S04E14_The%20Dukescam%20Scam.mp4" },
+            { title: "S02E17 - Officer Daisy Duke", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E17_Officer Daisy Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-17-officer-daisy-duke/The.Dukes.Of.Hazzard_S02E17_Officer%20Daisy%20Duke.mp4" },
+            { title: "S04E27 - Dukes In Danger", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E27_Dukes In Danger.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-27-dukes-in-danger/The.Dukes.Of.Hazzard_S04E27_Dukes%20In%20Danger.mp4" },
+            { title: "S02E14 - The Runaway", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E14_The Runaway.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-14-the-runaway/The.Dukes.Of.Hazzard_S02E14_The%20Runaway.mp4" },
+            { title: "S04E04 - Coltrane Vs. Duke", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E04_Coltrane vs. Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-04-coltrane-vs.-duke/The.Dukes.Of.Hazzard_S04E04_Coltrane%20vs.%20Duke.mp4" },
+            { title: "S04E08 - 10 Million Dollar Sheriff Part 1", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E08_10 Million Dollar Sheriff Part 1.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-08-10-million-dollar-sheriff-part-1/The.Dukes.Of.Hazzard_S04E08_10%20Million%20Dollar%20Sheriff%20Part%201.mp4" },
+            { title: "S03E06 - The Late J. D. Hogg", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E06_The Late J.D. Hogg.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-06-the-late-j.-d.-hogg/The.Dukes.Of.Hazzard_S03E06_The%20Late%20J.D.%20Hogg.mp4" },
+            { title: "S04E10 - Trouble At Cooter's", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E10_Trouble At Cooter's.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-10-trouble-at-cooters/The.Dukes.Of.Hazzard_S04E10_Trouble%20At%20Cooter's.mp4" },
+            { title: "S03E08 - Baa, Baa White Sheep", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E08_Baa, Baa White Sheep.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-08-baa-baa-white-sheep/The.Dukes.Of.Hazzard_S03E08_Baa%2C%20Baa%20White%20Sheep.mp4" },
+            { title: "S02E23 - Southern Comfurts", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E23_Southern Comfurts.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-23-southern-comfurts/The.Dukes.Of.Hazzard_S02E23_Southern%20Comfurts.mp4" },
+            { title: "S01E03 - Mary Kaye's Baby", season: "Season 1", filename: "The Dukes of Hazzard S01E03 Mary Kaye's Baby.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-03-mary-kayes-baby/The%20Dukes%20of%20Hazzard%20S01E03%20Mary%20Kaye's%20Baby.mp4" },
+            { title: "S01E12 - Route 7-11", season: "Season 1", filename: "The Dukes of Hazzard S01E12  Route 7-11.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-12-route-7-11/The%20Dukes%20of%20Hazzard%20S01E12%20%20Route%207-11.mp4" },
+            { title: "S02E20 - Return Of The Ridge Raiders", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E20_Return Of The Ridge Raiders.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-20-return-of-the-ridge-raiders/The.Dukes.Of.Hazzard_S02E20_Return%20Of%20The%20Ridge%20Raiders.mp4" },
+            { title: "S02E10 - Granny Annie", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E10_Granny Annie.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-10-granny-annie/The.Dukes.Of.Hazzard_S02E10_Granny%20Annie.mp4" },
+            { title: "S03E23 - The Canterbury Crock", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E23_The Canterbury Crock.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-23-the-canterbury-crock/The.Dukes.Of.Hazzard_S03E23_The%20Canterbury%20Crock.mp4" },
+            { title: "S03E09 - Mrs. Rosco P. Coltrane", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E09_Mrs.Rosco P. Coltrane.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-09-mrs.-rosco-p.-coltrane/The.Dukes.Of.Hazzard_S03E09_Mrs.Rosco%20P.%20Coltrane.mp4" },
+            { title: "S03E20 - Bye, Bye Boss", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E20_Bye, Bye Boss.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-20-bye-bye-boss/The.Dukes.Of.Hazzard_S03E20_Bye%2C%20Bye%20Boss.mp4" },
+            { title: "S01E05 - High Octane", season: "Season 1", filename: "The Dukes of Hazzard S01E05  High Octane.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-05-high-octane/The%20Dukes%20of%20Hazzard%20S01E05%20%20High%20Octane.mp4" },
+            { title: "S03E19 - The Return Of Hughie Hogg", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E19_The Return Of Hughie Hogg.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-19-the-return-of-hughie-hogg/The.Dukes.Of.Hazzard_S03E19_The%20Return%20Of%20Hughie%20Hogg.mp4" },
+            { title: "S01E08 - The Big Heist", season: "Season 1", filename: "The Dukes of Hazzard S01E08  The Big Heist.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-08-the-big-heist/The%20Dukes%20of%20Hazzard%20S01E08%20%20The%20Big%20Heist.mp4" },
+            { title: "S04E06 - The Great Bank Robbery", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E06_The Great Bank Robbery.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-06-the-great-bank-robbery/The.Dukes.Of.Hazzard_S04E06_The%20Great%20Bank%20Robbery.mp4" },
+            { title: "S01E13 - Double Sting", season: "Season 1", filename: "The Dukes of Hazzard S01E13  Double Sting.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-13-double-sting/The%20Dukes%20of%20Hazzard%20S01E13%20%20Double%20Sting.mp4" },
+            { title: "S02E01 - Days Of Shine And Roses", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E01_Days Of Shine And Roses.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-01-days-of-shine-and-roses/The.Dukes.Of.Hazzard_S02E01_Days%20Of%20Shine%20And%20Roses.mp4" },
+            { title: "S01E02 - Daisy's Song", season: "Season 1", filename: "The Dukes of Hazzard S01E02 Daisy's Song.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-02-daisys-song/The%20Dukes%20of%20Hazzard%20S01E02%20Daisy's%20Song.mp4" },
+            { title: "S02E11 - People's Choice", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E11_People's Choice.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-11-peoples-choice/The.Dukes.Of.Hazzard_S02E11_People's%20Choice.mp4" },
+            { title: "S03E12 - State Of The Country", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E12_State Of The Country.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-12-state-of-the-country/The.Dukes.Of.Hazzard_S03E12_State%20Of%20The%20Country.mp4" },
+            { title: "S03E02 - Carnival Of Thrills Part 2", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E02_Carnival Of Thrills Part 2.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-02-carnival-of-thrills-part-2/The.Dukes.Of.Hazzard_S03E02_Carnival%20Of%20Thrills%20Part%202.mp4" },
+            { title: "S04E17 - Pin The Tail On The Dukes", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E17_Pin The Tail On The Dukes.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-17-pin-the-tail-on-the-dukes/The.Dukes.Of.Hazzard_S04E17_Pin%20The%20Tail%20On%20The%20Dukes.mp4" },
+            { title: "S02E04 - The Meeting", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E04_The Meeting.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-04-the-meeting/The.Dukes.Of.Hazzard_S02E04_The%20Meeting.mp4" },
+            { title: "S04E18 - Miz Tisdale On The Lam", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E18_Miz Tisdale On The Lam.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-18-miz-tisdale-on-the-lam/The.Dukes.Of.Hazzard_S04E18_Miz%20Tisdale%20On%20The%20Lam.mp4" },
+            { title: "S02E09 - Witness For The Persecution", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E09_Witness For The Persecution.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-09-witness-for-the-persecution/The.Dukes.Of.Hazzard_S02E09_Witness%20For%20The%20Persecution.mp4" },
+            { title: "S02E22 - R.I.P. Henry Flatt", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E22_R.I.P. Henry Flatt.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-22-r.-i.-p.-henry-flatt/The.Dukes.Of.Hazzard_S02E22_R.I.P.%20Henry%20Flatt.mp4" },
+            { title: "S02E21 - Mason Dixon's Girls", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E21_Mason Dixon's Girls.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-21-mason-dixons-girls/The.Dukes.Of.Hazzard_S02E21_Mason%20Dixon's%20Girls.mp4" },
+            { title: "S02E15 - Follow That Still", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E15_Follow That Still.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-15-follow-that-still/The.Dukes.Of.Hazzard_S02E15_Follow%20That%20Still.mp4" },
+            { title: "S04E09 - 10 Million Dollar Sheriff Part 2", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E09_10 Million Dollar Sheriff Part 2.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-09-10-million-dollar-sheriff-part-2/The.Dukes.Of.Hazzard_S04E09_10%20Million%20Dollar%20Sheriff%20Part%202.mp4" },
+            { title: "S03E05 - And In This Corner, Luke Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E05_And In This Corner, Luke Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-05-and-in-this-corner-luke-duke/The.Dukes.Of.Hazzard_S03E05_And%20In%20This%20Corner%2C%20Luke%20Duke.mp4" },
+            { title: "S04E11 - Goodbye, General Lee", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E11_Goodbye, General Lee.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-11-goodbye-general-lee/The.Dukes.Of.Hazzard_S04E11_Goodbye%2C%20General%20Lee.mp4" },
+            { title: "S04E26 - The Law And Jesse Duke", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E26_The Law And Jesse Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-26-the-law-and-jesse-duke/The.Dukes.Of.Hazzard_S04E26_The%20Law%20And%20Jesse%20Duke.mp4" },
+            { title: "S02E02 - Gold Fever", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E02_Gold Fever.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-02-gold-fever/The.Dukes.Of.Hazzard_S02E02_Gold%20Fever.mp4" },
+            { title: "S04E12 - Cletus Falls In Love", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E12_Cletus Falls In Love.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-12-cletus-falls-in-love/The.Dukes.Of.Hazzard_S04E12_Cletus%20Falls%20In%20Love.mp4" },
+            { title: "S04E25 - Share And Share Alike", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E25_Share And Share Alike.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-25-share-and-share-alike/The.Dukes.Of.Hazzard_S04E25_Share%20And%20Share%20Alike.mp4" },
+            { title: "S04E20 - Dear Diary", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E20_Dear Diary.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-20-dear-diary/The.Dukes.Of.Hazzard_S04E20_Dear%20Diary.mp4" },
+            { title: "S04E01 - Mrs. Daisy Hogg", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E01_Mrs. Daisy Hogg.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-01-mrs.-daisy-hogg/The.Dukes.Of.Hazzard_S04E01_Mrs.%20Daisy%20Hogg.mp4" },
+            { title: "S02E13 - Duke Of Duke", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E13_Duke Of Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-13-duke-of-duke/The.Dukes.Of.Hazzard_S02E13_Duke%20Of%20Duke.mp4" },
+            { title: "S04E02 - Double Dukes", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E02_Double Dukes.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-02-double-dukes/The.Dukes.Of.Hazzard_S04E02_Double%20Dukes.mp4" },
+            { title: "S03E11 - Good Neighbors Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E11_Good Neighbors Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-11-good-neighbors-duke/The.Dukes.Of.Hazzard_S03E11_Good%20Neighbors%20Duke.mp4" },
+            { title: "S02E05 - Road Pirates", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E05_Road Pirates.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-05-road-pirates/The.Dukes.Of.Hazzard_S02E05_Road%20Pirates.mp4" },
+            { title: "S04E19 - Nothin' But The Truth", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E19_Nothin' But The Truth.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-19-nothin-but-the-truth/The.Dukes.Of.Hazzard_S04E19_Nothin'%20But%20The%20Truth.mp4" },
+            { title: "S01E09 - Limo One Is Missing", season: "Season 1", filename: "The Dukes of Hazzard S01E09  Limo One Is Missing.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-09-limo-one-is-missing/The%20Dukes%20of%20Hazzard%20S01E09%20%20Limo%20One%20Is%20Missing.mp4" },
+            { title: "S03E03 - Enos Strate To The Top", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E03_Enos Strate To The Top.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-03-enos-strate-to-the-top/The.Dukes.Of.Hazzard_S03E03_Enos%20Strate%20To%20The%20Top.mp4" },
+            { title: "S03E10 - The Great Santa Claus Chase", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E10_The Great Santa Claus Chase.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-10-the-great-santa-claus-chase/The.Dukes.Of.Hazzard_S03E10_The%20Great%20Santa%20Claus%20Chase.mp4" },
+            { title: "S03E14 - Duke VS. Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E14_Duke VS. Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-14-duke-vs.-duke/The.Dukes.Of.Hazzard_S03E14_Duke%20VS.%20Duke.mp4" },
+            { title: "S02E18 - Find Loretta Lynn", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E18_Find Loretta Lynn.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-18-find-loretta-lynn/The.Dukes.Of.Hazzard_S02E18_Find%20Loretta%20Lynn.mp4" },
+            { title: "S02E07 - Dukes Meet Cale Yarborough", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E07_Dukes Meet Cale Yarborough.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-07-dukes-meet-cale-yarborough/The.Dukes.Of.Hazzard_S02E07_Dukes%20Meet%20Cale%20Yarborough.mp4" },
+            { title: "S01E04 - Repo Men", season: "Season 1", filename: "The Dukes of Hazzard S01E04  Repo Men.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-04-repo-men/The%20Dukes%20of%20Hazzard%20S01E04%20%20Repo%20Men.mp4" },
+            { title: "S03E18 - By Line, Daisy Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E18_By-Line, Daisy Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-18-by-line-daisy-duke/The.Dukes.Of.Hazzard_S03E18_By-Line%2C%20Daisy%20Duke.mp4" },
+            { title: "S01E07 - Luke's Love Story", season: "Season 1", filename: "The Dukes of Hazzard S01E07  Luke's Love Story.mp4", video: "https://archive.org/download/the-dukes-of-hazzard-s-01-e-07-lukes-love-story/The%20Dukes%20of%20Hazzard%20S01E07%20%20Luke's%20Love%20Story.mp4" },
+            { title: "S03E17 - Along Came A Duke", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E17_Along Came A Duke.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-17-along-came-a-duke/The.Dukes.Of.Hazzard_S03E17_Along%20Came%20A%20Duke.mp4" },
+            { title: "S03E01 - Carnival Of Thrills Part 1", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E01_Carnival Of Thrills Part 1.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-01-carnival-of-thrills-part-1/The.Dukes.Of.Hazzard_S03E01_Carnival%20Of%20Thrills%20Part%201.mp4" },
+            { title: "S02E19 - Jude Emery", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E19_Jude Emery.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-19-jude-emery/The.Dukes.Of.Hazzard_S02E19_Jude%20Emery.mp4" },
+            { title: "S02E16 - Treasure Of Hazzard", season: "Season 2", filename: "The.Dukes.Of.Hazzard_S02E16_Treasure Of Hazzard.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-02-e-16-treasure-of-hazzard/The.Dukes.Of.Hazzard_S02E16_Treasure%20Of%20Hazzard.mp4" },
+            { title: "S04E24 - Miss Tri Counties", season: "Season 4", filename: "The.Dukes.Of.Hazzard_S04E24_Miss Tri-Counties.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-04-e-24-miss-tri-counties/The.Dukes.Of.Hazzard_S04E24_Miss%20Tri-Counties.mp4" },
+            { title: "S03E15 - My Son, Bo Hogg", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E15_My Son, Bo Hogg.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-15-my-son-bo-hogg/The.Dukes.Of.Hazzard_S03E15_My%20Son%2C%20Bo%20Hogg.mp4" },
+            { title: "S03E07 - Uncle Boss", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E07_Uncle Boss.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-07-uncle-boss/The.Dukes.Of.Hazzard_S03E07_Uncle%20Boss.mp4" },
+            { title: "S03E13 - The Legacy", season: "Season 3", filename: "The.Dukes.Of.Hazzard_S03E13_The Legacy.mp4", video: "https://archive.org/download/the.-dukes.-of.-hazzard-s-03-e-13-the-legacy/The.Dukes.Of.Hazzard_S03E13_The%20Legacy.mp4" },
+            ],
+            "Miami Vice": [
+            { title: "S01E01-E02 - Brother's Keeper (Pilot)", season: "Season 1", filename: "MIAMI VICE - S01 E01-E02 - Brother's Keeper, PILOT (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-01-e-02-brothers-keeper-pilot-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E01-E02%20-%20Brother's%20Keeper%2C%20PILOT%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E03 - Heart of Darkness", season: "Season 1", filename: "MIAMI VICE - S01 E03 - Heart of Darkness (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-03-heart-of-darkness-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E03%20-%20Heart%20of%20Darkness%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E04 - Cool Runnin'", season: "Season 1", filename: "MIAMI VICE - S01 E04 - Cool Runnin' (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-04-cool-runnin-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E04%20-%20Cool%20Runnin'%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E05 - The Hit List", season: "Season 1", filename: "MIAMI VICE - S01 E05 - The Hit List (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-05-the-hit-list-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E05%20-%20The%20Hit%20List%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E06 - Calderone's Demise", season: "Season 1", filename: "MIAMI VICE - S01 E06 - Calderone's Demise (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-06-calderones-demise-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E06%20-%20Calderone's%20Demise%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E07 - One Eyed Jack", season: "Season 1", filename: "MIAMI VICE - S01 E07 - One Eyed Jack (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-07-one-eyed-jack-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E07%20-%20One%20Eyed%20Jack%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E08 - No Exit", season: "Season 1", filename: "MIAMI VICE - S01 E08 - No Exit a.k.a. Three-Eyed Turtle (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-08-no-exit-a.k.a.-three-eyed-turtle-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E08%20-%20No%20Exit%20a.k.a.%20Three-Eyed%20Turtle%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E09 - The Great McCarthy", season: "Season 1", filename: "MIAMI VICE - S01 E09 - The Great McCarthy (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-09-the-great-mc-carthy-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E09%20-%20The%20Great%20McCarthy%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S01E10 - Glades", season: "Season 1", filename: "MIAMI VICE - S01 E10 - Glades (720p BluRay - ENG x2 Audio).mp4", video: "https://archive.org/download/miami-vice-s-01-e-10-glades-720p-blu-ray-eng-x-2-audio/MIAMI%20VICE%20-%20S01%20E10%20-%20Glades%20(720p%20BluRay%20-%20ENG%20x2%20Audio).mp4" },
+            { title: "S03E01", season: "Season 3", filename: "MIAMI VICE S03E01.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E01.mp4" },
+            { title: "S03E02", season: "Season 3", filename: "MIAMI VICE S03E02.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E02.mp4" },
+            { title: "S03E03", season: "Season 3", filename: "MIAMI VICE S03E03.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E03.mp4" },
+            { title: "S03E04", season: "Season 3", filename: "MIAMI VICE S03E04.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E04.mp4" },
+            { title: "S03E05", season: "Season 3", filename: "MIAMI VICE S03E05.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E05.mp4" },
+            { title: "S03E06", season: "Season 3", filename: "MIAMI VICE S03E06.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E06.mp4" },
+            { title: "S03E07", season: "Season 3", filename: "MIAMI VICE S03E07.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E07.mp4" },
+            { title: "S03E08", season: "Season 3", filename: "MIAMI VICE S03E08.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E08.mp4" },
+            { title: "S03E09", season: "Season 3", filename: "MIAMI VICE S03E09.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E09.mp4" },
+            { title: "S03E10", season: "Season 3", filename: "MIAMI VICE S03E10.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E10.mp4" },
+            { title: "S03E11", season: "Season 3", filename: "MIAMI VICE S03E11.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E11.mp4" },
+            { title: "S03E12", season: "Season 3", filename: "MIAMI VICE S03E12.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E12.mp4" },
+            { title: "S03E13", season: "Season 3", filename: "MIAMI VICE S03E13.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E13.mp4" },
+            { title: "S03E14", season: "Season 3", filename: "MIAMI VICE S03E14.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E14.mp4" },
+            { title: "S03E15", season: "Season 3", filename: "MIAMI VICE S03E15.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E15.mp4" },
+            { title: "S03E16", season: "Season 3", filename: "MIAMI VICE S03E16.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E16.mp4" },
+            { title: "S03E17", season: "Season 3", filename: "MIAMI VICE S03E17.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E17.mp4" },
+            { title: "S03E18", season: "Season 3", filename: "MIAMI VICE S03E18.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E18.mp4" },
+            { title: "S03E19", season: "Season 3", filename: "MIAMI VICE S03E19.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E19.mp4" },
+            { title: "S03E20", season: "Season 3", filename: "MIAMI VICE S03E20.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E20.mp4" },
+            { title: "S03E21", season: "Season 3", filename: "MIAMI VICE S03E21.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E21.mp4" },
+            { title: "S03E22", season: "Season 3", filename: "MIAMI VICE S03E22.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E22.mp4" },
+            { title: "S03E23", season: "Season 3", filename: "MIAMI VICE S03E23.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E23.mp4" },
+            { title: "S03E24", season: "Season 3", filename: "MIAMI VICE S03E24.mp4", video: "https://archive.org/download/miami-vice-s03-subs-spanish-portuguese-and-english/MIAMI%20VICE%20S03E24.mp4" },
+            { title: "S04E07 - Missing Hours", season: "Season 4", filename: "Miami Vice S04E07 Missing Hours.mp4", video: "https://archive.org/download/miami-vice-s-04-e-07-missing-hours/Miami%20Vice%20S04E07%20Missing%20Hours.mp4" },
+            ],
+            "Baretta": [
+            { title: "S01E01 - He'll Never See Daylight", season: "Season 1", filename: "baretta_dvd1_1975.mp4", video: "https://archive.org/download/baretta_dvd1_1975/baretta_dvd1_1975.mp4" },
+            { title: "S01E02 - The 5 1/2 Pound Junkie", season: "Season 1", filename: "baretta_dvd1_19751.mp4", video: "https://archive.org/download/baretta_dvd1_1975/baretta_dvd1_19751.mp4" },
+            { title: "S01E03 - Woman in the Harbor", season: "Season 1", filename: "baretta_dvd1_19752.mp4", video: "https://archive.org/download/baretta_dvd1_1975/baretta_dvd1_19752.mp4" },
+            { title: "S01E04 - If You Can't Pay the Price", season: "Season 1", filename: "baretta_dvd1_19754.mp4", video: "https://archive.org/download/baretta_dvd1_1975/baretta_dvd1_19754.mp4" },
+            { title: "S01E05 - The Half-Million Dollar Baby", season: "Season 1", filename: "baretta_dvd2_1975.mp4", video: "https://archive.org/download/baretta_dvd2_1975/baretta_dvd2_1975.mp4" },
+            { title: "S01E06 - Ragtime Billy Peaches", season: "Season 1", filename: "baretta_dvd2_19751.mp4", video: "https://archive.org/download/baretta_dvd2_1975/baretta_dvd2_19751.mp4" },
+            { title: "S01E07 - The Coppelli Oath", season: "Season 1", filename: "baretta_dvd2_19752.mp4", video: "https://archive.org/download/baretta_dvd2_1975/baretta_dvd2_19752.mp4" },
+            { title: "S01E08 - Walk Like You Talk", season: "Season 1", filename: "baretta_dvd2_19754.mp4", video: "https://archive.org/download/baretta_dvd2_1975/baretta_dvd2_19754.mp4" },
+            { title: "S02E01 - The Goodbye Orphan Annie Blues", season: "Season 2", filename: "Baretta S02E01 The Goodbye Orphan Annie Blues.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E01%20The%20Goodbye%20Orphan%20Annie%20Blues.mp4" },
+            { title: "S02E02 - The Glory Game", season: "Season 2", filename: "Baretta S02E02 The Glory Game.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E02%20The%20Glory%20Game.mp4" },
+            { title: "S02E03 - On the Road", season: "Season 2", filename: "Baretta S02E03 On the Road.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E03%20On%20the%20Road.mp4" },
+            { title: "S02E04 - Nobody in a Nothing Place", season: "Season 2", filename: "Baretta S02E04 Nobody in a Nothing Place.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E04%20Nobody%20in%20a%20Nothing%20Place.mp4" },
+            { title: "S02E05 - The Fire Man", season: "Season 2", filename: "Baretta S02E05 The Fire Man.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E05%20The%20Fire%20Man.mp4" },
+            { title: "S02E06 - Double Image", season: "Season 2", filename: "Baretta S02E06 Double Image.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E06%20Double%20Image.mp4" },
+            { title: "S02E07 - Photography by John Doe", season: "Season 2", filename: "Baretta S02E07 Photography by John Doe.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E07%20Photography%20by%20John%20Doe.mp4" },
+            { title: "S02E08 - Set-Up City", season: "Season 2", filename: "Baretta S02E08 Set-Up City.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E08%20Set-Up%20City.mp4" },
+            { title: "S02E09 - A Bite of the Apple", season: "Season 2", filename: "Baretta S02E09 A Bite of the Apple.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E09%20A%20Bite%20of%20the%20Apple.mp4" },
+            { title: "S02E10 - When Dues Come Down", season: "Season 2", filename: "Baretta S02E10 When Dues Come Down.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E10%20When%20Dues%20Come%20Down.mp4" },
+            { title: "S02E11 - The Big Hand's on Trouble", season: "Season 2", filename: "Baretta S02E11 The Big Hand's on Trouble.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E11%20The%20Big%20Hand's%20on%20Trouble.mp4" },
+            { title: "S02E12 - Count the Days I'm Gone", season: "Season 2", filename: "Baretta S02E12 Count the Days I'm Gone.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E12%20Count%20the%20Days%20I'm%20Gone.mp4" },
+            { title: "S02E13 - Sharper Than a Serpent's Tooth", season: "Season 2", filename: "Baretta S02E13 Sharper Than a Serpent's Tooth.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E13%20Sharper%20Than%20a%20Serpent's%20Tooth.mp4" },
+            { title: "S02E14 - The Left Hand of the Devil", season: "Season 2", filename: "Baretta S02E14 The Left Hand of the Devil.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E14%20The%20Left%20Hand%20of%20the%20Devil.mp4" },
+            { title: "S02E15 - Murder for Me", season: "Season 2", filename: "Baretta S02E15 Murder for Me.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E15%20Murder%20for%20Me.mp4" },
+            { title: "S02E16 - Pay or Die", season: "Season 2", filename: "Baretta S02E16 Pay or Die.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E16%20Pay%20or%20Die.mp4" },
+            { title: "S02E17 - The Blood Bond", season: "Season 2", filename: "Baretta S02E17 The Blood Bond.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E17%20The%20Blood%20Bond.mp4" },
+            { title: "S02E18 - The Dippers", season: "Season 2", filename: "Baretta S02E18 The Dippers.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E18%20The%20Dippers.mp4" },
+            { title: "S02E19 - Dead Man Out", season: "Season 2", filename: "Baretta S02E19 Dead Man Out.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E19%20Dead%20Man%20Out.mp4" },
+            { title: "S02E20 - Death on the Run", season: "Season 2", filename: "Baretta S02E20 Death on the Run.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E20%20Death%20on%20the%20Run.mp4" },
+            { title: "S02E21 - Aggie", season: "Season 2", filename: "Baretta S02E21 Aggie.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E21%20Aggie.mp4" },
+            { title: "S02E22 - And Down Will Come Baby", season: "Season 2", filename: "Baretta S02E22 And Down Will Come Baby.mp4", video: "https://archive.org/download/baretta-s-02-e-11-the-big-hands-on-trouble/Baretta%20S02E22%20And%20Down%20Will%20Come%20Baby.mp4" },
+            ],
+        };
+
+        function getCurrentEpisodes() {
+            return seriesEpisodes[activeSeries.title] || [];
+        }
 
         let activeSeries = seriesList[0];
-        let activeEpisode = episodesList[0];
+        let activeEpisode = null;
         let currentSeasonFilter = 'All';
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -375,8 +614,31 @@
             document.getElementById('viewHeaderSubtitle').innerText = `Select your preferred season and episode to start instant playback.`;
             document.getElementById('headerSearchContainer').innerHTML = `<input type="text" id="episodeSearchInput" oninput="filterEpisodes(this.value)" placeholder="Search episodes..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">`;
 
+            renderSeasonFilters();
+            currentSeasonFilter = 'All';
             filterSeason('All');
-            selectEpisode(episodesList[0]);
+            const eps = getCurrentEpisodes();
+            if (eps.length > 0) {
+                selectEpisode(eps[0]);
+            }
+        }
+
+        function renderSeasonFilters() {
+            const eps = getCurrentEpisodes();
+            const container = document.getElementById('seasonFiltersContainer');
+            container.innerHTML = '';
+
+            const seasons = ['All'].concat([...new Set(eps.map(ep => ep.season))].sort((a, b) => parseInt(a.replace(/[^\d]/g, '')) - parseInt(b.replace(/[^\d]/g, ''))));
+            seasons.forEach(season => {
+                const btn = document.createElement('button');
+                btn.className = season === 'All'
+                    ? 'season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-pink-600 text-white transition-all'
+                    : 'season-filter-btn px-3 py-1 rounded-lg text-xs font-mono font-bold bg-[#120a22] text-slate-400 border border-pink-950 hover:text-white transition-all';
+                btn.setAttribute('data-season', season);
+                btn.textContent = season === 'All' ? 'All Episodes' : season;
+                btn.onclick = () => filterSeason(season);
+                container.appendChild(btn);
+            });
         }
 
         function showMainCatalog() {
@@ -410,9 +672,10 @@
                 }
             });
 
-            const filtered = season === 'All' 
-                ? episodesList 
-                : episodesList.filter(ep => ep.season === season);
+            const sourceList = getCurrentEpisodes();
+            const filtered = season === 'All'
+                ? sourceList
+                : sourceList.filter(ep => ep.season === season);
             
             renderEpisodeList(filtered);
         }
@@ -454,9 +717,10 @@
 
         function filterEpisodes(query) {
             const q = query.toLowerCase();
-            const sourceList = currentSeasonFilter === 'All' 
-                ? episodesList 
-                : episodesList.filter(ep => ep.season === currentSeasonFilter);
+            const all = getCurrentEpisodes();
+            const sourceList = currentSeasonFilter === 'All'
+                ? all
+                : all.filter(ep => ep.season === currentSeasonFilter);
 
             const filtered = sourceList.filter(ep => ep.title.toLowerCase().includes(q) || ep.filename.toLowerCase().includes(q));
             renderEpisodeList(filtered);
@@ -477,9 +741,9 @@
             video.load();
             video.play().catch(e => console.log("Autoplay waiting for user interaction:", e));
 
-            const currentFiltered = currentSeasonFilter === 'All' 
-                ? episodesList 
-                : episodesList.filter(e => e.season === currentSeasonFilter);
+            const currentFiltered = currentSeasonFilter === 'All'
+                ? getCurrentEpisodes()
+                : getCurrentEpisodes().filter(e => e.season === currentSeasonFilter);
             renderEpisodeList(currentFiltered);
         }
     </script>
