@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NEXUS MUSIC — Rock & Country Catalog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>🎸 NEXUS MUSIC ENGINE • TOP ARTISTS (1970–2010)</h1>
+    <p>DD Daniel Dudek ★ Lead Architect</p>
+</div>
+
+<!-- MUSIC CATALOG -->
+<div class="catalog">
+
+    <!-- CORE ARTISTS -->
+    <h2>Core Artists</h2>
+
+    <div class="item">1970–2010 → <strong>Van Halen</strong> • Rock Catalog</div>
+    <div class="item">1970–2010 → <strong>Eagles</strong> • Rock Catalog</div>
+    <div class="item">1960–2010 → <strong>The Rolling Stones</strong> • Rock Catalog</div>
+    <div class="item">1990–2000 → <strong>Nirvana</strong> • Grunge Catalog</div>
+    <div class="item">1970–2010 → <strong>KISS</strong> • Rock Catalog</div>
+    <div class="item">1969–1980 → <strong>Led Zeppelin</strong> • Rock Catalog</div>
+    <div class="item">2000–2010 → <strong>Luke Bryan</strong> • Country Rock Catalog</div>
+    <div class="item">1973–2010 → <strong>Aerosmith</strong> • Rock Catalog</div>
+
+    <!-- SIMILAR ARTISTS -->
+    <h2>Similar Artists (Top 42)</h2>
+
+    <!-- Classic Rock / Hard Rock -->
+    <div class="item">1973–2010 → AC/DC • Hard Rock</div>
+    <div class="item">1985–2010 → Guns N’ Roses • Hard Rock</div>
+    <div class="item">1970–2010 → Queen • Classic Rock</div>
+    <div class="item">1976–2010 → Boston • Classic Rock</div>
+    <div class="item">1977–2010 → Foreigner • Classic Rock</div>
+    <div class="item">1975–2010 → Journey • Classic Rock</div>
+    <div class="item">1972–2010 → Styx • Classic Rock</div>
+    <div class="item">1971–2010 → REO Speedwagon • Classic Rock</div>
+    <div class="item">1973–2010 → Bad Company • Rock</div>
+    <div class="item">1965–2010 → The Who • Rock</div>
+    <div class="item">1969–2010 → ZZ Top • Southern Rock</div>
+    <div class="item">1973–2010 → Lynyrd Skynyrd • Southern Rock</div>
+    <div class="item">1971–2010 → Blue Öyster Cult • Rock</div>
+    <div class="item">1972–2010 → Scorpions • Hard Rock</div>
+    <div class="item">1974–2010 → Rush • Progressive Rock</div>
+    <div class="item">1968–2010 → Deep Purple • Hard Rock</div>
+    <div class="item">1976–2010 → Heart • Rock</div>
+    <div class="item">1973–2010 → Cheap Trick • Rock</div>
+    <div class="item">1976–2010 → Tom Petty & The Heartbreakers • Rock</div>
+    <div class="item">1980–2010 → Billy Squier • Rock</div>
+
+    <!-- Heavy Rock / Metal Adjacent -->
+    <div class="item">1981–2010 → Metallica • Heavy Rock</div>
+    <div class="item">1975–2010 → Iron Maiden • Heavy Rock</div>
+    <div class="item">1974–2010 → Judas Priest • Heavy Rock</div>
+    <div class="item">1983–2010 → Dio • Heavy Rock</div>
+    <div class="item">1969–2010 → Alice Cooper • Rock</div>
+    <div class="item">1980–2010 → Ozzy Osbourne • Heavy Rock</div>
+    <div class="item">1977–2010 → Def Leppard • Rock</div>
+    <div class="item">1981–2010 → Mötley Crüe • Rock</div>
+    <div class="item">1978–2010 → Whitesnake • Rock</div>
+    <div class="item">1986–2010 → Tesla • Rock</div>
+
+    <!-- Grunge / Alternative -->
+    <div class="item">1990–2010 → Pearl Jam • Grunge</div>
+    <div class="item">1984–2010 → Soundgarden • Grunge</div>
+    <div class="item">1987–2010 → Alice in Chains • Grunge</div>
+    <div class="item">1992–2010 → Stone Temple Pilots • Alt Rock</div>
+    <div class="item">1988–2010 → Smashing Pumpkins • Alt Rock</div>
+    <div class="item">1993–2010 → Creed • Alt Rock</div>
+    <div class="item">1994–2010 → Foo Fighters • Alt Rock</div>
+    <div class="item">1992–2010 → Bush • Alt Rock</div>
+    <div class="item">1993–2010 → Collective Soul • Alt Rock</div>
+    <div class="item">1996–2010 → Three Doors Down • Alt Rock</div>
+
+    <!-- Country Rock -->
+    <div class="item">1990–2010 → Brooks & Dunn • Country Rock</div>
+    <div class="item">2005–2010 → Jason Aldean • Country Rock</div>
+    <div class="item">1999–2010 → Montgomery Gentry • Country Rock</div>
+    <div class="item">1989–2010 → Travis Tritt • Country Rock</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p>NEXUS Music Engine • Designed by Daniel Dudek</p>
+</div>
+
+</body>
+</html>
