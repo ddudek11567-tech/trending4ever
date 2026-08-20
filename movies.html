@@ -317,10 +317,10 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
 
                     const isSaved = saved.has(f.id);
                     card.innerHTML = `
-                        ${f.img ? `<img class="card-img card-img-img" src="${f.img}" alt="${f.title}" loading="lazy">` : `<div class="card-img" style="background:linear-gradient(160deg, rgba(${f.rgb},.55), #0b0b10 80%)"><span class="card-icon">${f.icon}</span></div>`}${f.new ? '<span class="badge new">NEW</span>' : ''}
+                        <div class="card-img" style="background:${f.img ? `linear-gradient(160deg, rgba(${f.rgb},.72), rgba(8,12,20,.30) 45%, #0b0b10 92%), url('${f.img}') center/cover no-repeat` : `linear-gradient(160deg, rgba(${f.rgb},.55), #0b0b10 80%)`}"><span class="card-icon">${f.icon}</span></div>
                         <div class="card-scrim"></div>
                         <div class="card-top">
-                            <span class="badge year">${f.year}</span>${f.new ? '<span class="badge new">NEW</span>' : ''}
+                            <span class="badge year">${f.year}</span>
                             <button class="bookmark ${isSaved ? 'saved' : ''}" onclick="toggleSave(${f.id})" title="Save">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                             </button>
