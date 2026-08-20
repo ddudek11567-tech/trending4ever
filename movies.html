@@ -143,6 +143,17 @@
         <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
             <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
             <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div id="centerPad" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-4 opacity-0 transition-opacity duration-300 pointer-events-none">
+                <button class="ctrl grid place-items-center w-12 h-12 rounded-full bg-black/40 border border-white/10 backdrop-blur text-white transition-all hover:scale-105 cursor-pointer" id="cbBtn" title="Back 10s">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 20 9 12l10-8v16zM5 19V5h2v14z"/></svg>
+                </button>
+                <button class="ctrl grid place-items-center w-16 h-16 rounded-full bg-black/45 border border-white/15 backdrop-blur transition-all hover:scale-105 cursor-pointer text-[#22c55e]" id="cpBtn" title="Play / Pause (k)">
+                    <svg id="cpIcon" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <button class="ctrl grid place-items-center w-12 h-12 rounded-full bg-black/40 border border-white/10 backdrop-blur text-white transition-all hover:scale-105 cursor-pointer" id="cfBtn" title="Forward 10s">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4l10 8-10 8V4zm9 0v16h2V4h-2z"/></svg>
+                </button>
+            </div>
             <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
                 <div class="t-meta min-w-0">
                     <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
@@ -376,6 +387,52 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
             else document.exitFullscreen().catch(() => {});
         };
 
+        const centerPad = document.getElementById('centerPad');
+        const cpBtn = document.getElementById('cpBtn');
+        const cpIcon = document.getElementById('cpIcon');
+        let padHideTimer = null;
+
+        function padState() {
+            const paused = videoEl.paused;
+            cpIcon.innerHTML = paused ? '<path d="M8 5v14l11-7z"/>' : '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            cpBtn.className = 'ctrl grid place-items-center w-16 h-16 rounded-full bg-black/45 border border-white/15 backdrop-blur transition-all hover:scale-105 cursor-pointer ' + (paused ? 'text-[#22c55e]' : 'text-[#facc15]');
+        }
+
+        function showPad() {
+            clearTimeout(padHideTimer);
+            centerPad.style.opacity = '1';
+            centerPad.style.pointerEvents = 'auto';
+            padState();
+        }
+
+        function hidePad() {
+            clearTimeout(padHideTimer);
+            centerPad.style.opacity = '0';
+            centerPad.style.pointerEvents = 'none';
+        }
+
+        cpBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (videoEl.paused) videoEl.play(); else videoEl.pause();
+        };
+
+        document.getElementById('cbBtn').onclick = (e) => {
+            e.stopPropagation();
+            videoEl.currentTime = Math.max(0, videoEl.currentTime - 10);
+            showPad();
+        };
+
+        document.getElementById('cfBtn').onclick = (e) => {
+            e.stopPropagation();
+            videoEl.currentTime = Math.min(videoEl.duration || videoEl.currentTime, videoEl.currentTime + 10);
+            showPad();
+        };
+
+        stageEl.onclick = () => {
+            if (videoEl.paused) { videoEl.play(); }
+            else { videoEl.pause(); showPad(); }
+        };
+
         function setupUI() {
             videoEl.onwaiting = () => loaderEl.style.display = 'flex';
             videoEl.onplaying = () => loaderEl.style.display = 'none';
@@ -386,8 +443,15 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
                 curTimeEl.innerText = fmtTime(videoEl.currentTime);
                 durTimeEl.innerText = fmtTime(videoEl.duration);
             };
-            videoEl.onplay = () => ppIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-            videoEl.onpause = () => ppIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            videoEl.onplay = () => {
+                ppIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                padState();
+                padHideTimer = setTimeout(hidePad, 2600);
+            };
+            videoEl.onpause = () => {
+                ppIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                showPad();
+            };
         }
 
         function fmtTime(s) {
@@ -405,6 +469,10 @@ const SPOTLIGHT_IDS=[1, 21, 41, 61, 81, 101, 121, 131, 141];
         document.addEventListener('DOMContentLoaded', () => {
             try { renderHero(); } catch (e) { console.error('Hero render failed:', e); }
             try { renderCollection(); } catch (e) { console.error('Collection render failed:', e); }
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { document.getElementById('cbBtn').click(); e.preventDefault(); }
+            if (e.key === 'ArrowRight') { document.getElementById('cfBtn').click(); e.preventDefault(); }
         });
     </script>
 </body>
