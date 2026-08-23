@@ -24,13 +24,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
 <nav class="sticky top-0 z-40 backdrop-blur bg-black/70 border-b border-white/5">
 <div class="flex items-center justify-between px-6 md:px-12 py-4 gap-4">
 <a href="index.html" class="flex items-baseline gap-2 shrink-0"><span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span><span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span></a>
-<div class="hidden md:flex items-center gap-6 text-sm">
-<a href="index.html" class="text-white/50 hover:text-white transition">Movies</a>
-<a href="books.html" class="text-white/50 hover:text-white transition">Books on Tape</a>
-<a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a>
-<span class="text-white font-semibold">Music</span>
-<a href="iptv.html" class="text-white/50 hover:text-white transition">Live TV</a>
-</div>
+<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white/50 hover:text-white transition">IPTV</a><a href="index.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white font-semibold">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white/50 hover:text-white transition">Books</a><button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="ml-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">🎂</button></div>
 <div class="relative w-full max-w-xs">
 <input id="q" type="text" placeholder="Search artists, albums, songs…" class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm outline-none focus:border-cyan-400 transition placeholder:text-white/30">
 </div>
@@ -242,5 +236,35 @@ if(e.key===' '){e.preventDefault();togglePlay()}
 });
 renderTabs();renderGrid();
 </script>
+
+<!-- BIRTHDAY GATE -->
+<div id="nx-gate" style="display:none" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+<div class="w-full max-w-sm rounded-2xl border border-white/15 bg-neutral-900 p-8 text-center">
+<div class="text-4xl mb-3">🎂</div>
+<h2 class="font-disp text-xl font-bold mb-2">Welcome to AURORA</h2>
+<p class="text-sm text-white/60 mb-6">Enter your birthday and we will tailor what you can watch (G / PG / PG-13 / R).</p>
+<input id="nx-dob" type="date" onchange="NexusAge.submit()" class="w-full rounded-xl bg-black/40 border border-white/20 px-4 py-3 text-white outline-none focus:border-cyan-400 mb-3">
+<p id="nx-err" class="hidden text-xs text-red-400 mb-3">Please enter a valid birthday.</p>
+<button onclick="NexusAge.submit()" class="w-full rounded-full bg-cyan-400 text-black font-semibold px-6 py-2.5 hover:bg-cyan-300 transition">Continue</button>
+</div></div>
+<script>
+window.NexusAge=(function(){
+  var KEY='nexus_age';
+  var RANK={G:0,PG:1,'PG-13':2,R:3,ALL:4};
+  function data(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+  function age(dob){var b=new Date(dob+'T00:00:00');var t=new Date();var a=t.getFullYear()-b.getFullYear();var m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a}
+  function capFromAge(a){return a>=21?'ALL':a>=18?'R':a>=13?'PG-13':'PG'}
+  function label(){var c=cap();if(!c)return '';return c==='ALL'?'21+':c==='R'?'18+':c}
+  function cap(){var d=data();return d?d.c:null}
+  function show(){var g=document.getElementById('nx-gate');g.style.display='flex'}
+  function hide(){document.getElementById('nx-gate').style.display='none'}
+  function fire(c){document.dispatchEvent(new CustomEvent('nx-age',{detail:{cap:c}}))}
+  function init(){var d=data();var chip=document.getElementById('ageChip');if(chip)chip.textContent='\u{1F382} '+(label()||'set');if(d){hide();fire(d.c)}else{show()}}
+  function submit(){var v=document.getElementById('nx-dob').value;var err=document.getElementById('nx-err');if(!v){err.classList.remove('hidden');return}var a=age(v);if(isNaN(a)||a<0||a>120){err.classList.remove('hidden');return}err.classList.add('hidden');var c=capFromAge(a);try{localStorage.setItem(KEY,JSON.stringify({d:v,c:c}))}catch(e){}hide();var chip=document.getElementById('ageChip');if(chip)chip.textContent='\u{1F382} '+label();fire(c)}
+  return {open:show,cap:cap,rank:function(r){var x=RANK[r];return x==null?2:x},init:init,submit:submit};
+})();
+</script>
+
+<script>NexusAge.init();</script>
 </body>
 </html>
