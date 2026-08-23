@@ -52,6 +52,11 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 <p id="guideShowDesc" class="text-sm text-white/45 mt-3 leading-relaxed line-clamp-3">
 The English and Spanish channel lineup has been checked for working HLS and DASH manifests. Select any station below to stream instantly.
 </p>
+<div class="mt-3 h-1 rounded-full bg-white/10 overflow-hidden"><div id="guideProg" class="h-full bg-cyan-400 transition-all duration-1000" style="width:0%"></div></div>
+<div class="mt-4 pt-3 border-t border-white/10">
+<h4 class="text-[11px] font-bold tracking-widest text-white/40 uppercase mb-2">Up Next</h4>
+<div id="upNextList" class="space-y-2"></div>
+</div>
 </div>
 <div class="pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
 <div class="flex items-center gap-2 text-[11px] text-white/40">
@@ -1174,6 +1179,9 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
     }
 ];
 
+// epg.pw channel ids for real schedule data (null = no listing available)
+        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950"};
+
         // Format channels with sequenced IDs and scheduled blocks[cite: 4]
         const channels = rawChannels.map((c, index) => ({
             id: index + 1,
@@ -1185,12 +1193,51 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
             rating: c.rating,
             alternates: c.alternates || [],
             engine: c.engine || (String(c.url).toLowerCase().includes('.mpd') ? 'dash' : 'hls'),
+            epgId: EPG_IDS[c.name] || null,
             source: c.source || 'Original catalog',
             show1: `${c.name} Live Primetime Block`,
             show2: `${c.category} Spotlight Hour`,
             show3: `Late Night ${c.name} Special`,
             show4: `Early Morning ${c.name} Feed`
         }));
+
+// ================= LIVE EPG ENGINE (epg.pw) =================
+const epgStore={};
+let lastList=null;
+function utcKey(d){return d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0')+String(d.getUTCDate()).padStart(2,'0')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fmtT(ms){return new Date(ms).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
+function fmtRange(a,b){return fmtT(a)+' \u2013 '+fmtT(b)}
+async function fetchEpg(cid){
+  if(epgStore[cid])return epgStore[cid];
+  var day=new Date();
+  var days=[utcKey(day),utcKey(new Date(day.getTime()+864e5))];
+  var ck='nxepg_'+cid+'_'+days[0];
+  try{var c=localStorage.getItem(ck);if(c){epgStore[cid]=JSON.parse(c);return epgStore[cid]}}catch(e){}
+  var items=[];
+  try{
+    var res=await Promise.all(days.map(function(dd){
+      return fetch('https://epg.pw/api/epg.json?channel_id='+cid+'&lang=en&timezone=VVRD&date='+dd)
+        .then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+    }));
+    res.forEach(function(r){
+      (r&&Array.isArray(r.epg_list)?r.epg_list:[]).forEach(function(p){
+        if(!p.start_date)return;
+        var s=Date.parse(p.start_date);
+        if(!isNaN(s))items.push({s:s,t:String(p.title||'').trim(),d:String(p.desc||'').trim()});
+      });
+    });
+    items.sort(function(a,b){return a.s-b.s});
+    for(var i2=0;i2<items.length;i2++){items[i2].e=i2+1<items.length?items[i2+1].s:items[i2].s+36e5}
+    items=items.filter(function(p){return p.e>Date.now()-12*36e5});
+    epgStore[cid]={list:items};
+    if(items.length){try{localStorage.setItem(ck,JSON.stringify(epgStore[cid]))}catch(e){}}
+  }catch(e){epgStore[cid]={list:[]}}
+  return epgStore[cid];
+}
+function epgNow(cid){var st=epgStore[cid];if(!st)return null;var t=Date.now();for(var i2=0;i2<st.list.length;i2++){if(st.list[i2].s<=t&&t<st.list[i2].e)return st.list[i2]}return null}
+function epgNext(cid,n){var st=epgStore[cid];if(!st)return [];var t=Date.now();return st.list.filter(function(p){return p.s>t}).slice(0,n)}
+
 let currentChannel = null;
 let currentActiveUrl = null;
 
@@ -1211,6 +1258,16 @@ renderGuideRows(channels);
 selectGuideChannel(channels[0]);
 updateClock();
 setInterval(updateClock, 30000);
+
+(async () => {
+for (const cid of [...new Set(Object.values(EPG_IDS).filter(Boolean))]) {
+await fetchEpg(cid);
+if (lastList) renderGuideRows(lastList);
+updateGuideInfo(currentChannel);
+await new Promise(r => setTimeout(r, 200));
+}
+})();
+setInterval(() => { updateGuideInfo(currentChannel); if (lastList) renderGuideRows(lastList); }, 60000);
 });
 
 let hlsInstance = null;
@@ -1218,6 +1275,7 @@ let dashInstance = null;
 let isNativeMode = false;
 
 function renderGuideRows(list) {
+lastList = list;
 const container = document.getElementById('guideRowsContainer');
 container.innerHTML = '';
 list.forEach(ch => {
@@ -1229,19 +1287,27 @@ row.className = 'grid grid-cols-12 items-center cursor-pointer transition-all te
 : 'hover:bg-white/5 text-white/60');
 row.onclick = () => selectGuideChannel(ch);
 row.innerHTML = `
-<div class="col-span-3 px-4 py-1.5 flex items-center gap-3 truncate ${isSelected ? 'border-l-2 border-cyan-400' : ''}">
+<div class="col-span-12 md:col-span-4 px-4 py-1.5 flex items-center gap-3 truncate ${isSelected ? 'border-l-2 border-cyan-400' : ''}">
 <span class="${isSelected ? 'text-cyan-300' : 'text-white/30'} font-disp font-bold w-7 text-right shrink-0">${ch.number}</span>
 <span class="text-base shrink-0">${ch.icon}</span>
 <div class="truncate">
 <div class="font-semibold truncate">${ch.name}</div>
 <div class="text-[10px] text-white/35 uppercase">${ch.category} • ${ch.rating}</div>
 </div>
-</div>
-<div class="col-span-2 px-3 py-1.5 truncate text-white/35 text-xs hidden md:block">${ch.show4}</div>
-<div class="col-span-2 px-3 py-1.5 truncate bg-cyan-400/10 text-cyan-200 font-semibold text-xs">${ch.show1}</div>
-<div class="col-span-2 px-3 py-1.5 truncate text-white/45 text-xs hidden md:block">${ch.show2}</div>
-<div class="col-span-9 md:col-span-3 px-3 py-1.5 truncate text-white/35 text-xs">${ch.show3}</div>
-`;
+</div>`;
+const st = ch.epgId ? epgStore[ch.epgId] : null;
+if (!st) {
+row.innerHTML += '<div class="col-span-12 md:col-span-8 px-3 py-1.5 text-xs italic '+(isSelected?'text-white/50':'text-white/30')+'">'+(ch.epgId?'Loading schedule\u2026':'Live stream \u00b7 schedule unavailable')+'</div>';
+} else {
+const upcoming = st.list.filter(p => p.e > Date.now()).slice(0, 4);
+for (let si = 0; si < 4; si++) {
+const p = upcoming[si];
+const nowCell = si === 0;
+row.innerHTML += '<div class="'+(nowCell?'col-span-12 md:col-span-2':'col-span-6 md:col-span-2 '+(si===1?'':'hidden md:block'))+' px-3 py-1.5 min-w-0 '+(nowCell?'bg-cyan-400/10 text-cyan-200 font-semibold':'text-white/45')+'">'
++'<div class="text-[9px] uppercase tracking-wider opacity-60 truncate">'+(p?(nowCell?('NOW \u00b7 '+Math.max(0,Math.round((p.e-Date.now())/60000))+'m left'):fmtT(p.s)):'\u2014')+'</div>'
++'<div class="text-xs truncate">'+(p?esc(p.t):'No listing')+'</div></div>';
+}
+}
 container.appendChild(row);
 });
 document.getElementById('activeCountBadge').innerText = list.length + ' Channels';
@@ -1259,14 +1325,43 @@ currentActiveUrl = ch.url;
 
 document.getElementById('guideChannelNumBadge').innerText = ch.number;
 document.getElementById('guideNetworkName').innerText = ch.name + ' — ' + ch.category;
-document.getElementById('guideShowTitle').innerText = ch.show1;
-document.getElementById('guideShowTime').innerText = "Live Broadcast Block · 24/7";
-document.getElementById('guideShowDesc').innerText = "Now broadcasting live on " + ch.name + ". Multi-source fallback support with automatic HLS / DASH engine selection.";
 document.getElementById('guideRatingBadge').innerText = ch.rating;
 document.getElementById('pipChannelName').innerText = ch.number + '. ' + ch.name;
 
+updateGuideInfo(ch);
+renderGuideRows(lastList || channels);
 loadPlayerEngine();
-renderGuideRows(channels);
+
+if (ch.epgId && !epgStore[ch.epgId]) {
+fetchEpg(ch.epgId).then(() => {
+if (currentChannel && currentChannel.id === ch.id) { updateGuideInfo(currentChannel); renderGuideRows(lastList || channels); }
+});
+}
+}
+
+function updateGuideInfo(ch) {
+if (!ch) return;
+const st = ch.epgId ? epgStore[ch.epgId] : null;
+const nowP = st ? st.list.find(p => p.s <= Date.now() && Date.now() < p.e) : null;
+const tEl = document.getElementById('guideShowTitle');
+const tmEl = document.getElementById('guideShowTime');
+const dEl = document.getElementById('guideShowDesc');
+const bar = document.getElementById('guideProg');
+if (nowP) {
+tEl.innerText = nowP.t || ch.name;
+tmEl.innerText = 'NOW \u00b7 ' + fmtRange(nowP.s, nowP.e);
+dEl.innerText = nowP.d || ('Live on ' + ch.name + '.');
+bar.style.width = Math.min(100, Math.max(0, (Date.now() - nowP.s) / (nowP.e - nowP.s) * 100)) + '%';
+} else {
+tEl.innerText = st ? 'Live Stream' : (ch.epgId ? 'Loading schedule\u2026' : 'Live Stream');
+tmEl.innerText = st ? '24/7 continuous feed' : '\u2014';
+dEl.innerText = st ? ('Live broadcast on ' + ch.name + '. No detailed listing available for this stream.') : 'Fetching program guide\u2026';
+bar.style.width = '0%';
+}
+const nx = st ? st.list.filter(p => p.s > Date.now()).slice(0, 5) : [];
+document.getElementById('upNextList').innerHTML = nx.length ? nx.map(p =>
+'<div class="flex justify-between gap-3 text-xs"><span class="text-white/70 truncate">' + esc(p.t) + '</span><span class="text-white/40 shrink-0 tabular-nums">' + fmtT(p.s) + '</span></div>'
+).join('') : '<p class="text-xs text-white/35">' + (st ? 'No further listings available.' : '\u2026') + '</p>';
 }
 
 function loadPlayerEngine() {
