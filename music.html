@@ -54,6 +54,40 @@ box-shadow:0 0 0 1.5px rgba(255,255,255,.35)}
 .car-btn{display:none}
 @media(min-width:768px){.car-btn{display:flex}}
 .album-card.open{border-color:rgba(34,211,238,.45);box-shadow:0 0 34px -10px rgba(34,211,238,.4)}
+
+/* ---- record pickup / drop ---- */
+#dropzone.dropping{animation:rdrop .95s cubic-bezier(.33,.75,.55,1) both}
+@keyframes rdrop{
+0%{transform:translateY(-48%) scale(.9);opacity:0}
+20%{transform:translateY(-54%) scale(.94);opacity:.25}
+55%{transform:translateY(3%) scale(1.03);opacity:1}
+72%{transform:translateY(-4%) scale(1)}
+86%{transform:translateY(1.5%)}
+100%{transform:translateY(0) scale(1);opacity:1}}
+/* ---- tonearm ---- */
+.tonearm{position:absolute;right:-16px;top:-12px;width:48px;height:74px;z-index:20;pointer-events:none;
+transform-origin:80% 16%;transform:rotate(-40deg);transition:transform 1s cubic-bezier(.45,0,.25,1)}
+.tonearm.on{transform:rotate(-7deg)}
+.tn-base{position:absolute;right:0;top:0;width:17px;height:17px;border-radius:99px;background:#181822;
+border:1px solid rgba(255,255,255,.28);box-shadow:0 0 9px rgba(167,139,250,.35);animation:neonedg 9s ease-in-out infinite}
+.tn-arm{position:absolute;right:6px;top:7px;width:5px;height:50px;border-radius:99px;
+background:linear-gradient(180deg,#d7dcea,#8b93a8);box-shadow:0 0 5px rgba(255,255,255,.28)}
+.tn-head{position:absolute;right:2px;top:53px;width:13px;height:21px;border-radius:4px;
+background:linear-gradient(180deg,#eef1f8,#9aa2b5);animation:neonedg 9s ease-in-out infinite}
+@keyframes neonedg{0%,100%{box-shadow:0 0 8px rgba(34,211,238,.45)}33%{box-shadow:0 0 8px rgba(167,139,250,.45)}66%{box-shadow:0 0 8px rgba(244,114,182,.45)}}
+/* ---- soft neon cycling on light parts ---- */
+.neon-text{animation:ntext 9s ease-in-out infinite}
+@keyframes ntext{0%,100%{text-shadow:0 0 7px rgba(34,211,238,.32)}33%{text-shadow:0 0 7px rgba(167,139,250,.32)}66%{text-shadow:0 0 7px rgba(244,114,182,.32)}}
+.neon-glow{animation:nglowf 9s ease-in-out infinite}
+@keyframes nglowf{0%,100%{filter:drop-shadow(0 0 4px rgba(34,211,238,.35))}33%{filter:drop-shadow(0 0 4px rgba(167,139,250,.35))}66%{filter:drop-shadow(0 0 4px rgba(244,114,182,.35))}}
+input[type=range].neon::-webkit-slider-thumb{animation:nthumb 9s ease-in-out infinite}
+@keyframes nthumb{0%,100%{box-shadow:0 0 9px rgba(34,211,238,.55)}33%{box-shadow:0 0 9px rgba(167,139,250,.55)}66%{box-shadow:0 0 9px rgba(244,114,182,.55)}}
+.juke-glowline{animation:ngline 11s ease-in-out infinite}
+@keyframes ngline{0%,100%{border-top-color:rgba(34,211,238,.5)}33%{border-top-color:rgba(167,139,250,.5)}66%{border-top-color:rgba(244,114,182,.5)}}
+.neon-pulse{animation:npulse 9s ease-in-out infinite}
+@keyframes npulse{0%,100%{box-shadow:0 0 18px rgba(34,211,238,.4)}33%{box-shadow:0 0 18px rgba(167,139,250,.42)}66%{box-shadow:0 0 18px rgba(244,114,182,.4)}}
+.vinyl-hole{animation:nhole 9s ease-in-out infinite}
+@keyframes nhole{0%,100%{box-shadow:0 0 0 1.5px rgba(255,255,255,.35),0 0 6px rgba(34,211,238,.35)}33%{box-shadow:0 0 0 1.5px rgba(255,255,255,.35),0 0 6px rgba(167,139,250,.35)}66%{box-shadow:0 0 0 1.5px rgba(255,255,255,.35),0 0 6px rgba(244,114,182,.35)}}
 </style>
 </head>
 <body class="grain antialiased pb-24">
@@ -78,30 +112,33 @@ box-shadow:0 0 0 1.5px rgba(255,255,255,.35)}
 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
 <!-- spinning record -->
 <div class="relative w-20 h-20 md:w-24 md:h-24 shrink-0">
+<div id="dropzone" class="absolute inset-0">
 <div id="vinyl" class="vinyl absolute inset-0 rounded-full">
 <img id="np-cover" alt="" class="vinyl-label" onerror="this.style.visibility='hidden'">
 </div>
 <div class="vinyl-hole"></div>
 </div>
+<div id="tonearm" class="tonearm"><div class="tn-base"></div><div class="tn-arm"></div><div class="tn-head"></div></div>
+</div>
 <!-- song info -->
 <div class="min-w-0 flex-1 w-full text-center sm:text-left">
-<p id="np-title" class="text-sm font-semibold truncate">Queue a record…</p>
+<p id="np-title" class="neon-text text-sm font-semibold truncate">Queue a record…</p>
 <p id="np-art" class="text-xs text-white/40 truncate">Pick an album below and press play</p>
-<input id="seek" type="range" min="0" max="100" value="0" step="0.1" class="w-full mt-2">
+<input id="seek" type="range" min="0" max="100" value="0" step="0.1" class="neon w-full mt-2">
 <div class="flex justify-between text-[10px] text-white/35 tabular-nums"><span id="cur">0:00</span><span id="dur">0:00</span></div>
 </div>
 <!-- transport -->
 <div class="flex items-center gap-3 shrink-0">
-<button onclick="prevTrack()" aria-label="Previous" class="text-white/70 hover:text-white transition">
+<button onclick="prevTrack()" aria-label="Previous" class="neon-glow text-white/70 hover:text-white transition">
 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-<button id="btn-play" onclick="togglePlay()" class="w-11 h-11 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-black flex items-center justify-center hover:brightness-110 transition shadow-[0_0_18px_rgba(34,211,238,.45)]">
+<button id="btn-play" onclick="togglePlay()" class="neon-pulse w-11 h-11 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 text-black flex items-center justify-center hover:brightness-110 transition">
 <svg id="ic-play" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
 <svg id="ic-pause" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
 </button>
-<button onclick="nextTrack()" aria-label="Next" class="text-white/70 hover:text-white transition">
+<button onclick="nextTrack()" aria-label="Next" class="neon-glow text-white/70 hover:text-white transition">
 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
 <svg class="hidden md:block w-4 h-4 text-white/40 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05A4.5 4.5 0 0016.5 12z"/></svg>
-<input id="vol" type="range" min="0" max="1" value="0.8" step="0.01" class="hidden md:block w-20">
+<input id="vol" type="range" min="0" max="1" value="0.8" step="0.01" class="neon hidden md:block w-20">
 </div>
 </div>
 </div>
@@ -297,7 +334,13 @@ audio.addEventListener('error',()=>{$('np-title').textContent+=' — stream unav
 audio.addEventListener('timeupdate',()=>{$('seek').value=audio.currentTime/audio.duration*100||0;$('cur').textContent=fmt(audio.currentTime)});
 audio.addEventListener('loadedmetadata',()=>{$('dur').textContent=fmt(audio.duration)});
 $('seek').addEventListener('input',e=>{if(audio.duration)audio.currentTime=e.target.value/100*audio.duration});
-audio.addEventListener('play',()=>{document.getElementById('vinyl').classList.add('spinning')});
+function recordCue(){
+const dz=document.getElementById('dropzone');
+if(dz){dz.classList.remove('dropping');void dz.offsetWidth;dz.classList.add('dropping')}
+const v=document.getElementById('vinyl');if(v)v.classList.add('spinning');
+const ta=document.getElementById('tonearm');if(ta)ta.classList.add('on');
+}
+audio.addEventListener('play',recordCue);
 audio.addEventListener('pause',()=>{document.getElementById('vinyl').classList.remove('spinning')});
 function carSlide(d){const c=document.getElementById('agrid');c.scrollBy({left:d*c.clientWidth*.8,behavior:'smooth'})}
 function toggleAlbum(bi){
