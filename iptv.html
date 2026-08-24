@@ -216,11 +216,43 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "rating": "TV-Y",
         "url": "http://212.5.144.156/disneyjr/index.m3u8",
         "alternates": [
-            {
+        {
+        "name": "Filmex",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://filmex-filmex-xumo.amagi.tv/playlist.m3u8",
+        "alternates": []
+    },
+{
+        "name": "Filmex Clásico",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://filmex-filmexclasico-xumo.amagi.tv/playlist.m3u8",
+        "alternates": []
+    },
+    {
                 "label": "Fallback 1",
                 "url": "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8"
             }
         ]
+    },
+{
+        "name": "FilmRise Anime",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://dvu7aia8rjlfm.cloudfront.net/master.m3u8",
+        "alternates": []
+    },
+{
+        "name": "FilmRise Westerns",
+        "category": "Movies",
+        "icon": "🤠",
+        "rating": "TV-14",
+        "url": "https://dz05z8iljgvbe.cloudfront.net/master.m3u8",
+        "alternates": []
     },
     {
         "name": "Disney XD",
@@ -252,6 +284,14 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "icon": "🎬",
         "rating": "TV-MA",
         "url": "http://23.237.104.106:8080/USA_FX/index.m3u8",
+        "alternates": []
+    },
+{
+        "name": "Gravitas Movies",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://d6dg3ebeih71x.cloudfront.net/Gravitas_Movies.m3u8",
         "alternates": []
     },
     {
@@ -302,6 +342,14 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "url": "https://streamingserver000.viewtv.cloud/VIEWTVNETWORK-KALOOPY/index.m3u8",
         "alternates": []
     },
+{
+        "name": "Lifetime Movie Favorites",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://pb-137agpk5fqieb.akamaized.net/v1/aenetworks_holidaymoviefavorites_1/samsungheadend_us/latest/main/hls/playlist.m3u8",
+        "alternates": []
+    },
     {
         "name": "KPVM Movies!",
         "category": "Movies",
@@ -310,12 +358,52 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "url": "https://2-fss-2.streamhoster.com/pl_120/206858-4412962-1/playlist.m3u8",
         "alternates": []
     },
+{
+        "name": "Lifetime Movies Love & Drama",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://d1s7megtamek6r.cloudfront.net/Lifetime_Love_and_Drama.m3u8",
+        "alternates": []
+    },
     {
         "name": "Lifetime Movies",
         "category": "Movies",
         "icon": "🎥",
         "rating": "TV-14",
         "url": "http://23.237.104.106:8080/USA_LMN/index.m3u8",
+        "alternates": []
+    },
+{
+        "name": "Maverick Black Cinema",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://maverick-maverick-black-cinema-1-us.samsung.wurl.tv/playlist.m3u8",
+        "alternates": []
+    },
+{
+        "name": "MovieSphere",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://pb-wmei1j77c66s0.akamaized.net/MovieSphere.m3u8",
+        "alternates": []
+    },
+{
+        "name": "MyTime Movie Network",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://mytimeuk-rakuten-samsung.amagi.tv/playlist.m3u8",
+        "alternates": []
+    },
+{
+        "name": "OUTflix Movies",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://dg37ei3o66x3s.cloudfront.net/OutTV_US.m3u8",
         "alternates": []
     },
     {
@@ -446,6 +534,22 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "icon": "📰",
         "rating": "TV-14",
         "url": "http://23.237.104.106:8080/USA_VICETV/index.m3u8",
+        "alternates": []
+    },
+{
+        "name": "WBTV At the Movies",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://live-manifest.production-public.tubi.io/live/c24f15d1-f67e-4534-bfde-76b9a1b74360/playlist.m3u8",
+        "alternates": []
+    },
+{
+        "name": "WBTV Classic Cinema",
+        "category": "Movies",
+        "icon": "🎬",
+        "rating": "TV-14",
+        "url": "https://live-manifest.production-public.tubi.io/live/c9a11be6-98bc-4a1b-a8f0-6236bffa7286/playlist.m3u8",
         "alternates": []
     },
     {
@@ -1203,7 +1307,7 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
 ];
 
 // epg.pw channel ids for real schedule data (null = no listing available)
-        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950","TLC":null};
+        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950","TLC":null,"FilmRise Anime":null,"FilmRise Westerns":null,"Filmex":null,"Filmex Clásico":null,"Gravitas Movies":null,"Lifetime Movie Favorites":null,"Lifetime Movies Love & Drama":null,"Maverick Black Cinema":null,"MovieSphere":null,"MyTime Movie Network":null,"OUTflix Movies":null,"WBTV At the Movies":null,"WBTV Classic Cinema":null};
 
         // Format channels with sequenced IDs and scheduled blocks[cite: 4]
         const channels = rawChannels.map((c, index) => ({
