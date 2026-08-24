@@ -35,24 +35,33 @@ background:linear-gradient(180deg,rgba(34,211,238,.12),rgba(244,114,182,.12));bo
 .bub:nth-child(2){left:2px;background:#a78bfa;animation-delay:.9s;height:7px}
 .bub:nth-child(3){left:1px;background:#f472b6;animation-delay:1.8s;height:8px}
 @keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.9}88%{opacity:.7}100%{transform:translateY(-190px);opacity:0}}
-.vinyl{background:repeating-radial-gradient(circle at 50% 50%,#101010 0 2px,#1d1d1d 2px 4px);
-box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 18px rgba(0,0,0,.6),inset 0 0 26px rgba(0,0,0,.85);
+
+
+/* ---- 45 rpm single: black face, small center label, spindle dot ---- */
+.rec-wrap{position:relative;width:106px;height:106px}
+@media(min-width:768px){.rec-wrap{width:126px;height:126px}}
+#dropzone{position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;
+filter:drop-shadow(0 12px 22px rgba(0,0,0,.55))}
+#dropzone>*{grid-area:1/1;margin:0}
+#vinyl{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;
+background:repeating-radial-gradient(circle at 50% 50%,#0f0f0f 0 2px,#1c1c1c 2px 4px);
+box-shadow:0 0 0 1px rgba(255,255,255,.1),inset 0 0 34px rgba(0,0,0,.92);
 animation:vspin 1.9s linear infinite;animation-play-state:paused}
-.vinyl.spinning{animation-play-state:running}
-.vinyl:before{content:"";position:absolute;inset:0;border-radius:99px;
-background:conic-gradient(from 150deg,rgba(255,255,255,.06) 0 60deg,transparent 90deg 270deg,rgba(255,255,255,.06) 300deg 360deg)}
-.vinyl.spinning:before{animation:vshine 1.9s linear infinite}
+#vinyl:before{content:"";position:absolute;inset:0;border-radius:50%;
+background:conic-gradient(from 150deg,rgba(255,255,255,.055) 0 60deg,transparent 90deg 270deg,rgba(255,255,255,.055) 300deg)}
+#vinyl.spinning{animation-play-state:running}
+#vlabel{position:relative;z-index:3;width:36%;height:36%;border-radius:50%;overflow:hidden;background:#0c141c;
+border:2px solid rgba(0,0,0,.92);box-shadow:0 0 0 1px rgba(255,255,255,.16)}
+#vlabel img{width:100%;height:100%;object-fit:cover;display:block}
+#spindle{position:relative;z-index:4;width:12%;height:12%;border-radius:50%;background:#020204;
+box-shadow:0 0 0 2px rgba(0,0,0,.95),0 0 9px rgba(34,211,238,.65);animation:nhole 9s ease-in-out infinite}
+.spindle-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32%;height:32%;border-radius:50%;
+background:#22d3ee;box-shadow:0 0 6px rgba(34,211,238,.95)}
 @keyframes vspin{to{transform:rotate(360deg)}}
 @keyframes vshine{to{transform:rotate(-360deg)}}
-.vinyl-label{position:absolute;inset:21%;border-radius:99px;object-fit:cover;
-box-shadow:0 0 0 2px rgba(0,0,0,.85),0 0 0 3.5px rgba(34,211,238,.35)}
-#dropzone{display:grid;place-items:center}
-#dropzone>*{grid-area:1/1;margin:0}
-.spindle{position:relative;width:17%;aspect-ratio:1;border-radius:99px;z-index:6;
-background:radial-gradient(circle,#000 55%,rgba(0,0,0,.85) 100%);
-box-shadow:0 0 0 2px rgba(10,10,14,.92),0 0 0 3px rgba(255,255,255,.3)}
-.spindle-dot{position:absolute;left:50%;top:50%;width:30%;aspect-ratio:1;border-radius:99px;background:#22d3ee;transform:translate(-50%,-50%);
-box-shadow:0 0 7px rgba(34,211,238,.85);animation:nhole 9s ease-in-out infinite}
+
+
+
 .nx-scroll{scrollbar-width:thin;scrollbar-color:rgba(167,139,250,.4) transparent}
 .nx-scroll::-webkit-scrollbar{height:6px}
 .nx-scroll::-webkit-scrollbar-thumb{background:rgba(167,139,250,.35);border-radius:99px}
@@ -115,12 +124,11 @@ input[type=range].neon::-webkit-slider-thumb{animation:nthumb 9s ease-in-out inf
 
 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
 <!-- spinning record -->
-<div class="relative w-24 h-24 md:w-28 md:h-28 shrink-0">
-<div id="dropzone" class="absolute inset-0">
-<div id="vinyl" class="vinyl absolute inset-0 rounded-full">
-<img id="np-cover" alt="" draggable="false" class="vinyl-label" style="visibility:hidden" onload="this.style.visibility='visible'" onerror="this.style.visibility='hidden'">
-</div>
-<div class="spindle"><div class="spindle-dot"></div></div>
+<div class="rec-wrap shrink-0">
+<div id="dropzone">
+<div id="vinyl"></div>
+<div id="vlabel"><img id="np-cover" alt="" draggable="false" style="visibility:hidden" onload="this.style.visibility='visible'" onerror="this.style.visibility='hidden'"></div>
+<div id="spindle"><div class="spindle-dot"></div></div>
 </div>
 <div id="tonearm" class="tonearm"><div class="tn-base"></div><div class="tn-arm"></div><div class="tn-head"></div></div>
 </div>
