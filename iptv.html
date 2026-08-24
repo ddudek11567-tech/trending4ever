@@ -16,6 +16,13 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 .fade-in{animation:fi .5s ease both}@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}::-webkit-scrollbar-track{background:transparent}
 </style>
+<style>
+.nx-scroll{scrollbar-width:thin;scrollbar-color:rgba(34,211,238,.4) transparent}
+.nx-scroll::-webkit-scrollbar{width:6px;height:6px}
+.nx-scroll::-webkit-scrollbar-track{background:transparent}
+.nx-scroll::-webkit-scrollbar-thumb{background:rgba(34,211,238,.35);border-radius:99px}
+.guide-row{transition:background-color .15s}
+</style>
 </head>
 <body class="grain antialiased">
 
@@ -36,7 +43,9 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 
 <main class="px-6 md:px-12 pb-16 space-y-6">
 
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+<div class="lg:col-span-5 lg:sticky lg:top-[84px] space-y-5">
 <div class="lg:col-span-5 relative rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex flex-col justify-between overflow-hidden fade-in">
 <div class="absolute -right-12 -bottom-12 w-56 h-56 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
 <div>
@@ -67,33 +76,39 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
 </div>
 </div>
 
+
 <div class="lg:col-span-7 rounded-2xl overflow-hidden border border-white/10 bg-black relative aspect-video lg:aspect-auto lg:h-[calc(54vh-52px)] min-h-[320px]">
 <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
-<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>
+<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline>
+<button id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-black transition">🔇 Tap for sound</button></video>
 </div>
 <div class="absolute top-4 left-4 bg-black/70 backdrop-blur border border-cyan-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2.5 pointer-events-none">
 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
 <span id="pipChannelName">Live Stream Monitor</span>
 </div>
 </div>
+
 </div>
 
-<section>
+<section class="lg:col-span-7 min-w-0">
 <div class="flex items-baseline justify-between mb-3">
 <h3 id="catalogHeaderTitle" class="font-disp text-lg font-bold text-white/85">Verified Channel Guide</h3>
 <span class="text-xs text-white/30">Select a row to tune in</span>
 </div>
-<div class="rounded-2xl border border-white/10 overflow-hidden divide-y divide-white/5">
-<div class="grid grid-cols-12 bg-white/[0.04] text-[11px] font-bold text-white/45 text-center py-2.5 select-none">
-<div class="col-span-3 px-4 text-left border-r border-white/5">CHANNEL / STATION</div>
-<div class="col-span-2 border-r border-white/5 hidden md:block">PREV BLOCK</div>
-<div class="col-span-2 border-r border-white/5 text-cyan-300 bg-cyan-400/5">LIVE BROADCAST</div>
-<div class="col-span-2 border-r border-white/5 hidden md:block">NEXT SEGMENT</div>
-<div class="col-span-6 md:col-span-3">LATE NIGHT</div>
+<div class="rounded-2xl border border-white/10 overflow-hidden bg-black/20">
+<div class="grid grid-cols-12 bg-white/[0.04] text-[11px] font-bold text-white/45 py-2.5 select-none">
+<div class="col-span-12 md:col-span-4 px-4 text-left border-b md:border-b-0 md:border-r border-white/5">CHANNEL / STATION</div>
+<div class="hidden md:block md:col-span-8"><div class="grid grid-cols-4 divide-x divide-white/5 text-center">
+<div class="text-cyan-300 bg-cyan-400/5">ON NOW</div>
+<div>NEXT</div>
+<div>THEN</div>
+<div>LATER</div>
+</div></div>
 </div>
-<div id="guideRowsContainer" class="divide-y divide-white/5"></div>
+<div id="guideRowsContainer" class="divide-y divide-white/5 lg:max-h-[calc(100vh-13rem)] overflow-y-auto nx-scroll"></div>
 </div>
 </section>
+</div>
 </main>
 
 <footer class="border-t border-white/5 px-6 md:px-12 py-6 flex flex-wrap justify-between gap-4 text-xs text-white/30">
@@ -387,6 +402,14 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
         "rating": "TV-14",
         "url": "http://23.237.104.106:8080/USA_SYFY/index.m3u8",
         "alternates": []
+    },
+    {
+        "name": "TLC",
+        "category": "Lifestyle",
+        "icon": "\U0001F46A",
+        "rating": "TV-PG",
+        "url": "https://live-fi.tvkaista.net/tlc/live.m3u8?src=freetv",
+        "alternates": ["https://dogus.daioncdn.net/tlc/tlc.m3u8"]
     },
     {
         "name": "theDove TV",
@@ -1180,7 +1203,7 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
 ];
 
 // epg.pw channel ids for real schedule data (null = no listing available)
-        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950"};
+        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950","TLC":null};
 
         // Format channels with sequenced IDs and scheduled blocks[cite: 4]
         const channels = rawChannels.map((c, index) => ({
@@ -1238,6 +1261,32 @@ async function fetchEpg(cid){
 function epgNow(cid){var st=epgStore[cid];if(!st)return null;var t=Date.now();for(var i2=0;i2<st.list.length;i2++){if(st.list[i2].s<=t&&t<st.list[i2].e)return st.list[i2]}return null}
 function epgNext(cid,n){var st=epgStore[cid];if(!st)return [];var t=Date.now();return st.list.filter(function(p){return p.s>t}).slice(0,n)}
 
+// ---- autoplay helper: try unmuted, fall back to muted + unmute chip ----
+let __wantPlay = false;
+function tryPlay(v) {
+__wantPlay = true;
+v.autoplay = true;
+v.playsInline = true;
+const p = v.play();
+if (p && p.catch) p.catch(() => {
+v.muted = true;
+const q = v.play();
+if (q && q.catch) q.catch(() => {});
+showUnmuteChip();
+});
+}
+function showUnmuteChip() {
+const c = document.getElementById('unmuteChip');
+if (c) c.classList.remove('hidden');
+}
+document.addEventListener('DOMContentLoaded', () => {
+const v = document.getElementById('videoPlayer');
+if (!v) return;
+['loadedmetadata', 'canplay'].forEach(ev => v.addEventListener(ev, () => {
+if (__wantPlay && v.paused) tryPlay(v);
+}));
+});
+
 let currentChannel = null;
 let currentActiveUrl = null;
 
@@ -1260,59 +1309,81 @@ updateClock();
 setInterval(updateClock, 30000);
 
 (async () => {
-for (const cid of [...new Set(Object.values(EPG_IDS).filter(Boolean))]) {
+for (const [epgName, cid] of Object.entries(EPG_IDS)) {
+if (!cid) continue;
 await fetchEpg(cid);
-if (lastList) renderGuideRows(lastList);
+const ch = channels.find(x => x.epgId === cid);
+if (ch) patchRow(ch);
 updateGuideInfo(currentChannel);
-await new Promise(r => setTimeout(r, 200));
+await new Promise(r => setTimeout(r, 150));
 }
 })();
-setInterval(() => { updateGuideInfo(currentChannel); if (lastList) renderGuideRows(lastList); }, 60000);
+setInterval(() => {
+updateGuideInfo(currentChannel);
+if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); });
+}, 60000);
 });
 
 let hlsInstance = null;
 let dashInstance = null;
 let isNativeMode = false;
 
+let prevSelId = null;
+
+function slotCellsHtml(st) {
+const up = st.list.filter(p => p.e > Date.now()).slice(0, 4);
+let out = '<div class="grid grid-cols-4 h-full">';
+for (let i = 0; i < 4; i++) {
+const p = up[i];
+out += '<div class="px-3 py-2 min-w-0 ' + (i === 0 ? 'bg-cyan-400/10 text-cyan-200 font-semibold' : (i === 1 ? 'text-white/55' : 'text-white/40')) + '">'
++ '<div class="text-[9px] uppercase tracking-wider opacity-70 truncate">' + (p ? (i === 0 ? ('NOW \u00b7 ' + Math.max(0, Math.round((p.e - Date.now()) / 60000)) + 'm left') : fmtT(p.s)) : '\u2014') + '</div>'
++ '<div class="text-xs truncate">' + (p ? esc(p.t) : 'No listing') + '</div></div>';
+}
+return out + '</div>';
+}
+
+function rowInner(ch) {
+const isSelected = currentChannel && currentChannel.id === ch.id;
+let s = '<div class="col-span-12 md:col-span-4 px-4 py-2 flex items-center gap-3 ' + (isSelected ? 'bg-white/10 border-l-2 border-cyan-400' : '') + '">'
++ '<span class="' + (isSelected ? 'text-cyan-300' : 'text-white/30') + ' font-disp font-bold w-7 text-right shrink-0">' + ch.number + '</span>'
++ '<span class="text-base shrink-0">' + ch.icon + '</span>'
++ '<div class="min-w-0"><div class="font-semibold truncate">' + esc(ch.name) + '</div>'
++ '<div class="text-[10px] text-white/35 uppercase">' + ch.category + ' \u2022 ' + ch.rating + '</div></div></div>';
+const st = ch.epgId ? epgStore[ch.epgId] : null;
+if (!st) {
+s += '<div class="col-span-12 md:col-span-8 px-3 py-2 flex items-center text-xs italic ' + (isSelected ? 'text-white/50' : 'text-white/30') + '">'
++ (ch.epgId ? 'Loading schedule\u2026' : 'Live stream \u00b7 schedule unavailable') + '</div>';
+} else {
+s += '<div class="hidden md:block md:col-span-8 min-w-0">' + slotCellsHtml(st) + '</div>';
+const np = st.list.find(p => p.e > Date.now());
+s += '<div class="md:hidden col-span-12 px-3 pb-2 -mt-1 bg-cyan-400/5">'
++ (np ? '<span class="text-[9px] uppercase tracking-wider text-cyan-300 font-bold">NOW \u00b7 ' + Math.max(0, Math.round((np.e - Date.now()) / 60000)) + 'm</span> '
+: '')
++ '<span class="text-xs text-white/70 truncate">' + (np ? esc(np.t) : ch.name + ' live') + '</span></div>';
+}
+return s;
+}
+
 function renderGuideRows(list) {
 lastList = list;
 const container = document.getElementById('guideRowsContainer');
 container.innerHTML = '';
 list.forEach(ch => {
-const isSelected = currentChannel && currentChannel.id === ch.id;
 const row = document.createElement('div');
-row.className = 'grid grid-cols-12 items-center cursor-pointer transition-all text-sm py-2 fade-in ' +
-(isSelected
-? 'bg-white/10 text-white'
-: 'hover:bg-white/5 text-white/60');
+row.dataset.row = String(ch.id);
+row.className = 'guide-row grid grid-cols-12 items-stretch cursor-pointer text-sm hover:bg-white/5';
 row.onclick = () => selectGuideChannel(ch);
-row.innerHTML = `
-<div class="col-span-12 md:col-span-4 px-4 py-1.5 flex items-center gap-3 truncate ${isSelected ? 'border-l-2 border-cyan-400' : ''}">
-<span class="${isSelected ? 'text-cyan-300' : 'text-white/30'} font-disp font-bold w-7 text-right shrink-0">${ch.number}</span>
-<span class="text-base shrink-0">${ch.icon}</span>
-<div class="truncate">
-<div class="font-semibold truncate">${ch.name}</div>
-<div class="text-[10px] text-white/35 uppercase">${ch.category} • ${ch.rating}</div>
-</div>
-</div>`;
-const st = ch.epgId ? epgStore[ch.epgId] : null;
-if (!st) {
-row.innerHTML += '<div class="col-span-12 md:col-span-8 px-3 py-1.5 text-xs italic '+(isSelected?'text-white/50':'text-white/30')+'">'+(ch.epgId?'Loading schedule\u2026':'Live stream \u00b7 schedule unavailable')+'</div>';
-} else {
-const upcoming = st.list.filter(p => p.e > Date.now()).slice(0, 4);
-for (let si = 0; si < 4; si++) {
-const p = upcoming[si];
-const nowCell = si === 0;
-row.innerHTML += '<div class="'+(nowCell?'col-span-12 md:col-span-2':'col-span-6 md:col-span-2 '+(si===1?'':'hidden md:block'))+' px-3 py-1.5 min-w-0 '+(nowCell?'bg-cyan-400/10 text-cyan-200 font-semibold':'text-white/45')+'">'
-+'<div class="text-[9px] uppercase tracking-wider opacity-60 truncate">'+(p?(nowCell?('NOW \u00b7 '+Math.max(0,Math.round((p.e-Date.now())/60000))+'m left'):fmtT(p.s)):'\u2014')+'</div>'
-+'<div class="text-xs truncate">'+(p?esc(p.t):'No listing')+'</div></div>';
-}
-}
+row.innerHTML = rowInner(ch);
 container.appendChild(row);
 });
 document.getElementById('activeCountBadge').innerText = list.length + ' Channels';
 }
 
+function patchRow(ch) {
+if (!lastList) return;
+const row = document.querySelector('[data-row="' + ch.id + '"]');
+if (row) row.innerHTML = rowInner(ch);
+}
 function filterGuideChannels(query) {
 const q = query.toLowerCase();
 const filtered = channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q));
@@ -1328,13 +1399,18 @@ document.getElementById('guideNetworkName').innerText = ch.name + ' — ' + ch.c
 document.getElementById('guideRatingBadge').innerText = ch.rating;
 document.getElementById('pipChannelName').innerText = ch.number + '. ' + ch.name;
 
+if (prevSelId !== null && prevSelId !== ch.id) {
+const pr = channels.find(x => x.id === prevSelId);
+if (pr) patchRow(pr);
+}
+prevSelId = ch.id;
+patchRow(ch);
 updateGuideInfo(ch);
-renderGuideRows(lastList || channels);
 loadPlayerEngine();
 
 if (ch.epgId && !epgStore[ch.epgId]) {
 fetchEpg(ch.epgId).then(() => {
-if (currentChannel && currentChannel.id === ch.id) { updateGuideInfo(currentChannel); renderGuideRows(lastList || channels); }
+if (currentChannel && currentChannel.id === ch.id) { patchRow(ch); updateGuideInfo(currentChannel); }
 });
 }
 }
@@ -1392,21 +1468,23 @@ const isDash = currentChannel && (currentChannel.engine === 'dash' || /\.mpd(?:$
 if (isDash && window.dashjs) {
 dashInstance = dashjs.MediaPlayer().create();
 dashInstance.initialize(video, targetStream, true);
+try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {}
+tryPlay(video);
 } else if (!isDash && window.Hls && Hls.isSupported()) {
 hlsInstance = new Hls();
 hlsInstance.loadSource(targetStream);
 hlsInstance.attachMedia(video);
 hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-video.play().catch(e => console.log("Autoplay prevented:", e));
+tryPlay(video);
 });
 } else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
 video.src = targetStream;
 video.addEventListener('loadedmetadata', () => {
-video.play().catch(e => console.log("Autoplay prevented:", e));
+tryPlay(video);
 }, { once: true });
 } else {
 video.src = targetStream;
-video.play().catch(() => {});
+tryPlay(video);
 }
 }
 
