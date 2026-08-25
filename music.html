@@ -80,8 +80,8 @@ background:#22d3ee;box-shadow:0 0 6px rgba(34,211,238,.95)}
 100%{transform:translateY(0) scale(1);opacity:1}}
 /* ---- tonearm ---- */
 .tonearm{position:absolute;right:-26px;top:-22px;width:54px;height:84px;z-index:20;pointer-events:none;
-transform-origin:84% 12%;transform:rotate(-68deg);transition:transform 1s cubic-bezier(.45,0,.25,1)}
-.tonearm.on{transform:rotate(-11deg)}
+transform-origin:84% 12%;transform:rotate(-68deg);transition:transform .75s cubic-bezier(.4,.08,.3,1)}
+#tonearm.park{transition:transform 1.1s cubic-bezier(.45,0,.25,1)}
 .tn-base{position:absolute;right:0;top:0;width:13px;height:13px;border-radius:99px;background:#14141c;
 border:1px solid rgba(255,255,255,.18);box-shadow:0 0 6px rgba(167,139,250,.3)}
 .tn-arm{position:absolute;right:6px;top:7px;width:5px;height:50px;border-radius:99px;
@@ -346,14 +346,27 @@ audio.addEventListener('error',()=>{$('np-title').textContent+=' — stream unav
 audio.addEventListener('timeupdate',()=>{$('seek').value=audio.currentTime/audio.duration*100||0;$('cur').textContent=fmt(audio.currentTime)});
 audio.addEventListener('loadedmetadata',()=>{$('dur').textContent=fmt(audio.duration)});
 $('seek').addEventListener('input',e=>{if(audio.duration)audio.currentTime=e.target.value/100*audio.duration});
+const ARM_PARK=-68,ARM_OUT=-27,ARM_IN=-10;
+function setArm(deg,delayCss){
+const ta=document.getElementById('tonearm');if(!ta)return;
+ta.classList.toggle('park',!!delayCss);
+ta.style.transform='rotate('+deg+'deg)';
+}
+function armTrack(){
+if(!audio.duration)return;
+const p=Math.min(1,audio.currentTime/audio.duration);
+setArm(ARM_OUT+(ARM_IN-ARM_OUT)*p);
+}
 function recordCue(){
 const dz=document.getElementById('dropzone');
 if(dz){dz.classList.remove('dropping');void dz.offsetWidth;dz.classList.add('dropping')}
 const v=document.getElementById('vinyl');if(v)v.classList.add('spinning');
-const ta=document.getElementById('tonearm');if(ta)ta.classList.add('on');
+if(audio.currentTime<1)setArm(ARM_OUT);else armTrack();
 }
 audio.addEventListener('play',recordCue);
 audio.addEventListener('pause',()=>{document.getElementById('vinyl').classList.remove('spinning')});
+audio.addEventListener('timeupdate',armTrack);
+audio.addEventListener('ended',()=>setArm(ARM_PARK,true));
 function carSlide(d){const c=document.getElementById('agrid');c.scrollBy({left:d*c.clientWidth*.8,behavior:'smooth'})}
 function toggleAlbum(bi){
 const el=document.getElementById('alb-'+bi);if(!el)return;
