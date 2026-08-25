@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Archive Movie Link Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-white p-8">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold mb-2">Internet Archive Movie Link Tester</h1>
+        <p class="text-zinc-400 mb-8">Tests direct streaming links from archive.org and reports status directly in browser</p>
+        
+        <div class="flex gap-4 items-end mb-8 bg-zinc-900 p-6 rounded-xl">
+            <div>
+                <label class="block text-sm text-zinc-400 mb-1">Max Pages</label>
+                <input id="maxPages" type="number" value="1" class="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 w-24 text-white" />
+            </div>
+            <div>
+                <label class="block text-sm text-zinc-400 mb-1">Rows Per Page</label>
+                <input id="rowsPerPage" type="number" value="5" class="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 w-24 text-white" />
+            </div>
+            <button onclick="runTest()" id="testBtn" class="bg-emerald-600 hover:bg-emerald-500 cursor-pointer disabled:bg-zinc-700 px-6 py-2 rounded font-medium transition">
+                Run New Test
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="hidden bg-zinc-900 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-zinc-800 flex justify-between items-center">
+                <div>
+                    <span id="resultCount" class="font-semibold">0</span> links tested
+                </div>
+                <div id="resultStats" class="text-sm text-zinc-400">
+                    0 working | 0 failed
+                </div>
+            </div>
+            <div id="resultsList" class="divide-y divide-zinc-800"></div>
+        </div>
+
+        <div id="emptyState" class="text-center py-20 text-zinc-500">
+            Click "Run New Test" to scan Internet Archive.
+        </div>
+    </div>
+
+    <script>
+        const ARCHIVE_SEARCH_URL = "https://archive.org/advancedsearch.php";
+        const ARCHIVE_META_URL = "https://archive.org/metadata";
+        const VIDEO_EXTENSIONS = [".mp4", ".mkv", ".webm", ".avi", ".mov", ".ogg", ".ogv"];
+
+        async function testDirectLink(url) {
+            try {
+                let res = await fetch(url, { method: "HEAD" });
+                if (res.ok || res.status === 301 || res.status === 302) return true;
+                res = await fetch(url, { headers: { Range: "bytes=0-1024" } });
+                return res.ok || res.status === 206;
+            } catch {
+                return false;
+            }
+        }
+
+        function findBestVideoFile(files) {
+            if (!files || !Array.isArray(files)) return null;
+            for (const ext of VIDEO_EXTENSIONS) {
+                const match = files.find(f => f.name && f.name.toLowerCase().endsWith(ext));
+                if (match) return match;
+            }
+            const formatMatch = files.find(f => 
+                f.format && (
+                    f.format.toLowerCase().includes("mp4") || 
+                    f.format.toLowerCase().includes("h.264") || 
+                    f.format.toLowerCase().includes("webm")
+                )
+            );
+            return formatMatch || null;
+        }
+
+        async function runTest() {
+            const maxPages = parseInt(document.getElementById('maxPages').value) || 1;
+            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value) || 5;
+            setLoading(true);
+
+            const verified = [];
+
+            for (let page = 0; page < maxPages; page++) {
+                const query = "mediatype:movies";
+                const url = `${ARCHIVE_SEARCH_URL}?q=${encodeURIComponent(query)}&fl[]=identifier&fl[]=title&rows=${rowsPerPage}&page=${page + 1}&output=json`;
+
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) continue;
+                    const data = await res.json();
+                    const docs = data.response?.docs || [];
+
+                    for (const doc of docs) {
+                        const identifier = doc.identifier;
+                        const title = doc.title || identifier;
+                        try {
+                            const metaRes = await fetch(`${ARCHIVE_META_URL}/${identifier}`);
+                            if (!metaRes.ok) continue;
+                            const meta = await metaRes.json();
+                            const videoFile = findBestVideoFile(meta.files);
+
+                            if (videoFile) {
+                                const filename = videoFile.name;
+                                const directUrl = `https://archive.org/download/${identifier}/${encodeURIComponent(filename)}`;
+                                const isWorking = await testDirectLink(directUrl);
+                                verified.push({
+                                    title,
+                                    videoUrl: directUrl,
+                                    status: isWorking ? "success" : "fail"
+                                });
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            displayResults(verified);
+            setLoading(false);
+        }
+
+        function setLoading(isLoading) {
+            const btn = document.getElementById('testBtn');
+            btn.disabled = isLoading;
+            btn.innerText = isLoading ? "Testing Archive.org..." : "Run New Test";
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('resultsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const list = document.getElementById('resultsList');
+            
+            if (!results || results.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.innerText = "No working links found on this pass.";
+                return;
+            }
+
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            document.getElementById('resultCount').innerText = results.length;
+            const workingCount = results.filter(r => r.status === 'success').length;
+            const failCount = results.filter(r => r.status === 'fail').length;
+            document.getElementById('resultStats').innerText = `${workingCount} working | ${failCount} failed`;
+
+            list.innerHTML = results.map(movie => `
+                <div class="px-6 py-4 flex items-center justify-between hover:bg-zinc-950/50">
+                    <div class="flex-1 min-w-0 pr-4">
+                        <div class="font-medium truncate">${escapeHtml(movie.title)}</div>
+                        <a href="${movie.videoUrl}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline text-sm break-all">
+                            ${escapeHtml(movie.videoUrl)}
+                        </a>
+                    </div>
+                    <div class="px-4 py-1 rounded-full text-sm font-medium ${movie.status === 'success' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">
+                        ${movie.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BOOKS ON TAPE · NEXUS TV</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
+body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
+.font-disp{font-family:'Space Grotesk',sans-serif}
+.grain:before{content:"";position:fixed;inset:-100%;z-index:60;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 7s steps(10) infinite}
+@keyframes grain{0%,100%{transform:translate(0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-3%,4%)}80%{transform:translate(4%,2%)}}
+.aurora-text{background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fade-in{animation:fi .5s ease both}@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+:root{--accent:#22d3ee}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}::-webkit-scrollbar-track{background:transparent}
+.row-scroll{scrollbar-width:none}.row-scroll::-webkit-scrollbar{display:none}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(255,255,255,.15);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:99px;background:var(--accent);cursor:pointer;box-shadow:0 0 10px rgba(34,211,238,.6)}
+.seek{background:linear-gradient(to right,var(--accent) var(--p,0%),rgba(255,255,255,.22) var(--p,0%))}
+.volr{background:linear-gradient(to right,#fff var(--vp,100%),rgba(255,255,255,.25) var(--vp,100%))}
+.spinner{width:46px;height:46px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:99%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#spotbg{transition:background-image .5s ease,filter .5s ease}
+.hero-switch{animation:hs .35s ease}@keyframes hs{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+</style>
+</head>
+<body class="grain antialiased">
+
+<nav class="sticky top-0 z-40 backdrop-blur bg-black/70 border-b border-white/5">
+<div class="flex items-center justify-between px-6 md:px-12 py-4 gap-4">
+<a href="index.html" class="flex items-baseline gap-2 shrink-0"><span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span><span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span></a>
+<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white/50 hover:text-white transition">IPTV</a><a href="index.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white/50 hover:text-white transition">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white font-semibold">Books</a><button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="ml-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">🎂</button></div>
+<div class="relative w-full max-w-xs">
+<input id="navq" type="text" placeholder="Search titles & authors…" class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm outline-none focus:border-cyan-400 transition placeholder:text-white/30">
+</div>
+</div>
+</nav>
+
+<header class="px-6 md:px-12 pt-14 pb-8">
+<h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight"><span class="aurora-text">BOOKS ON TAPE</span></h1>
+<p id="stats" class="mt-3 text-sm text-white/40 tracking-wide"></p>
+</header>
+
+<section class="px-6 md:px-12 pb-10">
+<div class="relative rounded-3xl border border-white/10 overflow-hidden bg-white/[0.03]">
+<img id="spotbg" alt="" class="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40 pointer-events-none">
+<div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/25"></div>
+<div id="heroContent" class="relative z-10 p-8 md:p-14 flex flex-col md:flex-row items-start md:items-center gap-8 min-h-[320px]"></div>
+<div id="dots" class="absolute bottom-4 right-6 z-10 flex gap-2"></div>
+</div>
+</section>
+
+<main class="px-6 md:px-12 pb-28">
+<div class="relative max-w-md mb-8">
+<input id="bookSearch" type="text" placeholder="Search titles & authors…" class="w-full rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm outline-none focus:border-cyan-400 transition placeholder:text-white/30">
+</div>
+<p id="empty" class="hidden text-center text-white/40 py-16">Nothing matches your search.</p>
+<div id="collection" class="space-y-12"></div>
+</main>
+
+<div id="player" class="fixed inset-0 z-50 bg-black hidden items-center justify-center">
+<div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-video bg-black shadow-2xl overflow-hidden">
+<img id="artBg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25 blur-md scale-110 select-none">
+<div class="relative z-[1] h-full flex flex-col items-center justify-center gap-5 px-12 text-center">
+<img id="artFront" alt="" class="w-[min(32vh,280px)] aspect-square rounded-2xl object-cover shadow-2xl ring-1 ring-white/10">
+<div class="max-w-2xl">
+<h3 id="pTitle" class="font-disp text-xl md:text-2xl font-bold truncate">Title</h3>
+<p id="pMeta" class="text-sm text-white/55 mt-1"></p>
+<p id="pChapter" class="text-[11px] text-cyan-300 mt-2 font-bold tracking-[0.22em] uppercase"></p>
+</div>
+<a id="buyBtn" href="#" target="_blank" rel="noopener" class="hidden items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-6 py-2.5 rounded-full text-sm font-bold text-white transition">
+Buy on Apple Books ↗
+</a>
+</div>
+<div id="loader" class="absolute inset-0 hidden items-center justify-center bg-black/40 z-[2]"><div class="spinner"></div></div>
+<div class="absolute top-0 left-0 right-0 p-5 bg-gradient-to-b from-black/80 to-transparent flex justify-end items-start gap-4 opacity-0 transition-opacity duration-300 z-10" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+<button id="closeBtn" title="Close (Esc)" class="bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-xl backdrop-blur cursor-pointer text-white flex items-center justify-center hover:bg-white/20 transition">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+</button>
+</div>
+<div class="absolute left-0 right-0 bottom-0 p-4 md:p-6 bg-gradient-to-t from-black/95 to-transparent opacity-0 transition-opacity duration-300 z-10" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+<input type="range" class="seek w-full cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+<div class="flex justify-between text-[11.5px] text-white/45 mt-1.5 tabular-nums"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+<div class="flex items-center gap-4 mt-2">
+<button id="prevBtn" title="Previous chapter" class="text-white/80 hover:text-white cursor-pointer transition"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg></button>
+<button id="ppBtn" title="Play / Pause (k)" class="w-10 h-10 rounded-full bg-cyan-400 text-black flex items-center justify-center hover:bg-cyan-300 transition shrink-0"><svg id="ppIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+<button id="nextBtn" title="Next chapter" class="text-white/80 hover:text-white cursor-pointer transition"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+<button id="speedBtn" title="Playback speed" class="speed-pill bg-white/10 hover:bg-white/20 border border-white/15 text-white text-[11px] font-bold px-3 py-1.5 rounded-full cursor-pointer transition">1×</button>
+<button id="muteBtn" title="Mute (m)" class="text-white/80 hover:text-white cursor-pointer transition"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+<input type="range" class="volr cursor-pointer outline-none w-20 md:w-24" id="vol" min="0" max="100" value="100">
+</div>
+</div>
+</div>
+</div>
+
+<div id="toast" class="fixed left-1/2 bottom-8 -translate-x-1/2 translate-y-6 z-[60] bg-[#0b0b12]/95 border border-white/10 backdrop-blur px-5 py-3 rounded-xl text-sm opacity-0 transition-all pointer-events-none flex items-center gap-2"></div>
+
+<footer class="border-t border-white/5 px-6 md:px-12 py-6 flex flex-wrap justify-between gap-4 text-xs text-white/30">
+<span>NEXUS TV · private streaming library</span>
+<span>Audiobooks stream from archive.org · previews via Apple Books</span>
+</footer>
+
+<script>
+const CLASSIC_BOOKS=[{"id": 1, "title": "Dracula", "author": "Bram Stoker", "cat": "horror", "item": "dracula_v4_1903_librivox", "img": "posters/covers/dracula.jpg", "tracks": ["https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_01_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_01_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_02_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_02_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_03_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_03_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_04_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_04_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_05_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_05_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_06_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_06_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_07_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_07_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_08_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_08_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_09_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_09_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_10_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_10_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_11_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_11_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_12_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_12_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_13_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_13_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_14_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_14_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_15_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_15_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_16_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_16_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_17_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_17_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_18_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_18_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_19_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_19_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_20_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_20_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_21_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_21_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_22_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_22_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_23_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_23_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_24_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_24_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_25_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_25_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_26_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_26_stoker_128kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_27_stoker_64kb.mp3", "https://archive.org/download/dracula_v4_1903_librivox/dracula_v4_27_stoker_128kb.mp3"], "chapters": 54}, {"id": 2, "title": "Carmilla", "author": "J. Sheridan Le Fanu", "cat": "horror", "item": "carmilla_2011_librivox", "img": "posters/covers/carmilla.jpg", "tracks": ["https://archive.org/download/carmilla_2011_librivox/carmilla_00_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_00_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_01_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_01_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_02_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_02_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_03_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_03_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_04_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_04_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_05_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_05_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_06_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_06_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_07_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_07_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_08_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_08_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_09_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_09_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_10_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_10_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_11_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_11_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_12_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_12_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_13_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_13_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_14_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_14_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_15_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_15_lefanu_128kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_16_lefanu_64kb.mp3", "https://archive.org/download/carmilla_2011_librivox/carmilla_16_lefanu_128kb.mp3"], "chapters": 34}, {"id": 3, "title": "The Turn of the Screw", "author": "Henry James", "cat": "horror", "item": "turn_of_the_screw_ver_3_sc_2006_librivox", "img": "posters/covers/the-turn-of-the-screw.jpg", "tracks": ["https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_00_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_00_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_01_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_01_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_02_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_02_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_03_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_03_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_04_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_04_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_05_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_05_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_06_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_06_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_07_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_07_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_08_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_08_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_09_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_09_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_10_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_10_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_11_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_11_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_12_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_12_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_13_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_13_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_14_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_14_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_15_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_15_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_16_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_16_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_17_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_17_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_18_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_18_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_19_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_19_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_20_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_20_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_21_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_21_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_22_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_22_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_23_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_23_james_128kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_24_james_64kb.mp3", "https://archive.org/download/turn_of_the_screw_ver_3_sc_2006_librivox/turnofthescrew_24_james_128kb.mp3"], "chapters": 50}, {"id": 4, "title": "The Legend of Sleepy Hollow", "author": "Washington Irving", "cat": "horror", "item": "sleepyhollow_1206_librivox", "img": "posters/covers/the-legend-of-sleepy-hollow.jpg", "tracks": ["https://archive.org/download/sleepyhollow_1206_librivox/legendofsleepyhollow_01_irving_64kb.mp3", "https://archive.org/download/sleepyhollow_1206_librivox/legendofsleepyhollow_02_irving_64kb.mp3"], "chapters": 2}, {"id": 5, "title": "Frankenstein", "author": "Mary Shelley", "cat": "gothic", "item": "frankenstein_1107_librivox", "img": "posters/covers/frankenstein.jpg", "tracks": ["https://archive.org/download/frankenstein_1107_librivox/frankenstein_00_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_01_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_02_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_03_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_04_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_05_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_06_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_07_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_08_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_09_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_10_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_11_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_12_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_13_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_14_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_15_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_16_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_17_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_18_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_19_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_20_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_21_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_22_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_23_shelley_64kb.mp3", "https://archive.org/download/frankenstein_1107_librivox/frankenstein_24_shelley_64kb.mp3"], "chapters": 25}, {"id": 6, "title": "The Picture of Dorian Gray", "author": "Oscar Wilde", "cat": "gothic", "item": "picture_dorian_gray_1204_librivox", "img": "posters/covers/the-picture-of-dorian-gray.jpg", "tracks": ["https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_00_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_01_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_02_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_03_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_04_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_05_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_06_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_07_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_08_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_09_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_10_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_11_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_12_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_13_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_14_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_15_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_16_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_17_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_18_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_19_wilde_64kb.mp3", "https://archive.org/download/picture_dorian_gray_1204_librivox/pictureofdoriangray_20_wilde_64kb.mp3"], "chapters": 21}, {"id": 7, "title": "The Phantom of the Opera", "author": "Gaston Leroux", "cat": "gothic", "item": "phantom_opera_1304_librivox", "img": "posters/covers/the-phantom-of-the-opera.jpg", "tracks": ["https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_00_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_01_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_02_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_03_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_04_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_05_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_06_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_07_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_08_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_09_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_10_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_11_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_12_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_13_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_14_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_15_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_16_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_17_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_18_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_19_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_20_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_21_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_22_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_23_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_24_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_25_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_26_leroux_64kb.mp3", "https://archive.org/download/phantom_opera_1304_librivox/phantomoftheopera_27_leroux_64kb.mp3"], "chapters": 28}, {"id": 8, "title": "Dr. Jekyll & Mr. Hyde", "author": "Robert Louis Stevenson", "cat": "gothic", "item": "jekyll_hyde_1111_librivox", "img": "posters/covers/dr-jekyll-mr-hyde.jpg", "tracks": ["https://archive.org/download/jekyll_hyde_1111_librivox/thestrangecaseofdrjekyllandmrhyde_01_stevenson_64kb.mp3", "https://archive.org/download/jekyll_hyde_1111_librivox/thestrangecaseofdrjekyllandmrhyde_02_stevenson_64kb.mp3", "https://archive.org/download/jekyll_hyde_1111_librivox/thestrangecaseofdrjekyllandmrhyde_03_stevenson_64kb.mp3", "https://archive.org/download/jekyll_hyde_1111_librivox/thestrangecaseofdrjekyllandmrhyde_04_stevenson_64kb.mp3", "https://archive.org/download/jekyll_hyde_1111_librivox/thestrangecaseofdrjekyllandmrhyde_05_stevenson_64kb.mp3"], "chapters": 5}, {"id": 9, "title": "The Call of Cthulhu", "author": "H.P. Lovecraft", "cat": "lovecraft", "item": "thecallofcthulhu_2206_librivox", "img": "posters/covers/the-call-of-cthulhu.jpg", "tracks": ["https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_01_lovecraft_64kb.mp3", "https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_01_lovecraft_128kb.mp3", "https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_02_lovecraft_64kb.mp3", "https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_02_lovecraft_128kb.mp3", "https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_03_lovecraft_64kb.mp3", "https://archive.org/download/thecallofcthulhu_2206_librivox/thecallofcthulhu_03_lovecraft_128kb.mp3"], "chapters": 6}, {"id": 10, "title": "The Dunwich Horror", "author": "H.P. Lovecraft", "cat": "lovecraft", "item": "dunwich_horror_1511_librivox", "img": "posters/covers/the-dunwich-horror.jpg", "tracks": ["https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_01_lovecraft_64kb.mp3", "https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_01_lovecraft_128kb.mp3", "https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_02_lovecraft_64kb.mp3", "https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_02_lovecraft_128kb.mp3", "https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_03_lovecraft_64kb.mp3", "https://archive.org/download/dunwich_horror_1511_librivox/dunwichhorror_03_lovecraft_128kb.mp3"], "chapters": 6}, {"id": 11, "title": "The Shadow over Innsmouth", "author": "H.P. Lovecraft", "cat": "lovecraft", "item": "shadowoverinnsmouth_2403_librivox", "img": "posters/covers/the-shadow-over-innsmouth.jpg", "tracks": ["https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_01_lovecraft_64kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_01_lovecraft_128kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_02_lovecraft_64kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_02_lovecraft_128kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_03_lovecraft_64kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_03_lovecraft_128kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_04_lovecraft_64kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_04_lovecraft_128kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_05_lovecraft_64kb.mp3", "https://archive.org/download/shadowoverinnsmouth_2403_librivox/shadowoverinnsmouth_05_lovecraft_128kb.mp3"], "chapters": 10}, {"id": 12, "title": "At the Mountains of Madness", "author": "H.P. Lovecraft", "cat": "lovecraft", "item": "mountainsofmadnessver2_2402_librivox", "img": "posters/covers/at-the-mountains-of-madness.jpg", "tracks": ["https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_01_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_01_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_02_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_02_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_03_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_03_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_04_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_04_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_05_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_05_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_06_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_06_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_07_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_07_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_08_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_08_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_09_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_09_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_10_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_10_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_11_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_11_lovecraft_128kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_12_lovecraft_64kb.mp3", "https://archive.org/download/mountainsofmadnessver2_2402_librivox/atthemountainsofmadness_12_lovecraft_128kb.mp3"], "chapters": 24}, {"id": 13, "title": "Works of Edgar Allan Poe Vol. 2", "author": "Edgar Allan Poe", "cat": "poe", "item": "works_poe_raven_edition_2_1704_librivox", "img": "posters/covers/works-of-edgar-allan-poe-vol-2.jpg", "tracks": ["https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_01_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_01_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_02_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_02_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_03_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_03_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_04_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_04_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_05_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_05_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_06_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_06_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_07_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_07_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_08_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_08_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_09_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_09_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_10_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_10_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_11_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_11_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_12_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_12_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_13_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_13_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_14_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_14_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_15_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_15_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_16_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_16_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_17_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_17_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_18_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_18_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_19_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_19_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_20_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_20_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_21_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_21_poe_128kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_22_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_2_1704_librivox/workspoeravenv2_22_poe_128kb.mp3"], "chapters": 44}, {"id": 14, "title": "The Raven", "author": "Edgar Allan Poe", "cat": "poe", "item": "works_poe_raven_edition_vol1_1109", "img": "posters/covers/the-raven.jpg", "tracks": ["https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_01_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_02_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_03_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_04_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_05_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_06_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_07_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_08_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_09_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_10_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_11_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_12_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_13_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_14_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_15_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_16_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_17_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_18_poe_64kb.mp3", "https://archive.org/download/works_poe_raven_edition_vol1_1109/worksofpoevol1_19_poe_64kb.mp3"], "chapters": 19}, {"id": 15, "title": "The Hound of the Baskervilles", "author": "Arthur Conan Doyle", "cat": "mystery", "item": "hound_baskervilles_bn_librivox", "img": "posters/covers/the-hound-of-the-baskervilles.jpg", "tracks": ["https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_01_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_02_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_03_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_04_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_05_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_06_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_07_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_08_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_09_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_10_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_11_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_12_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_13_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_14_doyle_64kb.mp3", "https://archive.org/download/hound_baskervilles_bn_librivox/houndofthebaskervilles_15_doyle_64kb.mp3"], "chapters": 15}, {"id": 16, "title": "The Adventures of Sherlock Holmes", "author": "Arthur Conan Doyle", "cat": "mystery", "item": "the_adventures_of_sherlock_holmes_v5_1904_librivox", "img": "posters/covers/the-adventures-of-sherlock-holmes.jpg", "tracks": ["https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_01_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_01_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_02_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_02_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_03_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_03_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_04_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_04_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_05_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_05_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_06_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_06_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_07_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_07_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_08_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_08_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_09_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_09_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_10_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_10_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_11_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_11_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_12_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_12_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_13_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_13_conandoyle_128kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_14_conandoyle_64kb.mp3", "https://archive.org/download/the_adventures_of_sherlock_holmes_v5_1904_librivox/adventuresofsherlockhomes_14_conandoyle_128kb.mp3"], "chapters": 28}, {"id": 17, "title": "The Sign of the Four", "author": "Arthur Conan Doyle", "cat": "mystery", "item": "signofthefour_1301_librivox", "img": "posters/covers/the-sign-of-the-four.jpg", "tracks": ["https://archive.org/download/signofthefour_1301_librivox/signofthefour_01_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_02_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_03_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_04_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_05_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_06_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_07_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_08_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_09_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_10_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_11_doyle_64kb.mp3", "https://archive.org/download/signofthefour_1301_librivox/signofthefour_12_doyle_64kb.mp3"], "chapters": 12}, {"id": 18, "title": "The Time Machine", "author": "H.G. Wells", "cat": "scifi", "item": "time_machine_ms_librivox", "img": "posters/covers/the-time-machine.jpg", "tracks": ["https://archive.org/download/time_machine_ms_librivox/timemachine_01_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_02_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_03_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_04_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_05_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_06_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_07_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_08_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_09_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_10_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_11_wells_64kb.mp3", "https://archive.org/download/time_machine_ms_librivox/timemachine_12_wells_64kb.mp3"], "chapters": 12}, {"id": 19, "title": "The War of the Worlds", "author": "H.G. Wells", "cat": "scifi", "item": "waroftheworlds_2103_librivox", "img": "posters/covers/the-war-of-the-worlds.jpg", "tracks": ["https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_01_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_01_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_02_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_02_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_03_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_03_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_04_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_04_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_05_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_05_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_06_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_06_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_07_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_07_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_08_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_08_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_09_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_09_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_10_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_10_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_11_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_11_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_12_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_12_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_13_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_13_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_14_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_14_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_15_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_15_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_16_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_16_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_17_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_17_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_18_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_18_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_19_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_19_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_20_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_20_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_21_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_21_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_22_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_22_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_23_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_23_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_24_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_24_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_25_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_25_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_26_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_26_wells_128kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_27_wells_64kb.mp3", "https://archive.org/download/waroftheworlds_2103_librivox/waroftheworlds_27_wells_128kb.mp3"], "chapters": 54}, {"id": 20, "title": "The Invisible Man", "author": "H.G. Wells", "cat": "scifi", "item": "the_invisible_man_2102_librivox", "img": "posters/covers/the-invisible-man.jpg", "tracks": ["https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_01_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_01_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_02_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_02_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_03_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_03_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_04_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_04_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_05_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_05_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_06_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_06_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_07_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_07_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_08_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_08_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_09_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_09_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_10_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_10_wells_128kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_11_wells_64kb.mp3", "https://archive.org/download/the_invisible_man_2102_librivox/invisibleman_11_wells_128kb.mp3"], "chapters": 22}];
+// --- Archive.org extras (auto-pull) ---
+const KING_BOOKS=[{"id": 100, "title": "Needful Things", "author": "Stephen King", "cat": "king", "item": "stephen-king-needful-things-stephen-king", "img": "posters/covers/needful-things.jpg", "tracks": ["https://archive.org/download/stephen-king-needful-things-stephen-king/0_%20Prologue.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2001.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2002.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2003.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2004.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2005.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2006.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2007.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2008.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2009.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2010.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/1_%20Part%20One%20-%20Grand%20Opening%20Celebration%20-%20Chapter%2011.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2012.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2013.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2014.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2015.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2016.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2017.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/2_%20Part%20Two%20-%20The%20Sale%20of%20the%20Century%20-%20Chapter%2018.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/3_%20Part%20Three%20-%20Everything%20Must%20Go%20-%20Chapter%2019.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/3_%20Part%20Three%20-%20Everything%20Must%20Go%20-%20Chapter%2020.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/3_%20Part%20Three%20-%20Everything%20Must%20Go%20-%20Chapter%2021.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/3_%20Part%20Three%20-%20Everything%20Must%20Go%20-%20Chapter%2022.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/3_%20Part%20Three%20-%20Everything%20Must%20Go%20-%20Chapter%2023.mp3", "https://archive.org/download/stephen-king-needful-things-stephen-king/4_%20Epilogue.mp3"], "chapters": 25}];
+CLASSIC_BOOKS.push(...KING_BOOKS);
+const BESTSELLERS=[];
+const ROWS=[
+    {"key":"bestsellers","label":"New Releases & Best Sellers"},
+    {"key":"king","label":"Stephen King"},
+    {"key":"horror","label":"Classic Horror Vault"},
+    {"key":"gothic","label":"Gothic Chillers"},
+    {"key":"lovecraft","label":"Lovecraft & Weird Tales"},
+    {"key":"poe","label":"Edgar Allan Poe Collection"},
+    {"key":"mystery","label":"Detectives & Mystery"},
+    {"key":"scifi","label":"Sci-Fi Timeless"}
+];
+const SPOTLIGHT_IDS=CLASSIC_BOOKS.slice(0,5).map(b=>b.id);
+
+        const ACCENTS={"king":["#dc2626","220,38,38"],"horror":["#b91c1c","185,28,28"],"gothic":["#7e22ce","126,34,206"],"lovecraft":["#0e7490","14,116,144"],"poe":["#334155","51,65,85"],"mystery":["#a16207","161,98,7"],"scifi":["#1d4ed8","29,78,216"],"bestsellers":["#be185d","190,24,93"]};
+let saved = new Set(JSON.parse(localStorage.getItem("nexus_books_saved") || "[]"));
+let activeIdx = 0, rotTimer = null;
+
+const $=(id)=>document.getElementById(id);
+const collectionEl=$('collection'), heroContentEl=$('heroContent'), dotsEl=$('dots');
+
+function accentOf(key){return ACCENTS[key]||ACCENTS.bestsellers}
+
+(function stats(){let ch=0;for(const b of CLASSIC_BOOKS)ch+=b.chapters||0;
+$('stats').textContent=CLASSIC_BOOKS.length+' AUDIOBOOKS'+(ch?' · '+ch.toLocaleString()+' CHAPTERS':'');})();
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function renderDots(idx){
+dotsEl.innerHTML='';
+SPOTLIGHT_IDS.forEach((id,i)=>{
+const d=document.createElement('button');
+d.className='w-2.5 h-2.5 rounded-full transition '+(i===idx?'bg-white':'bg-white/25 hover:bg-white/60');
+d.onclick=()=>setSpotlight(i);
+dotsEl.appendChild(d);
+});
+}
+
+function updateHeroContent(idx){
+activeIdx=idx;
+const b=CLASSIC_BOOKS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
+if(!b)return;
+const [accent]=accentOf(b.cat);
+document.documentElement.style.setProperty('--accent',accent);
+$('spotbg').src=b.img;
+heroContentEl.classList.remove('hero-switch');void heroContentEl.offsetWidth;
+heroContentEl.innerHTML=`
+<img src="${esc(b.img)}" alt="" class="hidden md:block w-40 lg:w-48 aspect-square rounded-2xl object-cover ring-1 ring-white/15 shadow-2xl fade-in">
+<div class="flex-1 min-w-0 hero-switch">
+<div class="text-[11px] tracking-[0.25em] uppercase text-cyan-300 mb-3">🎧 Audiobook Feature</div>
+<h2 class="font-disp text-3xl md:text-5xl font-bold tracking-tight mb-3">${esc(b.title)}</h2>
+<p class="text-sm text-white/50 mb-6">${esc(b.author)} · ${b.chapters||'?'} chapters · Full &amp; Unabridged</p>
+<div class="flex flex-wrap gap-3">
+<button onclick="playBook(${b.id})" class="inline-flex items-center gap-2 rounded-full bg-cyan-400 text-black font-semibold text-sm px-6 py-2.5 hover:bg-cyan-300 transition">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Start Listening</button>
+<button onclick="toggleSave(${b.id})" class="rounded-full border border-white/20 bg-white/5 text-sm px-5 py-2.5 hover:bg-white/10 transition">${saved.has(b.id)?'✓ In Saved List':'+ Add to List'}</button>
+</div>
+</div>`;
+renderDots(idx);
+}
+
+function setSpotlight(idx){stopRot();updateHeroContent(idx);startRot()}
+function startRot(){stopRot();rotTimer=setInterval(()=>{activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;updateHeroContent(activeIdx)},8000)}
+function stopRot(){if(rotTimer)clearInterval(rotTimer)}
+
+window.playBook=function(id){
+const b=CLASSIC_BOOKS.find(x=>x.id===id)||BESTSELLERS.find(x=>x.id===id);
+if(!b)return;
+if(b.preview)openPreview(b);else openClassic(b);
+};
+
+window.toggleSave=function(id){
+if(saved.has(id))saved.delete(id);else saved.add(id);
+localStorage.setItem("nexus_books_saved",JSON.stringify([...saved]));
+renderCollection($('bookSearch').value.trim());
+const cur=CLASSIC_BOOKS.find(x=>x.id===SPOTLIGHT_IDS[activeIdx]);
+if(cur&&cur.id===id)updateHeroContent(activeIdx);
+showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
+};
+
+function showToast(msg){
+const t=$('toast');
+t.textContent=msg;
+t.classList.remove('translate-y-6','opacity-0');
+setTimeout(()=>t.classList.add('translate-y-6','opacity-0'),2600);
+}
+
+function cardShell(inner,onclick){
+const el=document.createElement('div');
+el.className='group cursor-pointer shrink-0 w-[150px] md:w-[172px] fade-in';
+el.onclick=onclick;
+el.innerHTML=inner;
+return el;
+}
+
+function classicCard(b){
+const isSaved=saved.has(b.id);
+return cardShell(`
+<div class="relative rounded-xl overflow-hidden border border-white/10 bg-white/5 aspect-square transition-all duration-300 group-hover:border-cyan-400/60 group-hover:shadow-[0_0_30px_-8px_rgba(34,211,238,.45)] group-hover:-translate-y-1">
+<img src="${esc(b.img)}" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+<span class="absolute top-1.5 left-1.5 rounded-md bg-black/75 px-1.5 py-0.5 text-[10px] text-white/75">${b.chapters||'?'} CH</span>
+<button class="bookmark absolute top-1.5 right-1.5 w-7 h-7 rounded-lg bg-black/70 backdrop-blur flex items-center justify-center transition ${isSaved?'text-cyan-300':'text-white/60 hover:text-white'}" onclick="event.stopPropagation();toggleSave(${b.id})" title="Save">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+</button>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/25">
+<div class="w-11 h-11 rounded-full bg-cyan-400 text-black flex items-center justify-center shadow-lg"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+</div>
+</div>
+<p class="mt-2 text-sm truncate">${esc(b.title)}</p>
+<p class="text-xs text-white/35 truncate">${esc(b.author)}</p>`,
+(e)=>{if(e.target.closest('.bookmark'))return;playBook(b.id)});
+}
+
+function bsCard(b){
+return cardShell(`
+<div class="relative rounded-xl overflow-hidden border border-white/10 bg-white/5 aspect-square transition-all duration-300 group-hover:border-fuchsia-400/60 group-hover:shadow-[0_0_30px_-8px_rgba(244,114,182,.45)] group-hover:-translate-y-1">
+<img src="${esc(b.img)}" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+<span class="absolute top-1.5 left-1.5 rounded-md bg-fuchsia-500/90 px-1.5 py-0.5 text-[10px] font-bold">PREVIEW</span>
+<a class="bookmark absolute top-1.5 right-1.5 w-7 h-7 rounded-lg bg-black/70 backdrop-blur flex items-center justify-center text-white/70 hover:text-white transition" href="${esc(b.buy)}" target="_blank" rel="noopener" title="Buy on Apple Books" onclick="event.stopPropagation()">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>
+</a>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/25">
+<div class="w-11 h-11 rounded-full bg-fuchsia-400 text-black flex items-center justify-center shadow-lg"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+</div>
+</div>
+<p class="mt-2 text-sm truncate">${esc(b.title)}</p>
+<p class="text-xs text-white/35 truncate">${esc(b.author)}</p>`,
+()=>openPreview(b));
+}
+
+function renderCollection(filter){
+filter=(filter||'').toLowerCase();
+collectionEl.innerHTML='';
+let shown=0;
+ROWS.forEach((r,ri)=>{
+const track=document.createElement('div');
+track.className='row-track flex gap-4 overflow-x-auto row-scroll pb-2';
+let count=0;
+if(r.key==='bestsellers'){
+if(filter)return;
+BESTSELLERS.forEach(bs=>track.appendChild(bsCard(bs)));
+count=BESTSELLERS.length;
+if(!BESTSELLERS.length)track.innerHTML='<div class="text-xs text-white/35 animate-pulse py-6">Loading charts from Apple Books…</div>';
+}else{
+const list=CLASSIC_BOOKS.filter(bs=>bs.cat===r.key&&(!filter||bs.title.toLowerCase().includes(filter)||bs.author.toLowerCase().includes(filter)));
+if(!list.length)return;
+list.forEach(bs=>track.appendChild(classicCard(bs)));
+count=list.length;
+shown+=count;
+}
+const row=document.createElement('div');
+row.className='fade-in';
+row.innerHTML=`<div class="flex items-baseline justify-between mb-3"><h3 class="font-disp text-lg font-bold text-white/85"><span class="text-white/30 mr-2">${String(ri+1).padStart(2,'0')}</span>${esc(r.label)}</h3><span class="text-xs text-white/30">${count||''}</span></div>`;
+row.appendChild(track);
+collectionEl.appendChild(row);
+});
+$('empty').classList.toggle('hidden',!(filter&&shown===0));
+}
+
+// ---------- Player ----------
+const playerEl=$('player');
+const audio=new Audio();
+audio.volume=.9;
+const loaderEl=$('loader'),seekEl=$('seek'),curTimeEl=$('curTime'),durTimeEl=$('durTime');
+const ppBtn=$('ppBtn'),ppIcon=$('ppIcon'),muteBtn=$('muteBtn'),volEl=$('vol');
+const prevBtn=$('prevBtn'),nextBtn=$('nextBtn'),speedBtn=$('speedBtn');
+const artBg=$('artBg'),artFront=$('artFront'),pTitle=$('pTitle'),pMeta=$('pMeta'),pChapter=$('pChapter'),buyBtn=$('buyBtn');
+
+let queue=[],qi=0,curBook=null;
+const SPEEDS=[1,1.25,1.5,2];
+let speedIdx=0;
+
+function openOverlay(){playerEl.style.display='flex'}
+function closePlayer(){audio.pause();playerEl.style.display='none'}
+
+function openClassic(b){
+curBook=b;queue=b.tracks;qi=0;
+buyBtn.classList.add('hidden');buyBtn.classList.remove('inline-flex');
+artBg.src=b.img;artFront.src=b.img;
+pTitle.innerText=b.title;pMeta.innerText=b.author;
+document.documentElement.style.setProperty('--accent',accentOf(b.cat)[0]);
+loadTrack();
+}
+
+function openPreview(b){
+curBook=b;queue=[b.previewUrl];qi=0;
+buyBtn.href=b.buy;buyBtn.classList.remove('hidden');buyBtn.classList.add('inline-flex');
+artBg.src=b.img;artFront.src=b.img;
+pTitle.innerText=b.title;pMeta.innerText=b.author+' · Preview';
+document.documentElement.style.setProperty('--accent','#e879f9');
+loadTrack();
+}
+
+function loadTrack(){
+seekEl.style.setProperty('--p','0%');
+audio.src=queue[qi];
+pChapter.innerText=queue.length>1?`Track ${qi+1} of ${queue.length}`:'';
+openOverlay();
+audio.play().catch(()=>{});
+}
+function nextTrack(){if(!queue.length)return;qi=(qi+1)%queue.length;loadTrack()}
+function prevTrack(){
+if(audio.currentTime>3){audio.currentTime=0;return}
+if(!queue.length)return;
+qi=(qi-1+queue.length)%queue.length;loadTrack();
+}
+
+audio.onwaiting=()=>loaderEl.style.display='flex';
+audio.onplaying=()=>loaderEl.style.display='none';
+audio.oncanplay=()=>loaderEl.style.display='none';
+audio.ontimeupdate=()=>{
+if(!audio.duration)return;
+const p=(audio.currentTime/audio.duration)*1000;
+seekEl.value=p;seekEl.style.setProperty('--p',(p/10)+'%');
+curTimeEl.innerText=fmtTime(audio.currentTime);
+durTimeEl.innerText=fmtTime(audio.duration);
+};
+audio.onended=()=>{if(queue.length>1)nextTrack()};
+audio.onplay=()=>ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+audio.onpause=()=>ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+
+ppBtn.onclick=()=>{if(audio.paused)audio.play();else audio.pause()};
+nextBtn.onclick=nextTrack;
+prevBtn.onclick=prevTrack;
+$('closeBtn').onclick=closePlayer;
+muteBtn.onclick=()=>{audio.muted=!audio.muted;volEl.value=audio.muted?0:audio.volume*100};
+volEl.oninput=(e)=>{audio.muted=false;audio.volume=e.target.value/100;volEl.style.setProperty('--vp',e.target.value+'%')};
+seekEl.oninput=(e)=>{if(audio.duration)audio.currentTime=(e.target.value/1000)*audio.duration};
+speedBtn.onclick=()=>{
+speedIdx=(speedIdx+1)%SPEEDS.length;
+audio.playbackRate=SPEEDS[speedIdx];
+speedBtn.textContent=SPEEDS[speedIdx]+'×';
+};
+document.addEventListener('keydown',(e)=>{
+if(e.key==='Escape'&&playerEl.style.display!=='none')closePlayer();
+if((e.key==='k'||e.key===' ')&&playerEl.style.display!=='none'){e.preventDefault();if(audio.paused)audio.play();else audio.pause()}
+});
+
+function fmtTime(s){
+if(!isFinite(s))return"0:00";
+s=Math.floor(s);
+const h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60;
+return h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;
+}
+
+// ---------- iTunes Best Sellers (JSONP, no key needed) ----------
+let bsCbN=0;
+function jsonp(url){
+return new Promise(res=>{
+const cb='nxbsCb'+(++bsCbN);
+window[cb]=d=>{res(d);cleanup()};
+const s=document.createElement('script');
+s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+function cleanup(){try{delete window[cb]}catch(e){}s.remove()}
+s.onerror=()=>{res(null);cleanup()};
+document.head.appendChild(s);
+});
+}
+
+async function loadBestsellers(){
+const terms=["stephen king audiobook","dean koontz audiobook","riley sager audiobook","freida mcfadden audiobook","james patterson audiobook"];
+const seen=new Set();
+let out=[];
+const results=await Promise.all(terms.map(t=>
+jsonp(`https://itunes.apple.com/search?term=${encodeURIComponent(t)}&media=audiobook&entity=audiobook&limit=6&country=us`)
+));
+results.forEach(r=>{
+(r&&r.results?r.results:[]).forEach(it=>{
+if(!it.collectionId||seen.has(it.collectionId))return;
+seen.add(it.collectionId);
+out.push({
+id:900+it.collectionId%100000,
+title:it.collectionName||'Untitled',
+author:it.artistName||'',
+img:(it.artworkUrl100||'').replace('100x100','600x600'),
+previewUrl:it.previewUrl,
+buy:it.trackViewUrl||('https://books.apple.com/us/audiobook/id'+it.collectionId),
+preview:true
+});
+});
+});
+out=out.slice(0,14);
+BESTSELLERS.length=0;
+BESTSELLERS.push(...out);
+renderCollection($('bookSearch').value.trim());
+}
+
+// ---------- Init ----------
+(function(){
+renderHeroSpotlight();
+renderCollection('');
+loadBestsellers();
+$('bookSearch').addEventListener('input',(e)=>{$('navq').value=e.target.value;renderCollection(e.target.value.trim())});
+$('navq').addEventListener('input',(e)=>{$('bookSearch').value=e.target.value;renderCollection(e.target.value.trim())});
+})();
+
+function renderHeroSpotlight(){if(SPOTLIGHT_IDS.length)updateHeroContent(0)}
+</script>
+
+<!-- BIRTHDAY GATE -->
+<div id="nx-gate" style="display:none" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+<div class="w-full max-w-sm rounded-2xl border border-white/15 bg-neutral-900 p-8 text-center">
+<div class="text-4xl mb-3">🎂</div>
+<h2 class="font-disp text-xl font-bold mb-2">Welcome to AURORA</h2>
+<p class="text-sm text-white/60 mb-6">Enter your birthday and we will tailor what you can watch (G / PG / PG-13 / R).</p>
+<input id="nx-dob" type="date" onchange="NexusAge.submit()" class="w-full rounded-xl bg-black/40 border border-white/20 px-4 py-3 text-white outline-none focus:border-cyan-400 mb-3">
+<p id="nx-err" class="hidden text-xs text-red-400 mb-3">Please enter a valid birthday.</p>
+<button onclick="NexusAge.submit()" class="w-full rounded-full bg-cyan-400 text-black font-semibold px-6 py-2.5 hover:bg-cyan-300 transition">Continue</button>
+</div></div>
+<script>
+window.NexusAge=(function(){
+  var KEY='nexus_age';
+  var RANK={G:0,PG:1,'PG-13':2,R:3,ALL:4};
+  function data(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+  function age(dob){var b=new Date(dob+'T00:00:00');var t=new Date();var a=t.getFullYear()-b.getFullYear();var m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a}
+  function capFromAge(a){return a>=21?'ALL':a>=18?'R':a>=13?'PG-13':'PG'}
+  function label(){var c=cap();if(!c)return '';return c==='ALL'?'21+':c==='R'?'18+':c}
+  function cap(){var d=data();return d?d.c:null}
+  function show(){var g=document.getElementById('nx-gate');g.style.display='flex'}
+  function hide(){document.getElementById('nx-gate').style.display='none'}
+  function fire(c){document.dispatchEvent(new CustomEvent('nx-age',{detail:{cap:c}}))}
+  function init(){var d=data();var chip=document.getElementById('ageChip');if(chip)chip.textContent='\u{1F382} '+(label()||'set');if(d){hide();fire(d.c)}else{show()}}
+  function submit(){var v=document.getElementById('nx-dob').value;var err=document.getElementById('nx-err');if(!v){err.classList.remove('hidden');return}var a=age(v);if(isNaN(a)||a<0||a>120){err.classList.remove('hidden');return}err.classList.add('hidden');var c=capFromAge(a);try{localStorage.setItem(KEY,JSON.stringify({d:v,c:c}))}catch(e){}hide();var chip=document.getElementById('ageChip');if(chip)chip.textContent='\u{1F382} '+label();fire(c)}
+  return {open:show,cap:cap,rank:function(r){var x=RANK[r];return x==null?2:x},init:init,submit:submit};
+})();
+</script>
+
+<script>NexusAge.init();</script>
+</body>
+</html>

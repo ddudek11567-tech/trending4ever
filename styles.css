@@ -1,0 +1,147 @@
+/* ============================================================
+   NEXUS TV v4.3 — Shared Styles
+   Used by iptv.html, movies.html, archive.html, generic.html
+   ============================================================ */
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(51, 65, 85, 0.6);
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(71, 85, 105, 0.9);
+}
+
+/* ============================================================
+   AETHER — Private Cinema Integration Styles (used by movies.html)
+   ============================================================ */
+:root{
+    --aether-bg:#060608;
+    --accent:#c8a86b;
+    --accent-rgb:200,168,107;
+    --text:#f4f1ec;
+    --muted:rgba(244,241,236,.62);
+    --faint:rgba(244,241,236,.4);
+    --line:rgba(244,241,236,.09);
+}
+
+.aether-cinema-root {
+    background: var(--aether-bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+}
+
+.aether-cinema-root ::selection { background: rgba(var(--accent-rgb),.35); color:#fff; }
+
+.grain,.vignette{position:absolute;inset:0;pointer-events:none;z-index:90}
+.grain{
+    opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+}
+.vignette{background:radial-gradient(120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%);z-index:1}
+
+.aether-hero{position:relative;height:70vh;min-height:420px;width:100%;overflow:hidden}
+.backdrops{position:absolute;inset:0}
+.bd{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;display:flex;align-items:center;justify-content:center}
+.bd.active{opacity:1}
+.bd .bd-icon{font-size:min(30vw,320px);opacity:.16;filter:blur(1px)}
+.glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);transition:background-color 1.3s ease,opacity 1.3s}
+.blob.a{width:62vw;height:62vw;top:-22vw;right:-12vw;background:rgb(var(--accent-rgb));opacity:.15}
+.blob.b{width:44vw;height:44vw;bottom:-18vw;left:-12vw;background:rgb(var(--accent-rgb));opacity:.1}
+.scrim{position:absolute;inset:0;z-index:2;background:
+    linear-gradient(90deg,rgba(6,6,8,.94) 0%,rgba(6,6,8,.7) 26%,rgba(6,6,8,.12) 58%,rgba(6,6,8,.35) 100%),
+    linear-gradient(0deg,rgba(6,6,8,1) 1%,rgba(6,6,8,0) 42%)}
+.hero-content{position:absolute;left:0;right:0;bottom:13vh;padding:0 5vw;max-width:720px;z-index:4;transition:opacity .35s ease,transform .35s ease}
+.hero-content.switching{opacity:0;transform:translateY(16px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:18px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+.hero-title{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(32px,5.5vw,72px);line-height:.96;letter-spacing:-.015em}
+.hero-title em{font-style:italic;color:var(--accent)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;align-items:center;font-size:13.5px;color:var(--muted);margin-top:20px;font-weight:500}
+.hero-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
+.match{color:#7fd29a;font-weight:700}
+.rating-pill{color:var(--accent);font-weight:700}
+.hero-actions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.btn-play{background:var(--accent);color:#0a0a0c;font-weight:600;padding:10px 22px;border-radius:8px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:transform .2s;border:0}
+.btn-play:hover{transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--line);padding:10px 22px;border-radius:8px;cursor:pointer;transition:background .2s}
+.btn-ghost:hover{background:rgba(255,255,255,.15)}
+.dots{position:absolute;right:5vw;bottom:13vh;display:flex;gap:8px;z-index:4}
+.dot{width:26px;height:3px;border-radius:3px;background:rgba(255,255,255,.22);cursor:pointer;transition:.35s;border:0;padding:0}
+.dot.active{background:var(--accent);width:44px}
+
+.collection{position:relative;z-index:2;padding:5vh 0 4vh}
+.row{position:relative;margin-bottom:40px}
+.row-head{display:flex;align-items:baseline;gap:14px;padding:0 5vw;margin-bottom:14px}
+.row-title{font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
+.row-title .num{font-family:'Playfair Display',serif;font-style:italic;color:var(--accent);font-size:15px;letter-spacing:0;text-transform:none}
+.row-track{display:flex;gap:15px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px 5vw 20px;scrollbar-width:none}
+.row-track::-webkit-scrollbar{display:none}
+
+.card{flex:0 0 auto;width:clamp(170px,17vw,220px);aspect-ratio:2/3;position:relative;border-radius:12px;overflow:hidden;cursor:pointer;background:#0c0c11;border:1px solid var(--line);scroll-snap-align:start;transition:transform .3s ease,box-shadow .3s ease}
+.card-img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:transform .5s ease}
+.card-img .card-icon{font-size:54px;opacity:.9}
+.card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,6,8,0) 40%,rgba(6,6,8,.55) 72%,rgba(6,6,8,.95) 100%)}
+.card-top{position:absolute;top:11px;left:11px;right:11px;display:flex;align-items:center;gap:6px;z-index:3}
+.badge{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.45);border:1px solid var(--line);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+.badge.year{color:var(--accent);border-color:rgba(var(--accent-rgb),.4)}
+.bookmark{margin-left:auto;width:31px;height:31px;border-radius:9px;background:rgba(0,0,0,.5);border:1px solid var(--line);color:#cfcfcf;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.bookmark.saved{color:var(--accent);border-color:rgba(var(--accent-rgb),.6)}
+.card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);opacity:0;z-index:3;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;display:grid;place-items:center;transition:.3s}
+.card-info{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;z-index:3}
+.card-info h3{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-info p{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
+.card:hover{transform:translateY(-5px);box-shadow:0 20px 40px -15px rgba(0,0,0,.8),0 0 0 1px rgba(var(--accent-rgb),.4)}
+.card:hover .card-img{transform:scale(1.08)}
+.card:hover .card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+/* Archive Stream Container (used by archive.html) */
+.archive-stream-container {
+    padding: 4vw;
+}
+.video-block {
+    margin-bottom: 40px;
+    text-align: center;
+    background: rgba(12, 12, 17, 0.6);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 20px;
+}
+.video-block iframe {
+    width: 100%;
+    max-width: 800px;
+    height: 450px;
+    border: none;
+}
+
+.back-btn {
+    background-color: #1a1c23;
+    color: #ffffff;
+    border: 1px solid #2d3748;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    width: fit-content;
+    transition: background 0.2s;
+}
+.back-btn:hover {
+    background-color: #2d3748;
+}
+
+
+/* Poster images + rolling NEW badge */
+.card-img-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.badge.new{color:#ec4899;border-color:rgba(236,72,153,.45);background:rgba(236,72,153,.18)}
