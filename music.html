@@ -49,15 +49,16 @@ box-shadow:0 0 0 1px rgba(255,255,255,.1),inset 0 0 34px rgba(0,0,0,.92);
 animation:vspin 1.9s linear infinite;animation-play-state:paused}
 #vinyl:before{content:"";position:absolute;inset:0;border-radius:50%;
 background:conic-gradient(from 150deg,rgba(255,255,255,.055) 0 60deg,transparent 90deg 270deg,rgba(255,255,255,.055) 300deg)}
-#vinyl.spinning{animation-play-state:running}
+#vinyl.spinning{animation-play-state:running;box-shadow:0 0 0 1px rgba(255,171,64,.28),inset 0 0 34px rgba(0,0,0,.92),0 0 30px -4px rgba(255,158,44,.55)}
 #vlabel{position:relative;z-index:3;width:36%;height:36%;border-radius:50%;overflow:hidden;background:#0c141c;
 border:2px solid rgba(0,0,0,.92);box-shadow:0 0 0 1px rgba(255,255,255,.16)}
 #vlabel img{width:100%;height:100%;object-fit:cover;display:block}
 #spindle{position:relative;z-index:4;width:12%;height:12%;border-radius:50%;background:#020204;
-box-shadow:0 0 0 2px rgba(0,0,0,.95),0 0 9px rgba(34,211,238,.65);animation:nhole 9s ease-in-out infinite}
+box-shadow:0 0 0 2px rgba(0,0,0,.95),0 0 10px rgba(255,158,44,.75);animation:fhole 9s ease-in-out infinite}
 .spindle-dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32%;height:32%;border-radius:50%;
-background:#22d3ee;box-shadow:0 0 6px rgba(34,211,238,.95)}
+background:#ffb347;box-shadow:0 0 7px rgba(255,158,44,.95)}
 @keyframes vspin{to{transform:rotate(360deg)}}
+@keyframes fhole{0%,100%{box-shadow:0 0 0 2px rgba(0,0,0,.95),0 0 11px rgba(255,158,44,.8)}50%{box-shadow:0 0 0 2px rgba(0,0,0,.95),0 0 4px rgba(255,158,44,.3)}}
 @keyframes vshine{to{transform:rotate(-360deg)}}
 
 
@@ -78,17 +79,49 @@ background:#22d3ee;box-shadow:0 0 6px rgba(34,211,238,.95)}
 72%{transform:translateY(-4%) scale(1)}
 86%{transform:translateY(1.5%)}
 100%{transform:translateY(0) scale(1);opacity:1}}
-/* ---- tonearm ---- */
-.tonearm{position:absolute;right:-26px;top:-22px;width:54px;height:84px;z-index:20;pointer-events:none;
-transform-origin:84% 12%;transform:rotate(-68deg);transition:transform .75s cubic-bezier(.4,.08,.3,1)}
-#tonearm.park{transition:transform 1.1s cubic-bezier(.45,0,.25,1)}
-.tn-base{position:absolute;right:0;top:0;width:13px;height:13px;border-radius:99px;background:#14141c;
-border:1px solid rgba(255,255,255,.18);box-shadow:0 0 6px rgba(167,139,250,.3)}
-.tn-arm{position:absolute;right:6px;top:7px;width:5px;height:50px;border-radius:99px;
-background:linear-gradient(180deg,#d7dcea,#8b93a8);box-shadow:0 0 5px rgba(255,255,255,.28)}
-.tn-head{position:absolute;right:3px;top:54px;width:11px;height:18px;border-radius:4px;
-background:linear-gradient(180deg,#aab2c5,#4c5568);border:1px solid rgba(255,255,255,.15);animation:neonedg 9s ease-in-out infinite}
-@keyframes neonedg{0%,100%{box-shadow:0 0 8px rgba(34,211,238,.45)}33%{box-shadow:0 0 8px rgba(167,139,250,.45)}66%{box-shadow:0 0 8px rgba(244,114,182,.45)}}
+/* ---- Fallout deck + tonearm ---- */
+.ft-deck{position:relative;width:152px;height:178px;display:flex;flex-direction:column;align-items:center;border-radius:16px;
+padding:12px 12px 26px;background:linear-gradient(165deg,#26292f,#16181b 55%,#0c0e10);
+border:1px solid rgba(255,171,64,.22);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -12px 26px rgba(0,0,0,.6),0 0 36px -12px rgba(255,158,44,.5)}
+@media(min-width:768px){.ft-deck{width:174px;height:198px}}
+.ft-deck:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+background-image:radial-gradient(circle,rgba(255,190,90,.9) 0 1.4px,rgba(0,0,0,.55) 1.8px,transparent 2.6px),
+radial-gradient(circle,rgba(255,190,90,.9) 0 1.4px,rgba(0,0,0,.55) 1.8px,transparent 2.6px),
+radial-gradient(circle,rgba(255,190,90,.9) 0 1.4px,rgba(0,0,0,.55) 1.8px,transparent 2.6px),
+radial-gradient(circle,rgba(255,190,90,.9) 0 1.4px,rgba(0,0,0,.55) 1.8px,transparent 2.6px);
+background-repeat:no-repeat;background-size:7px 7px;
+background-position:9px 9px,calc(100% - 9px) 9px,9px calc(100% - 20px),calc(100% - 9px) calc(100% - 20px)}
+.fd-tube{position:absolute;top:50%;transform:translateY(-50%);width:9px;height:58%;border-radius:99px;
+background:linear-gradient(180deg,#1a140c,#0b0a08);border:1px solid rgba(255,171,64,.3);
+box-shadow:inset 0 0 8px rgba(255,158,44,.3),0 0 12px -2px rgba(255,158,44,.35)}
+.fd-tube.l{left:4px}.fd-tube.r{right:4px}
+.fd-tube:before{content:"";position:absolute;left:50%;top:12%;bottom:12%;width:2px;transform:translateX(-50%);
+background:#ffb347;filter:blur(1px);border-radius:99px;animation:fila 2.6s ease-in-out infinite}
+.fd-tube.r:before{animation-delay:1.3s}
+@keyframes fila{0%,100%{opacity:.3;box-shadow:0 0 4px rgba(255,158,44,.4)}50%{opacity:.95;box-shadow:0 0 9px rgba(255,158,44,.9)}}
+.fd-lamp{position:absolute;left:0;right:0;bottom:13px;display:flex;align-items:center;justify-content:center;gap:5px;
+font-size:7px;letter-spacing:.24em;color:rgba(255,179,71,.55);font-family:ui-monospace,Menlo,Consolas,monospace}
+.fd-lamp i{width:6px;height:6px;border-radius:50%;background:#39280f;transition:.3s}
+.fd-lamp.lit i{background:#ffb347;box-shadow:0 0 9px rgba(255,158,44,.95);animation:blinkp 1.6s ease-in-out infinite}
+@keyframes blinkp{0%,100%{opacity:1}50%{opacity:.5}}
+.fd-stencil{position:absolute;left:0;right:0;bottom:4px;margin:0;text-align:center;
+font-size:6.5px;letter-spacing:.3em;color:rgba(255,190,90,.38);font-family:ui-monospace,Menlo,Consolas,monospace}
+.tonearm{position:absolute;top:-12px;right:-16px;width:74px;height:122px;z-index:30;pointer-events:none;
+transform-origin:76% 9%;transform:rotate(-24deg);transition:transform .9s cubic-bezier(.4,.08,.3,1)}
+#tonearm.park{transition:transform 1.3s cubic-bezier(.45,0,.25,1)}
+.ta-pivot{position:absolute;right:8px;top:2px;width:17px;height:17px;border-radius:50%;
+background:radial-gradient(circle at 35% 35%,#5a5f68,#23262c 70%);border:1px solid rgba(255,190,90,.4);
+box-shadow:0 0 10px rgba(255,158,44,.4),inset 0 1px 2px rgba(255,255,255,.25)}
+.ta-weight{position:absolute;right:11px;top:19px;width:11px;height:14px;border-radius:3px;
+background:linear-gradient(180deg,#8a8f99,#3c4048);box-shadow:0 1px 3px rgba(0,0,0,.65)}
+.ta-stick{position:absolute;right:13px;top:18px;width:5px;height:86px;border-radius:99px;
+background:linear-gradient(90deg,#eceef4,#9aa1af 55%,#697080);box-shadow:0 0 6px rgba(255,255,255,.2)}
+.ta-head{position:absolute;right:9px;top:98px;width:14px;height:22px;border-radius:4px;
+background:linear-gradient(180deg,#d8ab55,#6b4a1c);border:1px solid rgba(0,0,0,.55);
+box-shadow:0 0 10px rgba(255,158,44,.45)}
+
+
 /* ---- soft neon cycling on light parts ---- */
 .neon-text{animation:ntext 9s ease-in-out infinite}
 @keyframes ntext{0%,100%{text-shadow:0 0 7px rgba(34,211,238,.32)}33%{text-shadow:0 0 7px rgba(167,139,250,.32)}66%{text-shadow:0 0 7px rgba(244,114,182,.32)}}
@@ -124,13 +157,17 @@ input[type=range].neon::-webkit-slider-thumb{animation:nthumb 9s ease-in-out inf
 
 <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
 <!-- spinning record -->
-<div class="rec-wrap shrink-0">
+<div class="ft-deck shrink-0">
+<div class="fd-tube l"></div>
+<div class="fd-tube r"></div>
 <div id="dropzone">
 <div id="vinyl"></div>
 <div id="vlabel"><img id="np-cover" alt="" draggable="false" style="visibility:hidden" onload="this.style.visibility='visible'" onerror="this.style.visibility='hidden'"></div>
 <div id="spindle"><div class="spindle-dot"></div></div>
 </div>
-<div id="tonearm" class="tonearm"><div class="tn-base"></div><div class="tn-arm"></div><div class="tn-head"></div></div>
+<div class="fd-lamp" id="fdLamp"><i></i>NOW PLAYING</div>
+<p class="fd-stencil">VAULT-TEC MODEL 45-A</p>
+<div id="tonearm" class="tonearm"><div class="ta-pivot"></div><div class="ta-weight"></div><div class="ta-stick"></div><div class="ta-head"></div></div>
 </div>
 <!-- song info -->
 <div class="min-w-0 flex-1 w-full text-center sm:text-left">
@@ -346,7 +383,7 @@ audio.addEventListener('error',()=>{$('np-title').textContent+=' — stream unav
 audio.addEventListener('timeupdate',()=>{$('seek').value=audio.currentTime/audio.duration*100||0;$('cur').textContent=fmt(audio.currentTime)});
 audio.addEventListener('loadedmetadata',()=>{$('dur').textContent=fmt(audio.duration)});
 $('seek').addEventListener('input',e=>{if(audio.duration)audio.currentTime=e.target.value/100*audio.duration});
-const ARM_PARK=-68,ARM_OUT=-27,ARM_IN=-10;
+const ARM_PARK=-24,ARM_OUT=14,ARM_IN=32;
 function setArm(deg,delayCss){
 const ta=document.getElementById('tonearm');if(!ta)return;
 ta.classList.toggle('park',!!delayCss);
@@ -361,12 +398,15 @@ function recordCue(){
 const dz=document.getElementById('dropzone');
 if(dz){dz.classList.remove('dropping');void dz.offsetWidth;dz.classList.add('dropping')}
 const v=document.getElementById('vinyl');if(v)v.classList.add('spinning');
+const lamp=document.getElementById('fdLamp');if(lamp)lamp.classList.add('lit');
 if(audio.currentTime<1)setArm(ARM_OUT);else armTrack();
 }
 audio.addEventListener('play',recordCue);
-audio.addEventListener('pause',()=>{document.getElementById('vinyl').classList.remove('spinning')});
+audio.addEventListener('pause',()=>{document.getElementById('vinyl').classList.remove('spinning');
+const lamp=document.getElementById('fdLamp');if(lamp)lamp.classList.remove('lit')});
 audio.addEventListener('timeupdate',armTrack);
 audio.addEventListener('ended',()=>setArm(ARM_PARK,true));
+setArm(ARM_PARK);
 function carSlide(d){const c=document.getElementById('agrid');c.scrollBy({left:d*c.clientWidth*.8,behavior:'smooth'})}
 function toggleAlbum(bi){
 const el=document.getElementById('alb-'+bi);if(!el)return;
