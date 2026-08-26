@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LIVE TV · NEXUS TV</title>
+<title>LIVE TV · AURORA</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
 body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
@@ -15,40 +16,93 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 .aurora-text{background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
 .fade-in{animation:fi .5s ease both}@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}::-webkit-scrollbar-track{background:transparent}
-</style>
-<style>
 .nx-scroll{scrollbar-width:thin;scrollbar-color:rgba(34,211,238,.4) transparent}
 .nx-scroll::-webkit-scrollbar{width:6px;height:6px}
 .nx-scroll::-webkit-scrollbar-track{background:transparent}
 .nx-scroll::-webkit-scrollbar-thumb{background:rgba(34,211,238,.35);border-radius:99px}
 .guide-row{transition:background-color .15s}
+.vol-slider{-webkit-appearance:none;appearance:none;width:80px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);outline:none;cursor:pointer}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#22d3ee;cursor:pointer;border:2px solid rgba(0,0,0,.4)}
+.vol-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#22d3ee;cursor:pointer;border:2px solid rgba(0,0,0,.4)}
+.vol-slider::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.2)}
 </style>
 </head>
 <body class="grain antialiased">
 
-<nav class="sticky top-0 z-40 backdrop-blur bg-black/70 border-b border-white/5">
-<div class="flex items-center justify-between px-6 md:px-12 py-4 gap-4">
-<a href="index.html" class="flex items-baseline gap-2 shrink-0"><span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span><span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span></a>
-<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white font-semibold">IPTV</a><a href="index.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white/50 hover:text-white transition">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white/50 hover:text-white transition">Books</a><button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="ml-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">🎂</button></div>
-<div class="relative w-full max-w-xs">
-<input id="guideSearchInput" oninput="filterGuideChannels(this.value)" type="text" placeholder="Search verified channels…" class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm outline-none focus:border-cyan-400 transition placeholder:text-white/30">
+<!-- BROWSER SIMULATION BAR -->
+<div class="bg-[#0a0c12] px-4 py-2 flex items-center justify-between border-b border-white/5 text-xs text-white/40">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+</div>
+<div class="bg-white/5 px-6 py-1 rounded-md text-white/50 w-1/2 text-center truncate border border-white/5">
+https://trending4ever.com/iptv.html
+</div>
+<div class="flex items-center space-x-3">
+<i class="fa-solid fa-minus"></i>
+<i class="fa-solid fa-expand"></i>
+<i class="fa-solid fa-xmark"></i>
+</div>
+</div>
+
+<!-- MAIN NAVIGATION -->
+<nav class="sticky top-0 z-40 backdrop-blur bg-[#020204]/80 border-b border-white/5">
+<div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+<div class="flex items-center space-x-8">
+<a href="index.html" class="flex items-baseline gap-2 shrink-0">
+<span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span>
+<span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span>
+</a>
+<div class="hidden md:flex items-center gap-6 text-sm">
+<a href="iptv.html" class="text-white font-semibold border-b-2 border-cyan-400 pb-1">IPTV</a>
+<a href="index.html" class="text-white/50 hover:text-white transition">Movies</a>
+<a href="music.html" class="text-white/50 hover:text-white transition">Music</a>
+<a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a>
+<a href="books.html" class="text-white/50 hover:text-white transition">Books</a>
+<button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="ml-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">🎂</button>
+</div>
+</div>
+<div class="relative hidden sm:block">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-white/40">
+<i class="fa-solid fa-magnifying-glass text-xs"></i>
+</span>
+<input id="guideSearchInput" oninput="filterGuideChannels(this.value)" type="text" placeholder="Search verified channels…" class="bg-white/5 text-sm text-white/80 pl-9 pr-4 py-1.5 rounded-lg border border-white/10 focus:outline-none focus:border-cyan-400 w-64 transition placeholder:text-white/30">
 </div>
 </div>
 </nav>
 
-<header class="px-6 md:px-12 pt-14 pb-8">
-<h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight"><span class="aurora-text">LIVE TV</span></h1>
-<p id="stats" class="mt-3 text-sm text-white/40 tracking-wide">Verified English &amp; Spanish stations · HLS / DASH</p>
-</header>
+<!-- HERO SECTION -->
+<div class="max-w-7xl mx-auto px-4 md:px-8 pt-8 pb-4">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-<main class="px-6 md:px-12 pb-16 space-y-6">
-
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-
-<div class="lg:col-span-5 lg:sticky lg:top-[84px] space-y-5">
-<div class="lg:col-span-5 relative rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex flex-col justify-between overflow-hidden fade-in">
-<div class="absolute -right-12 -bottom-12 w-56 h-56 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-<div>
+<!-- FEATURED PLAYER (2 Cols) -->
+<div class="lg:col-span-2 rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl fade-in">
+<!-- VIDEO PLAYER -->
+<div id="playerWrapper" class="relative aspect-video bg-black">
+<div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
+<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>
+<div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>
+</div>
+<!-- LIVE OVERLAY -->
+<div class="absolute top-4 left-4 bg-black/70 backdrop-blur border border-cyan-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2.5 pointer-events-none">
+<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+<span id="pipChannelName">Live Stream Monitor</span>
+</div>
+<!-- PLAYER CONTROLS BAR -->
+<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button onclick="toggleMute()" id="muteBtn" class="text-white/80 hover:text-white transition text-sm"><i class="fa-solid fa-volume-high"></i></button>
+<input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)">
+<span id="volumeLabel" class="text-[10px] text-white/40 tabular-nums w-7 text-right">100%</span>
+</div>
+<div class="flex items-center gap-3">
+<button onclick="togglePiPMode()" id="pipModeBtn" class="px-3 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition"><i class="fa-solid fa-expand mr-1"></i>Native Engine</button>
+</div>
+</div>
+</div>
+<!-- NOW PLAYING INFO -->
+<div class="p-5">
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2.5">
 <span id="guideChannelNumBadge" class="bg-cyan-400 text-black px-2.5 py-1 rounded-md text-xs font-black tabular-nums">01</span>
@@ -56,48 +110,63 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 </div>
 <div id="guideRatingBadge" class="text-[11px] bg-white/5 text-white/60 border border-white/10 px-2.5 py-0.5 rounded-md font-bold">TV-PG</div>
 </div>
-<h2 id="guideShowTitle" class="font-disp text-2xl md:text-3xl font-bold tracking-tight leading-tight">Master Catalog Restored</h2>
+<h2 id="guideShowTitle" class="font-disp text-xl md:text-2xl font-bold tracking-tight leading-tight">Master Catalog Restored</h2>
 <div id="guideShowTime" class="text-xs font-semibold text-cyan-300/80 mt-1.5">Verified English and Spanish high-availability stations online</div>
-<p id="guideShowDesc" class="text-sm text-white/45 mt-3 leading-relaxed line-clamp-3">
-The English and Spanish channel lineup has been checked for working HLS and DASH manifests. Select any station below to stream instantly.
-</p>
+<p id="guideShowDesc" class="text-sm text-white/45 mt-3 leading-relaxed line-clamp-2">The English and Spanish channel lineup has been checked for working HLS and DASH manifests. Select any station below to stream instantly.</p>
 <div class="mt-3 h-1 rounded-full bg-white/10 overflow-hidden"><div id="guideProg" class="h-full bg-cyan-400 transition-all duration-1000" style="width:0%"></div></div>
 <div class="mt-4 pt-3 border-t border-white/10">
 <h4 class="text-[11px] font-bold tracking-widest text-white/40 uppercase mb-2">Up Next</h4>
-<div id="upNextList" class="space-y-2"></div>
+<div id="upNextList" class="space-y-1.5"></div>
 </div>
 </div>
-<div class="pt-4 mt-4 border-t border-white/5 flex items-center justify-between">
+</div>
+
+<!-- ADVANCED RECOMMENDATIONS PANEL (1 Col) -->
+<div class="bg-[#0a0c12] border border-white/10 rounded-2xl p-4 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-sm font-bold uppercase tracking-wider text-white/70">Featured Channels</h2>
+<span id="activeCountBadge" class="text-xs text-cyan-400">— Channels</span>
+</div>
+<div id="featuredChannels" class="space-y-2.5 flex-1"></div>
+<div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
 <div class="flex items-center gap-2 text-[11px] text-white/40">
-<span>Streams:</span><strong class="text-white/80" id="activeCountBadge">— Channels</strong>
-<span class="text-white/20">·</span><strong class="text-white/80" id="currentTimeDisplay">—</strong>
+<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+<strong class="text-white/80" id="currentTimeDisplay">—</strong>
 </div>
-<button onclick="togglePiPMode()" id="pipModeBtn" class="px-3.5 py-1.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition">⚡ Native Engine</button>
-</div>
-</div>
-
-
-<div class="lg:col-span-7 rounded-2xl overflow-hidden border border-white/10 bg-black relative aspect-video lg:aspect-auto lg:h-[calc(54vh-52px)] min-h-[320px]">
-<div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
-<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline>
-<button id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-black transition">🔇 Tap for sound</button></video>
-</div>
-<div class="absolute top-4 left-4 bg-black/70 backdrop-blur border border-cyan-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2.5 pointer-events-none">
-<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-<span id="pipChannelName">Live Stream Monitor</span>
+<span class="text-[10px] text-white/25">Streams via HLS.js / DASH.js</span>
 </div>
 </div>
 
 </div>
-
-<section class="lg:col-span-7 min-w-0">
-<div class="flex items-baseline justify-between mb-3">
-<h3 id="catalogHeaderTitle" class="font-disp text-lg font-bold text-white/85">Verified Channel Guide</h3>
-<span class="text-xs text-white/30">Select a row to tune in</span>
 </div>
-<div class="rounded-2xl border border-white/10 overflow-hidden bg-black/20">
-<div class="grid grid-cols-12 bg-white/[0.04] text-[11px] font-bold text-white/45 py-2.5 select-none">
-<div class="col-span-12 md:col-span-4 px-4 text-left border-b md:border-b-0 md:border-r border-white/5">CHANNEL / STATION</div>
+
+<!-- IPTV & LIVE TV GUIDE SECTION -->
+<div class="max-w-7xl mx-auto px-4 md:px-8 pb-12">
+<div class="bg-[#0a0c12] border border-white/10 rounded-2xl p-6 space-y-4">
+
+<!-- Guide Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between border-b border-white/10 pb-4">
+<div>
+<h2 class="text-lg font-bold text-white flex items-center space-x-2">
+<i class="fa-solid fa-tv text-cyan-400"></i>
+<span class="font-disp">Live TV EPG Guide</span>
+</h2>
+<p id="stats" class="text-xs text-white/40 mt-1">Verified English &amp; Spanish stations · HLS / DASH</p>
+</div>
+<div class="flex items-center space-x-3 mt-3 md:mt-0 text-xs">
+<span class="bg-red-500/20 text-red-400 px-2.5 py-1 rounded border border-red-500/30 flex items-center space-x-1.5">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<span>LIVE NOW</span>
+</span>
+</div>
+</div>
+
+<!-- Guide Table Grid -->
+<div class="overflow-x-auto">
+<div class="min-w-[900px] text-xs">
+<!-- Timeline Header -->
+<div class="grid grid-cols-12 gap-1 text-white/40 font-semibold border-b border-white/5 pb-2 px-2">
+<div class="col-span-12 md:col-span-4">CHANNEL / STATION</div>
 <div class="hidden md:block md:col-span-8"><div class="grid grid-cols-4 divide-x divide-white/5 text-center">
 <div class="text-cyan-300 bg-cyan-400/5">ON NOW</div>
 <div>NEXT</div>
@@ -105,20 +174,63 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
 <div>LATER</div>
 </div></div>
 </div>
-<div id="guideRowsContainer" class="divide-y divide-white/5 lg:max-h-[calc(100vh-13rem)] overflow-y-auto nx-scroll"></div>
+<!-- Channel Rows -->
+<div id="guideRowsContainer" class="divide-y divide-white/5 lg:max-h-[calc(100vh-14rem)] overflow-y-auto nx-scroll"></div>
 </div>
-</section>
 </div>
-</main>
 
-<footer class="border-t border-white/5 px-6 md:px-12 py-6 flex flex-wrap justify-between gap-4 text-xs text-white/30">
-<span>NEXUS TV · private streaming library</span>
-<span>Streams via HLS.js / DASH.js · multi-source fallbacks</span>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-[#0a0c12] border-t border-white/5 mt-8 text-xs text-white/40">
+<div class="max-w-7xl mx-auto px-4 md:px-8 py-8 grid grid-cols-2 md:grid-cols-5 gap-6">
+<div>
+<h4 class="text-white/70 font-bold mb-3 uppercase tracking-wider text-[11px]">Site Navigation</h4>
+<ul class="space-y-2">
+<li><a href="index.html" class="hover:text-white transition">Movies</a></li>
+<li><a href="iptv.html" class="hover:text-white transition">Live Guide</a></li>
+<li><a href="tv-series.html" class="hover:text-white transition">TV Series</a></li>
+<li><a href="music.html" class="hover:text-white transition">Music</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white/70 font-bold mb-3 uppercase tracking-wider text-[11px]">Library</h4>
+<ul class="space-y-2">
+<li><a href="books.html" class="hover:text-white transition">Books on Tape</a></li>
+<li><a href="movies.html" class="hover:text-white transition">VOD Movies</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white/70 font-bold mb-3 uppercase tracking-wider text-[11px]">Legal</h4>
+<ul class="space-y-2">
+<li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+<li><a href="#" class="hover:text-white transition">Terms of Use</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white/70 font-bold mb-3 uppercase tracking-wider text-[11px]">About</h4>
+<ul class="space-y-2">
+<li><a href="#" class="hover:text-white transition">Company Info</a></li>
+<li><a href="#" class="hover:text-white transition">Team</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white/70 font-bold mb-3 uppercase tracking-wider text-[11px]">Follow Us</h4>
+<div class="flex space-x-3 text-base">
+<a href="#" class="hover:text-white"><i class="fa-brands fa-facebook"></i></a>
+<a href="#" class="hover:text-white"><i class="fa-brands fa-twitter"></i></a>
+<a href="#" class="hover:text-white"><i class="fa-brands fa-instagram"></i></a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-4 md:px-8 mt-4 pt-4 border-t border-white/5 text-center text-[11px]">
+NEXUS TV · private streaming library · &copy; 2026 Aurora. All Rights Reserved.
+</div>
 </footer>
 
 <script>
-// Verified English and Spanish Channel Catalog[cite: 4]
-        const rawChannels = [
+const rawChannels = [
     {
         "name": "A&E",
         "category": "Entertainment",
@@ -1396,143 +1508,143 @@ The English and Spanish channel lineup has been checked for working HLS and DASH
     }
 ];
 
-// epg.pw channel ids for real schedule data (null = no listing available)
-        const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":"558540","Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":"464912","HBO Boxing · DASH":null,"Tennis Channel · DASH":"465236","Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":"562459","beIN Sports 3 HD · DASH":"54963","BEIN SPORTS 1 🇦🇺 · DASH":"55773","BEIN SPORTS 3 🇦🇺 · DASH":"54963","DAZN FAST · DASH":"537950","TLC":null,"FilmRise Anime":null,"FilmRise Westerns":null,"Filmex":null,"Filmex Clásico":null,"Gravitas Movies":null,"Lifetime Movie Favorites":null,"Lifetime Movies Love & Drama":null,"Maverick Black Cinema":null,"MovieSphere":null,"MyTime Movie Network":null,"OUTflix Movies":null,"WBTV At the Movies":null,"WBTV Classic Cinema":null,"ABC News Live":null,"CBS News 24/7":null,"USA Today":null,"Court TV":null,"Sky News Arabia":null,"FailArmy":null,"Tastemade":null,"Tastemade Travel":null,"History Hit":null,"ABC News Australia":null};
+const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Bounce XL":"465292","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":null,"Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":null,"HBO Boxing · DASH":null,"Tennis Channel · DASH":null,"Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":null,"beIN Sports 3 HD · DASH":null,"BEIN SPORTS 1 🇦🇺 · DASH":null,"BEIN SPORTS 3 🇦🇺 · DASH":null,"DAZN FAST · DASH":null,"ABC News Live":null,"CBS News 24/7":null,"USA Today":null,"Court TV":null,"Sky News Arabia":null,"FailArmy":null,"Tastemade":null,"Tastemade Travel":null,"History Hit":null,"ABC News Australia":null,"Filmex":null,"Filmex Clásico":null,"FilmRise Anime":null,"FilmRise Westerns":null,"Gravitas Movies":null,"Lifetime Movie Favorites":null,"Lifetime Movies Love & Drama":null,"Maverick Black Cinema":null,"MovieSphere":null,"MyTime Movie Network":null,"OUTflix Movies":null,"WBTV At the Movies":null,"WBTV Classic Cinema":null};
 
-        // Format channels with sequenced IDs and scheduled blocks[cite: 4]
-        const channels = rawChannels.map((c, index) => ({
-            id: index + 1,
-            number: String(index + 1).padStart(2, '0'),
-            name: c.name,
-            category: c.category,
-            icon: c.icon,
-            url: c.url,
-            rating: c.rating,
-            alternates: c.alternates || [],
-            engine: c.engine || (String(c.url).toLowerCase().includes('.mpd') ? 'dash' : 'hls'),
-            epgId: EPG_IDS[c.name] || null,
-            source: c.source || 'Original catalog',
-            show1: `${c.name} Live Primetime Block`,
-            show2: `${c.category} Spotlight Hour`,
-            show3: `Late Night ${c.name} Special`,
-            show4: `Early Morning ${c.name} Feed`
-        }));
+const channels = rawChannels.map((c, index) => ({
+    id: index + 1,
+    number: String(index + 1).padStart(2, '0'),
+    name: c.name,
+    category: c.category,
+    icon: c.icon,
+    url: c.url,
+    rating: c.rating,
+    alternates: c.alternates || [],
+    engine: c.engine || (String(c.url).toLowerCase().includes('.mpd') ? 'dash' : 'hls'),
+    epgId: EPG_IDS[c.name] || null,
+    source: c.source || 'Original catalog',
+    show1: `${c.name} Live Primetime Block`,
+    show2: `${c.category} Spotlight Hour`,
+    show3: `Late Night ${c.name} Special`,
+    show4: `Early Morning ${c.name} Feed`
+}));
 
-// ================= LIVE EPG ENGINE (epg.pw) =================
-const epgStore={};
-let lastList=null;
+// ===== EPG ENGINE =====
+const epgStore={};let lastList=null;
 function utcKey(d){return d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0')+String(d.getUTCDate()).padStart(2,'0')}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function fmtT(ms){return new Date(ms).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
 function fmtRange(a,b){return fmtT(a)+' \u2013 '+fmtT(b)}
 async function fetchEpg(cid){
-  if(epgStore[cid])return epgStore[cid];
-  var day=new Date();
-  var days=[utcKey(day),utcKey(new Date(day.getTime()+864e5))];
-  var ck='nxepg_'+cid+'_'+days[0];
+  if(epgStore[cid])return epgStore[cid];var day=new Date();var days=[utcKey(day),utcKey(new Date(day.getTime()+864e5))];var ck='nxepg_'+cid+'_'+days[0];
   try{var c=localStorage.getItem(ck);if(c){epgStore[cid]=JSON.parse(c);return epgStore[cid]}}catch(e){}
-  var items=[];
-  try{
-    var res=await Promise.all(days.map(function(dd){
-      return fetch('https://epg.pw/api/epg.json?channel_id='+cid+'&lang=en&timezone=VVRD&date='+dd)
-        .then(function(r){return r.ok?r.json():null}).catch(function(){return null});
-    }));
-    res.forEach(function(r){
-      (r&&Array.isArray(r.epg_list)?r.epg_list:[]).forEach(function(p){
-        if(!p.start_date)return;
-        var s=Date.parse(p.start_date);
-        if(!isNaN(s))items.push({s:s,t:String(p.title||'').trim(),d:String(p.desc||'').trim()});
-      });
-    });
-    items.sort(function(a,b){return a.s-b.s});
-    for(var i2=0;i2<items.length;i2++){items[i2].e=i2+1<items.length?items[i2+1].s:items[i2].s+36e5}
-    items=items.filter(function(p){return p.e>Date.now()-12*36e5});
-    epgStore[cid]={list:items};
-    if(items.length){try{localStorage.setItem(ck,JSON.stringify(epgStore[cid]))}catch(e){}}
-  }catch(e){epgStore[cid]={list:[]}}
+  var items=[];try{var res=await Promise.all(days.map(function(dd){return fetch('https://epg.pw/api/epg.json?channel_id='+cid+'&lang=en&timezone=VVRD&date='+dd).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}));res.forEach(function(r){(r&&Array.isArray(r.epg_list)?r.epg_list:[]).forEach(function(p){if(!p.start_date)return;var s=Date.parse(p.start_date);if(!isNaN(s))items.push({s:s,t:String(p.title||'').trim(),d:String(p.desc||'').trim()})})});items.sort(function(a,b){return a.s-b.s});for(var i2=0;i2<items.length;i2++){items[i2].e=i2+1<items.length?items[i2+1].s:items[i2].s+36e5}items=items.filter(function(p){return p.e>Date.now()-12*36e5});epgStore[cid]={list:items};if(items.length){try{localStorage.setItem(ck,JSON.stringify(epgStore[cid]))}catch(e){}}}catch(e){epgStore[cid]={list:[]}}
   return epgStore[cid];
 }
 function epgNow(cid){var st=epgStore[cid];if(!st)return null;var t=Date.now();for(var i2=0;i2<st.list.length;i2++){if(st.list[i2].s<=t&&t<st.list[i2].e)return st.list[i2]}return null}
 function epgNext(cid,n){var st=epgStore[cid];if(!st)return [];var t=Date.now();return st.list.filter(function(p){return p.s>t}).slice(0,n)}
 
-// ---- autoplay helper: try unmuted, fall back to muted + unmute chip ----
+// ===== VOLUME CONTROL =====
+let isMuted = false;
+let savedVolume = 1;
+function setVolume(val) {
+    const v = document.getElementById('videoPlayer');
+    if (!v) return;
+    v.volume = parseFloat(val);
+    v.muted = val == 0;
+    isMuted = val == 0;
+    document.getElementById('volumeLabel').textContent = Math.round(val * 100) + '%';
+    updateMuteIcon();
+}
+function toggleMute() {
+    const v = document.getElementById('videoPlayer');
+    if (!v) return;
+    if (isMuted) {
+        v.muted = false;
+        v.volume = savedVolume || 0.5;
+        isMuted = false;
+        document.getElementById('volumeSlider').value = v.volume;
+        document.getElementById('volumeLabel').textContent = Math.round(v.volume * 100) + '%';
+    } else {
+        savedVolume = v.volume;
+        v.muted = true;
+        isMuted = true;
+        document.getElementById('volumeSlider').value = 0;
+        document.getElementById('volumeLabel').textContent = '0%';
+    }
+    updateMuteIcon();
+}
+function updateMuteIcon() {
+    const btn = document.getElementById('muteBtn');
+    if (!btn) return;
+    if (isMuted) {
+        btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+    } else {
+        const v = document.getElementById('videoPlayer');
+        const vol = v ? v.volume : 0.5;
+        if (vol < 0.3) btn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
+        else if (vol < 0.7) btn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
+        else btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+    }
+}
+
+// ===== AUTOPLAY =====
 let __wantPlay = false;
 function tryPlay(v) {
-__wantPlay = true;
-v.autoplay = true;
-v.playsInline = true;
-const p = v.play();
-if (p && p.catch) p.catch(() => {
-v.muted = true;
-const q = v.play();
-if (q && q.catch) q.catch(() => {});
-showUnmuteChip();
-});
+    __wantPlay = true; v.autoplay = true; v.playsInline = true;
+    const p = v.play();
+    if (p && p.catch) p.catch(() => { v.muted = true; const q = v.play(); if (q && q.catch) q.catch(() => {}); showUnmuteChip(); });
 }
-function showUnmuteChip() {
-const c = document.getElementById('unmuteChip');
-if (c) c.classList.remove('hidden');
-}
+function showUnmuteChip() { const c = document.getElementById('unmuteChip'); if (c) c.classList.remove('hidden'); }
 document.addEventListener('DOMContentLoaded', () => {
 const v = document.getElementById('videoPlayer');
-if (!v) return;
-['loadedmetadata', 'canplay'].forEach(ev => v.addEventListener(ev, () => {
-if (__wantPlay && v.paused) tryPlay(v);
-}));
+if (v) { ['loadedmetadata', 'canplay'].forEach(ev => v.addEventListener(ev, () => { if (__wantPlay && v.paused) tryPlay(v); })); }
 });
 
-let currentChannel = null;
-let currentActiveUrl = null;
+let currentChannel = null, currentActiveUrl = null;
 
 function updateClock(){
-const el=document.getElementById('currentTimeDisplay');
-if(!el)return;
-const d=new Date();
-const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-el.innerText=days[d.getDay()]+' '+d.toLocaleDateString()+" "+d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+const el=document.getElementById('currentTimeDisplay');if(!el)return;const d=new Date();const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];el.innerText=days[d.getDay()]+' '+d.toLocaleDateString()+" "+d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
 }
 
+// ===== FEATURED CHANNELS PANEL =====
+function renderFeaturedChannels() {
+    const container = document.getElementById('featuredChannels');
+    if (!container) return;
+    const featured = channels.slice(0, 8);
+    container.innerHTML = featured.map(ch => {
+        const st = ch.epgId ? epgStore[ch.epgId] : null;
+        const np = st ? st.list.find(p => p.e > Date.now()) : null;
+        const isSelected = currentChannel && currentChannel.id === ch.id;
+        return '<div onclick="selectGuideChannel(channels.find(x=>x.id===' + ch.id + '))" class="flex items-center space-x-3 bg-white/[0.03] p-2.5 rounded-xl border ' + (isSelected ? 'border-cyan-400/40 bg-cyan-400/5' : 'border-white/5 hover:border-white/15') + ' transition cursor-pointer">'
+        + '<span class="text-xl shrink-0">' + ch.icon + '</span>'
+        + '<div class="flex-1 min-w-0">'
+        + '<h4 class="text-xs font-bold text-white truncate">' + esc(ch.name) + '</h4>'
+        + '<p class="text-[10px] text-white/40 truncate">' + ch.category + ' · ' + ch.rating + '</p>'
+        + (np ? '<span class="text-[10px] text-cyan-300/70 truncate block">' + esc(np.t) + '</span>' : '')
+        + '</div></div>';
+    }).join('');
+}
+
+// ===== DOMContentLoaded =====
 document.addEventListener('DOMContentLoaded', () => {
-currentChannel = channels[0];
-currentActiveUrl = channels[0].url;
+currentChannel = channels[0]; currentActiveUrl = channels[0].url;
 document.getElementById('stats').innerText = channels.length + ' VERIFIED CHANNELS · HLS / DASH';
 document.getElementById('guideSearchInput').placeholder = 'Search ' + channels.length + ' verified channels…';
-renderGuideRows(channels);
-selectGuideChannel(channels[0]);
-updateClock();
+renderGuideRows(channels); selectGuideChannel(channels[0]); updateClock();
 setInterval(updateClock, 30000);
-
-(async () => {
-for (const [epgName, cid] of Object.entries(EPG_IDS)) {
-if (!cid) continue;
-await fetchEpg(cid);
-const ch = channels.find(x => x.epgId === cid);
-if (ch) patchRow(ch);
-updateGuideInfo(currentChannel);
-await new Promise(r => setTimeout(r, 150));
-}
-})();
-setInterval(() => {
-updateGuideInfo(currentChannel);
-if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); });
-}, 60000);
+(async () => { for (const [epgName, cid] of Object.entries(EPG_IDS)) { if (!cid) continue; await fetchEpg(cid); const ch = channels.find(x => x.epgId === cid); if (ch) patchRow(ch); updateGuideInfo(currentChannel); await new Promise(r => setTimeout(r, 150)); } renderFeaturedChannels(); })();
+setInterval(() => { updateGuideInfo(currentChannel); if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); }); renderFeaturedChannels(); }, 60000);
 });
 
-let hlsInstance = null;
-let dashInstance = null;
-let isNativeMode = false;
-
-let prevSelId = null;
+let hlsInstance = null, dashInstance = null, isNativeMode = false, prevSelId = null;
 
 function slotCellsHtml(st) {
 const up = st.list.filter(p => p.e > Date.now()).slice(0, 4);
 let out = '<div class="grid grid-cols-4 h-full">';
-for (let i = 0; i < 4; i++) {
-const p = up[i];
+for (let i = 0; i < 4; i++) { const p = up[i];
 out += '<div class="px-3 py-2 min-w-0 ' + (i === 0 ? 'bg-cyan-400/10 text-cyan-200 font-semibold' : (i === 1 ? 'text-white/55' : 'text-white/40')) + '">'
 + '<div class="text-[9px] uppercase tracking-wider opacity-70 truncate">' + (p ? (i === 0 ? ('NOW \u00b7 ' + Math.max(0, Math.round((p.e - Date.now()) / 60000)) + 'm left') : fmtT(p.s)) : '\u2014') + '</div>'
-+ '<div class="text-xs truncate">' + (p ? esc(p.t) : 'No listing') + '</div></div>';
-}
++ '<div class="text-xs truncate">' + (p ? esc(p.t) : 'No listing') + '</div></div>'; }
 return out + '</div>';
 }
 
@@ -1544,90 +1656,47 @@ let s = '<div class="col-span-12 md:col-span-4 px-4 py-2 flex items-center gap-3
 + '<div class="min-w-0"><div class="font-semibold truncate">' + esc(ch.name) + '</div>'
 + '<div class="text-[10px] text-white/35 uppercase">' + ch.category + ' \u2022 ' + ch.rating + '</div></div></div>';
 const st = ch.epgId ? epgStore[ch.epgId] : null;
-if (!st) {
-s += '<div class="col-span-12 md:col-span-8 px-3 py-2 flex items-center text-xs italic ' + (isSelected ? 'text-white/50' : 'text-white/30') + '">'
+if (!st) { s += '<div class="col-span-12 md:col-span-8 px-3 py-2 flex items-center text-xs italic ' + (isSelected ? 'text-white/50' : 'text-white/30') + '">'
 + (ch.epgId ? 'Loading schedule\u2026' : 'Live stream \u00b7 schedule unavailable') + '</div>';
 } else {
 s += '<div class="hidden md:block md:col-span-8 min-w-0">' + slotCellsHtml(st) + '</div>';
 const np = st.list.find(p => p.e > Date.now());
 s += '<div class="md:hidden col-span-12 px-3 pb-2 -mt-1 bg-cyan-400/5">'
-+ (np ? '<span class="text-[9px] uppercase tracking-wider text-cyan-300 font-bold">NOW \u00b7 ' + Math.max(0, Math.round((np.e - Date.now()) / 60000)) + 'm</span> '
-: '')
-+ '<span class="text-xs text-white/70 truncate">' + (np ? esc(np.t) : ch.name + ' live') + '</span></div>';
-}
++ (np ? '<span class="text-[9px] uppercase tracking-wider text-cyan-300 font-bold">NOW \u00b7 ' + Math.max(0, Math.round((np.e - Date.now()) / 60000)) + 'm</span> ' : '')
++ '<span class="text-xs text-white/70 truncate">' + (np ? esc(np.t) : ch.name + ' live') + '</span></div>'; }
 return s;
 }
 
 function renderGuideRows(list) {
-lastList = list;
-const container = document.getElementById('guideRowsContainer');
-container.innerHTML = '';
-list.forEach(ch => {
-const row = document.createElement('div');
-row.dataset.row = String(ch.id);
+lastList = list; const container = document.getElementById('guideRowsContainer'); container.innerHTML = '';
+list.forEach(ch => { const row = document.createElement('div'); row.dataset.row = String(ch.id);
 row.className = 'guide-row grid grid-cols-12 items-stretch cursor-pointer text-sm hover:bg-white/5';
-row.onclick = () => selectGuideChannel(ch);
-row.innerHTML = rowInner(ch);
-container.appendChild(row);
-});
+row.onclick = () => selectGuideChannel(ch); row.innerHTML = rowInner(ch); container.appendChild(row); });
 document.getElementById('activeCountBadge').innerText = list.length + ' Channels';
 }
-
-function patchRow(ch) {
-if (!lastList) return;
-const row = document.querySelector('[data-row="' + ch.id + '"]');
-if (row) row.innerHTML = rowInner(ch);
-}
-function filterGuideChannels(query) {
-const q = query.toLowerCase();
-const filtered = channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q));
-renderGuideRows(filtered);
-}
+function patchRow(ch) { if (!lastList) return; const row = document.querySelector('[data-row="' + ch.id + '"]'); if (row) row.innerHTML = rowInner(ch); }
+function filterGuideChannels(query) { const q = query.toLowerCase(); renderGuideRows(channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q))); }
 
 function selectGuideChannel(ch) {
-currentChannel = ch;
-currentActiveUrl = ch.url;
-
+currentChannel = ch; currentActiveUrl = ch.url;
 document.getElementById('guideChannelNumBadge').innerText = ch.number;
 document.getElementById('guideNetworkName').innerText = ch.name + ' — ' + ch.category;
 document.getElementById('guideRatingBadge').innerText = ch.rating;
 document.getElementById('pipChannelName').innerText = ch.number + '. ' + ch.name;
-
-if (prevSelId !== null && prevSelId !== ch.id) {
-const pr = channels.find(x => x.id === prevSelId);
-if (pr) patchRow(pr);
-}
-prevSelId = ch.id;
-patchRow(ch);
-updateGuideInfo(ch);
-loadPlayerEngine();
-
-if (ch.epgId && !epgStore[ch.epgId]) {
-fetchEpg(ch.epgId).then(() => {
-if (currentChannel && currentChannel.id === ch.id) { patchRow(ch); updateGuideInfo(currentChannel); }
-});
-}
+if (prevSelId !== null && prevSelId !== ch.id) { const pr = channels.find(x => x.id === prevSelId); if (pr) patchRow(pr); }
+prevSelId = ch.id; patchRow(ch); updateGuideInfo(ch); loadPlayerEngine();
+if (ch.epgId && !epgStore[ch.epgId]) { fetchEpg(ch.epgId).then(() => { if (currentChannel && currentChannel.id === ch.id) { patchRow(ch); updateGuideInfo(currentChannel); } }); }
 }
 
 function updateGuideInfo(ch) {
-if (!ch) return;
-const st = ch.epgId ? epgStore[ch.epgId] : null;
+if (!ch) return; const st = ch.epgId ? epgStore[ch.epgId] : null;
 const nowP = st ? st.list.find(p => p.s <= Date.now() && Date.now() < p.e) : null;
-const tEl = document.getElementById('guideShowTitle');
-const tmEl = document.getElementById('guideShowTime');
-const dEl = document.getElementById('guideShowDesc');
-const bar = document.getElementById('guideProg');
-if (nowP) {
-tEl.innerText = nowP.t || ch.name;
-tmEl.innerText = 'NOW \u00b7 ' + fmtRange(nowP.s, nowP.e);
-dEl.innerText = nowP.d || ('Live on ' + ch.name + '.');
-bar.style.width = Math.min(100, Math.max(0, (Date.now() - nowP.s) / (nowP.e - nowP.s) * 100)) + '%';
-} else {
-tEl.innerText = st ? 'Live Stream' : (ch.epgId ? 'Loading schedule\u2026' : 'Live Stream');
+const tEl = document.getElementById('guideShowTitle'), tmEl = document.getElementById('guideShowTime'), dEl = document.getElementById('guideShowDesc'), bar = document.getElementById('guideProg');
+if (nowP) { tEl.innerText = nowP.t || ch.name; tmEl.innerText = 'NOW \u00b7 ' + fmtRange(nowP.s, nowP.e);
+dEl.innerText = nowP.d || ('Live on ' + ch.name + '.'); bar.style.width = Math.min(100, Math.max(0, (Date.now() - nowP.s) / (nowP.e - nowP.s) * 100)) + '%';
+} else { tEl.innerText = st ? 'Live Stream' : (ch.epgId ? 'Loading schedule\u2026' : 'Live Stream');
 tmEl.innerText = st ? '24/7 continuous feed' : '\u2014';
-dEl.innerText = st ? ('Live broadcast on ' + ch.name + '. No detailed listing available for this stream.') : 'Fetching program guide\u2026';
-bar.style.width = '0%';
-}
+dEl.innerText = st ? ('Live broadcast on ' + ch.name + '. No detailed listing available for this stream.') : 'Fetching program guide\u2026'; bar.style.width = '0%'; }
 const nx = st ? st.list.filter(p => p.s > Date.now()).slice(0, 5) : [];
 document.getElementById('upNextList').innerHTML = nx.length ? nx.map(p =>
 '<div class="flex justify-between gap-3 text-xs"><span class="text-white/70 truncate">' + esc(p.t) + '</span><span class="text-white/40 shrink-0 tabular-nums">' + fmtT(p.s) + '</span></div>'
@@ -1636,62 +1705,36 @@ document.getElementById('upNextList').innerHTML = nx.length ? nx.map(p =>
 
 function loadPlayerEngine() {
 const container = document.getElementById('playerContainer');
-container.innerHTML = `
-<video
-id="videoPlayer"
-class="w-full h-full absolute inset-0 object-contain bg-black"
-controls
-autoplay
-playsinline
-></video>
-`;
-
+container.innerHTML = '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
++ '<div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById(\'videoPlayer\');vv.muted=false;vv.play();this.classList.add(\'hidden\')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>';
 const video = document.getElementById('videoPlayer');
+// Restore volume state
+video.volume = isMuted ? 0 : (savedVolume || 1);
+video.muted = isMuted;
+document.getElementById('volumeSlider').value = isMuted ? 0 : video.volume;
+document.getElementById('volumeLabel').textContent = Math.round(video.volume * 100) + '%';
+updateMuteIcon();
+// Re-attach events
+['loadedmetadata', 'canplay'].forEach(ev => video.addEventListener(ev, () => { if (__wantPlay && video.paused) tryPlay(video); }));
 const targetStream = currentActiveUrl;
-
-if (hlsInstance) {
-hlsInstance.destroy();
-hlsInstance = null;
-}
-if (dashInstance) {
-dashInstance.reset();
-dashInstance = null;
-}
-
+if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+if (dashInstance) { dashInstance.reset(); dashInstance = null; }
 const isDash = currentChannel && (currentChannel.engine === 'dash' || /\.mpd(?:$|\?)/i.test(targetStream));
 if (isDash && window.dashjs) {
-dashInstance = dashjs.MediaPlayer().create();
-dashInstance.initialize(video, targetStream, true);
-try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {}
-tryPlay(video);
+dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
+try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {} tryPlay(video);
 } else if (!isDash && window.Hls && Hls.isSupported()) {
-hlsInstance = new Hls();
-hlsInstance.loadSource(targetStream);
-hlsInstance.attachMedia(video);
-hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-tryPlay(video);
-});
+hlsInstance = new Hls(); hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
+hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
 } else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
-video.src = targetStream;
-video.addEventListener('loadedmetadata', () => {
-tryPlay(video);
-}, { once: true });
-} else {
-video.src = targetStream;
-tryPlay(video);
-}
+video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPlay(video); }, { once: true });
+} else { video.src = targetStream; tryPlay(video); }
 }
 
 function togglePiPMode() {
-isNativeMode = !isNativeMode;
-const btn = document.getElementById('pipModeBtn');
-if (isNativeMode) {
-btn.className = "px-3.5 py-1.5 rounded-lg bg-fuchsia-400/10 border border-fuchsia-400/30 hover:bg-fuchsia-400/20 text-fuchsia-300 text-xs font-semibold transition";
-btn.innerText = "⚡ PiP Monitor Active";
-} else {
-btn.className = "px-3.5 py-1.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition";
-btn.innerText = "⚡ Native Engine";
-}
+isNativeMode = !isNativeMode; const btn = document.getElementById('pipModeBtn');
+if (isNativeMode) { btn.className = "px-3 py-1 rounded-lg bg-fuchsia-400/10 border border-fuchsia-400/30 hover:bg-fuchsia-400/20 text-fuchsia-300 text-xs font-semibold transition"; btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i>PiP Monitor Active';
+} else { btn.className = "px-3 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition"; btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i>Native Engine'; }
 }
 </script>
 
@@ -1707,8 +1750,7 @@ btn.innerText = "⚡ Native Engine";
 </div></div>
 <script>
 window.NexusAge=(function(){
-  var KEY='nexus_age';
-  var RANK={G:0,PG:1,'PG-13':2,R:3,ALL:4};
+  var KEY='nexus_age';var RANK={G:0,PG:1,'PG-13':2,R:3,ALL:4};
   function data(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
   function age(dob){var b=new Date(dob+'T00:00:00');var t=new Date();var a=t.getFullYear()-b.getFullYear();var m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a}
   function capFromAge(a){return a>=21?'ALL':a>=18?'R':a>=13?'PG-13':'PG'}
@@ -1722,7 +1764,6 @@ window.NexusAge=(function(){
   return {open:show,cap:cap,rank:function(r){var x=RANK[r];return x==null?2:x},init:init,submit:submit};
 })();
 </script>
-
 <script>NexusAge.init();</script>
 </body>
 </html>
