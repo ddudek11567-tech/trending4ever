@@ -1,17 +1,132 @@
 <!DOCTYPE html>
-<html>
-<head><title>NovaSearch Browser</title></head>
-<body style="font-family:sans-serif;max-width:700px;margin:50px auto;padding:20px">
-  <h1>NovaSearch Browser</h1>
-  <p>A fast, clean web browser for your Roku TV.</p>
-  <h3>Features</h3>
-  <ul>
-    <li>URL navigation</li>
-    <li>Web search</li>
-    <li>Bookmarks</li>
-    <li>History tracking</li>
-    <li>Quick links</li>
-  </ul>
-  <p>Premium version: $2.99 - remove ads and unlock more features.</p>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Joi</title>
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; background:#000; overflow:hidden; }
+    body { font-family:'Inter','Segoe UI',sans-serif; color:#fff; -webkit-font-smoothing:antialiased; }
+
+    #stage {
+        position:fixed; inset:0; background:#000;
+        display:flex; align-items:center; justify-content:center;
+    }
+    #joiVideo {
+        width:100%; height:100%;
+        object-fit:contain;
+        background:#000;
+        opacity:0;
+        transition:opacity 1.2s ease;
+    }
+    #joiVideo.ready { opacity:1; }
+
+    #hint {
+        position:fixed; left:50%; bottom:32px; transform:translateX(-50%);
+        font-size:12px; letter-spacing:.35em; text-transform:uppercase;
+        color:rgba(255,255,255,.55);
+        text-align:center;
+        transition:opacity .6s ease;
+        pointer-events:none;
+        font-family:'JetBrains Mono',monospace;
+    }
+
+    #skip {
+        position:fixed; top:22px; right:26px;
+        background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+        color:#fff; font-size:12px; letter-spacing:.15em; text-transform:uppercase;
+        padding:9px 18px; border-radius:999px; cursor:pointer;
+        backdrop-filter:blur(6px);
+        transition:background .25s ease, border-color .25s ease;
+        z-index:10;
+        font-family:'JetBrains Mono',monospace;
+    }
+    #skip:hover { background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4); }
+
+    #soundToggle {
+        position:fixed; bottom:64px; left:50%; transform:translateX(-50%);
+        background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+        color:#fff; font-size:12px; letter-spacing:.15em; text-transform:uppercase;
+        padding:9px 18px; border-radius:999px; cursor:pointer;
+        backdrop-filter:blur(6px);
+        transition:background .25s ease, border-color .25s ease;
+        z-index:10;
+        font-family:'JetBrains Mono',monospace;
+        display:none;
+    }
+    #soundToggle:hover { background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4); }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <video id="joiVideo" src="video/joi-startup.mp4" playsinline poster></video>
+  </div>
+
+  <button id="soundToggle">Enable Sound</button>
+  <button id="skip">Skip &#10148;</button>
+  <div id="hint">Joi</div>
+
+<script>
+(function(){
+    var video = document.getElementById('joiVideo');
+    var hint  = document.getElementById('hint');
+    var skip  = document.getElementById('skip');
+    var snd   = document.getElementById('soundToggle');
+    var gone  = false;
+
+    function leave(){
+        if(gone) return; gone = true;
+        if(!document.fullscreenElement){ window.location.href = 'home.html'; }
+    }
+
+    function ensureLoad(){
+        if(video.readyState >= 3){ video.requestAnimationFrame && 0; }
+        if(video.readyState >= 2){ video.classList.add('ready'); }
+    }
+
+    // Autoplay muted to satisfy browser autoplay policies, then allow sound.
+    video.muted = true;
+    video.play().then(function(){
+        video.classList.add('ready');
+        if(video.muted && video.hasAttribute('autoplay')){}
+        // surface sound toggle (autoplay with sound is often blocked)
+        setTimeout(function(){ snd.style.display = 'block'; }, 600);
+    }).catch(function(){
+        // if autoplay is blocked, show a tap-to-enter overlay via skip text
+        hint.textContent = 'Tap anywhere to begin';
+        document.addEventListener('pointerdown', function once(){
+            video.muted = false;
+            video.play().catch(function(){});
+            video.classList.add('ready');
+            hint.textContent = 'Joi';
+            snd.style.display = 'block';
+        }, { once:true });
+    });
+
+    // On first user tap, enable sound
+    document.addEventListener('pointerdown', function(){
+        if(video.muted){ video.muted = false; snd.style.display = 'none'; }
+    }, { once:true });
+
+    snd.addEventListener('click', function(){
+        video.muted = false;
+        video.play().catch(function(){});
+        snd.style.display = 'none';
+    });
+
+    video.addEventListener('ended', leave);
+    video.addEventListener('error', function(){
+        hint.textContent = 'Could not load intro';
+        setTimeout(leave, 4000);
+    });
+
+    skip.addEventListener('click', leave);
+
+    // Safety: if the video never finishes, still proceed after 32s
+    setTimeout(function(){ if(video.ended || video.readyState >= 3){  } else { leave(); } }, 34000);
+})();
+</script>
 </body>
 </html>

@@ -1,321 +1,437 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ADULT VAULT · NEXUS TV</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
-body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
-.font-disp{font-family:'Space Grotesk',sans-serif}
-.grain:before{content:"";position:fixed;inset:-100%;z-index:60;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 7s steps(10) infinite}
-@keyframes grain{0%,100%{transform:translate(0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-3%,4%)}80%{transform:translate(4%,2%)}}
-.aurora-text{background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
-.fade-in{animation:fi .5s ease both}@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
-:root{--accent:#f472b6}
-::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}::-webkit-scrollbar-track{background:transparent}
-input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:rgba(255,255,255,.15);outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:99px;background:var(--accent);cursor:pointer;box-shadow:0 0 10px rgba(244,114,182,.6)}
-.seek{background:linear-gradient(to right,var(--accent) var(--p,0%),rgba(255,255,255,.22) var(--p,0%))}
-.volr{background:linear-gradient(to right,#fff var(--vp,100%),rgba(255,255,255,.25) var(--vp,100%))}
-.spinner{width:46px;height:46px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:99%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#spotbg{transition:background-image .5s ease,filter .5s ease}
-.hero-switch{animation:hs .35s ease}@keyframes hs{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TV — Adult Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="grain antialiased">
+<body class="min-h-screen bg-[#060913] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-x-hidden">
 
-<nav class="sticky top-0 z-40 backdrop-blur bg-black/70 border-b border-white/5">
-<div class="flex items-center justify-between px-6 md:px-12 py-4 gap-4">
-<a href="home.html" class="flex items-baseline gap-2 shrink-0"><span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span><span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span></a>
-<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white/50 hover:text-white transition">IPTV</a><a href="movies.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white/50 hover:text-white transition">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white/50 hover:text-white transition">Books</a><a href="adult.html" class="text-pink-400 font-semibold">Adult</a><button onclick="openGate()" title="18+ verification" class="ml-2 rounded-full border border-pink-400/30 bg-pink-400/10 px-3 py-1 text-xs font-semibold text-pink-300 hover:bg-pink-400/20 transition">🔞</button></div>
-<div class="relative w-full max-w-xs">
-<input id="navq" type="text" placeholder="Search films…" class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm outline-none focus:border-pink-400 transition placeholder:text-white/30">
-</div>
-</div>
+
+    <!-- Adult Age Gate -->
+    <div id="adultGate" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur flex items-center justify-center" style="display:none;">
+        <div class="max-w-md w-full mx-6 text-center p-10 rounded-3xl border border-red-500/30 bg-[#0a0f1d] shadow-2xl">
+            <div class="text-5xl mb-4">🔞</div>
+            <h2 class="text-2xl font-extrabold text-white mb-2">Adult Only Content</h2>
+            <p class="text-sm text-slate-400 mb-6">This section contains adult films for viewers 18 and over. Enter only if you are an adult.</p>
+            <button id="adultEnter" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl mb-3 transition">I am 18 or older — Enter</button>
+            <button id="adultLeave" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition">Leave</button>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-slate-800/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-pink-600/20 text-white font-black text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-500">TV</span>
+                    </h1>
+                    <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">v4.3 &bull; QUANTUM</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </a>
+
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>Latest Movies</span>
+                    </div>
+                </a>
+
+                <a href="archive.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🏛️</span>
+                        <span>Archive.org Stream</span>
+                    </div>
+                    <span class="text-[10px] bg-cyan-500 text-white px-2 py-0.5 rounded-full font-bold">TOP</span>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                <a href="generic.html?section=search" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔍</span>
+                    <span>Search</span>
+                </a>
+
+                <a href="generic.html?section=mylist" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">🔖</span>
+                    <span>My List</span>
+                </a>
+
+                <a href="generic.html?section=guide" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                    <span class="text-base">📅</span>
+                    <span>Live Guide</span>
+                </a>
+                                <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-base">📺</span>
+                            <span>VOD TV Series</span>
+                        </div>
+                    </a>
+                    <a href="music.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-base">🎸</span>
+                            <span>Music Engine</span>
+                        </div>
+                    </a>
 </nav>
+        </div>
 
-<header class="px-6 md:px-12 pt-14 pb-8">
-<h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight"><span class="aurora-text">ADULT VAULT</span> <span class="align-middle text-xs md:text-sm font-semibold text-pink-400/80 border border-pink-400/30 bg-pink-400/10 rounded-full px-3 py-1 ml-2">18+</span></h1>
-<p id="stats" class="mt-3 text-sm text-white/40 tracking-wide"></p>
-</header>
+        <!-- Sidebar Footer / Profile & Settings -->
+        <div class="p-4 border-t border-slate-800/40 space-y-3">
+            <a href="generic.html?section=settings" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
 
-<section class="px-6 md:px-12 pb-10">
-<div class="relative rounded-3xl border border-white/10 overflow-hidden bg-white/[0.03]">
-<img id="spotbg" alt="" class="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40 pointer-events-none">
-<div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/25"></div>
-<div id="heroContent" class="relative z-10 p-8 md:p-14 flex flex-col md:flex-row items-start md:items-center gap-8 min-h-[320px]"></div>
-<div id="dots" class="absolute bottom-4 right-6 z-10 flex gap-2"></div>
-</div>
-</section>
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
 
-<main class="px-6 md:px-12 pb-28">
-<div class="relative max-w-md mb-8">
-<input id="filmSearch" type="text" placeholder="Search titles…" class="w-full rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm outline-none focus:border-pink-400 transition placeholder:text-white/30">
-</div>
-<p id="empty" class="hidden text-center text-white/40 py-16">Nothing matches your search.</p>
-<div id="collection" class="space-y-12"></div>
-</main>
 
-<footer class="border-t border-white/5 px-6 md:px-12 py-6 flex flex-wrap justify-between gap-4 text-xs text-white/30">
-<span>NEXUS TV · private streaming library · 18+ only</span>
-<span>Films stream from archive.org</span>
-</footer>
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-gradient-to-br from-[#060913] via-[#0b1021] to-[#04060c]">
+        <div class="flex-1 flex flex-col overflow-y-auto custom-scrollbar aether-cinema-root">
+            <div class="vignette"></div>
+            <div class="grain"></div>
 
-<div id="player" class="fixed inset-0 z-50 bg-black hidden items-center justify-center">
-<div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-video bg-black shadow-2xl overflow-hidden">
-<img id="artBg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25 blur-md pointer-events-none">
-<video id="video" playsinline class="relative w-full h-full block bg-black object-contain"></video>
-<div id="loader" class="absolute inset-0 hidden items-center justify-center bg-black/40 z-[2]"><div class="spinner"></div></div>
-<div class="absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10" id="titlebar">
-<div class="min-w-0">
-<h3 id="pTitle" class="font-disp text-[22px] font-semibold text-white truncate">Title</h3>
-<p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
-</div>
-<button class="bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center shrink-0" id="closeBtn" title="Close (Esc)">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-</button>
-</div>
-<div class="absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10" id="ctrlbar">
-<input type="range" class="seek w-full cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
-<div class="flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
-<div class="flex items-center gap-[18px] mt-[6px]">
-<button class="bg-transparent border-0 text-white cursor-pointer p-1 transition-all hover:text-pink-400" id="ppBtn" title="Play / Pause (k)">
-<svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-</button>
-<div class="vol flex items-center gap-2">
-<button class="bg-transparent border-0 text-white cursor-pointer p-1 transition-all hover:text-pink-400" id="muteBtn" title="Mute (m)">
-<svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-</button>
-<input type="range" class="volr cursor-pointer outline-none w-20 md:w-24" id="vol" min="0" max="100" value="100">
-</div>
-<div class="flex-1"></div>
-<button class="bg-transparent border-0 text-white cursor-pointer p-1 transition-all hover:text-pink-400" id="fsBtn" title="Fullscreen (f)">
-<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-</button>
-</div>
-</div>
-</div>
-</div>
+            <!-- Aether Hero Section -->
+            <section class="aether-hero" id="hero">
+                <div class="backdrops" id="backdrops"></div>
+                <div class="glow"><div class="blob a"></div><div class="blob b"></div></div>
+                <div class="scrim"></div>
+                <div class="hero-content" id="heroContent"></div>
+                <div class="dots" id="dots"></div>
+            </section>
 
-<div id="toast" class="fixed left-1/2 bottom-8 -translate-x-1/2 translate-y-6 z-[60] bg-[#0b0b12]/95 border border-white/10 backdrop-blur px-5 py-3 rounded-xl text-sm opacity-0 transition-all pointer-events-none flex items-center gap-2"></div>
+            <!-- Aether Collection Rows -->
+            <section class="collection" id="collection"></section>
+        </div>
 
-<!-- 18+ Age Gate -->
-<div id="adultGate" class="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md hidden items-center justify-center p-4">
-<div class="max-w-md w-full text-center p-10 rounded-3xl border border-pink-500/30 bg-[#0b0b12] shadow-2xl">
-<div class="text-5xl mb-4">🔞</div>
-<h2 class="font-disp text-2xl font-bold text-white mb-2">Adults Only</h2>
-<p class="text-sm text-white/40 mb-6">This vault contains explicit films for viewers 18 and over. Enter only if you are an adult.</p>
-<button id="adultEnter" class="w-full bg-pink-500 hover:bg-pink-400 text-black font-bold py-3 rounded-xl mb-3 transition">I am 18 or older — Enter</button>
-<button id="adultLeave" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 font-semibold py-3 rounded-xl transition">Leave</button>
-</div>
-</div>
+        <!-- Footer Signature -->
+        <footer class="py-4 px-8 border-t border-slate-800/40 text-center text-[11px] text-slate-500 bg-[#060913]">
+            NEXUS TV v4.3 Engine &bull; Webpage Designed by: Daniel Dudek
+        </footer>
+    </main>
 
-<script>
-const FILMS=[{"id": 1, "title": "Deep Throat", "year": 1972, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/deep-throat-1972_202212/Deep%20Throat%20%281972%29.mp4", "cats": ["adult"], "img": "posters/deep-throat.jpg", "new": false}, {"id": 2, "title": "Behind the Green Door", "year": 1972, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/behind-the-green-door_480p/behind-the-green-door_480p.mp4", "cats": ["adult"], "img": "posters/behind-the-green-door.jpg", "new": false}, {"id": 3, "title": "The Story of Joanna", "year": 1975, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/1975-the-story-of-joanna/1975%20-%20The%20Story%20Of%20Joanna.mp4", "cats": ["adult"], "img": "posters/the-story-of-joanna.jpg", "new": false}, {"id": 4, "title": "The Opening of Misty Beethoven", "year": 1975, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/the-opening-of-misty-beethoven-1976/15584975063617.mp4", "cats": ["adult"], "new": false}, {"id": 5, "title": "Taboo", "year": 1980, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/taboo_202111/Taboo.mp4", "cats": ["adult"], "img": "posters/taboo.jpg", "new": false}, {"id": 6, "title": "Pirates II: Stagnetti's Revenge", "year": 2008, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/xk-kl-6-efot-bypp-6-kw/XkKl6EfotBYpp6Kw.mp4", "cats": ["adult"], "new": false}, {"id": 7, "title": "Insatiable", "year": 1980, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/insatiable_202601/Insatiable.mp4", "cats": ["adult"], "new": false}, {"id": 8, "title": "Nightdreams", "year": 1981, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/Nightdreams/Nightdreams.mp4", "cats": ["adult"], "new": false}, {"id": 9, "title": "The Fashionistas (2002) — Part 1", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20~%20Rocco%20Sifferdi%20~%20Rus%20CD1.avi.mp4", "cats": ["adult"], "new": false, "img": "https://archive.org/services/img/fashionistas-2002"}, {"id": 10, "title": "The Fashionistas (2002) — Part 2", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20~%20Rocco%20Siiferdi%20~%20Rus%20CD2.mp4", "cats": ["adult"], "new": false, "img": "https://archive.org/services/img/fashionistas-2002"}, {"id": 11, "title": "The Fashionistas (2002) — Part 3", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20%20~%20Rocco%20Sifferdi%20~%20%5BRRG%5D%7BBrego%7DRus%20CD3.mp4", "cats": ["adult"], "new": false, "img": "https://archive.org/services/img/fashionistas-2002"}, {"id": 12, "title": "Nymphomaniac: Vol. I", "year": 2013, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/nymphomaniac-vol-1-lars-von-trier-2013/Nymphomaniac%20Vol%201%20-%20Lars%20Von%20Trier%20-%202013.mp4", "cats": ["adult"], "new": false}, {"id": 13, "title": "Nymphomaniac: Vol. II", "year": 2013, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/nymphomaniac-vol-2-lars-von-trier-2013/Nymphomaniac%20Vol%202%20-%20Lars%20Von%20Trier%20-%202013.mp4", "cats": ["adult"], "new": false}, {"id": 14, "title": "Climax", "year": 2018, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/climax.-2018.720p.-blu-ray.x-264-yts.-am/Climax.2018.720p.BluRay.x264-%5BYTS.AM%5D.mp4", "cats": ["adult"], "new": false}, {"id": 15, "title": "365 Days", "year": 2020, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/ver-365-dni-365-days-2020-online-cuevana-3-peliculas-online/Ver%20365%20DNI%20(365%20Days)%20(2020)%20Online%20-%20Cuevana%203%20Peliculas%20Online.mp4", "cats": ["adult"], "new": false}, {"id": 16, "title": "Cafe Flesh", "year": 1982, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/cafe-flesh101/cafe_flesh.mp4", "cats": ["adult"], "new": true, "img": "https://archive.org/services/img/cafe_flesh"}, {"id": 17, "title": "The Inconfessable Orgies of Emmanuelle", "year": 1982, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/the-inconfessable-orgies-of-emmanuelle-1982-dvdrip-oldies/The%20Inconfessable%20Orgies%20of%20Emmanuelle%20%281982%29%20DVDRip%20Oldies.mp4", "cats": ["adult"], "new": true, "img": "https://archive.org/services/img/the-inconfessable-orgies-of-emmanuelle-1982-dvdrip-oldies"}, {"id": 18, "title": "Emmanuelle", "year": 2024, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/emmanuelle-2024_202606/Emmanuelle%20%282024%29%20.mp4", "cats": ["adult"], "new": true, "img": "https://archive.org/services/img/emmanuelle-2024_202606"}, {"id": 19, "title": "Debbie Does Dallas", "year": 1978, "genreKey": "pd", "genreLabel": "Public Domain", "icon": "🔞", "accent": "#a78bfa", "rgb": "167,139,250", "video": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Debbie_Does_Dallas_%281978%29.webm", "cats": ["pd"], "new": true, "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Debbie_Does_Dallas_%281978%29.webm/500px--Debbie_Does_Dallas_%281978%29.webm.jpg"}, {"id": 20, "title": "Debbie Does Dallas · Original Trailer", "year": 1978, "genreKey": "pd", "genreLabel": "Public Domain", "icon": "🔞", "accent": "#a78bfa", "rgb": "167,139,250", "video": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Debbie_Does_Dallas%2C_1978%2C_trailer.webm", "cats": ["pd"], "new": true, "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Debbie_Does_Dallas%2C_1978%2C_trailer.webm/500px--Debbie_Does_Dallas%2C_1978%2C_trailer.webm.jpg"}, {"id": 21, "title": "The Virgin with the Hot Pants", "year": "≈1915", "genreKey": "pd", "genreLabel": "Public Domain", "icon": "🔞", "accent": "#a78bfa", "rgb": "167,139,250", "video": "https://upload.wikimedia.org/wikipedia/commons/4/4c/The_Virgin_with_the_Hot_Pants.webm", "cats": ["pd"], "new": true, "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/The_Virgin_with_the_Hot_Pants.webm/500px--The_Virgin_with_the_Hot_Pants.webm.jpg"}, {"id": 22, "title": "The Sculptor's Dream", "year": "≈1900s", "genreKey": "pd", "genreLabel": "Public Domain", "icon": "🔞", "accent": "#a78bfa", "rgb": "167,139,250", "video": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Der_Traum_der_Bildhauers_AKA_The_Sculptors_Dream.webm", "cats": ["pd"], "new": true, "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Der_Traum_der_Bildhauers_AKA_The_Sculptors_Dream.webm/500px--Der_Traum_der_Bildhauers_AKA_The_Sculptors_Dream.webm.jpg"}, {"id": 23, "title": "Massages", "year": "Vintage", "genreKey": "pd", "genreLabel": "Public Domain", "icon": "🔞", "accent": "#a78bfa", "rgb": "167,139,250", "video": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Massages.ogv", "cats": ["pd"], "new": true, "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Massages.ogv/500px--Massages.ogv.jpg"}];
-const ROWS=[{"key": "adult", "label": "Adult Films (1972–2010)"},
-{"key": "pd", "label": "Public Domain Classics · Wikimedia Commons"},
-{"key": "penthouse", "label": "Penthouse Productions Collection"}];
-// --- Penthouse Productions (archive.org auto-pull) ---
-const PENTHOUSE_FILMS=[{"id": 55, "title": "25th Anniversary Pet of the Year Spectacular", "year": "56 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/25th%20Anniversary%20Pet%20of%20the%20Year%20Spectacular.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 56, "title": "25th Anniversary Swimsuit Video", "year": "58 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/25th%20Anniversary%20Swimsuit%20Video.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 57, "title": "30 Pets, 60 Minutes", "year": "59 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/30%20Pets%2C%2060%20Minutes.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 58, "title": "All Access", "year": "55 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/All%20Access.mp4", "cats": ["penthouse"], "new": true}, {"id": 59, "title": "All Pet Workout", "year": "59 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/All%20Pet%20Workout.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 60, "title": "Amazing Amazon Beauties", "year": "50 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Amazing%20Amazon%20Beauties.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 61, "title": "Auch Brunette Mogens Heiss", "year": "51 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Auch%20Brunette%20Mogens%20Heiss.mp4", "cats": ["penthouse"], "new": true}, {"id": 62, "title": "Beach Babes", "year": "54 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Beach%20Babes.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 63, "title": "Bedroom Fantasies", "year": "57 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Bedroom%20Fantasies.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 64, "title": "Behind The Scenes", "year": "49 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Behind%20The%20Scenes.mp4", "cats": ["penthouse"], "new": true}, {"id": 65, "title": "Behind the Scenes at the Swimsuit Calendar Photo Shoot", "year": "53 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Behind%20the%20Scenes%20at%20the%20Swimsuit%20Calendar%20Photo%20Shoot.mp4", "cats": ["penthouse"], "new": true}, {"id": 66, "title": "Blonde Bombshells", "year": "59 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Blonde%20Bombshells.mp4", "cats": ["penthouse"], "new": true}, {"id": 67, "title": "Casting Call", "year": "55 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Casting%20Call.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 68, "title": "Casting Call 2 [rus]", "year": "56 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Casting%20Call%202%20%5Brus%5D.mp4", "cats": ["penthouse"], "new": true}, {"id": 69, "title": "Centerfold - Julie Strain", "year": "44 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Centerfold%20-%20Julie%20Strain.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 70, "title": "Centerfold Auditions", "year": "54 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Centerfold%20Auditions.mp4", "cats": ["penthouse"], "new": true}, {"id": 71, "title": "Centerfolds Volume 1 - Amy Lynn & Julie Strain", "year": "58 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Centerfolds%20Volume%201%20-%20Amy%20Lynn%20%26%20Julie%20Strain.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 72, "title": "Centerfolds Volume 4 - Mahalia & Leslie Glass", "year": "55 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Centerfolds%20Volume%204%20-%20Mahalia%20%26%20Leslie%20Glass.mp4", "cats": ["penthouse"], "new": true}, {"id": 73, "title": "College Cuties", "year": "1:00", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/College%20Cuties.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 74, "title": "Confessions", "year": "54 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Confessions.mp4", "cats": ["penthouse"], "new": true}, {"id": 75, "title": "Dear Diary", "year": "1:01", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Dear%20Diary.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 76, "title": "Dream Girls", "year": "51 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Dream%20Girls.ia.mp4", "cats": ["penthouse"], "new": true}, {"id": 77, "title": "Eden Adams and Friends", "year": "49 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Eden%20Adams%20and%20Friends.mp4", "cats": ["penthouse"], "new": true}, {"id": 78, "title": "Eurogirls - Afternoon Delights", "year": "55 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Eurogirls%20-%20Afternoon%20Delights.mp4", "cats": ["penthouse"], "new": true}, {"id": 79, "title": "Eurogirls - Caught in the Act", "year": "58 min", "genreKey": "penthouse", "genreLabel": "Penthouse", "icon": "\u{1F51E}", "accent": "#be185d", "rgb": "190,24,93", "video": "https://archive.org/download/penthouse-productions-movies-collection/Eurogirls%20-%20Caught%20in%20the%20Act.ia.mp4", "cats": ["penthouse"], "new": true}];
-FILMS.push(...PENTHOUSE_FILMS);
-const SPOTLIGHT_IDS=[19, 1, 2, 9, 18, 5];
+    <!-- Aether Video Player Overlay Modal -->
+    <div class="player fixed inset-0 z-[100] bg-black hidden items-center justify-center opacity-0 transition-opacity duration-300" id="player" style="display:none;">
+        <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-[16/9] bg-black shadow-[0_0_120px_rgba(0,0,0,0.8)]" id="stage">
+            <video id="video" playsinline class="w-full h-full block bg-black object-contain"></video>
+            <div class="loader absolute inset-0 hidden items-center justify-center bg-black/30" id="loader"><div class="spinner w-[46px] h-[46px] border-[3px] border-white/15 border-t-[var(--accent)] rounded-full animate-spin"></div></div>
+            <div class="titlebar absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10">
+                <div class="t-meta min-w-0">
+                    <h3 id="pTitle" class="font-serif text-[22px] font-semibold text-white truncate">Title</h3>
+                    <p id="pMeta" class="text-[12px] text-slate-300 mt-[3px]"></p>
+                </div>
+                <button class="ctrl close-x bg-white/10 border border-white/10 w-[38px] h-[38px] rounded-[10px] backdrop-blur cursor-pointer text-white flex items-center justify-center" id="closeBtn" title="Close (Esc)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="controls absolute left-0 right-0 bottom-0 p-[16px_24px_18px] bg-gradient-to-t from-black/92 to-transparent opacity-0 transition-opacity duration-300 z-10">
+                <input type="range" class="seek w-full appearance-none h-[5px] rounded-[5px] bg-[linear-gradient(to_right,var(--accent)_var(--p,0%),rgba(255,255,255,.22)_var(--p,0%))] cursor-pointer outline-none" id="seek" min="0" max="1000" value="0" step="1">
+                <div class="times flex justify-between text-[11.5px] text-slate-300 mt-[7px] tracking-[0.03em]"><span id="curTime">0:00</span><span id="durTime">0:00</span></div>
+                <div class="btnrow flex items-center gap-[18px] mt-[6px]">
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="ppBtn" title="Play / Pause (k)">
+                        <svg id="ppIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <div class="vol flex items-center gap-2">
+                        <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="muteBtn" title="Mute (m)">
+                            <svg id="volIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        </button>
+                        <input type="range" class="appearance-none h-[4px] rounded-[4px] bg-[linear-gradient(to_right,#fff_var(--vp,100%),rgba(255,255,255,.25)_var(--vp,100%))] cursor-pointer outline-none w-[84px]" id="vol" min="0" max="100" value="100">
+                    </div>
+                    <div class="spacer flex-1"></div>
+                    <button class="ctrl bg-transparent border-0 text-white cursor-pointer grid place-items-center p-1 transition-all hover:text-[var(--accent)]" id="fsBtn" title="Fullscreen (f)">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-let saved=new Set(JSON.parse(localStorage.getItem('aurora_adult_saved')||'[]'));
-let activeIdx=0,rotTimer=null;
-const backdropsEl=document.getElementById('backdrops');
-const heroContentEl=document.getElementById('heroContent');
-const dotsEl=document.getElementById('dots');
-const collectionEl=document.getElementById('collection');
-document.getElementById('stats').textContent=FILMS.length+' films · 18+ · streaming from archive.org';
+    <div class="toast fixed left-1/2 bottom-[34px] -translate-x-1/2 translate-y-[30px] z-[120] bg-[rgba(18,18,24,.92)] border border-[var(--line)] backdrop-blur-[14px] px-[22px] py-[13px] rounded-[12px] text-[13.5px] font-medium opacity-0 transition-all pointer-events-none flex items-center gap-[10px]" id="toast"></div>
 
-function renderHero(){
-if(!SPOTLIGHT_IDS.length)return;
-dotsEl.innerHTML='';
-SPOTLIGHT_IDS.forEach((id,i)=>{
-const dot=document.createElement('button');
-dot.className=`dot ${i===0?'active':''}`;
-dot.onclick=()=>setSpotlight(i);
-dotsEl.appendChild(dot);
-});
-updateHeroContent(0);
-startRot();
-}
+    <script>
+const FILMS=[{"id": 1, "title": "Deep Throat", "year": 2022, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/deep-throat-1972_202212/Deep%20Throat%20%281972%29.mp4", "cats": ["adult"], "img": "posters/deep-throat.jpg", "new": false}, {"id": 2, "title": "Behind the Green Door", "year": 1972, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/behind-the-green-door_480p/behind-the-green-door_480p.mp4", "cats": ["adult"], "img": "posters/behind-the-green-door.jpg", "new": false}, {"id": 3, "title": "The Story of Joanna", "year": 2025, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/1975-the-story-of-joanna/1975%20-%20The%20Story%20Of%20Joanna.mp4", "cats": ["adult"], "img": "posters/the-story-of-joanna.jpg", "new": false}, {"id": 4, "title": "The Opening of Misty Beethoven", "year": 1975, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/the-opening-of-misty-beethoven-1976/15584975063617.mp4", "cats": ["adult"], "new": false}, {"id": 5, "title": "Taboo", "year": 2021, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/taboo_202111/Taboo.mp4", "cats": ["adult"], "img": "posters/taboo.jpg", "new": false}, {"id": 6, "title": "Pirates II: Stagnetti's Revenge", "year": 2024, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/xk-kl-6-efot-bypp-6-kw/XkKl6EfotBYpp6Kw.mp4", "cats": ["adult"], "new": false}, {"id": 7, "title": "Insatiable", "year": 2026, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/insatiable_202601/Insatiable.mp4", "cats": ["adult"], "new": false}, {"id": 8, "title": "Nightdreams", "year": 1981, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/Nightdreams/Nightdreams.mp4", "cats": ["adult"], "new": false}, {"id": 9, "title": "The Fashionistas (2002) - Part 1", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20~%20Rocco%20Sifferdi%20~%20Rus%20CD1.avi.mp4", "cats": ["adult"], "new": false}, {"id": 10, "title": "The Fashionistas (2002) - Part 2", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20~%20Rocco%20Siiferdi%20~%20Rus%20CD2.mp4", "cats": ["adult"], "new": false}, {"id": 11, "title": "The Fashionistas (2002) - Part 3", "year": 2002, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔒", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/fashionistas-2002/The%20Fashionistas%20%282002%29%20~%20Rocco%20Sifferdi%20~%20%5BRRG%5D%7BBrego%7DRus%20CD3.mp4", "cats": ["adult"], "new": false}, {"id": 12, "title": "Nymphomaniac: Vol. I", "year": 2013, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/nymphomaniac-vol-1-lars-von-trier-2013/Nymphomaniac%20Vol%201%20-%20Lars%20Von%20Trier%20-%202013.mp4", "cats": ["adult"], "new": false}, {"id": 13, "title": "Nymphomaniac: Vol. II", "year": 2013, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/nymphomaniac-vol-2-lars-von-trier-2013/Nymphomaniac%20Vol%202%20-%20Lars%20Von%20Trier%20-%202013.mp4", "cats": ["adult"], "new": false}, {"id": 14, "title": "Climax", "year": 2018, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/climax.-2018.720p.-blu-ray.x-264-yts.-am/Climax.2018.720p.BluRay.x264-%5BYTS.AM%5D.mp4", "cats": ["adult"], "new": false}, {"id": 15, "title": "365 Days", "year": 2020, "genreKey": "adult", "genreLabel": "Adult", "icon": "🔞", "accent": "#b91c1c", "rgb": "185,28,28", "video": "https://archive.org/download/ver-365-dni-365-days-2020-online-cuevana-3-peliculas-online/Ver%20365%20DNI%20(365%20Days)%20(2020)%20Online%20-%20Cuevana%203%20Peliculas%20Online.mp4", "cats": ["adult"], "new": false}];
+const ROWS=[{"key": "adult", "label": "Adult Films (1972–2010)"}];
+const SPOTLIGHT_IDS=[1, 2, 3, 4, 5, 9];
 
-function updateHeroContent(idx){
-activeIdx=idx;
-const f=FILMS.find(x=>x.id===SPOTLIGHT_IDS[idx]);
-if(!f)return;
-const bg=document.getElementById('spotbg');
-if(f.img){bg.src=f.img;bg.style.opacity=.4}else{bg.removeAttribute('src');bg.style.opacity=0}
-document.documentElement.style.setProperty('--accent',f.accent||'#f472b6');
-document.querySelectorAll('#dots .dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
-heroContentEl.classList.add('hero-switch');
-setTimeout(()=>{
-heroContentEl.innerHTML=`
-<div class="eyebrow text-[11px] tracking-[0.35em] uppercase text-pink-400/80 mb-3">🔞 ${f.genreLabel} Feature</div>
-<h2 class="font-disp text-3xl md:text-5xl font-bold leading-tight mb-3">${f.title}</h2>
-<div class="flex items-center gap-3 text-sm text-white/50 mb-7"><span class="rounded-full border border-white/15 bg-white/5 px-3 py-0.5">${f.year}</span><span>·</span><span>${f.genreLabel}</span></div>
-<div class="flex flex-wrap gap-3">
-<button onclick="playFilm(${f.id})" class="inline-flex items-center gap-2 rounded-full bg-pink-400 px-7 py-2.5 text-sm font-semibold text-black hover:bg-pink-300 transition shadow-lg shadow-pink-500/25"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film</button>
-<button onclick="toggleSave(${f.id})" class="rounded-full border border-white/15 bg-white/5 px-6 py-2.5 text-sm font-medium text-white/70 hover:text-white hover:border-white/30 transition">${saved.has(f.id)?'✓ In Saved List':'+ Add to List'}</button>
-</div>`;
-heroContentEl.classList.remove('hero-switch');
-},180);
-}
+        let saved = new Set(JSON.parse(localStorage.getItem("aether_saved") || "[]"));
+        let activeIdx = 0, rotTimer = null;
 
-function setSpotlight(i){stopRot();updateHeroContent(i);startRot()}
-function startRot(){stopRot();rotTimer=setInterval(()=>{activeIdx=(activeIdx+1)%SPOTLIGHT_IDS.length;updateHeroContent(activeIdx)},8000)}
-function stopRot(){if(rotTimer)clearInterval(rotTimer)}
+        const backdropsEl = document.getElementById('backdrops');
+        const heroContentEl = document.getElementById('heroContent');
+        const dotsEl = document.getElementById('dots');
+        const collectionEl = document.getElementById('collection');
 
-window.playFilm=function(id){const f=FILMS.find(x=>x.id===id);if(f)openPlayer(f)};
-window.toggleSave=function(id){
-if(saved.has(id))saved.delete(id);else saved.add(id);
-localStorage.setItem('aurora_adult_saved',JSON.stringify([...saved]));
-renderCollection();renderHero();
-showToast(saved.has(id)?'Added to your saved list':'Removed from your list');
-};
+        function renderHero() {
+            if (!SPOTLIGHT_IDS.length) return;
+            backdropsEl.innerHTML = '';
+            dotsEl.innerHTML = '';
+            SPOTLIGHT_IDS.forEach((id, i) => {
+                const f = FILMS.find(x => x.id === id);
+                const bd = document.createElement('div');
+                bd.className = `bd ${i === 0 ? 'active' : ''}`;
+                bd.style.background = `radial-gradient(circle at 32% 22%, rgba(${f.rgb},.45), transparent 60%), linear-gradient(160deg, rgba(${f.rgb},.28), #060608 78%)`;
+                bd.innerHTML = `<span class="bd-icon">${f.icon}</span>`;
+                backdropsEl.appendChild(bd);
 
-function showToast(msg){
-const t=document.getElementById('toast');
-t.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
-t.classList.remove('opacity-0','translate-y-6');
-setTimeout(()=>t.classList.add('opacity-0','translate-y-6'),2600);
-}
+                const dot = document.createElement('button');
+                dot.className = `dot ${i === 0 ? 'active' : ''}`;
+                dot.onclick = () => setSpotlight(i);
+                dotsEl.appendChild(dot);
+            });
+            updateHeroContent(0);
+            startRot();
+        }
 
-function filmCard(f){
-const el=document.createElement('div');
-el.className='group cursor-pointer fade-in';
-el.onclick=(e)=>{if(e.target.closest('.bookmark'))return;playFilm(f.id)};
-const bg=f.img?`url('${f.img}')`:`linear-gradient(160deg,rgba(${f.rgb},.55),#0b0b10 85%)`;
-el.innerHTML=`
-<div class="relative rounded-xl overflow-hidden border border-white/10 bg-white/5 aspect-[2/3] transition-all duration-300 group-hover:border-pink-400/60 group-hover:shadow-[0_0_30px_-8px_rgba(244,114,182,.45)] group-hover:-translate-y-1 bg-cover bg-center" style="background-image:${bg}">
-<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20"></div>
-<span class="bookmark absolute top-1.5 right-1.5 w-7 h-7 rounded-lg bg-black/70 backdrop-blur flex items-center justify-center ${saved.has(f.id)?'text-pink-400':'text-white/70'} hover:text-white transition" onclick="event.stopPropagation();toggleSave(${f.id})" title="Save">
-<svg width="14" height="14" viewBox="0 0 24 24" fill="${saved.has(f.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-</span>
-<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-<div class="w-12 h-12 rounded-full bg-pink-400 text-black flex items-center justify-center shadow-lg"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-</div>
-</div>
-<p class="mt-2 text-sm truncate">${f.title}</p>
-<p class="text-xs text-white/35">${f.year} · ${f.genreLabel}</p>`;
-return el;
-}
+        function updateHeroContent(idx) {
+            activeIdx = idx;
+            const f = FILMS.find(x => x.id === SPOTLIGHT_IDS[idx]);
+            document.documentElement.style.setProperty('--accent', f.accent);
+            document.documentElement.style.setProperty('--accent-rgb', f.rgb);
 
-function renderCollection(filter){
-filter=(filter||'').toLowerCase();
-collectionEl.innerHTML='';
-let shown=0;
-ROWS.forEach((r,ri)=>{
-let list=FILMS.filter(f=>f.cats.includes(r.key)&&(!filter||f.title.toLowerCase().includes(filter)));
-if(!list.length)return;
-shown+=list.length;
-const sec=document.createElement('section');
-sec.className='fade-in';
-sec.innerHTML=`<div class="flex items-center justify-between mb-4"><h2 class="font-disp text-lg md:text-xl font-semibold tracking-wide"><span class="text-white/30 mr-2">${String(ri+1).padStart(2,'0')}</span>${r.label}</h2><span class="text-xs text-white/30">${list.length} films</span></div>`;
-const grid=document.createElement('div');
-grid.className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4';
-list.forEach(f=>grid.appendChild(filmCard(f)));
-sec.appendChild(grid);
-collectionEl.appendChild(sec);
-});
-document.getElementById('empty').classList.toggle('hidden',!!shown);
-}
+            document.querySelectorAll('.bd').forEach((b, i) => b.classList.toggle('active', i === idx));
+            document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
 
-const playerEl=document.getElementById('player');
-const videoEl=document.getElementById('video');
-const loaderEl=document.getElementById('loader');
-const stageEl=playerEl.querySelector('.stage');
-const seekEl=document.getElementById('seek');
-const curTimeEl=document.getElementById('curTime');
-const durTimeEl=document.getElementById('durTime');
-const ppIcon=document.getElementById('ppIcon');
-const volEl=document.getElementById('vol');
+            heroContentEl.classList.add('switching');
+            setTimeout(() => {
+                heroContentEl.innerHTML = `
+                    <div class="eyebrow">${f.icon} ${f.genreLabel} Feature</div>
+                    <h2 class="hero-title">${f.title.split(' ').map((w, wi) => wi === 1 ? `<em>${w}</em>` : w).join(' ')}</h2>
+                    <div class="hero-meta">
+                        <span class="rating-pill">${f.genreLabel}</span>
+                        <span class="sep"></span>
+                        <span>${f.year}</span>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-play" onclick="playFilm(${f.id})">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play Film
+                        </button>
+                        <button class="btn-ghost" onclick="toggleSave(${f.id})">
+                            ${saved.has(f.id) ? '✓ In Saved List' : '+ Add to List'}
+                        </button>
+                    </div>
+                `;
+                heroContentEl.classList.remove('switching');
+            }, 220);
+        }
 
-function openPlayer(f){
-playerEl.style.display='flex';
-requestAnimationFrame(()=>playerEl.classList.add('opacity-100'));
-const art=document.getElementById('artBg');
-if(f.img){art.src=f.img;art.style.opacity=.25}else art.style.opacity=0;
-document.getElementById('pTitle').innerText=f.title;
-document.getElementById('pMeta').innerText=`${f.genreLabel} · ${f.year}`;
-videoEl.src=f.video;
-videoEl.play().catch(()=>{});
-wireUI();
-showControls();
-}
+        function setSpotlight(idx) {
+            stopRot();
+            updateHeroContent(idx);
+            startRot();
+        }
 
-function closePlayer(){
-videoEl.pause();videoEl.removeAttribute('src');videoEl.load();
-playerEl.classList.remove('opacity-100');
-setTimeout(()=>playerEl.style.display='none',250);
-if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
-}
+        function startRot() {
+            stopRot();
+            rotTimer = setInterval(() => {
+                activeIdx = (activeIdx + 1) % SPOTLIGHT_IDS.length;
+                updateHeroContent(activeIdx);
+            }, 8000);
+        }
 
-document.getElementById('closeBtn').onclick=closePlayer;
-document.addEventListener('keydown',e=>{
-if(e.key==='Escape')closePlayer();
-if(!playerEl.style.display||playerEl.style.display==='none')return;
-if(e.key===' '){e.preventDefault();videoEl.paused?videoEl.play():videoEl.pause()}
-if(e.key==='k'){videoEl.paused?videoEl.play():videoEl.pause()}
-if(e.key==='m')videoEl.muted=!videoEl.muted;
-if(e.key==='f'){document.fullscreenElement?document.exitFullscreen():stageEl.requestFullscreen().catch(()=>{})}
-});
+        function stopRot() {
+            if (rotTimer) clearInterval(rotTimer);
+        }
 
-document.getElementById('ppBtn').onclick=()=>{videoEl.paused?videoEl.play():videoEl.pause()};
-document.getElementById('muteBtn').onclick=()=>{videoEl.muted=!videoEl.muted;volEl.value=videoEl.muted?0:videoEl.volume*100};
-document.getElementById('fsBtn').onclick=()=>{document.fullscreenElement?document.exitFullscreen():stageEl.requestFullscreen().catch(()=>{})};
+        window.playFilm = function (id) {
+            const f = FILMS.find(x => x.id === id);
+            if (!f) return;
+            openPlayer(f);
+        };
 
-function wireUI(){
-videoEl.onwaiting=()=>loaderEl.style.display='flex';
-videoEl.onplaying=()=>loaderEl.style.display='none';
-videoEl.ontimeupdate=()=>{
-if(!videoEl.duration)return;
-seekEl.value=(videoEl.currentTime/videoEl.duration)*1000;
-seekEl.style.setProperty('--p',(videoEl.currentTime/videoEl.duration*100)+'%');
-curTimeEl.innerText=fmtTime(videoEl.currentTime);
-durTimeEl.innerText=fmtTime(videoEl.duration);
-};
-videoEl.onplay=()=>{ppIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';showControls();};
-videoEl.onpause=()=>{ppIcon.innerHTML='<path d="M8 5v14l11-7z"/>';clearTimeout(ctrlTimer);showControls();};
-}
+        window.toggleSave = function (id) {
+            if (saved.has(id)) saved.delete(id); else saved.add(id);
+            localStorage.setItem("aether_saved", JSON.stringify([...saved]));
+            renderCollection();
+            renderHero();
+            showToast(saved.has(id) ? 'Added to your saved list' : 'Removed from your list');
+        };
 
-function fmtTime(s){
-if(!isFinite(s))return '0:00';
-s=Math.floor(s);
-const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
-return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`;
-}
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>${msg}`;
+            t.classList.add('opacity-100');
+            setTimeout(() => t.classList.remove('opacity-100'), 2600);
+        }
 
-seekEl.oninput=e=>{if(videoEl.duration)videoEl.currentTime=(e.target.value/1000)*videoEl.duration};
+        function renderCollection() {
+            collectionEl.innerHTML = '';
+            ROWS.forEach((r, ri) => {
+                let list = FILMS.filter(f => f.cats.includes(r.key));
+                if (list.length === 0) return;
 
-const titleBar=document.getElementById('titlebar');
-let ctrlTimer=null;
-function showControls(){
-clearTimeout(ctrlTimer);
-titleBar.classList.remove('opacity-0');
-ctrlBar.classList.remove('opacity-0');
-stageEl.style.cursor='default';
-if(!videoEl.paused&&!videoEl.ended){ctrlTimer=setTimeout(()=>{if(!videoEl.paused&&!videoEl.ended){titleBar.classList.add('opacity-0');ctrlBar.classList.add('opacity-0');stageEl.style.cursor='none'}},2600)}
-}
-['mousemove','touchstart','mousedown'].forEach(ev=>stageEl.addEventListener(ev,showControls,{passive:true}));
-videoEl.addEventListener('click',()=>{videoEl.paused?videoEl.play():videoEl.pause()});
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.innerHTML = `
+                    <div class="row-head">
+                        <h3 class="row-title"><span class="num">${String(ri + 1).padStart(2, '0')}.</span> ${r.label}</h3>
+                        <span class="row-count text-xs text-slate-500">${list.length} films</span>
+                    </div>
+                    <div class="row-track" id="track-${r.key}"></div>
+                `;
+                const track = row.querySelector('.row-track');
+                list.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = (e) => {
+                        if (e.target.closest('.bookmark')) return;
+                        playFilm(f.id);
+                    };
 
-volEl.oninput=e=>{videoEl.muted=false;videoEl.volume=e.target.value/100};
-document.getElementById('navq').addEventListener('input',e=>{document.getElementById('filmSearch').value=e.target.value;renderCollection(e.target.value)});
-document.getElementById('filmSearch').addEventListener('input',e=>{document.getElementById('navq').value=e.target.value;renderCollection(e.target.value)});
+                    const isSaved = saved.has(f.id);
+                    card.innerHTML = `
+                        <div class="card-img" style="background:${f.img ? `linear-gradient(160deg, rgba(${f.rgb},.72), rgba(8,12,20,.30) 45%, #0b0b10 92%), url('${f.img}') center/cover no-repeat` : `linear-gradient(160deg, rgba(${f.rgb},.55), #0b0b10 80%)`}"><span class="card-icon">${f.icon}</span></div>
+                        <div class="card-scrim"></div>
+                        <div class="card-top">
+                            <span class="badge year">${f.year}</span>
+                            <button class="bookmark ${isSaved ? 'saved' : ''}" onclick="toggleSave(${f.id})" title="Save">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            </button>
+                        </div>
+                        <div class="card-play">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                        <div class="card-info">
+                            <h3>${f.title}</h3>
+                            <p>${f.genreLabel}</p>
+                        </div>
+                    `;
+                    track.appendChild(card);
+                });
+                collectionEl.appendChild(row);
+            });
+        }
 
-function openGate(){document.getElementById('adultGate').style.display='flex'}
-document.getElementById('adultEnter').onclick=function(){localStorage.setItem('nexus_adult18','1');document.getElementById('adultGate').style.display='none'};
-document.getElementById('adultLeave').onclick=function(){try{history.back()}catch(e){};document.getElementById('adultGate').style.display='none'};
-if(!localStorage.getItem('nexus_adult18')){document.getElementById('adultGate').style.display='flex'}
+        // Player setup
+        const playerEl = document.getElementById('player');
+        const videoEl = document.getElementById('video');
+        const loaderEl = document.getElementById('loader');
+        const stageEl = document.getElementById('stage');
+        const seekEl = document.getElementById('seek');
+        const curTimeEl = document.getElementById('curTime');
+        const durTimeEl = document.getElementById('durTime');
+        const ppBtn = document.getElementById('ppBtn');
+        const ppIcon = document.getElementById('ppIcon');
+        const muteBtn = document.getElementById('muteBtn');
+        const volEl = document.getElementById('vol');
+        const fsBtn = document.getElementById('fsBtn');
 
-document.addEventListener('DOMContentLoaded',()=>{
-try{renderHero()}catch(e){console.error('hero:',e)}
-try{renderCollection()}catch(e){console.error('collection:',e)}
-});
-</script>
+        function openPlayer(f) {
+            playerEl.style.display = 'flex';
+            setTimeout(() => playerEl.classList.add('opacity-100'), 10);
+            document.getElementById('pTitle').innerText = f.title;
+            document.getElementById('pMeta').innerText = `${f.genreLabel} · ${f.year}`;
+            videoEl.src = f.video;
+            videoEl.play().catch(() => {});
+            setupUI();
+        }
+
+        function closePlayer() {
+            videoEl.pause();
+            videoEl.src = "";
+            playerEl.classList.remove('opacity-100');
+            setTimeout(() => playerEl.style.display = 'none', 300);
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        }
+
+        document.getElementById('closeBtn').onclick = closePlayer;
+
+        ppBtn.onclick = () => {
+            if (videoEl.paused) videoEl.play(); else videoEl.pause();
+        };
+
+        muteBtn.onclick = () => {
+            videoEl.muted = !videoEl.muted;
+            volEl.value = videoEl.muted ? 0 : (videoEl.volume * 100);
+        };
+
+        fsBtn.onclick = () => {
+            if (!document.fullscreenElement) stageEl.requestFullscreen().catch(() => {});
+            else document.exitFullscreen().catch(() => {});
+        };
+
+        function setupUI() {
+            videoEl.onwaiting = () => loaderEl.style.display = 'flex';
+            videoEl.onplaying = () => loaderEl.style.display = 'none';
+            videoEl.ontimeupdate = () => {
+                if (!videoEl.duration) return;
+                const p = (videoEl.currentTime / videoEl.duration) * 1000;
+                seekEl.value = p;
+                curTimeEl.innerText = fmtTime(videoEl.currentTime);
+                durTimeEl.innerText = fmtTime(videoEl.duration);
+            };
+            videoEl.onplay = () => ppIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            videoEl.onpause = () => ppIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        }
+
+        function fmtTime(s) {
+            if (!isFinite(s)) return "0:00";
+            s = Math.floor(s);
+            const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+            return h ? `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : `${m}:${String(sec).padStart(2, '0')}`;
+        }
+
+        seekEl.oninput = (e) => {
+            if (!videoEl.duration) return;
+            videoEl.currentTime = (e.target.value / 1000) * videoEl.duration;
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try { renderHero(); } catch (e) { console.error('Hero render failed:', e); }
+            try { renderCollection(); } catch (e) { console.error('Collection render failed:', e); }
+        });
+    </script>
+
+    <script>
+        if (!localStorage.getItem("nexus_adult18")) {
+            document.getElementById("adultGate").style.display = "flex";
+        }
+        document.getElementById("adultEnter").onclick = function () {
+            localStorage.setItem("nexus_adult18", "1");
+            document.getElementById("adultGate").style.display = "none";
+        };
+        document.getElementById("adultLeave").onclick = function () {
+            try { history.back(); } catch (e) {}
+            document.getElementById("adultGate").style.display = "none";
+        };
+    </script>
 </body>
 </html>

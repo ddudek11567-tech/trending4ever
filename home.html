@@ -47,7 +47,7 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif;overflow-x:hid
 
   <div class="relative z-10 max-w-6xl mx-auto px-4 w-full py-12 fade-in">
     <div class="inline-flex items-center gap-2 text-cyan-300 text-xs font-semibold tracking-widest uppercase mb-3">
-      <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Live · Welcome
+      <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Welcome
     </div>
     <h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
       <span class="aurora-text">AURORA</span><br>
@@ -130,11 +130,11 @@ window.NexusAge=(function(){
 <!-- GREETING VIDEO PLAYER -->
 <script>
 (function(){
-  var url="http://40.160.24.53/METV/index.m3u8";
   var v=document.getElementById('heroVideo');
+  v.src='video/joi-startup.mp4';
   v.muted=true;
-  if(window.Hls&&Hls.isSupported()){var h=new Hls();h.loadSource(url);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,function(){v.play().catch(function(){})});}
-  else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=url;v.addEventListener('loadedmetadata',function(){v.play().catch(function(){})});}
+  v.loop=true;
+  v.play().catch(function(){});
 })();
 </script>
 </body>
