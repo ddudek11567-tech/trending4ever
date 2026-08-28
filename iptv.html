@@ -79,7 +79,7 @@ https://trending4ever.com/iptv.html
 <!-- FEATURED PLAYER (55%) -->
 <div class="rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl fade-in">
 <!-- VIDEO PLAYER -->
-<div id="playerWrapper" class="relative aspect-video bg-black">
+<div id="playerWrapper" class="relative h-44 md:h-56 lg:h-64 bg-black">
 <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
 <video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>
 <div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>
@@ -102,21 +102,21 @@ https://trending4ever.com/iptv.html
 </div>
 </div>
 <!-- NOW PLAYING INFO -->
-<div class="p-5">
-<div class="flex items-center justify-between mb-3">
+<div class="p-4">
+<div class="flex items-center justify-between mb-2.5">
 <div class="flex items-center gap-2.5">
 <span id="guideChannelNumBadge" class="bg-cyan-400 text-black px-2.5 py-1 rounded-md text-xs font-black tabular-nums">01</span>
 <span id="guideNetworkName" class="text-xs font-bold tracking-wider uppercase text-cyan-300">SELECT A CHANNEL</span>
 </div>
 <div id="guideRatingBadge" class="text-[11px] bg-white/5 text-white/60 border border-white/10 px-2.5 py-0.5 rounded-md font-bold">TV-PG</div>
 </div>
-<h2 id="guideShowTitle" class="font-disp text-xl md:text-2xl font-bold tracking-tight leading-tight">Master Catalog Restored</h2>
-<div id="guideShowTime" class="text-xs font-semibold text-cyan-300/80 mt-1.5">Verified English and Spanish high-availability stations online</div>
-<p id="guideShowDesc" class="text-sm text-white/45 mt-3 leading-relaxed line-clamp-2">The English and Spanish channel lineup has been checked for working HLS and DASH manifests. Select any station below to stream instantly.</p>
-<div class="mt-3 h-1 rounded-full bg-white/10 overflow-hidden"><div id="guideProg" class="h-full bg-cyan-400 transition-all duration-1000" style="width:0%"></div></div>
-<div class="mt-4 pt-3 border-t border-white/10">
-<h4 class="text-[11px] font-bold tracking-widest text-white/40 uppercase mb-2">Up Next</h4>
-<div id="upNextList" class="space-y-1.5"></div>
+<h2 id="guideShowTitle" class="font-disp text-lg md:text-xl font-bold tracking-tight leading-tight">Master Catalog Restored</h2>
+<div id="guideShowTime" class="text-xs font-semibold text-cyan-300/80 mt-1">Verified English and Spanish high-availability stations online</div>
+<p id="guideShowDesc" class="text-[13px] text-white/45 mt-2 leading-snug line-clamp-1">The English and Spanish channel lineup has been checked for working HLS and DASH manifests. Select any station below to stream instantly.</p>
+<div class="mt-2.5 h-1 rounded-full bg-white/10 overflow-hidden"><div id="guideProg" class="h-full bg-cyan-400 transition-all duration-1000" style="width:0%"></div></div>
+<div class="mt-3 pt-2.5 border-t border-white/10">
+<h4 class="text-[10px] font-bold tracking-widest text-white/40 uppercase mb-1.5">Up Next</h4>
+<div id="upNextList" class="space-y-1"></div>
 </div>
 </div>
 </div>
@@ -125,18 +125,18 @@ https://trending4ever.com/iptv.html
 <div class="hidden lg:block"></div>
 
 <!-- MOVIES NOW PLAYING PANEL (42%) -->
-<div class="bg-[#0a0c12] border border-white/10 rounded-2xl p-4 flex flex-col justify-between">
-<div class="flex items-center justify-between mb-3">
+<div class="bg-[#0a0c12] border border-white/10 rounded-2xl p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2.5">
 <h2 class="text-sm font-bold uppercase tracking-wider text-white/70"><i class="fa-solid fa-film text-cyan-400 mr-1.5"></i>Movies Now Playing</h2>
 <span id="activeCountBadge" class="text-xs text-cyan-400">— Channels</span>
 </div>
-<div id="featuredChannels" class="space-y-2.5 flex-1 overflow-y-auto nx-scroll pr-1"></div>
-<div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between">
-<div class="flex items-center gap-2 text-[11px] text-white/40">
+<div id="featuredChannels" class="grid grid-cols-2 gap-2 flex-1 content-start overflow-y-auto nx-scroll pr-1"></div>
+<div class="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
+<div class="flex items-center gap-2 text-[10px] text-white/40">
 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
 <strong class="text-white/80" id="currentTimeDisplay">—</strong>
 </div>
-<span class="text-[10px] text-white/25">Streams via HLS.js / DASH.js</span>
+<span class="text-[9px] text-white/25">Streams via HLS.js / DASH.js</span>
 </div>
 </div>
 
@@ -1645,21 +1645,20 @@ function renderFeaturedChannels() {
         const title = np ? np.t : ch.name;
         const time = np ? fmtT(np.s) : 'NOW';
         const isSelected = currentChannel && currentChannel.id === ch.id;
-        const img = posterFor(ch) || ch.icon;
-        const useImg = posterFor(ch) && posterFor(ch) !== '';
-        return '<button onclick="selectGuideChannel(channels.find(x=>x.id===' + ch.id + '))" class="w-full text-left flex items-center gap-3 bg-white/[0.03] p-2 rounded-xl border ' + (isSelected ? 'border-cyan-400/50 bg-cyan-400/5' : 'border-white/5 hover:border-white/20 hover:bg-white/[0.06]') + ' transition cursor-pointer group">'
-        + '<div class="relative w-14 h-20 shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-cyan-900/40 to-purple-900/40 flex items-center justify-center text-lg border border-white/10">'
-        + (useImg ? '<img src="' + posterFor(ch) + '" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'nx-noimg\')">' : '<span class="opacity-70">' + img + '</span>')
-        + '<span class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-1 text-[9px] font-bold text-cyan-300 group-hover:opacity-100 opacity-0 transition">TUNE IN</span>'
+        const usePoster = posterFor(ch) && posterFor(ch) !== '';
+        return '<button onclick="selectGuideChannel(channels.find(x=>x.id===' + ch.id + '))" class="group relative text-left overflow-hidden rounded-xl border bg-white/[0.03] ' + (isSelected ? 'border-cyan-400/50 ring-1 ring-cyan-400/40' : 'border-white/5 hover:border-white/25 hover:bg-white/[0.06]') + ' transition cursor-pointer">'
+        + '<div class="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-cyan-900/40 to-purple-900/40 flex items-center justify-center">'
+        + (usePoster ? '<img src="' + posterFor(ch) + '" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'nx-noimg\')">' : '<span class="text-2xl opacity-70">' + ch.icon + '</span>')
+        + '<span class="absolute top-1.5 left-1.5 bg-black/70 backdrop-blur border border-white/10 px-1.5 py-px rounded text-[8px] font-bold text-white">CH ' + ch.number + '</span>'
+        + '<span class="absolute top-1.5 right-1.5 bg-cyan-400/90 text-black px-1.5 py-px rounded text-[8px] font-black tabular-nums">' + time + '</span>'
+        + '<span class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-1.5 text-[9px] font-bold text-cyan-300 opacity-0 group-hover:opacity-100 transition">TUNE IN</span>'
         + '</div>'
-        + '<div class="flex-1 min-w-0">'
-        + '<div class="flex items-center justify-between gap-2">'
-        + '<span class="text-[9px] bg-white/10 text-white/60 rounded px-1.5 py-px font-bold shrink-0">CH ' + ch.number + '</span>'
-        + '<span class="text-[10px] text-cyan-300 font-semibold shrink-0 tabular-nums">' + time + '</span>'
+        + '<div class="p-1.5">'
+        + '<div class="text-[10px] font-bold text-white leading-tight line-clamp-2">' + esc(title) + '</div>'
+        + '<div class="text-[8px] text-white/40 mt-0.5 truncate">' + esc(ch.name) + '</div>'
+        + '<div class="mt-0.5 flex items-center gap-1 text-[8px] text-cyan-300/80"><i class="fa-solid fa-circle -scale-100"></i><span class="font-semibold">LIVE</span><span class="text-white/30">· ' + esc(ch.rating) + '</span></div>'
         + '</div>'
-        + '<h4 class="text-xs font-bold text-white truncate mt-1">' + esc(title) + '</h4>'
-        + '<p class="text-[10px] text-white/40 truncate">' + esc(ch.name) + ' · ' + ch.rating + '</p>'
-        + '</div></button>';
+        + '</button>';
     }).join('');
 }
 
