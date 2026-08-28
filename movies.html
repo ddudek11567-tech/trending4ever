@@ -1,73 +1,145 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOVIES Â· NEXUS TV</title>
+    <title>NEXUS TV — Master Movie Catalog & Verified Poster Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 50:'#f0fdf4',500:'#22c55e',600:'#16a34a',700:'#15803d',900:'#14532d' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
-        body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
-        .font-disp{font-family:'Space Grotesk',sans-serif}
-        .grain:before{content:"";position:fixed;inset:-100%;z-index:60;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 7s steps(10) infinite}
-        @keyframes grain{0%,100%{transform:translate(0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-3%,4%)}80%{transform:translate(4%,2%)}}
-        .aurora-text{background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
-        .fade-in{animation:fi .6s ease both}@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1}}
-        .nx-scroll::-webkit-scrollbar{width:8px;height:8px}
-        .nx-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
-        .nx-scroll::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}::-webkit-scrollbar-track{background:transparent}
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(219, 39, 119, 0.6); border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(236, 72, 153, 0.8); }
+        .movie-grid-bg {
+            background: linear-gradient(135deg, #12091c 0%, #030712 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+        .poster-glow {
+            box-shadow: 0 0 25px rgba(219, 39, 119, 0.2);
+        }
     </style>
 </head>
-<body class="grain antialiased min-h-screen bg-[#020204] text-white overflow-x-hidden">
-<nav class="fixed top-0 inset-x-0 z-50 backdrop-blur bg-black/70 border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-    <a href="home.html" class="flex items-baseline gap-2 shrink-0">
-      <span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span>
-      <span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span>
-    </a>
-    <div class="hidden md:flex items-center gap-6 text-sm">
-      <a href="iptv.html" class="text-white/60 hover:text-white transition">IPTV</a>
-      <a href="movies.html" class="text-white font-semibold">Movies</a>
-      <a href="music.html" class="text-white/60 hover:text-white transition">Music</a>
-      <a href="tv-series.html" class="text-white/60 hover:text-white transition">TV Series</a>
-      <a href="books.html" class="text-white/60 hover:text-white transition">Books</a>
-    </div>
-    <button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">ðŸŽ‚</button>
-  </div>
-</nav>
+<body class="min-h-screen bg-[#030712] text-slate-100 flex font-sans selection:bg-pink-600 selection:text-white overflow-hidden pt-11">
+<nav class="fixed top-0 inset-x-0 z-[60] backdrop-blur bg-black/85 border-b border-white/5">
+<div class="flex items-center justify-center gap-6 text-sm py-3"><a href="iptv.html" class="text-slate-400 hover:text-white transition">IPTV</a><a href="movies.html" class="text-white font-semibold">Movies</a><a href="music.html" class="text-slate-400 hover:text-white transition">Music</a><a href="tv-series.html" class="text-slate-400 hover:text-white transition">TV Series</a><a href="books.html" class="text-slate-400 hover:text-white transition">Books</a><button id="ageChip" onclick="NexusAge.open()" title="Birthday settings" class="ml-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-400/20 transition">🎂</button>
+</div></nav>
 
 
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#0a0614] border-r border-pink-950/60 flex flex-col justify-between shrink-0 select-none z-30 h-[calc(100vh-44px)]">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center space-x-3 border-b border-pink-950/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 via-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-pink-500/20 text-white font-black text-xl">
+                    🎬
+                </div>
+                <div>
+                    <h1 class="font-extrabold tracking-wider text-lg text-white flex items-center gap-1.5">
+                        NEXUS<span class="text-pink-400">VOD</span>
+                    </h1>
+                    <span id="catalogCountBadge" class="text-[10px] text-pink-400/80 font-bold tracking-widest uppercase font-mono">POSTER ENGINE &bull; LOADING...</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1.5">
+<a href="books.html" class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border border-pink-500/40 bg-slate-800/60 text-white shadow-lg shadow-pink-600/10">
+                <div class="flex items-center space-x-3">
+                    <span class="text-base">🎧</span>
+                    <span>Books on Tape</span>
+                </div>
+                <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-2 py-0.5 rounded-full font-bold">NEW</span>
+                </a>
+                <a href="iptv.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📡</span>
+                        <span>Live IPTV</span>
+                    </div>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                </a>
+
+                <a href="movies.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-pink-300 bg-pink-950/30 border-pink-800/50 shadow-inner">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">🎬</span>
+                        <span>VOD Movies</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
+                </a>
+
+                <a href="tv-series.html" class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all border text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-base">📺</span>
+                        <span>VOD TV Series</span>
+                    </div>
+                    <span class="text-[10px] bg-pink-500/20 text-pink-400 border border-pink-500/30 px-1.5 py-0.5 rounded font-bold">VOD</span>
+                </a>
+
+                <div class="pt-4 pb-1 px-4 text-[10px] uppercase font-bold tracking-wider text-slate-500">Discovery</div>
+
+                
+
+                
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer / Profile -->
+        <div class="p-4 border-t border-pink-950/40 space-y-3">
+            <div class="flex items-center space-x-3 p-2.5 rounded-xl bg-[#120a22] border border-pink-950/80">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-sm shadow">
+                    DD
+                </div>
+                <div class="overflow-hidden flex-1">
+                    <div class="text-xs font-bold text-white truncate">Daniel Dudek</div>
+                    <div class="text-[10px] text-pink-400 font-medium flex items-center gap-1">
+                        <span>★</span> Lead Architect
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <!-- Main Content Area -->
-    <main class="pt-14 max-w-6xl mx-auto px-4 pb-12 fade-in">
+    <main class="flex-1 flex flex-col h-[calc(100vh-44px)] overflow-hidden movie-grid-bg">
 
-        <!-- Header & Search -->
-        <header class="flex flex-col md:flex-row md:items-end justify-between gap-4 py-6 border-b border-white/10">
+        <!-- Top Header & Search Bar -->
+        <header class="p-6 border-b border-pink-950/60 bg-[#0a0614]/95 backdrop-blur-md shadow-xl flex items-center justify-between shrink-0">
             <div>
-                <h1 class="font-disp text-3xl md:text-4xl font-bold tracking-tight">Movies</h1>
-                <p class="text-white/40 text-sm mt-1">Verified on-demand features from the archive — <span id="catalogCountBadge" class="text-cyan-300 font-semibold">loading...</span></p>
+                <h2 class="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <span>🎬</span> VOD Movie Master Catalog
+                </h2>
+                <p class="text-xs text-pink-300/80 font-mono mt-0.5">High-definition feature films extracted directly from Archive.org repository sources with dynamic poster art integration.</p>
             </div>
-            <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search movies..." class="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 w-72 transition">
+            <div class="flex items-center space-x-3">
+                <input type="text" id="movieSearchInput" oninput="filterMovies(this.value)" placeholder="Search movies..." class="bg-[#120a22] border border-pink-950 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-pink-500 w-72 transition-all font-mono">
+            </div>
         </header>
 
-        <!-- Split View: Poster grid + player -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+        <!-- Main Workspace: Split View -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden">
 
             <!-- Left Panel: Scrollable Poster Card Grid -->
-            <div class="lg:col-span-7 bg-white/[0.03] border border-white/10 rounded-2xl p-4 overflow-y-auto nx-scroll" style="max-height:74vh">
+            <div class="lg:col-span-7 bg-[#07040f] border border-pink-950/80 rounded-2xl p-4 overflow-y-auto custom-scrollbar shadow-2xl flex flex-col">
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4" id="moviePosterGrid">
                     <!-- Populated dynamically -->
                 </div>
             </div>
 
             <!-- Right Panel: Active Video Player & Movie Metadata Card -->
-            <div class="lg:col-span-5 bg-white/[0.03] border border-white/10 rounded-2xl p-5 flex flex-col justify-between relative overflow-hidden">
-                <div class="absolute -right-16 -top-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="lg:col-span-5 bg-[#07040f] border border-pink-950/80 rounded-2xl p-5 flex flex-col justify-between shadow-2xl poster-glow relative overflow-hidden">
+                <div class="absolute -right-16 -top-16 w-56 h-56 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
                 <!-- Video Player Container -->
-                <div class="w-full aspect-video bg-black rounded-xl overflow-hidden border border-white/10 relative shadow-2xl flex items-center justify-center">
+                <div class="w-full h-[52%] bg-black rounded-xl overflow-hidden border border-pink-900/50 relative shadow-2xl flex items-center justify-center">
                     <video
                         id="movieVideoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
@@ -81,22 +153,27 @@
                 <div class="mt-4 flex-1 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <span id="activeMovieYear" class="text-xs font-black bg-cyan-400/15 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded font-mono">2023</span>
-                            <span class="text-[11px] bg-white/5 text-white/50 px-2 py-0.5 rounded font-mono font-bold">1080p BluRay</span>
+                            <span id="activeMovieYear" class="text-xs font-black bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded font-mono">2023</span>
+                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono font-bold">1080p BluRay</span>
                         </div>
                         <h3 id="activeMovieTitle" class="text-xl font-black text-white tracking-tight leading-snug">Select a Movie</h3>
-                        <p id="activeMovieUrlText" class="text-[11px] text-white/40 font-mono mt-1 truncate">archive.org/download/...</p>
+                        <p id="activeMovieUrlText" class="text-[11px] text-slate-400 font-mono mt-1 truncate">archive.org/download/...</p>
                     </div>
 
-                    <div class="pt-3 border-t border-white/10 flex items-center justify-between">
-                        <span class="text-xs text-white/50">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
-                        <a id="downloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition-all flex items-center gap-1.5">
-                            <span>&#128229;</span> Direct Source Link
+                    <div class="pt-3 border-t border-pink-950/80 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">Status: <strong class="text-emerald-400">Ready to Stream</strong></span>
+                        <a id="downloadBtn" href="#" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-pink-600/20 border border-pink-500/40 hover:bg-pink-600/40 text-pink-300 text-xs font-semibold transition-all shadow flex items-center gap-1.5">
+                            <span>📥</span> Direct Source Link
                         </a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="py-2.5 px-6 border-t border-pink-950/60 text-center text-[11px] text-slate-500 bg-[#030712] shrink-0 font-mono">
+            NEXUS VOD Poster Engine &bull; Designed by: Daniel Dudek
+        </footer>
     </main>
 
     <script>
@@ -180,11 +257,11 @@
             { title: "The Blair Witch Project", year: "1999", url: "https://archive.org/download/OakleyTapes_2292_EntertainTape/20220214_182801.ia.mp4", poster: "posters/the-blair-witch-project.jpg" },
             { title: "Candyman", year: "1992", url: "https://archive.org/download/candyman-1992-vhs-trailer/Candyman%201992%20VHS%20Trailer.ia.mp4", poster: "posters/candyman.jpg" },
             { title: "Misery", year: "1990", url: "https://archive.org/download/turner_video_1898/1898.ia.mp4", poster: "posters/misery.jpg" },
-            { title: "Jacobâ€™s Ladder", year: "1990", url: "https://archive.org/download/turner_video_1890/1890.ia.mp4", poster: "posters/jacob-s-ladder.jpg" },
+            { title: "Jacob’s Ladder", year: "1990", url: "https://archive.org/download/turner_video_1890/1890.ia.mp4", poster: "posters/jacob-s-ladder.jpg" },
             { title: "Interview with the Vampire", year: "1994", url: "https://archive.org/download/dvd-transfer-164/VTS_01_1.ia.mp4", poster: "posters/interview-with-the-vampire.jpg" },
             { title: "From Dusk Till Dawn", year: "1996", url: "https://archive.org/download/turner_video_48227/48227.mp4", poster: "posters/from-dusk-till-dawn.jpg" },
             { title: "The Sixth Sense", year: "1999", url: "https://archive.org/download/turner_video_110822/110822.ia.mp4", poster: "posters/the-sixth-sense.jpg" },
-            { title: "Bram Stokerâ€™s Dracula", year: "1992", url: "https://archive.org/download/dracula-workprint/Bram%20Stoker%27s%20Dracula%20%5BWorkprint%5D%20%281%29.ia.mp4", poster: "posters/bram-stoker-s-dracula.jpg" },
+            { title: "Bram Stoker’s Dracula", year: "1992", url: "https://archive.org/download/dracula-workprint/Bram%20Stoker%27s%20Dracula%20%5BWorkprint%5D%20%281%29.ia.mp4", poster: "posters/bram-stoker-s-dracula.jpg" },
             { title: "The Ring", year: "1998", url: "https://archive.org/download/city-of-the-rising-sun/City%20of%20the%20Rising%20Sun.mp4", poster: "posters/the-ring.jpg" },
             { title: "Audition", year: "1999", url: "https://archive.org/download/atbym06/ATBYM-S01EP06_HD%20720p_MEDIUM_FR30.ia.mp4", poster: "posters/audition.jpg" },
             { title: "The Frighteners", year: "1996", url: "https://archive.org/download/Frighteners/Frighteners.ia.mp4", poster: "posters/the-frighteners.jpg" },
@@ -194,7 +271,7 @@
             { title: "The Craft", year: "1996", url: "https://archive.org/download/wipeout-sega-saturn-pal-gameplay-full-game-longplay-complete-the-game-recorded-by-you-tube/Wipeout%20Sega%20Saturn%20PAL%20Gameplay%20%28Demostration%20Attract%20Mode%29.ia.mp4", poster: "posters/the-craft.jpg" },
             { title: "Urban Legend", year: "1998", url: "https://archive.org/download/turner_video_48504/48504.ia.mp4", poster: "posters/urban-legend.jpg" },
             { title: "American Beauty", year: "1999", url: "https://archive.org/download/turner_video_2965/2965.mkv", poster: "posters/american-beauty.jpg" },
-            { title: "Schindlerâ€™s List", year: "1993", url: "https://archive.org/download/DeadEnd1937/Stalingrad%20%281993%29%20English%20Subtitles.mp4", poster: "posters/schindler-s-list.jpg" },
+            { title: "Schindler’s List", year: "1993", url: "https://archive.org/download/DeadEnd1937/Stalingrad%20%281993%29%20English%20Subtitles.mp4", poster: "posters/schindler-s-list.jpg" },
             { title: "Titanic", year: "1997", url: "https://archive.org/download/TheVistaGroup-TVCommercials1997NovemberDecemberTNTSeattleWA/TV%20Commercials%20%E2%80%A2%201997%20November-December%20%E2%80%A2%20TNT%20%E2%80%A2%20Seattle%2C%20WA%20%E2%80%A2%2060%20FPS.mp4", poster: "posters/titanic.jpg" },
             { title: "The Insider", year: "1999", url: "https://archive.org/download/CLE-B04_32600-33049/32600_The-Insider-movie-advertisement-CBS-WOIO-19_1999-11-18.ia.mp4", poster: "posters/the-insider.jpg" },
             { title: "The English Patient", year: "1996", url: "https://archive.org/download/turner_video_14137/14137.ia.mp4", poster: "posters/the-english-patient.jpg" },
@@ -219,7 +296,7 @@
             { title: "Enemy of the State", year: "1998", url: "https://archive.org/download/enemy-of-the-state-1998_202408/Enemy%20of%20the%20State%20%281998%29%20.mp4", poster: "posters/enemy-of-the-state.jpg" },
             { title: "Cape Fear", year: "1991", url: "https://archive.org/download/beta12quantumleap/quantum%20leap.ia.mp4", poster: "posters/cape-fear.jpg" },
             { title: "Sleeping with the Enemy", year: "1991", url: "https://archive.org/download/commercials-sas-7-14-04-91/Commercials%20SAS-7%2C%2014-04-91.mp4", poster: "posters/sleeping-with-the-enemy.jpg" },
-            { title: "The Devilâ€™s Advocate", year: "1997", url: "https://archive.org/download/TheVistaGroup-TVCommercialsMixPart75/TV%20Commercials%20Mix%20Part%2075.ia.mp4", poster: "posters/the-devil-s-advocate.jpg" },
+            { title: "The Devil’s Advocate", year: "1997", url: "https://archive.org/download/TheVistaGroup-TVCommercialsMixPart75/TV%20Commercials%20Mix%20Part%2075.ia.mp4", poster: "posters/the-devil-s-advocate.jpg" },
             { title: "Copycat", year: "1995", url: "https://archive.org/download/cruel-jaws-a-bruno-mattei-film/Cruel%20Jaws%20%28A%20Bruno%20Mattei%20Film%29.mp4", poster: "posters/copycat.jpg" },
             { title: "The Pelican Brief", year: "1993", url: "https://archive.org/download/beta-40-how-the-grinch-stole-christmas-rugrats-married-with-children/Beta%20Is%20How%20the%20Grinch%20Stole%20Christmas%2C%20rugrats%2C%20married%20with%20children.ia.mp4", poster: "posters/the-pelican-brief.jpg" },
             { title: "Dumb and Dumber", year: "1994", url: "https://archive.org/download/1994-dumb-and-dumber-movie-commercial-1/1994%20Dumb%20and%20Dumber%20Movie%20Commercial%20%231.mp4", poster: "posters/dumb-and-dumber.jpg" },
@@ -227,7 +304,7 @@
             { title: "Groundhog Day", year: "1993", url: "https://archive.org/download/1993-commercial-for-groundhog-day/1993%20commercial%20for%20Groundhog%20Day.ia.mp4", poster: "posters/groundhog-day.jpg" },
             { title: "Mrs. Doubtfire", year: "1993", url: "https://archive.org/download/mrs.-doubtfire_202506/%27Mrs.%20Doubtfire.mp4", poster: "posters/mrs-doubtfire.jpg" },
             { title: "The Big Lebowski", year: "1998", url: "https://archive.org/download/turner_video_2575/2575.mkv", poster: "posters/the-big-lebowski.jpg" },
-            { title: "Wayneâ€™s World", year: "1992", url: "https://archive.org/download/waynes-world-1992-snl-special-japanese-subtitles/Wayne%27s%20World%201992%20SNL%20Special%20%28Japanese%20Subtitles%29.mp4", poster: "posters/wayne-s-world.jpg" },
+            { title: "Wayne’s World", year: "1992", url: "https://archive.org/download/waynes-world-1992-snl-special-japanese-subtitles/Wayne%27s%20World%201992%20SNL%20Special%20%28Japanese%20Subtitles%29.mp4", poster: "posters/wayne-s-world.jpg" },
             { title: "Austin Powers: International Man of Mystery", year: "1997", url: "https://archive.org/download/austin-powers-international-man-of-mystery_202605/Austin_Powers_International_Man_of_Mystery.ia.mp4", poster: "posters/austin-powers-international-man-of-mystery.jpg" },
             { title: "Austin Powers: The Spy Who Shagged Me", year: "1999", url: "https://archive.org/download/amc-previews-idle-hands-april-30-1999/AMC%20Previews%20-%20Idle%20Hands%20%28April%2030%2C%201999%29.ia.mp4", poster: "posters/austin-powers-the-spy-who-shagged-me.jpg" },
             { title: "Happy Gilmore", year: "1996", url: "https://archive.org/download/TheVistaGroup-1990sTVCommercialsPart7/90s%20TV%20Commercials%20Part%207%20%E2%80%A2%C2%A060%20FPS%201990s.ia.mp4", poster: "posters/happy-gilmore.jpg" },
@@ -253,7 +330,7 @@
             { title: "The Lion King", year: "1994", url: "https://archive.org/download/fox-kids-network-1994-commercials-polly-pocket-skittles-the-lion-king/Fox%20Kids%20Network%20%281994%29%20Commercials%20-%20Polly%20Pocket%2C%20Skittles%2C%20The%20Lion%20King%20Tiger%20Electronics%20Handheld%20Game%2C%20Magic%20Ice%20Cream%20Party%2C%20WoE%20Is%20Carmen%20Sandiego%2C%20The%20Tick.mkv", poster: "posters/the-lion-king.jpg" },
             { title: "Toy Story", year: "1995", url: "https://archive.org/download/critically-endangered-animals-races-in-planet-zoo-included-lion-bornean-orangutan-gorilla-etc_202503/Critically%20Endangered%20Animals%20Races%20in%20Planet%20Zoo%20included%20Lion%2C%20Bornean%20Orangutan%2C%20Gorilla%20%26%20etc.ia.mp4", poster: "posters/toy-story.jpg" },
             { title: "Toy Story 2", year: "1999", url: "https://archive.org/download/toy-story-2-1999-woodys-nightmare-scene-slow-fast-motion/Toy%20Story%202%20%281999%29%20-%20Woody%27s%20Nightmare%20Scene%20%28Fast%20Motion%29.ia.mp4", poster: "posters/toy-story-2.jpg" },
-            { title: "A Bugâ€™s Life", year: "1998", url: "https://archive.org/download/flaming-death-a-bugs-life/Flaming%20death%20-%20%27A%20Bug%27s%20Life%27.mp4", poster: "posters/a-bug-s-life.jpg" },
+            { title: "A Bug’s Life", year: "1998", url: "https://archive.org/download/flaming-death-a-bugs-life/Flaming%20death%20-%20%27A%20Bug%27s%20Life%27.mp4", poster: "posters/a-bug-s-life.jpg" },
             { title: "The Iron Giant", year: "1999", url: "https://archive.org/download/01-opening_202510/01%20Opening.ia.mp4", poster: "posters/the-iron-giant.jpg" },
             { title: "Anastasia", year: "1997", url: "https://archive.org/download/abertura-do-vhs-gasparzinho-como-tudo-comecou-1997-abril-video/Abertura%20do%20VHS%20Gasparzinho%20Como%20Tudo%20Come%C3%A7ou%20%281997%29%20%28Abril%20V%C3%ADdeo%29.mp4", poster: "posters/anastasia.jpg" },
             { title: "The Prince of Egypt", year: "1998", url: "https://archive.org/download/amc-previews-antz-october-2-1998/AMC%20Previews%20-%20A%20Bug%E2%80%99s%20Life%20%28November%2025%2C%201998%29.ia.mp4", poster: "posters/the-prince-of-egypt.jpg" },
@@ -271,8 +348,8 @@
             { title: "The Bourne Identity", year: "2002", url: "https://archive.org/download/the.-bourne.-identity.-2002.720p.-br-rip.x-264.-yify/The.Bourne.Identity.2002.720p.BrRip.x264.YIFY.mp4", poster: "posters/the-bourne-identity.jpg" },
             { title: "The Bourne Supremacy", year: "2004", url: "https://archive.org/download/the-bourne-supremacy-2004/The.Bourne.Supremacy.2004.mkv", poster: "posters/the-bourne-supremacy.jpg" },
             { title: "The Bourne Ultimatum", year: "2007", url: "https://archive.org/download/the.-bourne.-ultimatum.-2007.720p.-br-rip.x-264.-yify/The.Bourne.Ultimatum.2007.720p.BrRip.x264.YIFY.mp4", poster: "posters/the-bourne-ultimatum.jpg" },
-            { title: "Spiderâ€‘Man", year: "2002", url: "https://archive.org/download/Spider-Man-67-Collection/Season%203%20%281970%29/12%20-%20Down%20To%20Earth.mkv", poster: "posters/spider-man.jpg" },
-            { title: "Spiderâ€‘Man 2", year: "2004", url: "https://archive.org/download/spider-man-12-full-screen/Spider-Man%202%20Full-Screen.mkv", poster: "posters/spider-man-2.jpg" },
+            { title: "Spider‑Man", year: "2002", url: "https://archive.org/download/Spider-Man-67-Collection/Season%203%20%281970%29/12%20-%20Down%20To%20Earth.mkv", poster: "posters/spider-man.jpg" },
+            { title: "Spider‑Man 2", year: "2004", url: "https://archive.org/download/spider-man-12-full-screen/Spider-Man%202%20Full-Screen.mkv", poster: "posters/spider-man-2.jpg" },
             { title: "The Matrix Reloaded", year: "2003", url: "https://archive.org/download/mtv-movie-awards-2003/MTV%20Movie%20Awards%202003%20-%2000%20-%20Incomplete%20Ceremony.ia.mp4", poster: "posters/the-matrix-reloaded.jpg" },
             { title: "Mission: Impossible II", year: "2000", url: "https://archive.org/download/mtv-movie-awards-2000-two/MTV%20Movie%20Awards%202000%20-%2000%20Ceremony.mp4", poster: "posters/mission-impossible-ii.jpg" },
             { title: "Mission: Impossible III", year: "2006", url: "https://archive.org/download/video_2025-11-24T00.07.21/video_2025-11-24T00.07.21.mp4", poster: "posters/mission-impossible-iii.jpg" },
@@ -285,7 +362,7 @@
             { title: "Donnie Darko", year: "2001", url: "https://archive.org/download/donnie-darko-vhs/Donnie%20Darko%20VHS.mp4", poster: "posters/donnie-darko.jpg" },
             { title: "War of the Worlds", year: "2005", url: "https://archive.org/download/when-worlds-collide/When%20Worlds%20Collide.mp4", poster: "posters/war-of-the-worlds.jpg" },
             { title: "I, Robot", year: "2004", url: "https://archive.org/download/robots.-2005.720p.-br-rip.x-264.-yify/Robots.2005.720p.BrRip.x264.YIFY.ia.mp4", poster: "posters/i-robot.jpg" },
-            { title: "The Hitchhikerâ€™s Guide to the Galaxy", year: "2005", url: "https://archive.org/download/the-hitchhikers-guide-to-the-galaxy-part-one-1992-uk-vhs/The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy%20Part%20One%20%281992%20UK%20VHS%29.ia.mp4", poster: "posters/the-hitchhiker-s-guide-to-the-galaxy.jpg" },
+            { title: "The Hitchhiker’s Guide to the Galaxy", year: "2005", url: "https://archive.org/download/the-hitchhikers-guide-to-the-galaxy-part-one-1992-uk-vhs/The%20Hitchhiker%27s%20Guide%20to%20the%20Galaxy%20Part%20One%20%281992%20UK%20VHS%29.ia.mp4", poster: "posters/the-hitchhiker-s-guide-to-the-galaxy.jpg" },
             { title: "The Time Machine", year: "2002", url: "https://archive.org/download/the-time-machine/The%20Time%20Machine.mp4", poster: "posters/the-time-machine.jpg" },
             { title: "Cloverfield", year: "2008", url: "https://archive.org/download/CordkillersEp206/CordkillersEp206.mp4", poster: "posters/cloverfield.jpg" },
             { title: "The Day After Tomorrow", year: "2004", url: "https://archive.org/download/the-day-after-tomorrow-sci-fi-disaster/The%20Day%20After%20Tomorrow%20%28Sci-fi%20Disaster%29.mp4", poster: "posters/the-day-after-tomorrow.jpg" },
@@ -300,7 +377,7 @@
             { title: "The Mist", year: "2007", url: "https://archive.org/download/Httpsen.m.wikipedia.orgwikiThe_Starlost/Ep3%20%27The%20Goddess%20Calabra%27.mp4", poster: "posters/the-mist.jpg" },
             { title: "Jeepers Creepers", year: "2001", url: "https://archive.org/download/jeepers.-creepers.-reborn.-2022.1080p.-webrip.x-264-rarbg/Jeepers.Creepers.Reborn.2022.1080p.WEBRip.x264-RARBG.ia.mp4", poster: "posters/jeepers-creepers.jpg" },
             { title: "Jeepers Creepers 2", year: "2003", url: "https://archive.org/download/jeepers-creepers-2-2003/Jeepers%20Creepers%202%20%282003%29.ia.mp4", poster: "posters/jeepers-creepers-2.jpg" },
-            { title: "The Devilâ€™s Rejects", year: "2005", url: "https://archive.org/download/28-days-later_202505/Rebel%20Without%20a%20Cause%20%281955%29%20%F0%9D%98%BD%F0%9D%99%A4%F0%9D%99%A3%F0%9D%99%AA%F0%9D%99%A8%20James%20Dean%2C%20Natalie%20Wood%20Sal%20Mineo%2C%20Nick%20Adams.mp4", poster: "posters/the-devil-s-rejects.jpg" },
+            { title: "The Devil’s Rejects", year: "2005", url: "https://archive.org/download/28-days-later_202505/Rebel%20Without%20a%20Cause%20%281955%29%20%F0%9D%98%BD%F0%9D%99%A4%F0%9D%99%A3%F0%9D%99%AA%F0%9D%99%A8%20James%20Dean%2C%20Natalie%20Wood%20Sal%20Mineo%2C%20Nick%20Adams.mp4", poster: "posters/the-devil-s-rejects.jpg" },
             { title: "The Hills Have Eyes", year: "2006", url: "https://archive.org/download/TheHillsHaveEyes1977_201605/The%20Hills%20Have%20Eyes%201977.mp4", poster: "posters/the-hills-have-eyes.jpg" },
             { title: "The Orphanage", year: "2007", url: "https://archive.org/download/The.Orphanage.2007.wahidMiniNass.MTU.mkv.003/The.Orphanage.2007.wahid%20mini%20nass.MTU.mkv", poster: "posters/the-orphanage.jpg" },
             { title: "REC", year: "2007", url: "https://archive.org/download/rec-2007/Rec%202007%20BRRip%20720p%20x264%20AC3%20%5BCastellano_Eng.Sub%5D%20URBiN4HD.mkv", poster: "posters/rec.jpg" },
@@ -346,7 +423,7 @@
             { title: "Zoolander", year: "2001", url: "https://archive.org/download/Zoolander.2.2016.720p.hdts/Zoolander.2.2016.720p.hdts.mp4", poster: "posters/zoolander.jpg" },
             { title: "Wedding Crashers", year: "2005", url: "https://archive.org/download/wedding.-crashers.-2005.-repack.-1080p.-blu-ray.x-264.-aac-5.1-yts.-mx/Wedding.Crashers.2005.REPACK.1080p.BluRay.x264.AAC5.1-%5BYTS.MX%5D.mp4", poster: "posters/wedding-crashers.jpg" },
             { title: "Bruce Almighty", year: "2003", url: "https://archive.org/download/ba2003usdvd/Opening%20to%20Bruce%20Almighty%20%28US%20DVD%2C%202003%29%20%28DTS%29.mkv", poster: "posters/bruce-almighty.jpg" },
-            { title: "The 40â€‘Yearâ€‘Old Virgin", year: "2005", url: "https://archive.org/download/the-40-year-old-virgin_202602/The%2040-Year-Old%20Virgin.mp4", poster: "posters/the-40-year-old-virgin.jpg" },
+            { title: "The 40‑Year‑Old Virgin", year: "2005", url: "https://archive.org/download/the-40-year-old-virgin_202602/The%2040-Year-Old%20Virgin.mp4", poster: "posters/the-40-year-old-virgin.jpg" },
             { title: "Little Miss Sunshine", year: "2006", url: "https://archive.org/download/little-miss-sunshine-2006-dual-audio/Little%20Miss%20Sunshine%20%282006%29%20Dual%20Audio.mkv", poster: "posters/little-miss-sunshine.jpg" },
             { title: "The Notebook", year: "2004", url: "https://archive.org/download/the-notebook-2004-720p-blu-ray-yts.-mx_202403/The%20Notebook%20%282004%29/The.Notebook.2004.720p.BrRip.x264.YIFY.mp4", poster: "posters/the-notebook.jpg" },
             { title: "A Walk to Remember", year: "2002", url: "https://archive.org/download/BayCircuitGap/BayCircuitGap.mpg", poster: "posters/a-walk-to-remember.jpg" },
@@ -358,12 +435,12 @@
             { title: "Chocolat", year: "2000", url: "https://archive.org/download/chocolat-asmr-2015-02-20-asmr-whispering-whats-in-my-bag-sweet-kisses/Chocolat%20ASMR/Chocolat%20ASMR%20%20%202015%2002%2020%20%20%20ASMR%20whispering%20what%27s%20in%20my%20bag%20%2B%20sweet%20kisses.ia.mp4", poster: "posters/chocolat.jpg" },
             { title: "Shrek 2", year: "2004", url: "https://archive.org/download/shrek-2-2004-full-screen_202406/Shrek%202%20%282004%29%20%28Full%20Screen%29.mkv", poster: "posters/shrek-2.jpg" },
             { title: "Finding Nemo", year: "2003", url: "https://archive.org/download/finding-nemo-2004-australian-vhs/Finding%20Nemo%20%282004%20Australian%20VHS%29.ia.mp4", poster: "posters/finding-nemo.jpg" },
-            { title: "WALLâ€‘E", year: "2008", url: "https://archive.org/download/wall-e_20240823/WallE2008FullscreenDisc2.ia.mp4", poster: "posters/wall-e.jpg" },
+            { title: "WALL‑E", year: "2008", url: "https://archive.org/download/wall-e_20240823/WallE2008FullscreenDisc2.ia.mp4", poster: "posters/wall-e.jpg" },
             { title: "Monsters, Inc.", year: "2001", url: "https://archive.org/download/monsters-inc-2002-vhs.ia_202401/Monsters%20Inc%20%282002%20VHS%29.ia.mp4", poster: "posters/monsters-inc.jpg" },
             { title: "The Incredibles", year: "2004", url: "https://archive.org/download/the-incredibles-2005-vhs-australia/The%20Incredibles%20%282005%20VHS%20Australia%29.ia.mp4", poster: "posters/the-incredibles.jpg" },
             { title: "Ratatouille", year: "2007", url: "https://archive.org/download/Popcornarchive-ratatouille2007/Popcornarchive-ratatouille2007.mp4", poster: "posters/ratatouille.jpg" },
             { title: "Spirited Away", year: "2001", url: "https://archive.org/download/ep.-1.v-0.1639299147.1080p/EP.1.v0.1639299147.1080p.mp4", poster: "posters/spirited-away.jpg" },
-            { title: "Howlâ€™s Moving Castle", year: "2004", url: "https://archive.org/download/howls.-moving.-castle.-2004.1080p.-bdrip.-dual.-audio.-aac-5.1.10bits.x-265-rapta/Howl%27s.Moving.Castle.2004.1080p.BDRip.Dual.Audio.AAC5.1.10bits.x265-Rapta.mkv", poster: "posters/howl-s-moving-castle.jpg" },
+            { title: "Howl’s Moving Castle", year: "2004", url: "https://archive.org/download/howls.-moving.-castle.-2004.1080p.-bdrip.-dual.-audio.-aac-5.1.10bits.x-265-rapta/Howl%27s.Moving.Castle.2004.1080p.BDRip.Dual.Audio.AAC5.1.10bits.x265-Rapta.mkv", poster: "posters/howl-s-moving-castle.jpg" },
             { title: "Bowling for Columbine", year: "2002", url: "https://archive.org/download/y-2meta.app-docu-bowling-for-columbine-michael-moore-2002-480p/Y2meta.app-%23Docu%20Bowling%20for%20Columbine%20%28Michael%20Moore%2C%202002%29-%28480p%29.ia.mp4", poster: "posters/bowling-for-columbine.jpg" },
             { title: "Super Size Me", year: "2004", url: "https://archive.org/download/super-size-me/Super-Size-Me.mp4", poster: "posters/super-size-me.jpg" },
             { title: "Grizzly Man", year: "2005", url: "https://archive.org/download/GrizzlyandManUneasyTruce/National.Audubon.Society.Specials.S03E01.Grizzly.and.Man.Uneasy.Truce.1988.VHSRip.AAC2.0.x264-rattera.mp4", poster: "posters/grizzly-man.jpg" },
@@ -375,9 +452,9 @@
             { title: "Capturing the Friedmans", year: "2003", url: "https://archive.org/download/Charlie-Rose-2003-06-24/Charlie-Rose-2003-06-24.ia.mp4", poster: "posters/capturing-the-friedmans.jpg" },
             { title: "Mad Max: Fury Road", year: "2015", url: "https://archive.org/download/youtube-IPWR2UCgCiU/IPWR2UCgCiU.mp4", poster: "posters/mad-max-fury-road.jpg" },
             { title: "Skyfall", year: "2012", url: "https://archive.org/download/skyfall_202401/Skyfall.mp4", poster: "posters/skyfall.jpg" },
-            { title: "Mission: Impossible â€“ Ghost Protocol", year: "2011", url: "https://archive.org/download/opening-to-mission-impossible-ghost-protocol-2012-dvd/Opening%20to%20Mission%20Impossible%20-%20Ghost%20Protocol%202012%20DVD.ia.mp4", poster: "posters/mission-impossible-ghost-protocol.jpg" },
-            { title: "Mission: Impossible â€“ Rogue Nation", year: "2015", url: "https://archive.org/download/roosterteeth-32618/2019-04-17_Mission_Impossible_Rogue_Nation_%5B32618%5D.mp4", poster: "posters/mission-impossible-rogue-nation.jpg" },
-            { title: "Mission: Impossible â€“ Fallout", year: "2018", url: "https://archive.org/download/youtube-0EyExVZvKFg/FFR_38_-_Mission_-_Impossible_-_Fallout-0EyExVZvKFg.mkv", poster: "posters/mission-impossible-fallout.jpg" },
+            { title: "Mission: Impossible – Ghost Protocol", year: "2011", url: "https://archive.org/download/opening-to-mission-impossible-ghost-protocol-2012-dvd/Opening%20to%20Mission%20Impossible%20-%20Ghost%20Protocol%202012%20DVD.ia.mp4", poster: "posters/mission-impossible-ghost-protocol.jpg" },
+            { title: "Mission: Impossible – Rogue Nation", year: "2015", url: "https://archive.org/download/roosterteeth-32618/2019-04-17_Mission_Impossible_Rogue_Nation_%5B32618%5D.mp4", poster: "posters/mission-impossible-rogue-nation.jpg" },
+            { title: "Mission: Impossible – Fallout", year: "2018", url: "https://archive.org/download/youtube-0EyExVZvKFg/FFR_38_-_Mission_-_Impossible_-_Fallout-0EyExVZvKFg.mkv", poster: "posters/mission-impossible-fallout.jpg" },
             { title: "The Raid: Redemption", year: "2011", url: "https://archive.org/download/the-raid-redemption-2011/The%20Raid%20Redemption%20%282011%29.mp4", poster: "posters/the-raid-redemption.jpg" },
             { title: "The Raid 2", year: "2014", url: "https://archive.org/download/The.Raid.2.Vose/The.Raid.2.%20vose.avi", poster: "posters/the-raid-2.jpg" },
             { title: "Baby Driver", year: "2017", url: "https://archive.org/download/baby.-driver.-2017.1080p.-blu-ray.x-264-yts.-ag_202312/Baby.Driver.2017.1080p.BluRay.x264-%5BYTS.AG%5D.mp4", poster: "posters/baby-driver.jpg" },
@@ -397,7 +474,7 @@
             { title: "Midsommar", year: "2019", url: "https://archive.org/download/svtplay-e4zXEpr/Bara%20sex%20-%201.%20Sommar%20igen.mkv", poster: "posters/midsommar.jpg" },
             { title: "The Witch", year: "2015", url: "https://archive.org/download/TheNakedWitch/TheNakedWitch1964FullMovieFilmHorror.mp4", poster: "posters/the-witch.jpg" },
             { title: "Us", year: "2019", url: "https://archive.org/download/unus-annus/Goodbye..ia.mp4", poster: "posters/us.jpg" },
-            { title: "Donâ€™t Breathe", year: "2016", url: "https://archive.org/download/AchievementHunter_2017/%5B20171220%5D%20Achievement%20Hunter%20Live%20Stream%20-%20PLAYERUNKNOWN%27S%20Battlegrounds%20-%20Squad%20Roulette%20%28Ryan%29-9l_HYIdHjlc%20%5B25358%20views%5D.mkv", poster: "posters/don-t-breathe.jpg" },
+            { title: "Don’t Breathe", year: "2016", url: "https://archive.org/download/AchievementHunter_2017/%5B20171220%5D%20Achievement%20Hunter%20Live%20Stream%20-%20PLAYERUNKNOWN%27S%20Battlegrounds%20-%20Squad%20Roulette%20%28Ryan%29-9l_HYIdHjlc%20%5B25358%20views%5D.mkv", poster: "posters/don-t-breathe.jpg" },
             { title: "The Babadook", year: "2014", url: "https://archive.org/download/abbadook_v4_js_020621/abbadook_v4_js_020621.mp4", poster: "posters/the-babadook.jpg" },
             { title: "Train to Busan", year: "2016", url: "https://archive.org/download/train-to-busan-2016_202504/Train%20to%20Busan%202016%20720p%2010Bit%20HEVC%20BluRay%20Hindi%20AMZN%20Korean%20-%20ESubs%20-%20MoviesMod.Org.In.mkv", poster: "posters/train-to-busan.jpg" },
             { title: "A Quiet Place", year: "2018", url: "https://archive.org/download/Popcornarchive-aQuietPlacePartIi2020/Popcornarchive-aQuietPlacePartIi2020.mp4", poster: "posters/a-quiet-place.jpg" },
@@ -432,7 +509,7 @@
             { title: "The Other Guys", year: "2010", url: "https://archive.org/download/batvwi-The_Other_Guys_-_Coach_Carter_2005/The_Other_Guys_-_Coach_Carter_2005.mp4", poster: "posters/the-other-guys.jpg" },
             { title: "The Disaster Artist", year: "2017", url: "https://archive.org/download/CordkillersEp199/CordkillersEp199.mp4", poster: "posters/the-disaster-artist.jpg" },
             { title: "This Is the End", year: "2013", url: "https://archive.org/download/movie-this-is-the-end-2013/MOVIE%20-%20This%20Is%20the%20End%20%282013%29.mp4", poster: "posters/this-is-the-end.jpg" },
-            { title: "The Worldâ€™s End", year: "2013", url: "https://archive.org/download/TheWorldsEnd2013FULLViDEOENGAUDiOCAMRipOrOdO/The_Worlds_End_2013_FULL_ViDEO_ENG_AUDiO_CAMRip_OrOdO.avi", poster: "posters/the-world-s-end.jpg" },
+            { title: "The World’s End", year: "2013", url: "https://archive.org/download/TheWorldsEnd2013FULLViDEOENGAUDiOCAMRipOrOdO/The_Worlds_End_2013_FULL_ViDEO_ENG_AUDiO_CAMRip_OrOdO.avi", poster: "posters/the-world-s-end.jpg" },
             { title: "Game Night", year: "2018", url: "https://archive.org/download/family-game-night-restoration/Family%20Game%20Night%20-%20S04E15%20-%20Season%204%2C%20Episode%2015.mp4", poster: "posters/game-night.jpg" },
             { title: "Horrible Bosses", year: "2011", url: "https://archive.org/download/EP.Daily.2014.11.24/EP.Daily.2014.11.24.mp4", poster: "posters/horrible-bosses.jpg" },
             { title: "Sausage Party", year: "2016", url: "https://archive.org/download/foxblue-skyadultmovie-2016-1/FOXBlueSkyadultmovie2016-1.mp4", poster: "posters/sausage-party.jpg" },
@@ -454,7 +531,7 @@
             { title: "Free Solo", year: "2018", url: "https://archive.org/download/patma-PLAYBACK_-_FREE_SOLO/PLAYBACK_-_FREE_SOLO.mp4", poster: "posters/free-solo.jpg" },
             { title: "The Act of Killing", year: "2012", url: "https://archive.org/download/the-act-of-killing-2012/The%20Act%20of%20Killing%20-%202012.mp4", poster: "posters/the-act-of-killing.jpg" },
             { title: "The Look of Silence", year: "2014", url: "https://archive.org/download/The_Look_Of_Silence/TheLookOfSilence.mp4", poster: "posters/the-look-of-silence.jpg" },
-            { title: "Wonâ€™t You Be My Neighbor?", year: "2018", url: "https://archive.org/download/RETNFRW2018WontYouBeMyNeighbor/RETN-FRW-2018-WontYouBeMyNeighbor.mp4", poster: "posters/won-t-you-be-my-neighbor.jpg" },
+            { title: "Won’t You Be My Neighbor?", year: "2018", url: "https://archive.org/download/RETNFRW2018WontYouBeMyNeighbor/RETN-FRW-2018-WontYouBeMyNeighbor.mp4", poster: "posters/won-t-you-be-my-neighbor.jpg" },
             { title: "Searching for Sugar Man", year: "2012", url: "https://archive.org/download/38-searching-for-sugar-man/38%20searching%20for%20sugar%20man.mp4", poster: "posters/searching-for-sugar-man.jpg" }
         
         
@@ -463,7 +540,7 @@
         let activeMovie = movies[0];
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('catalogCountBadge').innerText = `${movies.length} verified titles`;
+            document.getElementById('catalogCountBadge').innerText = `POSTER ENGINE \u2022 ${movies.length} MOVIES`;
             document.getElementById('movieSearchInput').placeholder = `Search ${movies.length} movies...`;
             renderMovieGrid(movies);
             selectMovie(movies[0]);
@@ -471,7 +548,7 @@
 
         // Robust SVG Fallback generator ensuring zero broken image icons
         function posterFallback(title) {
-            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a0a0f"/><stop offset="1" stop-color="#0e1726"/></linearGradient></defs><rect width="300" height="450" fill="url(#g)"/><rect x="18" y="18" width="264" height="414" fill="none" stroke="#22d3ee" stroke-width="2" rx="10"/><text x="150" y="220" font-family="Arial, sans-serif" font-size="18" fill="#22d3ee" text-anchor="middle" font-weight="bold">' + title + '</text><text x="150" y="255" font-family="Arial, sans-serif" font-size="12" fill="#8b8b9e" text-anchor="middle">AURORA Stream</text></svg>';
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#120a22"/><stop offset="1" stop-color="#3b0a2a"/></linearGradient></defs><rect width="300" height="450" fill="url(#g)"/><rect x="18" y="18" width="264" height="414" fill="none" stroke="#e879f9" stroke-width="2" rx="10"/><text x="150" y="220" font-family="Arial, sans-serif" font-size="18" fill="#e879f9" text-anchor="middle" font-weight="bold">' + title + '</text><text x="150" y="255" font-family="Arial, sans-serif" font-size="12" fill="#9d9db0" text-anchor="middle">NEXUS VOD Stream</text></svg>';
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
 
@@ -482,22 +559,22 @@
             list.forEach(m => {
                 const isSelected = activeMovie && activeMovie.url === m.url;
                 const card = document.createElement('div');
-                card.className = `group cursor-pointer bg-white/[0.03] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
+                card.className = `group cursor-pointer bg-[#120a22] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
                     isSelected 
-                        ? 'border-cyan-400/70 ring-1 ring-cyan-400/40 shadow-lg shadow-cyan-500/10' 
-                        : 'border-white/10 hover:border-cyan-400/40 hover:-translate-y-0.5'
+                        ? 'border-pink-500 ring-2 ring-pink-500/50 shadow-lg shadow-pink-950' 
+                        : 'border-pink-950/60 hover:border-pink-600/50 hover:scale-[1.02]'
                 }`;
                 card.onclick = () => selectMovie(m);
 
                 card.innerHTML = `
-                    <div class="aspect-[2/3] w-full bg-black/40 relative overflow-hidden">
+                    <div class="aspect-[2/3] w-full bg-slate-950 relative overflow-hidden">
                         <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                        <span class="absolute top-2 right-2 bg-black/70 backdrop-blur border border-cyan-400/30 text-cyan-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#120a22] via-transparent to-transparent opacity-80"></div>
+                        <span class="absolute top-2 right-2 bg-slate-950/80 backdrop-blur border border-pink-500/30 text-pink-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
                     <div class="p-3">
                         <h4 class="text-xs font-bold text-white truncate">${m.title}</h4>
-                        <div class="text-[10px] text-white/40 font-mono mt-0.5">1080p · VOD</div>
+                        <div class="text-[10px] text-pink-400 font-mono mt-0.5">1080p VOD Stream</div>
                     </div>
                 `;
 
@@ -540,7 +617,7 @@
 <!-- BIRTHDAY GATE -->
 <div id="nx-gate" style="display:none" class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
 <div class="w-full max-w-sm rounded-2xl border border-white/15 bg-neutral-900 p-8 text-center">
-<div class="text-4xl mb-3">ðŸŽ‚</div>
+<div class="text-4xl mb-3">🎂</div>
 <h2 class="font-disp text-xl font-bold mb-2">Welcome to AURORA</h2>
 <p class="text-sm text-white/60 mb-6">Enter your birthday and we will tailor what you can watch (G / PG / PG-13 / R).</p>
 <input id="nx-dob" type="date" onchange="NexusAge.submit()" class="w-full rounded-xl bg-black/40 border border-white/20 px-4 py-3 text-white outline-none focus:border-cyan-400 mb-3">
