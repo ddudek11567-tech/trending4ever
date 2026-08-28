@@ -79,7 +79,7 @@ https://trending4ever.com/iptv.html
 <!-- FEATURED PLAYER (55%) -->
 <div class="rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl fade-in">
 <!-- VIDEO PLAYER -->
-<div id="playerWrapper" class="relative h-44 md:h-56 lg:h-64 bg-black">
+<div id="playerWrapper" class="relative h-40 md:h-52 lg:h-56 bg-black">
 <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
 <video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>
 <div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>
@@ -1643,18 +1643,16 @@ function renderFeaturedChannels() {
         const time = np ? fmtT(np.s) : 'NOW';
         const isSelected = currentChannel && currentChannel.id === ch.id;
         const usePoster = posterFor(ch) && posterFor(ch) !== '';
-        return '<button onclick="selectGuideChannel(channels.find(x=>x.id===' + ch.id + '))" class="group relative text-left overflow-hidden rounded-xl border bg-white/[0.03] flex flex-col h-full ' + (isSelected ? 'border-cyan-400/50 ring-1 ring-cyan-400/40' : 'border-white/5 hover:border-white/25 hover:bg-white/[0.06]') + ' transition cursor-pointer">'
-        + '<div class="relative w-full flex-1 min-h-0 overflow-hidden bg-gradient-to-br from-cyan-900/40 to-purple-900/40 flex items-center justify-center">'
-        + (usePoster ? '<img src="' + posterFor(ch) + '" alt="" class="absolute inset-0 w-full h-full object-cover" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'nx-noimg\')">' : '<span class="text-3xl opacity-70">' + ch.icon + '</span>')
+        return '<button onclick="selectGuideChannel(channels.find(x=>x.id===' + ch.id + '))" class="group relative text-left overflow-hidden rounded-xl border h-full w-full bg-white/[0.03] ' + (isSelected ? 'border-cyan-400/50 ring-1 ring-cyan-400/40' : 'border-white/5 hover:border-white/25 hover:bg-white/[0.06]') + ' transition cursor-pointer">'
+        + (usePoster ? '<img src="' + posterFor(ch) + '" alt="" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy" onerror="this.style.display=\'none\';this.parentNode.classList.add(\'nx-noimg\')">' : '<div class="absolute inset-0 bg-gradient-to-br from-cyan-900/40 to-purple-900/40 flex items-center justify-center"><span class="text-3xl opacity-70">' + ch.icon + '</span></div>')
         + '<span class="absolute top-1.5 left-1.5 bg-black/70 backdrop-blur border border-white/10 px-1.5 py-px rounded text-[8px] font-bold text-white">CH ' + ch.number + '</span>'
         + '<span class="absolute top-1.5 right-1.5 bg-cyan-400/90 text-black px-1.5 py-px rounded text-[8px] font-black tabular-nums">' + time + '</span>'
-        + '<span class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center pb-1.5 text-[9px] font-bold text-cyan-300 opacity-0 group-hover:opacity-100 transition">TUNE IN</span>'
-        + '</div>'
-        + '<div class="p-1.5 border-t border-white/10">'
-        + '<div class="text-[11px] font-bold text-white leading-tight line-clamp-2">' + esc(title) + '</div>'
+        + '<div class="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/95 via-black/60 to-transparent">'
+        + '<div class="text-[10px] font-bold text-white leading-tight line-clamp-1">' + esc(title) + '</div>'
         + '<div class="text-[8px] text-white/40 mt-0.5 truncate">' + esc(ch.name) + '</div>'
-        + '<div class="mt-0.5 flex items-center gap-1 text-[8px] text-cyan-300/80"><i class="fa-solid fa-circle -scale-100"></i><span class="font-semibold">LIVE</span><span class="text-white/30">· ' + esc(ch.rating) + '</span></div>'
+        + '<div class="mt-0.5 flex items-center gap-1 text-[8px] text-cyan-300/80"><i class="fa-solid fa-circle -scale-100"></i><span class="font-semibold">LIVE</span><span class="text-white/40">· ' + esc(ch.rating) + '</span></div>'
         + '</div>'
+        + '<span class="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center text-[10px] font-bold text-cyan-300 opacity-0 group-hover:opacity-100 transition">▶ TUNE IN</span>'
         + '</button>';
     }).join('');
 }
