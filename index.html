@@ -87,21 +87,20 @@
     }
 
     // Autoplay muted to satisfy browser autoplay policies, then allow sound.
-    video.muted = true;
+    // Try to start Joi WITH sound. Browsers may block audio autoplay on first
+    // visit, in which case she starts muted and any tap will unmute her.
+    video.muted = false;
     video.play().then(function(){
         video.classList.add('ready');
-        if(video.muted && video.hasAttribute('autoplay')){}
-        // surface sound toggle (autoplay with sound is often blocked)
-        setTimeout(function(){ snd.style.display = 'block'; }, 600);
     }).catch(function(){
-        // if autoplay is blocked, show a tap-to-enter overlay via skip text
-        hint.textContent = 'Tap anywhere to begin';
+        video.muted = true;
+        video.play().catch(function(){ video.classList.add('ready'); });
+        hint.textContent = 'Tap or click to enable Joi\u2019s voice';
         document.addEventListener('pointerdown', function once(){
             video.muted = false;
             video.play().catch(function(){});
             video.classList.add('ready');
             hint.textContent = 'Joi';
-            snd.style.display = 'block';
         }, { once:true });
     });
 
