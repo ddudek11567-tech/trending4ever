@@ -97,7 +97,7 @@ https://trending4ever.com/iptv.html
 <span id="volumeLabel" class="text-[10px] text-white/40 tabular-nums w-7 text-right">100%</span>
 </div>
 <div class="flex items-center gap-3">
-<button onclick="togglePiPMode()" id="pipModeBtn" class="px-3 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition"><i class="fa-solid fa-expand mr-1"></i>Native Engine</button>
+<button onclick="toggleFullscreen()" id="fullscreenBtn" title="Fullscreen" class="px-3 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition"><i class="fa-solid fa-expand mr-1"></i>Fullscreen</button>
 </div>
 </div>
 </div>
@@ -1673,7 +1673,7 @@ setInterval(updateClock, 30000);
 setInterval(() => { updateGuideInfo(currentChannel); if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); }); renderFeaturedChannels(); }, 60000);
 });
 
-let hlsInstance = null, dashInstance = null, isNativeMode = false, prevSelId = null;
+let hlsInstance = null, dashInstance = null, prevSelId = null;
 
 function slotCellsHtml(st) {
 const up = st.list.filter(p => p.e > Date.now()).slice(0, 4);
@@ -1768,11 +1768,23 @@ video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPl
 } else { video.src = targetStream; tryPlay(video); }
 }
 
-function togglePiPMode() {
-isNativeMode = !isNativeMode; const btn = document.getElementById('pipModeBtn');
-if (isNativeMode) { btn.className = "px-3 py-1 rounded-lg bg-fuchsia-400/10 border border-fuchsia-400/30 hover:bg-fuchsia-400/20 text-fuchsia-300 text-xs font-semibold transition"; btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i>PiP Monitor Active';
-} else { btn.className = "px-3 py-1 rounded-lg bg-cyan-400/10 border border-cyan-400/30 hover:bg-cyan-400/20 text-cyan-300 text-xs font-semibold transition"; btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i>Native Engine'; }
+function toggleFullscreen() {
+const wrap = document.getElementById('playerWrapper');
+const btn = document.getElementById('fullscreenBtn');
+if (!document.fullscreenElement) {
+  if (wrap.requestFullscreen) wrap.requestFullscreen();
+  else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+  if (btn) btn.innerHTML = '<i class="fa-solid fa-compress mr-1"></i>Exit';
+} else {
+  if (document.exitFullscreen) document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  if (btn) btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i>Fullscreen';
 }
+}
+document.addEventListener('fullscreenchange', () => {
+const btn = document.getElementById('fullscreenBtn');
+if (btn) btn.innerHTML = document.fullscreenElement ? '<i class="fa-solid fa-compress mr-1"></i>Exit' : '<i class="fa-solid fa-expand mr-1"></i>Fullscreen';
+});
 </script>
 
 <!-- BIRTHDAY GATE -->
