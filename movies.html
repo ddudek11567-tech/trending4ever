@@ -72,8 +72,9 @@
                         id="movieVideoPlayer"
                         class="w-full h-full absolute inset-0 object-contain bg-black"
                         controls
-                        autoplay
                         playsinline
+                        preload="auto"
+                        poster="posters/star-wars-a-new-hope.jpg"
                     ></video>
                 </div>
 
@@ -465,7 +466,7 @@
             document.getElementById('catalogCountBadge').innerText = `${movies.length} verified titles`;
             document.getElementById('movieSearchInput').placeholder = `Search ${movies.length} movies...`;
             renderMovieGrid(movies);
-            selectMovie(movies[0]);
+            selectMovie(movies[0], true);
         });
 
         // Robust SVG Fallback generator ensuring zero broken image icons
@@ -517,7 +518,7 @@
             renderMovieGrid(filtered);
         }
 
-        function selectMovie(m) {
+        function selectMovie(m, noAutoplay) {
             activeMovie = m;
 
             // Update Info Panel
@@ -528,9 +529,10 @@
 
             // Load Video Player
             const video = document.getElementById('movieVideoPlayer');
+            video.poster = m.poster;
             video.src = m.url;
             video.load();
-            video.play().catch(e => console.log("Autoplay blocked:", e));
+            if (!noAutoplay) video.play().catch(e => console.log("Autoplay blocked:", e));
 
             renderMovieGrid(movies);
         }
