@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ADULT VAULT · NEXUS TV</title>
+<title>ADULT TV + VAULT · NEXUS TV</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
@@ -29,17 +29,39 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
 <nav class="sticky top-0 z-40 backdrop-blur bg-black/70 border-b border-white/5">
 <div class="flex items-center justify-between px-6 md:px-12 py-4 gap-4">
 <a href="home.html" class="flex items-baseline gap-2 shrink-0"><span class="font-disp text-xl font-bold tracking-[0.3em] aurora-text">AURORA</span><span class="hidden sm:inline text-[10px] tracking-widest text-white/40 uppercase">by NEXUS TV</span></a>
-<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white/50 hover:text-white transition">IPTV</a><a href="movies.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white/50 hover:text-white transition">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white/50 hover:text-white transition">Books</a><a href="adult.html" class="text-pink-400 font-semibold">Adult</a><a href="adult-tv.html" class="text-white/50 hover:text-pink-300 transition">Adult TV +</a><a href="index.html" class="text-white/50 hover:text-white transition">My NextGen.AI</a><button onclick="openGate()" title="18+ verification" class="ml-2 rounded-full border border-pink-400/30 bg-pink-400/10 px-3 py-1 text-xs font-semibold text-pink-300 hover:bg-pink-400/20 transition">🔞</button></div>
+<div class="hidden md:flex items-center gap-6 text-sm"><a href="iptv.html" class="text-white/50 hover:text-white transition">IPTV</a><a href="movies.html" class="text-white/50 hover:text-white transition">Movies</a><a href="music.html" class="text-white/50 hover:text-white transition">Music</a><a href="tv-series.html" class="text-white/50 hover:text-white transition">TV Series</a><a href="books.html" class="text-white/50 hover:text-white transition">Books</a><a href="adult.html" class="text-white/50 hover:text-white transition">Adult Vault</a><a href="adult-tv.html" class="text-pink-400 font-semibold">Adult TV +</a><a href="index.html" class="text-white/50 hover:text-white transition">My NextGen.AI</a><button onclick="openGate()" title="18+ verification" class="ml-2 rounded-full border border-pink-400/30 bg-pink-400/10 px-3 py-1 text-xs font-semibold text-pink-300 hover:bg-pink-400/20 transition">🔞</button></div>
 <div class="relative w-full max-w-xs">
 <input id="navq" type="text" placeholder="Search films…" class="w-full rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm outline-none focus:border-pink-400 transition placeholder:text-white/30">
 </div>
 </div>
 </nav>
 
-<header class="px-6 md:px-12 pt-14 pb-8">
-<h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight"><span class="aurora-text">ADULT VAULT</span> <span class="align-middle text-xs md:text-sm font-semibold text-pink-400/80 border border-pink-400/30 bg-pink-400/10 rounded-full px-3 py-1 ml-2">18+</span></h1>
+<header class="px-6 md:px-12 pt-14 pb-6">
+<h1 class="font-disp text-4xl md:text-6xl font-bold tracking-tight"><span class="aurora-text">ADULT TV + VAULT</span> <span class="align-middle text-xs md:text-sm font-semibold text-pink-400/80 border border-pink-400/30 bg-pink-400/10 rounded-full px-3 py-1 ml-2">18+</span></h1>
 <p id="stats" class="mt-3 text-sm text-white/40 tracking-wide"></p>
 </header>
+
+<!-- LIVE ADULT TV SECTION -->
+<section class="px-6 md:px-12 pb-10">
+<div class="relative rounded-3xl border border-white/10 overflow-hidden bg-white/[0.03] p-5 md:p-6">
+<div class="flex items-center justify-between gap-4 mb-4">
+<h2 class="font-disp text-xl md:text-2xl font-bold tracking-wide"><span class="mr-2">📡</span><span class="aurora-text">Live Adult TV</span></h2>
+<span id="liveBadge" class="text-[11px] font-semibold text-pink-300 bg-pink-400/10 border border-pink-400/30 rounded-full px-3 py-1">● LIVE STREAMING</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<div class="lg:col-span-8 aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 relative">
+<video id="tvVideo" class="w-full h-full block bg-black object-contain" playsinline controls autoplay></video>
+</div>
+<div class="lg:col-span-4 flex flex-col min-h-[240px] max-h-[70vh] rounded-2xl border border-white/10 bg-black/40 overflow-hidden">
+<div class="px-4 py-3 border-b border-white/10 flex items-center justify-between">
+<span class="text-sm font-semibold text-white/80">Live Channels</span>
+<span class="text-[11px] text-white/30">click to tune</span>
+</div>
+<div id="tvChannelList" class="flex-1 overflow-y-auto p-2 space-y-1.5"></div>
+</div>
+</div>
+</div>
+</section>
 
 <section class="px-6 md:px-12 pb-10">
 <div class="relative rounded-3xl border border-white/10 overflow-hidden bg-white/[0.03]">
@@ -297,6 +319,41 @@ function openGate(){document.getElementById('adultGate').style.display='flex'}
 document.getElementById('adultEnter').onclick=function(){localStorage.setItem('nexus_adult18','1');document.getElementById('adultGate').style.display='none'};
 document.getElementById('adultLeave').onclick=function(){try{history.back()}catch(e){};document.getElementById('adultGate').style.display='none'};
 if(!localStorage.getItem('nexus_adult18')){document.getElementById('adultGate').style.display='flex'}
+
+// ===== LIVE ADULT TV =====
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+const TV_CHANNELS=[
+{name:"Playboy",category:"Adult",icon:"🔞",url:"http://190.11.225.124:5000/live/playboy_hd/playlist.m3u8"}
+];
+let tvCurrent=TV_CHANNELS[0]||null;
+const tvVideo=document.getElementById('tvVideo');
+const tvListEl=document.getElementById('tvChannelList');
+
+function renderTvChannels(){
+if(!tvListEl)return;
+tvListEl.innerHTML='';
+TV_CHANNELS.forEach(ch=>{
+const btn=document.createElement('button');
+const sel=tvCurrent&&tvCurrent.name===ch.name;
+btn.className='w-full text-left px-3 py-2.5 rounded-xl border transition flex items-center gap-3 '+(sel?'bg-pink-400/15 border-pink-400/40':'border-white/5 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/15');
+btn.innerHTML='<span class="text-lg">'+(ch.icon||'📺')+'</span><span class="min-w-0 flex-1"><span class="block text-sm font-semibold truncate">'+esc(ch.name)+'</span><span class="block text-[10px] text-white/40 uppercase">'+(ch.category||'Adult')+'</span></span>'+(sel?'<span class="text-pink-300 text-xs font-bold">LIVE</span>':'');
+btn.onclick=()=>tuneTv(ch);
+tvListEl.appendChild(btn);
+});
+}
+
+function tuneTv(ch){
+tvCurrent=ch;
+if(tvVideo){
+tvVideo.src=ch.url;
+tvVideo.play().catch(()=>{});
+}
+renderTvChannels();
+}
+
+renderTvChannels();
+if(tvVideo&&tvCurrent){tvVideo.src=tvCurrent.url;}
+
 
 document.addEventListener('DOMContentLoaded',()=>{
 try{renderHero()}catch(e){console.error('hero:',e)}
