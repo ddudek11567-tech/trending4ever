@@ -23,6 +23,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
 @keyframes spin{to{transform:rotate(360deg)}}
 #spotbg{transition:background-image .5s ease,filter .5s ease}
 .hero-switch{animation:hs .35s ease}@keyframes hs{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+#tvVideo::-webkit-media-controls{display:flex !important;visibility:visible !important;opacity:1 !important;}
+#tvVideo::-webkit-media-controls-panel{display:flex !important;}
+#tvVideo::-webkit-media-controls-play-button{display:block !important;}
+#tvVideo::-webkit-media-controls-volume-slider{display:block !important;}
+#tvVideo::-webkit-media-controls-current-time-display{display:block !important;}
+#tvVideo::-webkit-media-controls-time-remaining-display{display:block !important;}
+#tvVideo{pointer-events:auto !important;}
 </style>
 </head>
 <body class="grain antialiased">
@@ -89,7 +96,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
 <div id="player" class="fixed inset-0 z-50 bg-black hidden items-center justify-center">
 <div class="stage relative w-[min(100vw,calc(100vh*16/9))] aspect-video bg-black shadow-2xl overflow-hidden">
 <img id="artBg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25 blur-md pointer-events-none">
-<video id="video" playsinline class="relative w-full h-full block bg-black object-contain"></video>
+<video id="video" playsinline controls class="relative w-full h-full block bg-black object-contain"></video>
 <div id="loader" class="absolute inset-0 hidden items-center justify-center bg-black/40 z-[2]"><div class="spinner"></div></div>
 <div class="absolute top-0 left-0 right-0 p-[20px_24px_40px] bg-gradient-to-b from-black/80 to-transparent flex justify-between items-start gap-4 opacity-0 transition-opacity duration-300 z-10" id="titlebar">
 <div class="min-w-0">
