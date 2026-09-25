@@ -1688,8 +1688,8 @@ const rawChannels = [
         "category": "music",
         "icon": "🎵",
         "rating": "TV-14",
-        "url": "https://ma.anixa.tv/clips/stream/mtv/playlist.php",
-        "alternates": []
+        "url": "http://23.237.104.106:8080/USA_MTV/index.m3u8",
+        "alternates": ["https://ma.anixa.tv/clips/stream/mtv/playlist.php"]
     },
     {
         "name": "Golf Channel",
@@ -1728,16 +1728,16 @@ const rawChannels = [
         "category": "entertainment",
         "icon": "📺",
         "rating": "TV-14",
-        "url": "https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/DISCOVERYCHANNEL/CMAF/index.m3u8",
-        "alternates": []
+        "url": "http://190.197.41.183:80/DISCOVERY/index.m3u8",
+        "alternates": ["https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/DISCOVERYCHANNEL/CMAF/index.m3u8"]
     },
     {
         "name": "Food Network",
         "category": "entertainment",
         "icon": "📺",
         "rating": "TV-14",
-        "url": "https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/FOODNETWORK/CMAF/index.m3u8",
-        "alternates": []
+        "url": "http://23.237.104.106:8080/USA_FOOD_NETWORK/index.m3u8",
+        "alternates": ["https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/FOODNETWORK/CMAF/index.m3u8"]
     },
     {
         "name": "Travel Channel",
@@ -2051,6 +2051,8 @@ document.getElementById('upNextList').innerHTML = nx.length ? nx.map(p =>
 function loadPlayerEngine() {
 const container = document.getElementById('playerContainer');
 container.innerHTML = '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
++ '<div id="audioBtn" onclick="event.stopPropagation();document.getElementById(\'audioMenu\').classList.toggle(\'hidden\')" title="Audio language" class="hidden absolute top-3 right-3 z-30 w-9 h-9 items-center justify-center rounded-full bg-black/70 border border-white/20 text-white/80 text-sm backdrop-blur hover:bg-white/10 transition cursor-pointer">🌐</div>'
++ '<div id="audioMenu" class="hidden absolute top-12 right-3 z-40 min-w-[180px] rounded-xl border border-white/15 bg-neutral-900/95 backdrop-blur shadow-xl"></div>'
 + '<div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById(\'videoPlayer\');vv.muted=false;vv.play();this.classList.add(\'hidden\')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>';
 const video = document.getElementById('videoPlayer');
 // Restore volume state
@@ -2069,11 +2071,37 @@ if (isDash && window.dashjs) {
 dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
 try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {} tryPlay(video);
 } else if (!isDash && window.Hls && Hls.isSupported()) {
-hlsInstance = new Hls(); hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
+hlsInstance = new Hls({ audioPreference: { langCode: 'eng' } }); hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
 hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
+hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
+hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
+renderAudioMenu();
 } else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
 video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPlay(video); }, { once: true });
-} else { video.src = targetStream; tryPlay(video); }
+} else { video.src = targetStream; tryPlay(video); renderAudioMenu(); }
+}
+
+function renderAudioMenu() {
+const btn = document.getElementById('audioBtn');
+const menu = document.getElementById('audioMenu');
+if (!btn || !menu) return;
+const tracks = (window.Hls && hlsInstance && hlsInstance.audioTracks) ? hlsInstance.audioTracks : [];
+const show = tracks.length > 1;
+btn.style.display = show ? 'flex' : 'none';
+if (!show) { menu.classList.add('hidden'); return; }
+const cur = hlsInstance.audioTrack;
+menu.innerHTML = tracks.map(t => {
+const lang = t.langCode || t.lang || '?';
+const name = (t.name && t.name.toLowerCase() !== lang.toLowerCase()) ? (t.name + ' (' + lang + ')') : (lang.toUpperCase());
+return '<div data-id="' + t.id + '" onclick="event.stopPropagation();setAudioTrack(' + String(t.id) + ')" class="audio-opt px-3 py-2 text-xs truncate ' + (String(t.id) === String(cur) ? 'text-cyan-300 font-semibold' : 'text-white/70 hover:text-white') + ' cursor-pointer hover:bg-white/10 transition">' + esc(name) + '</div>';
+}).join('');
+}
+
+function setAudioTrack(id) {
+if (!hlsInstance || !hlsInstance.audioTracks || !hlsInstance.audioTracks.length) return;
+hlsInstance.audioTrack = Number(id);
+renderAudioMenu();
+document.getElementById('audioMenu').classList.add('hidden');
 }
 
 </script>
