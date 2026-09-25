@@ -231,16 +231,14 @@ NEXUS TV · private streaming library · &copy; 2026 Aurora. All Rights Reserved
 </footer>
 
 <script>
-const rawChannels = [
+const rawChannels = const rawChannels = [
     {
             "name": "ABC (Australian Broadcast Corporation)",
             "category": "News",
             "icon": "📰",
-            "url": "https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index_5.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index_5.m3u8",
+            "alternates": []
     },
     {
             "name": "ABC News Australia",
@@ -248,8 +246,7 @@ const rawChannels = [
             "icon": "📺",
             "rating": "TV-G",
             "url": "https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "Animal Planet",
@@ -263,11 +260,9 @@ const rawChannels = [
             "name": "AYM.SPORTS",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://aym-as.otteravision.com/aym/as/as.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://aym-as.otteravision.com/aym/as/as.m3u8",
+            "alternates": []
     },
     {
             "name": "BBC America",
@@ -281,31 +276,25 @@ const rawChannels = [
             "name": "BBC Earth (1080p)",
             "category": "News",
             "icon": "📰",
-            "url": "https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "BBC World News (GB)",
             "category": "News",
             "icon": "📰",
-            "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/t=3840/v=pv14/b=5070016/main.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://vs-hls-push-ww-live.akamaized.net/x=4/i=urn:bbc:pips:service:bbc_news_channel_hd/t=3840/v=pv14/b=5070016/main.m3u8",
+            "alternates": []
     },
     {
             "name": "Bein Sports Xtra 🇬🇧🇲🇽",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://bein-xtra-xumo.amagi.tv/hls/amagi_hls_data_beinAAAAA-bein-xtra-xumoA/CDN/master.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://bein-xtra-xumo.amagi.tv/hls/amagi_hls_data_beinAAAAA-bein-xtra-xumoA/CDN/master.m3u8",
+            "alternates": []
     },
     {
             "name": "Big Ten Network",
@@ -327,21 +316,17 @@ const rawChannels = [
             "name": "Bloomberg Originals (1080p)",
             "category": "News",
             "icon": "📰",
-            "url": "https://bloomberg.com/media-manifest/streams/qt.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://bloomberg.com/media-manifest/streams/qt.m3u8",
+            "alternates": []
     },
     {
             "name": "Bloomberg TV",
             "category": "News",
             "icon": "📰",
-            "url": "https://www.bloomberg.com/media-manifest/streams/asia.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://www.bloomberg.com/media-manifest/streams/asia.m3u8",
+            "alternates": []
     },
     {
             "name": "Brat TV",
@@ -363,11 +348,9 @@ const rawChannels = [
             "name": "CA CBC NEWS NETWORK",
             "category": "News",
             "icon": "📰",
-            "url": "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://d2ny9lo79ujali.cloudfront.net/CBC_News_International.m3u8",
+            "alternates": []
     },
     {
             "name": "Canal Once",
@@ -381,11 +364,9 @@ const rawChannels = [
             "name": "Channel News Asia",
             "category": "News",
             "icon": "📰",
-            "url": "https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8",
+            "alternates": []
     },
     {
             "name": "Cinemax 5StarMax",
@@ -393,6 +374,62 @@ const rawChannels = [
             "icon": "🎬",
             "rating": "TV-MA",
             "url": "http://23.237.104.106:8080/USA_5STARMAX/index.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax Action East",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78628.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax Action WEST",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78629.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax Classics",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78627.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax HD",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78625.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax HD West",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78626.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax Hits East",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78631.m3u8",
+            "alternates": []
+    },
+    {
+            "name": "Cinemax Hits West",
+            "category": "Movies",
+            "icon": "🎬",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78632.m3u8",
             "alternates": []
     },
     {
@@ -431,11 +468,9 @@ const rawChannels = [
             "name": "CNBC",
             "category": "News",
             "icon": "📰",
-            "url": "https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://amg01079-nbcuuk-amg01079c2-samsung-gb-1258.playouts.now.amagi.tv/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "CNN",
@@ -467,8 +502,7 @@ const rawChannels = [
             "icon": "⚖️",
             "rating": "TV-14",
             "url": "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-courttv-tablo/playlist.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "Crime + Investigation",
@@ -484,22 +518,15 @@ const rawChannels = [
             "icon": "🕵️‍♂️",
             "rating": "TV-14",
             "url": "https://d4whmvwm0rdvi.cloudfront.net/10007/99993007/hls/master.m3u8?ads.xumo_channelId=99993007",
-            "alternates": [
-                    {
-                            "label": "Fallback 1",
-                            "url": "https://dz59iptwz5rxs.cloudfront.net/live/master.m3u8"
-                    }
-            ]
+            "alternates": [{"label":"Fallback 1","url":"https://dz59iptwz5rxs.cloudfront.net/live/master.m3u8"}]
     },
     {
             "name": "Dazn Ringside",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://aegis-cloudfront-1.tubi.video/bfad29e2-5bee-44f3-8256-127324e8b106/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://aegis-cloudfront-1.tubi.video/bfad29e2-5bee-44f3-8256-127324e8b106/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "Discovery Channel",
@@ -507,9 +534,7 @@ const rawChannels = [
             "icon": "📺",
             "rating": "TV-14",
             "url": "http://190.197.41.183:80/DISCOVERY/index.m3u8",
-            "alternates": [
-                    "https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/DISCOVERYCHANNEL/CMAF/index.m3u8"
-            ]
+            "alternates": ["https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/DISCOVERYCHANNEL/CMAF/index.m3u8"]
     },
     {
             "name": "Disney Channel",
@@ -517,12 +542,7 @@ const rawChannels = [
             "icon": "🏰",
             "rating": "TV-G",
             "url": "http://212.5.144.156/disney/index.m3u8",
-            "alternates": [
-                    {
-                            "label": "Fallback 1",
-                            "url": "http://190.14.10.19:16000/play/a06z/index.m3u8"
-                    }
-            ]
+            "alternates": [{"label":"Fallback 1","url":"http://190.14.10.19:16000/play/a06z/index.m3u8"}]
     },
     {
             "name": "Disney Junior",
@@ -530,28 +550,7 @@ const rawChannels = [
             "icon": "🧸",
             "rating": "TV-Y",
             "url": "http://212.5.144.156/disneyjr/index.m3u8",
-            "alternates": [
-                    {
-                            "name": "Filmex",
-                            "category": "Movies",
-                            "icon": "🎬",
-                            "rating": "TV-14",
-                            "url": "https://filmex-filmex-xumo.amagi.tv/playlist.m3u8",
-                            "alternates": []
-                    },
-                    {
-                            "name": "Filmex Clásico",
-                            "category": "Movies",
-                            "icon": "🎬",
-                            "rating": "TV-14",
-                            "url": "https://filmex-filmexclasico-xumo.amagi.tv/playlist.m3u8",
-                            "alternates": []
-                    },
-                    {
-                            "label": "Fallback 1",
-                            "url": "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8"
-                    }
-            ]
+            "alternates": [{"name":"Filmex","category":"Movies","icon":"🎬","rating":"TV-14","url":"https://filmex-filmex-xumo.amagi.tv/playlist.m3u8","alternates":[]}, {"name":"Filmex Clásico","category":"Movies","icon":"🎬","rating":"TV-14","url":"https://filmex-filmexclasico-xumo.amagi.tv/playlist.m3u8","alternates":[]}, {"label":"Fallback 1","url":"http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8"}]
     },
     {
             "name": "Disney XD",
@@ -583,8 +582,7 @@ const rawChannels = [
             "icon": "😂",
             "rating": "TV-14",
             "url": "https://failarmy-international-au.samsung.wurl.tv/playlist.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "FilmRise Anime",
@@ -608,9 +606,7 @@ const rawChannels = [
             "icon": "📺",
             "rating": "TV-14",
             "url": "http://23.237.104.106:8080/USA_FOOD_NETWORK/index.m3u8",
-            "alternates": [
-                    "https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/FOODNETWORK/CMAF/index.m3u8"
-            ]
+            "alternates": ["https://streaming.aurora.enhanced.live/live/mpc/enl0eG1mLmVncmVzcy5mZDJ2eHI=/out/v1/IT_SIMULCAST/FOODNETWORK/CMAF/index.m3u8"]
     },
     {
             "name": "Foro TV",
@@ -624,31 +620,25 @@ const rawChannels = [
             "name": "FOX Sports on Tubi",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://live-manifest.production-public.tubi.io/live/6035c7fd-efff-4ec7-93dc-aa0c7a58ba47/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://live-manifest.production-public.tubi.io/live/6035c7fd-efff-4ec7-93dc-aa0c7a58ba47/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "France i24 News",
             "category": "News",
             "icon": "📰",
-            "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_2300.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_2300.m3u8",
+            "alternates": []
     },
     {
             "name": "FS1 HD",
             "category": "Sports",
             "icon": "⚽",
-            "url": "http://85.237.89.160:9590/usa-s/FOX-SPORTS-1/index.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "http://85.237.89.160:9590/usa-s/FOX-SPORTS-1/index.m3u8",
+            "alternates": []
     },
     {
             "name": "Fuse",
@@ -718,21 +708,17 @@ const rawChannels = [
             "name": "Horse & Country",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://hnc-free-viewlift.amagi.tv/HNC_AUSTRALIA.m3u8",
+            "alternates": []
     },
     {
             "name": "INTERNETV.DEPORTES",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://stream.ads.ottera.tv/playlist.m3u8?network_id=5999",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://stream.ads.ottera.tv/playlist.m3u8?network_id=5999",
+            "alternates": []
     },
     {
             "name": "ION Plus",
@@ -783,6 +769,14 @@ const rawChannels = [
             "alternates": []
     },
     {
+            "name": "MGM+ HD",
+            "category": "Movies",
+            "icon": "🦁",
+            "rating": "TV-MA",
+            "url": "http://vividmedia.xyz:80/live/judith11/judith11/78637.m3u8",
+            "alternates": []
+    },
+    {
             "name": "MovieSphere",
             "category": "Movies",
             "icon": "🎬",
@@ -794,11 +788,9 @@ const rawChannels = [
             "name": "MovieSphere UK (1080p)",
             "category": "Movies",
             "icon": "🎬",
-            "url": "https://moviesphereuk-samsunguk.amagi.tv/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://moviesphereuk-samsunguk.amagi.tv/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "MTV",
@@ -806,9 +798,7 @@ const rawChannels = [
             "icon": "🎵",
             "rating": "TV-14",
             "url": "http://23.237.104.106:8080/USA_MTV/index.m3u8",
-            "alternates": [
-                    "https://ma.anixa.tv/clips/stream/mtv/playlist.php"
-            ]
+            "alternates": ["https://ma.anixa.tv/clips/stream/mtv/playlist.php"]
     },
     {
             "name": "MTV Live",
@@ -822,31 +812,25 @@ const rawChannels = [
             "name": "MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5c01df1759ee03633e7b272c/master.m3u8?advertisingId=&appName=web&appStoreUrl=&appVersion=DNT&app_name=&architecture=&buildVersion=&deviceDNT=0&deviceId=5c01df1759ee03633e7b272c&deviceLat=&deviceLon=&deviceMake=web&deviceModel=web&deviceType=web&deviceVersion=DNT&includeExtendedEvents=false&marketingRegion=US&serverSideAds=false&sid=971&terminate=false&userId=",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5c01df1759ee03633e7b272c/master.m3u8?advertisingId=&appName=web&appStoreUrl=&appVersion=DNT&app_name=&architecture=&buildVersion=&deviceDNT=0&deviceId=5c01df1759ee03633e7b272c&deviceLat=&deviceLon=&deviceMake=web&deviceModel=web&deviceType=web&deviceVersion=DNT&includeExtendedEvents=false&marketingRegion=US&serverSideAds=false&sid=971&terminate=false&userId=",
+            "alternates": []
     },
     {
             "name": "MX ▎PLUTO TV LUCHA LIBRE AAA(roku)",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5c01df1759ee03633e7b272c/master.m3u8?advertisingId=channel&appName=rokuchannel&appVersion=1.0&bmodel=bm1&channel_id=channel&content=channel&content_rating=ROKU_ADS_CONTENT_RATING&content_type=livefeed&coppa=false&deviceDNT=1&deviceId=channel&deviceMake=rokuChannel&deviceModel=web&deviceType=rokuChannel&deviceVersion=1.0&embedPartner=rokuChannel&genre=ROKU_ADS_CONTENT_GENRE&is_lat=1&platform=web&rdid=channel&studio_id=viacom&tags=ROKU_CONTENT_TAGS",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5c01df1759ee03633e7b272c/master.m3u8?advertisingId=channel&appName=rokuchannel&appVersion=1.0&bmodel=bm1&channel_id=channel&content=channel&content_rating=ROKU_ADS_CONTENT_RATING&content_type=livefeed&coppa=false&deviceDNT=1&deviceId=channel&deviceMake=rokuChannel&deviceModel=web&deviceType=rokuChannel&deviceVersion=1.0&embedPartner=rokuChannel&genre=ROKU_ADS_CONTENT_GENRE&is_lat=1&platform=web&rdid=channel&studio_id=viacom&tags=ROKU_CONTENT_TAGS",
+            "alternates": []
     },
     {
             "name": "MY :Billiard TV",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://1621590671.rsc.cdn77.org/HLS/BILLIARDTV_SCTE.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://1621590671.rsc.cdn77.org/HLS/BILLIARDTV_SCTE.m3u8",
+            "alternates": []
     },
     {
             "name": "NBC Sports",
@@ -860,11 +844,9 @@ const rawChannels = [
             "name": "NHK World-Japan (1080p)",
             "category": "International",
             "icon": "🌐",
-            "url": "https://masterpl.hls.nhkworld.jp/hls/w/live/smarttv.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://masterpl.hls.nhkworld.jp/hls/w/live/smarttv.m3u8",
+            "alternates": []
     },
     {
             "name": "Nickelodeon",
@@ -926,51 +908,41 @@ const rawChannels = [
             "name": "Qello Concerts by Stingray (1080p)",
             "category": "Music",
             "icon": "🎶",
-            "url": "https://lotus.stingray.com/manifest/qello-qello001-montreal/samsungtvplus/master.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://lotus.stingray.com/manifest/qello-qello001-montreal/samsungtvplus/master.m3u8",
+            "alternates": []
     },
     {
             "name": "RealMadrid (ENG)",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/master.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/master.m3u8",
+            "alternates": []
     },
     {
             "name": "RealMadrid (ESP)",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8",
+            "alternates": []
     },
     {
             "name": "RealMadrid tv",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8",
+            "alternates": []
     },
     {
             "name": "RedBullTv",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8",
+            "alternates": []
     },
     {
             "name": "Retro TV",
@@ -978,12 +950,7 @@ const rawChannels = [
             "icon": "📻",
             "rating": "TV-G",
             "url": "https://freecast-lukentvlive.vgcdn.net/out/v1/665e9f91614b43b0a0654e9317f1d9f3/index.m3u8",
-            "alternates": [
-                    {
-                            "label": "Fallback 1",
-                            "url": "https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/retro/index.m3u8"
-                    }
-            ]
+            "alternates": [{"label":"Fallback 1","url":"https://lukentvlive.vgcdn.net/v1/master/cef183924f24adfa3d5d7601c3a17769082c0c2b/retro/index.m3u8"}]
     },
     {
             "name": "Science Channel",
@@ -1015,8 +982,7 @@ const rawChannels = [
             "icon": "📰",
             "rating": "TV-G",
             "url": "https://live-stream.skynewsarabia.com/c-horizontal-channel/horizontal-stream/index.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "Starz Cinema",
@@ -1046,31 +1012,25 @@ const rawChannels = [
             "name": "Strongman Champion League 1",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://rightsboosterltd-scl-1-nl.samsung.wurl.tv/playlist.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://rightsboosterltd-scl-1-nl.samsung.wurl.tv/playlist.m3u8",
+            "alternates": []
     },
     {
             "name": "StrongmanChampionLeague",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://3f4b9dde8740443b9b90459fc7b67cdd.mediatailor.us-east-1.amazonaws.com/v1/manifest/04fd913bb278d8775298c26fdca9d9841f37601f/Samsung-gb_StrongmanChampionsLeague/e21d95be-bbb1-442c-bd84-71813dc764ce/0.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://3f4b9dde8740443b9b90459fc7b67cdd.mediatailor.us-east-1.amazonaws.com/v1/manifest/04fd913bb278d8775298c26fdca9d9841f37601f/Samsung-gb_StrongmanChampionsLeague/e21d95be-bbb1-442c-bd84-71813dc764ce/0.m3u8",
+            "alternates": []
     },
     {
             "name": "Swerve Combat",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://dbrb49pjoymg4.cloudfront.net/10001/99991696/hls/playlist.m3u8?ads.xumo_channelId=99991696",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://dbrb49pjoymg4.cloudfront.net/10001/99991696/hls/playlist.m3u8?ads.xumo_channelId=99991696",
+            "alternates": []
     },
     {
             "name": "SYFY",
@@ -1086,8 +1046,7 @@ const rawChannels = [
             "icon": "✈️",
             "rating": "TV-G",
             "url": "https://d6ef3usc6d9cl.cloudfront.net/Tastemade_Travel.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "TBS",
@@ -1101,11 +1060,9 @@ const rawChannels = [
             "name": "TCM (Turner Classic Movies) West",
             "category": "Movies",
             "icon": "🎬",
-            "url": "https://raw.githubusercontent.com/InsolenceWillow/insolencetvgo/main/streams/tcmwest.us.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://raw.githubusercontent.com/InsolenceWillow/insolencetvgo/main/streams/tcmwest.us.m3u8",
+            "alternates": []
     },
     {
             "name": "Tennis Channel",
@@ -1129,32 +1086,23 @@ const rawChannels = [
             "icon": "🎨",
             "rating": "TV-Y",
             "url": "https://stream-us-east-1.getpublica.com/playlist.m3u8?network_id=37",
-            "alternates": [
-                    {
-                            "label": "Fallback 1",
-                            "url": "https://d1eg24xrsfr6kv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-b4b1bzxkt1uzo-prod/tg/tg/tg.m3u8"
-                    }
-            ]
+            "alternates": [{"label":"Fallback 1","url":"https://d1eg24xrsfr6kv.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-b4b1bzxkt1uzo-prod/tg/tg/tg.m3u8"}]
     },
     {
             "name": "Total Music Concerts",
             "category": "Music",
             "icon": "🎶",
-            "url": "https://cdn.global.elektamedia.com/live/c7eds/Totalmusic_Concerts/SA_LIVE_hls_enc/master.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "https://cdn.global.elektamedia.com/live/c7eds/Totalmusic_Concerts/SA_LIVE_hls_enc/master.m3u8",
+            "alternates": []
     },
     {
             "name": "UFC",
             "category": "Sports",
             "icon": "⚽",
-            "url": "https://dbrb49pjoymg4.cloudfront.net/10001/99951134/hls/playlist.m3u8?ads.xumo_channelId=99951134",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "https://dbrb49pjoymg4.cloudfront.net/10001/99951134/hls/playlist.m3u8?ads.xumo_channelId=99951134",
+            "alternates": []
     },
     {
             "name": "UniMas Central",
@@ -1176,11 +1124,9 @@ const rawChannels = [
             "name": "US Cinemax (East)[1920x1080]",
             "category": "Movies",
             "icon": "🎬",
-            "url": "http://23.237.104.106:8080/USA_CINEMAX/index.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: Original",
-            "engine": "hls"
+            "url": "http://23.237.104.106:8080/USA_CINEMAX/index.m3u8",
+            "alternates": []
     },
     {
             "name": "USA Today",
@@ -1188,8 +1134,7 @@ const rawChannels = [
             "icon": "📰",
             "rating": "TV-G",
             "url": "https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00731-gannettcoinc-usatodaynews-plex/playlist.m3u8",
-            "alternates": [],
-            "source": "FAST: iptv-org"
+            "alternates": []
     },
     {
             "name": "VH1",
@@ -1227,15 +1172,13 @@ const rawChannels = [
             "name": "XSport",
             "category": "Sports",
             "icon": "⚽",
-            "url": "http://iptv.prosto.tv:7000/ch110/video.m3u8",
             "rating": "TV-PG",
-            "alternates": [],
-            "source": "GitHub: SPORTS CHANNELS",
-            "engine": "hls"
+            "url": "http://iptv.prosto.tv:7000/ch110/video.m3u8",
+            "alternates": []
     }
 ];
 
-const EPG_IDS={"A&E":null,"Big Ten Network":"465073","Brat TV":null,"CMT":"465107","Comedy Central":"464922","Comet":"465305","Crime + Investigation":"76667","Dateline 24/7":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","Fox West":"10749","Fuse":"465105","FX":"464813","FXX":"465357","Hallmark Movies & More":null,"History":"465176","ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movies":null,"Magnificent Movies Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Reelz":"465018","Retro TV":"465151","Sony Channel Andes":"12503","Starz":"465238","Starz Cinema":"465115","Starz Comedy":"464979","SYFY":"465053","theDove TV":null,"Toon Goggles":null,"Univision":"470765","VICE TV":"464972","UniMas Central":"464928","We TV":"464955","Nickelodeon":"465345","Nicktoons":"465038","CNBC":"464791","NBA TV":"464912","Bloomberg TV":"465324","Bloomberg Originals (1080p)":null,"BBC World News (GB)":"523303","France i24 News":"464920","CA CBC NEWS NETWORK":"470695","Channel News Asia":"524182","ABC (Australian Broadcast Corporation)":"3357","Sky News":"12069","NFL Network":"465311","FS1 HD":"465248","MovieSphere UK (1080p)":"538953","US Cinemax (East)[1920x1080]":"523277","TCM (Turner Classic Movies) West":"55769","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Total Music Concerts":null,"Qello Concerts by Stingray (1080p)":"471413","BBC Earth (1080p)":"470439","FOX Sports on Tubi":null,"NHK World-Japan (1080p)":"443124","Arirang TV HD (720p)":"12037","RealMadrid tv":null,"StrongmanChampionLeague":null,"Dazn Ringside":null,"Strongman Champion League 1":null,"RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"MY :Billiard TV":"561886","Swerve Combat":null,"UFC":"446965","MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"EQUALYMPIC HD":"6783","XSport":null,"AYM.SPORTS":null,"INTERNETV.DEPORTES":null,"CANAL.ONCE":null,"RedBullTv":null,"Horse & Country":null,"FUBO SPORTS 1 · DASH":null,"FUBO SPORTS 2 · DASH":null,"FOXSPORTS · DASH":null,"FOXSPORTS 2 · DASH":null,"FOXSPORTS 3 · DASH":null,"FOXSPORTS PREMIUM · DASH":null,"PREMIER LEAGUE TV (ott.navigator) · DASH":null,"Tap Sports_mpd(ott) · DASH":null,"SPOTV HD_mpd(ott) · DASH":null,"SPOTV 2 HD_mpd(ott) · DASH":null,"PremierSports 2_mpd(ott) · DASH":null,"SPOTV (VS+)_ott.navigator · DASH":null,"SPOTV 2 (VS+)_ott.navigator · DASH":null,"SPORTTV.2_FIFA CLUB WORLDCUP 2 · DASH":null,"Premiere Sports 1 · DASH":null,"Premiere Sports 2 · DASH":null,"Premiere Sports 3 · DASH":null,"Premiere Sports 4 · DASH":null,"Premiere Sports 5 · DASH":null,"Premiere Sports 1 UK · DASH":null,"Premiere Sports 2 UK · DASH":null,"SportTV 3 · DASH":null,"NBA TV · DASH":null,"HBO Boxing · DASH":null,"Tennis Channel · DASH":null,"Bein Sport 2 · DASH":null,"DSPORTS FIGHT (AMZ) · DASH":null,"CBS Sports · DASH":null,"beIN Sports 3 HD · DASH":null,"BEIN SPORTS 1 🇦🇺 · DASH":null,"BEIN SPORTS 3 🇦🇺 · DASH":null,"DAZN FAST · DASH":null,"ABC News Live":null,"CBS News 24/7":null,"USA Today":null,"Court TV":null,"Sky News Arabia":null,"FailArmy":null,"Tastemade":null,"Tastemade Travel":null,"History Hit":null,"ABC News Australia":null,"Filmex":null,"Filmex Clásico":null,"FilmRise Anime":null,"FilmRise Westerns":null,"Gravitas Movies":null,"Lifetime Movie Favorites":null,"Lifetime Movies Love & Drama":null,"MovieSphere":null,"MyTime Movie Network":null,"OUTflix Movies":null,"WBTV At the Movies":null,"WBTV Classic Cinema":null};
+const EPG_IDS={"ABC (Australian Broadcast Corporation)":"3357","ABC News Australia":null,"Animal Planet":null,"AYM.SPORTS":null,"BBC America":null,"BBC Earth (1080p)":"470439","BBC World News (GB)":"523303","Bein Sports Xtra 🇬🇧🇲🇽":"413152","Big Ten Network":"465073","Bloomberg":null,"Bloomberg Originals (1080p)":null,"Bloomberg TV":"465324","Brat TV":null,"Buzzr":null,"CA CBC NEWS NETWORK":"470695","Canal Once":null,"Channel News Asia":"524182","Cinemax 5StarMax":null,"Cinemax Action East":null,"Cinemax Action WEST":null,"Cinemax Classics":null,"Cinemax HD":null,"Cinemax HD West":null,"Cinemax Hits East":null,"Cinemax Hits West":null,"Cinemax MoreMax":null,"Cinemax ThrillerMax":null,"Cinemax West":null,"CMT":"465107","CNBC":"464791","CNN":null,"Comet":"465305","Cooking Channel":null,"Court TV":null,"Crime + Investigation":"76667","Dateline 24/7":null,"Dazn Ringside":null,"Discovery Channel":null,"Disney Channel":"465170","Disney Junior":"465320","Disney XD":"464807","E!":null,"Estrella TV":null,"FailArmy":null,"FilmRise Anime":null,"FilmRise Westerns":null,"Food Network":null,"Foro TV":null,"FOX Sports on Tubi":null,"France i24 News":"464920","FS1 HD":"465248","Fuse":"465105","Golf Channel":null,"Gravitas Movies":null,"Hallmark Movies & More":null,"HBO Family":null,"HBO Zone":null,"History":"465176","HLN":null,"Horse & Country":null,"INTERNETV.DEPORTES":null,"ION Plus":null,"ION TV":"9195","Kaloopy TV":null,"KPVM Movies!":"466361","Lifetime Movie Favorites":null,"Lifetime Movies Love & Drama":null,"MGM+ HD":null,"MovieSphere":null,"MovieSphere UK (1080p)":"538953","MTV":null,"MTV Live":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(pluto)":null,"MX ▎PLUTO TV LUCHA LIBRE AAA(roku)":null,"MY :Billiard TV":"561886","NBC Sports":null,"NHK World-Japan (1080p)":"443124","Nickelodeon":"465345","OUTflix Movies":null,"OWN":null,"Paramount Network":null,"PBS Kids":"464925","PBS Kids Hawaii":null,"Playboy":null,"Qello Concerts by Stingray (1080p)":"471413","RealMadrid (ENG)":null,"RealMadrid (ESP)":null,"RealMadrid tv":null,"RedBullTv":null,"Retro TV":"465151","Science Channel":null,"SEC Network":null,"Showtime Family":null,"Sky News Arabia":null,"Starz Cinema":"465115","Starz Comedy":"464979","Starz West":null,"Strongman Champion League 1":null,"StrongmanChampionLeague":null,"Swerve Combat":null,"SYFY":"465053","Tastemade Travel":null,"TBS":null,"TCM (Turner Classic Movies) West":"55769","Tennis Channel":null,"theDove TV":null,"Toon Goggles":null,"Total Music Concerts":null,"UFC":"446965","UniMas Central":"464928","Univision":"470765","US Cinemax (East)[1920x1080]":"523277","USA Today":null,"VH1":null,"VICE TV":"464972","WBTV At the Movies":null,"WBTV Classic Cinema":null,"XSport":null}
 
 const channels = rawChannels.map((c, index) => ({
     id: index + 1,
