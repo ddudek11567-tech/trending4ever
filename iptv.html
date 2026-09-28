@@ -91,13 +91,27 @@ https://trending4ever.com/iptv.html
 <span id="pipChannelName">Live Stream Monitor</span>
 </div>
 <!-- PLAYER CONTROLS BAR -->
-<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 py-3 flex items-center justify-between">
-<div class="flex items-center gap-3">
-<button onclick="toggleMute()" id="muteBtn" class="text-white/80 hover:text-white transition text-sm"><i class="fa-solid fa-volume-high"></i></button>
-<input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)">
-<span id="volumeLabel" class="text-[10px] text-white/40 tabular-nums w-7 text-right">100%</span>
-</div>
-</div>
+    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button onclick="toggleMute()" id="muteBtn" class="text-white/80 hover:text-white transition text-sm"><i class="fa-solid fa-volume-high"></i></button>
+      <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)">
+      <span id="volumeLabel" class="text-[10px] text-white/40 tabular-nums w-7 text-right">100%</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="timeshift(-30)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Rewind 30s"><i class="fa-solid fa-backward"></i></button>
+      <button onclick="timeshift(-10)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Rewind 10s"><i class="fa-solid fa-rotate-left"></i></button>
+      <button onclick="timeshift(10)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 10s"><i class="fa-solid fa-rotate-right"></i></button>
+      <button onclick="timeshift(30)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 30s"><i class="fa-solid fa-forward"></i></button>
+      <span id="tsIndicator" class="text-[10px] text-cyan-400 ml-2 hidden"></span>
+    </div>
+  </div>
+  <div class="absolute bottom-3 left-4 right-4 flex items-center gap-2">
+    <span id="tsPosition" class="text-[9px] text-white/40 tabular-nums"></span>
+    <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer relative" onclick="seekTo(event)" id="progressBar">
+      <div id="tsProgressBar" class="h-full bg-cyan-400/60 transition-all duration-300" style="width:0%"></div>
+    </div>
+    <span id="tsDuration" class="text-[9px] text-white/40 tabular-nums"></span>
+  </div>
 </div>
 <!-- NOW PLAYING INFO -->
 <div class="p-4">
@@ -1265,6 +1279,60 @@ function updateMuteIcon() {
     }
 }
 
+function timeshift(seconds) {
+  const video = document.getElementById('videoPlayer');
+  if (!video) return;
+  if (hlsInstance && hlsInstance.currentLevel !== -1) {
+    const curTime = video.currentTime;
+    const newTime = Math.max(0, curTime + seconds);
+    video.currentTime = newTime;
+    const el = document.getElementById('tsIndicator');
+    if (el) { el.textContent = (seconds >= 0 ? '+' : '') + seconds + 's'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 1500); }
+  } else if (video.duration && video.duration !== Infinity) {
+    const curTime = video.currentTime;
+    const newTime = Math.max(0, curTime + seconds);
+    video.currentTime = newTime;
+    const el = document.getElementById('tsIndicator');
+    if (el) { el.textContent = (seconds >= 0 ? '+' : '') + seconds + 's'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 1500); }
+  }
+}
+
+function seekTo(e) {
+  const bar = document.getElementById('progressBar');
+  if (!bar) return;
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const video = document.getElementById('videoPlayer');
+  if (!video || !video.duration || video.duration === Infinity) return;
+  video.currentTime = pct * video.duration;
+}
+
+// Channel history: save last watched
+function saveChannelHistory(ch) {
+  try { localStorage.setItem('aurora_last_channel', JSON.stringify({ id: ch.id, name: ch.name, url: ch.url, category: ch.category, icon: ch.icon, time: Date.now() })); } catch(e) {}
+}
+function loadChannelHistory() {
+  try { const d = JSON.parse(localStorage.getItem('aurora_last_channel')); if (d && (Date.now() - d.time) < 86400000) return d; } catch(e) {}
+  return null;
+}
+function updateTSProgress() {
+  const video = document.getElementById('videoPlayer');
+  const bar = document.getElementById('tsProgressBar');
+  const pos = document.getElementById('tsPosition');
+  const dur = document.getElementById('tsDuration');
+  if (!video || !bar) return;
+  if (video.duration && video.duration !== Infinity) {
+    const pct = (video.currentTime / video.duration) * 100;
+    bar.style.width = pct + '%';
+    pos.textContent = fmtT(video.currentTime * 1000);
+    dur.textContent = fmtT(video.duration * 1000);
+  } else {
+    pos.textContent = 'LIVE';
+    dur.textContent = '';
+  }
+  requestAnimationFrame(updateTSProgress);
+}
+
 // ===== AUTOPLAY =====
 let __wantPlay = false;
 function tryPlay(v) {
@@ -1337,13 +1405,16 @@ function renderFeaturedChannels() {
 
 // ===== DOMContentLoaded =====
 document.addEventListener('DOMContentLoaded', () => {
-currentChannel = channels[0]; currentActiveUrl = channels[0].url;
-document.getElementById('stats').innerText = channels.length + ' VERIFIED CHANNELS · HLS / DASH';
-document.getElementById('guideSearchInput').placeholder = 'Search ' + channels.length + ' verified channels…';
-renderGuideRows(channels); selectGuideChannel(channels[0]); updateClock();
-setInterval(updateClock, 30000);
-(async () => { for (const [epgName, cid] of Object.entries(EPG_IDS)) { if (!cid) continue; await fetchEpg(cid); const ch = channels.find(x => x.epgId === cid); if (ch) patchRow(ch); updateGuideInfo(currentChannel); await new Promise(r => setTimeout(r, 150)); } renderFeaturedChannels(); })();
-setInterval(() => { updateGuideInfo(currentChannel); if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); }); renderFeaturedChannels(); }, 60000);
+  currentChannel = channels[0]; currentActiveUrl = channels[0].url;
+  const saved = loadChannelHistory();
+  if (saved) { const ch = channels.find(x => x.id === saved.id); if (ch) currentChannel = ch; currentActiveUrl = saved.url; }
+  document.getElementById('stats').innerText = channels.length + ' VERIFIED CHANNELS · HLS / DASH';
+  document.getElementById('guideSearchInput').placeholder = 'Search ' + channels.length + ' verified channels…';
+  renderGuideRows(channels); selectGuideChannel(currentChannel); updateClock();
+  requestAnimationFrame(updateTSProgress);
+  setInterval(updateClock, 30000);
+  (async () => { for (const [epgName, cid] of Object.entries(EPG_IDS)) { if (!cid) continue; await fetchEpg(cid); const ch = channels.find(x => x.epgId === cid); if (ch) patchRow(ch); updateGuideInfo(currentChannel); await new Promise(r => setTimeout(r, 150)); } renderFeaturedChannels(); })();
+  setInterval(() => { updateGuideInfo(currentChannel); if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); }); renderFeaturedChannels(); }, 60000);
 });
 
 let hlsInstance = null, dashInstance = null, prevSelId = null;
@@ -1388,15 +1459,16 @@ function patchRow(ch) { if (!lastList) return; const row = document.querySelecto
 function filterGuideChannels(query) { const q = query.toLowerCase(); renderGuideRows(channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q))); }
 
 function selectGuideChannel(ch) {
-currentChannel = ch; currentActiveUrl = ch.url;
-document.getElementById('guideChannelNumBadge').innerText = ch.number;
-document.getElementById('guideNetworkName').innerText = ch.name + ' — ' + ch.category;
-document.getElementById('guideRatingBadge').innerText = ch.rating;
-document.getElementById('pipChannelName').innerText = ch.number + '. ' + ch.name;
-if (prevSelId !== null && prevSelId !== ch.id) { const pr = channels.find(x => x.id === prevSelId); if (pr) patchRow(pr); }
-prevSelId = ch.id; patchRow(ch); updateGuideInfo(ch); loadPlayerEngine();
-if (ch.epgId && !epgStore[ch.epgId]) { fetchEpg(ch.epgId).then(() => { if (currentChannel && currentChannel.id === ch.id) { patchRow(ch); updateGuideInfo(currentChannel); } }); }
-}
+ currentChannel = ch; currentActiveUrl = ch.url;
+ saveChannelHistory(ch);
+ document.getElementById('guideChannelNumBadge').innerText = ch.number;
+ document.getElementById('guideNetworkName').innerText = ch.name + ' — ' + ch.category;
+ document.getElementById('guideRatingBadge').innerText = ch.rating;
+ document.getElementById('pipChannelName').innerText = ch.number + '. ' + ch.name;
+ if (prevSelId !== null && prevSelId !== ch.id) { const pr = channels.find(x => x.id === prevSelId); if (pr) patchRow(pr); }
+ prevSelId = ch.id; patchRow(ch); updateGuideInfo(ch); loadPlayerEngine();
+ if (ch.epgId && !epgStore[ch.epgId]) { fetchEpg(ch.epgId).then(() => { if (currentChannel && currentChannel.id === ch.id) { patchRow(ch); updateGuideInfo(currentChannel); } }); }
+ }
 
 function updateGuideInfo(ch) {
 if (!ch) return; const st = ch.epgId ? epgStore[ch.epgId] : null;
