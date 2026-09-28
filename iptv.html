@@ -100,6 +100,7 @@ https://trending4ever.com/iptv.html
     <div class="flex items-center gap-2">
       <button onclick="timeshift(-30)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Rewind 30s"><i class="fa-solid fa-backward"></i></button>
       <button onclick="timeshift(-10)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Rewind 10s"><i class="fa-solid fa-rotate-left"></i></button>
+      <button onclick="goToShowStart()" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Go to start of show"><i class="fa-solid fa-backward-step"></i></button>
       <button onclick="timeshift(10)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 10s"><i class="fa-solid fa-rotate-right"></i></button>
       <button onclick="timeshift(30)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 30s"><i class="fa-solid fa-forward"></i></button>
       <span id="tsIndicator" class="text-[10px] text-cyan-400 ml-2 hidden"></span>
@@ -1277,6 +1278,27 @@ function updateMuteIcon() {
         else if (vol < 0.7) btn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
         else btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
     }
+}
+
+function goToShowStart() {
+  if (!currentChannel) return;
+  const st = currentChannel.epgId ? epgStore[currentChannel.epgId] : null;
+  if (!st) return;
+  const nowP = st.list.find(p => p.s <= Date.now() && Date.now() < p.e);
+  if (!nowP) return;
+  const elapsed = Math.max(0, (Date.now() - nowP.s) / 1000);
+  const video = document.getElementById('videoPlayer');
+  if (!video) return;
+  if (hlsInstance && hlsInstance.currentLevel !== -1) {
+    video.currentTime = Math.max(0, video.currentTime - elapsed);
+  } else if (video.duration && video.duration !== Infinity) {
+    video.currentTime = Math.max(0, video.currentTime - elapsed);
+  } else if (video.seekable && video.seekable.length > 0) {
+    const seekStart = video.seekable.start(0);
+    video.currentTime = seekStart;
+  }
+  const el = document.getElementById('tsIndicator');
+  if (el) { el.textContent = 'START'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 2000); }
 }
 
 function timeshift(seconds) {
