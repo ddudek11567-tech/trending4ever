@@ -1301,6 +1301,63 @@ function goToShowStart() {
   if (el) { el.textContent = 'START'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 2000); }
 }
 
+function reloadStream() {
+  if (!currentChannel) return;
+  const video = document.getElementById('videoPlayer');
+  if (!video) return;
+  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
+  if (dashInstance) { dashInstance.reset(); dashInstance = null; }
+  const container = document.getElementById('playerContainer');
+  if (container) container.innerHTML = '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
+    + '<div id="audioBtn" onclick="event.stopPropagation();document.getElementById(\'audioMenu\').classList.toggle(\'hidden\')" title="Audio language" class="hidden absolute top-3 right-3 z-30 w-9 h-9 items-center justify-center rounded-full bg-black/70 border border-white/20 text-white/80 text-sm backdrop-blur hover:bg-white/10 transition cursor-pointer">🌐</div>'
+    + '<div id="audioMenu" class="hidden absolute top-12 right-3 z-40 min-w-[180px] rounded-xl border border-white/15 bg-neutral-900/95 backdrop-blur shadow-xl"></div>'
+    + '<div id="unmuteChip" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>';
+  const v = document.getElementById('videoPlayer');
+  v.volume = isMuted ? 0 : (savedVolume || 1);
+  v.muted = isMuted;
+  video = v;
+  const targetStream = currentActiveUrl;
+  const isDash = currentChannel && (currentChannel.engine === 'dash' || /\.mpd(?:$|\?)/i.test(targetStream));
+  if (isDash && window.dashjs) {
+    dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
+    try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch(e) {} tryPlay(video);
+  } else if (window.Hls && Hls.isSupported()) {
+    hlsInstance = new Hls({ audioPreference: { langCode: 'eng' }, liveSyncDurationCount: 1, liveMaxLatencyDurationCount: 3, maxBufferLength: 10, maxMaxBufferLength: 20, maxBufferSize: 30 * 1000 * 1000, startLevel: -1, capLevelToPlayerSize: true, backBufferLength: 30 });
+    hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay(video));
+    hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
+    hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { hlsInstance.recoverMediaError(); }
+        else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { hlsInstance.startLoad(); }
+        else { hlsInstance.destroy(); hlsInstance = null; setTimeout(reloadStream, 2000); }
+      }
+    });
+    renderAudioMenu();
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = targetStream; video.addEventListener('loadedmetadata', () => tryPlay(video), { once: true });
+  } else { video.src = targetStream; tryPlay(video); renderAudioMenu(); }
+}
+
+// Watchdog: detect stalled playback and auto-recover
+let _playwatch = null;
+function startPlayWatch() {
+  clearInterval(_playwatch);
+  _playwatch = setInterval(() => {
+    const v = document.getElementById('videoPlayer');
+    if (!v || !currentChannel) return;
+    if (v.paused && !v.seeking) {
+      const retry = () => { v.play().catch(() => {}); };
+      setTimeout(retry, 1000);
+      setTimeout(retry, 3000);
+    }
+    if (v.buffered.length > 0 && v.buffered.end(v.buffered.length - 1) - v.currentTime < 1 && !v.seeking && !v.paused) {
+      reloadStream();
+    }
+  }, 5000);
+}
+
 function timeshift(seconds) {
   const video = document.getElementById('videoPlayer');
   if (!video) return;
@@ -1530,15 +1587,47 @@ if (isDash && window.dashjs) {
 dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
 try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {} tryPlay(video);
 } else if (!isDash && window.Hls && Hls.isSupported()) {
-hlsInstance = new Hls({ audioPreference: { langCode: 'eng' } }); hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
-hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
-hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
-hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
-renderAudioMenu();
-} else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
-video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPlay(video); }, { once: true });
-} else { video.src = targetStream; tryPlay(video); renderAudioMenu(); }
-}
+hlsInstance = new Hls({
+      audioPreference: { langCode: 'eng' },
+      liveSyncDurationCount: 1,
+      liveMaxLatencyDurationCount: 3,
+      maxBufferLength: 10,
+      maxMaxBufferLength: 20,
+      maxBufferSize: 30 * 1000 * 1000,
+      startLevel: -1,
+      capLevelToPlayerSize: true,
+      backBufferLength: 30
+    });
+    hlsInstance.loadSource(targetStream);
+    hlsInstance.attachMedia(video);
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
+    hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
+    hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
+    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          hlsInstance.recoverMediaError();
+        } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          hlsInstance.startLoad();
+        } else {
+          hlsInstance.destroy();
+          hlsInstance = null;
+          reloadStream();
+        }
+      }
+    });
+    hlsInstance.on(Hls.Events.FRAG_LOADED, () => {
+      if (video.paused && !video.seeking) {
+        video.play().catch(() => {});
+      }
+    });
+    renderAudioMenu();
+    startPlayWatch();
+  } else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPlay(video); }, { once: true });
+    startPlayWatch();
+  } else { video.src = targetStream; tryPlay(video); renderAudioMenu(); startPlayWatch(); }
+  }
 
 function renderAudioMenu() {
 const btn = document.getElementById('audioBtn');
