@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style id="sg-style">#sg{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#0a0614 0%,#0f0a1e 50%,#060310 100%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}#sg::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 30% 20%,rgba(139,92,246,.14) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(34,211,238,.10) 0%,transparent 60%)}#sg .c{position:relative;width:min(380px,90vw);padding:40px 32px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(167,139,250,.22);box-shadow:0 0 60px -20px rgba(167,139,250,.4),0 20px 60px rgba(0,0,0,.5);text-align:center}#sg .l{font-size:32px;margin-bottom:14px}#sg .t{font-size:26px;font-weight:700;letter-spacing:.35em;color:#fff;margin-bottom:6px;background:linear-gradient(90deg,#a78bfa,#22d3ee,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}#sg .s{font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.35);margin-bottom:28px;text-transform:uppercase}#sg .i{width:100%;padding:13px 16px;border-radius:12px;border:1px solid rgba(167,139,250,.25);background:rgba(0,0,0,.4);color:#fff;font-size:15px;outline:none;transition:border .2s,box-shadow .2s}#sg .i:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 3px rgba(167,139,250,.15)}#sg .b{width:100%;margin-top:14px;padding:13px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#0ea5e9);color:#fff;font-size:14px;font-weight:600;letter-spacing:.05em;transition:opacity .2s,transform .1s}#sg .b:hover{opacity:.9}#sg .b:active{transform:scale(.98)}#sg .e{color:#f87171;font-size:12px;margin-top:12px;min-height:18px}#sg.out{opacity:0;transition:opacity .4s ease;pointer-events:none}</style>
+<script id="sg-js">
+(function(){
+if(sessionStorage.getItem('sg_ok')==='1')return;
+var PW='59c01efdcf1b63e7709325d63183f1b0e03e01c8afca97a49904919e0b942bd2';
+var d=document.createElement('div');d.id='sg';
+d.innerHTML='<div class="c"><div class="l">&#128274;</div><div class="t">AURORA</div><div class="s">private site</div><input type="password" class="i" id="sgp" placeholder="Enter password" autocomplete="off"><button class="b" id="sgb">Unlock</button><div class="e" id="sge"></div></div>';
+function show(){document.documentElement.appendChild(d);var p=document.getElementById('sgp');p.focus();document.getElementById('sgb').addEventListener('click',go);p.addEventListener('keydown',function(e){if(e.key==='Enter')go()})}
+function go(){var v=document.getElementById('sgp').value,e=document.getElementById('sge');if(!crypto||!crypto.subtle){e.textContent='Browser not supported';return}crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)).then(function(b){var h=Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('');if(h===PW){sessionStorage.setItem('sg_ok','1');d.className='out';setTimeout(function(){d.remove()},400)}else{e.textContent='Incorrect password';document.getElementById('sgp').value='';document.getElementById('sgp').focus()}}).catch(function(){e.textContent='Error'})}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',show)}else{show()}
+})();
+</script>
+
+
 <meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AURORA — NEXUS TV · Welcome</title>
 <script src="https://cdn.tailwindcss.com"></script>
