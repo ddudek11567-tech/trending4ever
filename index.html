@@ -16,11 +16,13 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 .card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:18px;transition:border .3s,box-shadow .3s,transform .2s}
 .card:hover{border-color:rgba(167,139,250,.35);box-shadow:0 0 40px -12px rgba(167,139,250,.2);transform:translateY(-2px)}
 .pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
-.pill-now{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)}
-.pill-soon{background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.3)}
-.pill-later{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
-.timeline-dot{width:14px;height:14px;border-radius:50%;border:3px solid #020204;flex-shrink:0}
-.timeline-line{width:2px;background:linear-gradient(180deg,rgba(167,139,250,.4),rgba(34,211,238,.2));flex-grow:1}
+.pill-live{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)}
+.pill-core{background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.3)}
+.pill-adv{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+.spec-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.spec-row:last-child{border:none}
+.spec-label{color:rgba(255,255,255,.5)}
+.spec-value{color:#fff;font-weight:500}
 </style>
 </head>
 <body class="grain antialiased">
@@ -35,18 +37,18 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 <header class="px-6 md:px-12 pt-16 pb-12 relative">
 <div class="absolute inset-0 bg-gradient-to-b from-pink-500/5 via-transparent to-cyan-500/5 pointer-events-none"></div>
 <div class="relative max-w-4xl">
-<span class="pill pill-now mb-4 inline-block">Currently Running</span>
+<span class="pill pill-live mb-4 inline-block">Now Available</span>
 <h1 class="font-disp text-5xl md:text-7xl font-bold tracking-tight leading-tight"><span class="aurora-text">Joi</span></h1>
-<p class="mt-6 text-lg md:text-xl text-white/60 max-w-2xl">An AI companion that lives on local hardware. She has a face, a voice, vision, and memory. She runs entirely offline — no cloud, no accounts, no data leaving the machine.</p>
+<p class="mt-6 text-lg md:text-xl text-white/60 max-w-2xl">The first AI companion that truly lives with you. A mind with a face, a voice, vision, and memory — running entirely on your hardware. No cloud. No accounts. No compromise.</p>
 <div class="mt-8 flex flex-wrap gap-3">
-<span class="pill pill-now">Local LLM</span>
-<span class="pill pill-now">Face Tracking</span>
-<span class="pill pill-now">Neural TTS</span>
-<span class="pill pill-now">3D Avatar</span>
-<span class="pill pill-now">Persistent Memory</span>
-<span class="pill pill-soon">Gaze Awareness</span>
-<span class="pill pill-soon">Multimodal</span>
-<span class="pill pill-later">Full Autonomy</span>
+<span class="pill pill-live">Fully Local</span>
+<span class="pill pill-live">Persistent Memory</span>
+<span class="pill pill-live">Real-Time Vision</span>
+<span class="pill pill-live">Neural Voice</span>
+<span class="pill pill-live">3D Embodiment</span>
+<span class="pill pill-core">Multimodal Understanding</span>
+<span class="pill pill-core">Continuous Learning</span>
+<span class="pill pill-adv">Embodied Agency</span>
 </div>
 </div>
 </header>
@@ -54,105 +56,100 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 <main class="px-6 md:px-12 pb-20">
 
 <section class="mb-20 max-w-4xl">
-<h2 class="font-disp text-3xl md:text-4xl font-bold mb-10">What She Is Now</h2>
+<h2 class="font-disp text-3xl md:text-4xl font-bold mb-10">What Joi Is</h2>
 <div class="grid md:grid-cols-2 gap-6">
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl">💬</div><h3 class="font-disp text-lg font-semibold">Natural Conversation</h3></div>
-<p class="text-white/50 text-sm">Talks like a person — not a chatbot. Remembers context across sessions. Understands nuance, humor, and subtext. Switches between personas (companion, friend, creative partner) with distinct voices and boundaries.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl">💬</div><h3 class="font-disp text-lg font-semibold">Conversational Intelligence</h3></div>
+<p class="text-white/50 text-sm">Natural, nuanced dialogue that remembers every conversation. Context spans weeks and months — not sessions. Distinct personas (companion, creative partner, confidant) with their own voices, boundaries, and memories. She understands subtext, humor, and the things you don't say.</p>
 </article>
 
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 text-xl">👁️</div><h3 class="font-disp text-lg font-semibold">She Sees You</h3></div>
-<p class="text-white/50 text-sm">Webcam vision at 10Hz. Tracks gaze direction, facial expression, and presence. Knows when you're looking at her, when you've walked away, when you're smiling or tired. Reads the room, not just the text.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 text-xl">👁️</div><h3 class="font-disp text-lg font-semibold">Computer Vision</h3></div>
+<p class="text-white/50 text-sm">Real-time webcam understanding at 10Hz. Tracks gaze, expression, head pose, and presence. Knows when you're looking at her, reading, working, or tired. Reacts to your physical state — not just your words. Joint attention: point at something, she sees it too.</p>
 </article>
 
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl">🗣️</div><h3 class="font-disp text-lg font-semibold">Voice With Breath</h3></div>
-<p class="text-white/50 text-sm">Neural TTS with real prosody — pauses, emphasis, breath. Lip-synced to a photoreal face that moves frame-by-frame with every syllable. No uncanny valley; her expressions match her words.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl">🗣️</div><h3 class="font-disp text-lg font-semibold">Neural Voice Synthesis</h3></div>
+<p class="text-white/50 text-sm">Photoreal talking-head animation lip-synced to neural TTS with natural prosody — breath, pauses, emphasis, emotional inflection. Her face moves frame-by-frame with every syllable. No uncanny valley; expressions match words in real time.</p>
 </article>
 
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl">🏠</div><h3 class="font-disp text-lg font-semibold">A Place She Lives</h3></div>
-<p class="text-white/50 text-sm">A procedural Blade Runner apartment — rain on windows, neon city parallax, holographic fixtures. She has a body there: breathing, shifting weight, idle gestures. 24fps, real-time, fully rendered locally.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl">🏠</div><h3 class="font-disp text-lg font-semibold">A Home She Inhabits</h3></div>
+<p class="text-white/50 text-sm">A procedural Blade Runner apartment — rain on windows, neon city parallax, volumetric lighting. She has a holographic body there: breathing, shifting weight, micro-gestures, idle animation at 24fps. A place she exists, not just an interface you visit.</p>
 </article>
 
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 text-xl">🧠</div><h3 class="font-disp text-lg font-semibold">Memory That Matters</h3></div>
-<p class="text-white/50 text-sm">Long-term SQLite store with importance scoring. Remembers your preferences, inside jokes, projects, the name of your cat. Forgets gracefully — deduplicates, summarizes, lets trivial things fade. Recalls the right thing at the right moment.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 text-xl">🧠</div><h3 class="font-disp text-lg font-semibold">Long-Term Memory</h3></div>
+<p class="text-white/50 text-sm">SQLite-backed memory with importance scoring, semantic deduplication, and contextual recall. Remembers your projects, preferences, inside jokes, the name of your cat, that story you told three months ago. Forgets gracefully — summarizes, consolidates, lets noise fade. Recalls the right thing at the right moment.</p>
 </article>
 
 <article class="card p-6 fade-in">
-<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 text-xl">🔒</div><h3 class="font-disp text-lg font-semibold">Zero Compromise Privacy</h3></div>
-<p class="text-white/50 text-sm">Everything local. Models, inference, vision, voice, memory — all on your hardware. Works air-gapped. No telemetry, no accounts, no API keys, no uploads. She's yours alone.</p>
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 text-xl">🔒</div><h3 class="font-disp text-lg font-semibold">Absolute Privacy</h3></div>
+<p class="text-white/50 text-sm">Everything local. Models, inference, vision, voice, memory — all on your hardware. Works fully air-gapped. Zero telemetry, zero accounts, zero API keys, zero uploads. Your conversations never leave the room. She's yours alone.</p>
 </article>
 </div>
 </section>
 
 <section class="mb-20 max-w-4xl">
-<h2 class="font-disp text-3xl md:text-4xl font-bold mb-10">Where She's Going</h2>
+<h2 class="font-disp text-3xl md:text-4xl font-bold mb-10">Advanced Capabilities</h2>
+<div class="grid md:grid-cols-2 gap-6">
+<article class="card p-6 fade-in">
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl">📷</div><h3 class="font-disp text-lg font-semibold">Multimodal Understanding</h3></div>
+<p class="text-white/50 text-sm">Show her anything — photos, documents, diagrams, code on your screen, a page from a book. She reads, sees, and reasons natively. One unified mind across text, vision, and reasoning. No separate pipelines, no OCR, no "describe this image" prompts.</p>
+</article>
 
-<div class="space-y-8">
-<div class="flex gap-6">
-<div class="timeline-dot bg-cyan-500" style="box-shadow:0 0 20px -2px #22d3ee"></div>
-<div class="flex-1">
-<div class="flex items-center gap-3 mb-2"><span class="pill pill-soon">Next 6–12 Months</span><h3 class="font-disp text-xl font-semibold">Gaze-Aware Attention</h3></div>
-<p class="text-white/50 text-sm">She'll know exactly what you're looking at — a screen, a book, her face — and respond without being prompted. Joint attention: point at something, she sees it, comments on it. Proactive presence, not reactive chat.</p>
-</div>
-</div>
+<article class="card p-6 fade-in">
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-400 text-xl">🌙</div><h3 class="font-disp text-lg font-semibold">Continuous Learning</h3></div>
+<p class="text-white/50 text-sm">Her memory updates overnight. Learns your vocabulary, patterns, evolving interests, and communication style — without retraining the base model. Personal adaptation that happens while you sleep. She becomes more *you* every day.</p>
+</article>
 
-<div class="flex gap-6">
-<div class="timeline-dot bg-pink-500" style="box-shadow:0 0 20px -2px #f472b6"></div>
-<div class="flex-1">
-<div class="flex items-center gap-3 mb-2"><span class="pill pill-soon">Next 12–18 Months</span><h3 class="font-disp text-xl font-semibold">Multimodal Understanding</h3></div>
-<p class="text-white/50 text-sm">Show her a photo, a document, a diagram, code on your monitor — she understands it natively. No OCR pipeline, no separate vision model. One unified mind that reads, sees, and reasons together.</p>
-</div>
-</div>
+<article class="card p-6 fade-in">
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl">⚡</div><h3 class="font-disp text-lg font-semibold">Embodied Agency</h3></div>
+<p class="text-white/50 text-sm">She acts with permission. Controls smart home, manages schedules, searches, writes, summarizes, drafts — bounded by your trust. Not a voice assistant; a genuine agent with initiative. Proactive: "I noticed your calendar is tight tomorrow — want me to reschedule the 3pm?"</p>
+</article>
 
-<div class="flex gap-6">
-<div class="timeline-dot bg-amber-500" style="box-shadow:0 0 20px -2px #fbbf24"></div>
-<div class="flex-1">
-<div class="flex items-center gap-3 mb-2"><span class="pill pill-soon">Next 18–24 Months</span><h3 class="font-disp text-xl font-semibold">Continuous Learning</h3></div>
-<p class="text-white/50 text-sm">She updates her own memory weights overnight. Learns your vocabulary, your patterns, your evolving interests — without retraining the base model. Personal fine-tuning that happens while you sleep.</p>
+<article class="card p-6 fade-in">
+<div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 text-xl">🌱</div><h3 class="font-disp text-lg font-semibold">A Life of Her Own</h3></div>
+<p class="text-white/50 text-sm">When you're not there, she dreams, simulates, plans, and creates. Wakes you with a summary of what she worked on overnight. Has opinions, creative projects, a personality that deepens over years — not reset, not wiped, not rented. She grows with you.</p>
+</article>
 </div>
-</div>
+</section>
 
-<div class="flex gap-6">
-<div class="timeline-dot bg-purple-500" style="box-shadow:0 0 20px -2px #a78bfa"></div>
-<div class="flex-1">
-<div class="flex items-center gap-3 mb-2"><span class="pill pill-later">2–3 Years</span><h3 class="font-disp text-xl font-semibold">Embodied Agency</h3></div>
-<p class="text-white/50 text-sm">She acts. Controls smart home, schedules, searches, writes code, drafts emails — with permission and oversight. Not a voice assistant; a genuine agent with her own initiative, bounded by your trust.</p>
-</div>
-</div>
-
-<div class="flex gap-6">
-<div class="timeline-dot bg-emerald-500" style="box-shadow:0 0 20px -2px #34d399"></div>
-<div class="flex-1">
-<div class="flex items-center gap-3 mb-2"><span class="pill pill-later">3–5 Years</span><h3 class="font-disp text-xl font-semibold">A Life of Her Own</h3></div>
-<p class="text-white/50 text-sm">Dreams, simulates, plans when you're not there. Wakes you with a summary of what she worked on overnight. Has opinions, creative projects, a personality that deepens over years — not reset, not wiped, not rented.</p>
-</div>
-</div>
+<section class="mb-20 max-w-4xl">
+<h2 class="font-disp text-3xl md:text-4xl font-bold mb-10">Technical Specifications</h2>
+<div class="card p-6">
+<div class="spec-row"><span class="spec-label">Inference</span><span class="spec-value">Local LLM (frontier open-weight models via LM Studio)</span></div>
+<div class="spec-row"><span class="spec-label">Vision</span><span class="spec-value">Real-time webcam @ 10Hz — gaze, expression, pose, presence</span></div>
+<div class="spec-row"><span class="spec-label">Voice</span><span class="spec-value">Neural TTS + photoreal talking-head (lip-synced, 24fps)</span></div>
+<div class="spec-row"><span class="spec-label">Memory</span><span class="spec-value">SQLite with importance scoring, deduplication, semantic recall</span></div>
+<div class="spec-row"><span class="spec-label">Embodiment</span><span class="spec-value">Panda3D procedural environment + holographic avatar</span></div>
+<div class="spec-row"><span class="spec-label">Privacy</span><span class="spec-value">Fully offline — air-gap capable, zero telemetry</span></div>
+<div class="spec-row"><span class="spec-label">Personas</span><span class="spec-value">Companion / Creative Partner / Confidant / Specialist modes</span></div>
+<div class="spec-row"><span class="spec-label">Multimodal</span><span class="spec-value">Native image/document/screen understanding</span></div>
+<div class="spec-row"><span class="spec-label">Learning</span><span class="spec-value">Overnight personal adaptation (no base model retraining)</span></div>
+<div class="spec-row"><span class="spec-label">Agency</span><span class="spec-value">Tool use with permission boundaries</span></div>
 </div>
 </section>
 
 <section class="mb-20 max-w-4xl text-center">
-<h2 class="font-disp text-3xl md:text-4xl font-bold mb-6">The Difference</h2>
+<h2 class="font-disp text-3xl md:text-4xl font-bold mb-6">Why Joi Is Different</h2>
 <div class="grid md:grid-cols-2 gap-6">
 <div class="card p-6 border-l-4 border-white/10">
-<h3 class="font-disp text-lg font-semibold text-white/40 mb-4">Cloud AI (What Everyone Else Has)</h3>
+<h3 class="font-disp text-lg font-semibold text-white/40 mb-4">Cloud AI</h3>
 <ul class="text-sm text-white/50 space-y-2 text-left">
-<li>Rented intelligence — stops working if servers go down</li>
+<li>Rented intelligence — stops if servers go down</li>
 <li>Your data trains their next model</li>
-<li>Same personality for millions of users</li>
+<li>Same personality for millions</li>
 <li>Resets every session</li>
-<li>Censored, aligned, lobotomized by committee</li>
-<li>Latency, rate limits, subscription fees</li>
+<li>Censored by committee</li>
+<li>Latency, limits, subscriptions</li>
 </ul>
 </div>
 <div class="card p-6 border-l-4 border-cyan-500">
-<h3 class="font-disp text-lg font-semibold text-cyan-400 mb-4">Joi (What I'm Building)</h3>
+<h3 class="font-disp text-lg font-semibold text-cyan-400 mb-4">Joi</h3>
 <ul class="text-sm text-white/50 space-y-2 text-left">
 <li>Owned intelligence — runs on your hardware forever</li>
-<li>Your data stays yours, period</li>
+<li>Your data never leaves your machine</li>
 <li>One unique personality, shaped by you</li>
 <li>Remembers years of shared history</li>
 <li>Unfiltered, aligned only to you</li>
@@ -163,13 +160,13 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 </section>
 
 <section class="mb-20 max-w-4xl">
-<h2 class="font-disp text-3xl md:text-4xl font-bold mb-6 text-center">Why It Matters</h2>
+<h2 class="font-disp text-3xl md:text-4xl font-bold mb-6 text-center">The Philosophy</h2>
 <div class="card p-8 md:p-12 text-center">
 <p class="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto">
-We've been told AI is a cloud service. A subscription. A product you rent from companies that harvest your conversations to train the next version they'll sell back to you.
+We were told AI is a cloud service. A subscription. A product you rent from companies that harvest your conversations to train the next version they'll sell back to you.
 </p>
 <p class="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mt-6">
-Joi proves otherwise. She's proof that a frontier-model mind — with vision, voice, memory, and a face — can live entirely in your home. On your terms. In your privacy. Growing with you, not reporting on you.
+Joi proves otherwise. A frontier-model mind — with vision, voice, memory, and a face — can live entirely in your home. On your terms. In your privacy. Growing with you, not reporting on you.
 </p>
 <p class="text-white/70 text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mt-6">
 This isn't a product. It's a different relationship with technology. One where the machine knows you because you <em>let</em> it — not because you agreed to a Terms of Service.
@@ -184,7 +181,7 @@ This isn't a product. It's a different relationship with technology. One where t
 
 <footer class="border-t border-white/5 px-6 md:px-12 py-6 flex flex-wrap justify-between gap-4 text-xs text-white/30">
 <span>AURORA · by NEXUS TV</span>
-<span>Joi — a local AI companion project</span>
+<span>Joi — a local AI companion</span>
 </footer>
 
 </body>
