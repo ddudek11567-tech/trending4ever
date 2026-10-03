@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,8 +13,7 @@ var d=document.createElement('div');d.id='sg';d.innerHTML='<div class="c"><div c
 function show(){document.body.appendChild(d);var p=document.getElementById('sgp');p.focus();document.getElementById('sgb').addEventListener('click',go);p.addEventListener('keydown',function(e){if(e.key==='Enter')go()})}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',show)}else{show()}
 })();</script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="kids_data.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&family=Inter:wght@300;400;600&display=swap');
@@ -648,9 +647,12 @@ function renderStories(){
   var chips=$('storyChips');chips.innerHTML='';chips.dataset.f='All';
   cats.forEach(function(c){var x=document.createElement('button');x.className='chip'+(c==='All'?' on':'');x.textContent=c;x.onclick=function(){chips.dataset.f=c;chips.querySelectorAll('.chip').forEach(function(q){q.classList.toggle('on',q===x)});renderStories()};chips.appendChild(x)});
   var f=chips.dataset.f;var list=STORIES.filter(function(s){return f==='All'||s.cat===f});
-  grid.innerHTML=list.map(function(s,i){
+  grid.innerHTML=list.map(function(s){
     var done=storyTouched.indexOf(s.t)>=0;
-    return '<div class="panel p-4 card-f pop"><div class="text-5xl bounce">'+s.e+'</div><p class="font-extrabold mt-3">'+s.t+'</p><p class="text-white/50 text-xs mt-1">'+s.cat+' · '+s.d+'</p><button class="btn btn-g w-full justify-center mt-3" onclick="openStory('+i+')">'+(done?'📖 Read again':'▶ Read now')+'</button></div>'}).join('');
+    var iOrig=STORIES.indexOf(s);
+    return '<div class="panel p-4 card-f pop"><div class="text-5xl bounce">'+s.e+'</div><p class="font-extrabold mt-3">'+s.t+'</p><p class="text-white/50 text-xs mt-1">'+s.cat+' · '+s.d+'</p><button class="btn btn-g w-full justify-center mt-3" onclick="openStory('+iOrig+')">'+(done?'📖 Read again':'▶ Read now')+'</button></div>';
+  }).join('');
+
 }
 var reader=null;
 function openStory(i){var s=STORIES[i];$('storyTitle').textContent=s.e+' '+s.t;var b=$('storyBody');b.innerHTML=
