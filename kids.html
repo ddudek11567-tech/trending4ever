@@ -459,14 +459,16 @@ function renderLive(){var r=$('liveRow');r.innerHTML='';D.channels.forEach(funct
   r.appendChild(d);
   setTimeout(function(){const e=d.querySelector('[data-fave="'+f+'"]');if(e)e.textContent=rawFave(f)?'⭐':'☆';if(e)e.classList.toggle('on',rawFave(f))},0);
 });}
-function playLive(i){var ch=D.channels[i];$('liveTitle').textContent=ch.n;closeWin();var v=$('liveVideo'),e=$('liveErr');e.textContent='';v.removeAttribute('src');v.load();
+var curHls=null;
+function killLive(){if(curHls){try{curHls.destroy()}catch(e){}curHls=null}var v=$('liveVideo');if(v){try{v.pause()}catch(e){}try{v.removeAttribute('src')}catch(e){}try{v.load()}catch(e){}}}
+function playLive(i){var ch=D.channels[i];$('liveTitle').textContent=ch.n;closeWin();killLive();var v=$('liveVideo'),e=$('liveErr');e.textContent='';
   if(/\.m3u8($|\?)/i.test(ch.u)||/playlist\.php/i.test(ch.u)){
-    if(window.Hls&&Hls.isSupported()){var h=new Hls();h.loadSource(ch.u);h.attachMedia(v);h.on(Hls.Events.ERROR,function(ev,data){if(data.fatal)e.textContent='That stream glitched (paste it in Chrome/Edge, or try another channel).'})}
+    if(window.Hls&&Hls.isSupported()){curHls=new Hls();curHls.loadSource(ch.u);curHls.attachMedia(v);curHls.on(Hls.Events.ERROR,function(ev,data){if(data.fatal)e.textContent='That stream glitched (paste it in Chrome/Edge, or try another channel).'})}
     else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=ch.u}
     else{e.textContent='This browser cannot play HLS. Try Chrome or Edge.';return}
-  }else{v.src=ch.u;v.addEventListener('error',function(){e.textContent='Could not load that channel right now.'},{once:true})}
+  }else{v.src=ch.u;if(!v._errB){v._errB=1;v.addEventListener('error',function(){e.textContent='Could not load that channel right now.'})}}
   $('liveModal').classList.remove('hidden');sfx('pop')}
-function closeLive(){$('liveModal').classList.add('hidden');var v=$('liveVideo');v.pause();v.removeAttribute('src');v.load()}
+function closeLive(){$('liveModal').classList.add('hidden');killLive()}
 
 /* ---------- MOVIES ---------- */
 function ageOK(m,b){if(b==='all')return true;if(m.age.indexOf('all')>=0)return true;return m.age.indexOf(b)>=0}
