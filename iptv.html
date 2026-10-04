@@ -992,9 +992,7 @@ const rawChannels = [
         "icon": "🔞",
         "rating": "TV-MA",
         "url": "http://vividmedia.xyz:80/live/judith11/judith11/518382.m3u8",
-        "alternates": [
-            "http://190.11.225.124:5000/live/playboy_hd/playlist.m3u8"
-        ]
+        "alternates": []
     },
     {
         "name": "Qello Concerts by Stingray (1080p)",
@@ -1388,10 +1386,9 @@ const rawChannels = [
     },
     {
         "name": "USA Network (1080p)",
-        "url": "http://190.11.225.124:5000/live/usa_hd/playlist.m3u8",
+        "url": "http://23.237.104.106:8080/USA_E/index.m3u8",
         "alternates": [
-            "http://23.237.104.106:8080/USA_SYFY/index.m3u8",
-            "http://23.237.104.106:8080/USA_E/index.m3u8"
+            "http://23.237.104.106:8080/USA_SYFY/index.m3u8"
         ]
     },
     {
@@ -1585,6 +1582,28 @@ function goToShowStart() {
   if (el) { el.textContent = 'START'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 2000); }
 }
 
+// Single source of truth for HLS tuning. Both loadPlayerEngine() and
+// reloadStream() must use this, otherwise a stall recovery silently
+// downgrades the player to a weaker config and it degrades from there.
+const HLS_CFG = {
+  audioPreference: { langCode: 'eng' },
+  liveSyncDurationCount: 1,
+  liveMaxLatencyDurationCount: 3,
+  liveDurationInfinity: true,
+  maxBufferLength: 30,
+  maxMaxBufferLength: 60,
+  maxBufferSize: 60 * 1000 * 1000,
+  startLevel: -1,
+  capLevelToPlayerSize: true,
+  backBufferLength: 90,
+  fragLoadingTimeOut: 30000,
+  fragLoadingMaxRetry: 5,
+  manifestLoadingTimeOut: 10000,
+  manifestLoadingMaxRetry: 5,
+  levelLoadingTimeOut: 10000,
+  levelLoadingMaxRetry: 5
+};
+
 function reloadStream() {
   if (!currentChannel) return;
   const video = document.getElementById('videoPlayer');
@@ -1606,7 +1625,7 @@ function reloadStream() {
     dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
     try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch(e) {} tryPlay(video);
   } else if (window.Hls && Hls.isSupported()) {
-    hlsInstance = new Hls({ audioPreference: { langCode: 'eng' }, liveSyncDurationCount: 1, liveMaxLatencyDurationCount: 3, maxBufferLength: 10, maxMaxBufferLength: 20, maxBufferSize: 30 * 1000 * 1000, startLevel: -1, capLevelToPlayerSize: true, backBufferLength: 30 });
+    hlsInstance = new Hls(HLS_CFG);
     hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay(video));
     hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
@@ -1626,8 +1645,14 @@ function reloadStream() {
 
 // Watchdog: detect stalled playback and auto-recover
 let _playwatch = null;
+let _stallCount = 0;
+let _lastRecover = 0;
+const STALL_RELOAD_AFTER = 3;
+const RECOVER_COOLDOWN = 15000;
 function startPlayWatch() {
   clearInterval(_playwatch);
+  _stallCount = 0;
+  _lastRecover = 0;
   _playwatch = setInterval(() => {
     const v = document.getElementById('videoPlayer');
     if (!v || !currentChannel) return;
@@ -1636,9 +1661,21 @@ function startPlayWatch() {
       setTimeout(retry, 1000);
       setTimeout(retry, 3000);
     }
-    if (v.buffered.length > 0 && v.buffered.end(v.buffered.length - 1) - v.currentTime < 1 && !v.seeking && !v.paused) {
-      reloadStream();
+    if (v.seeking || v.paused || v.buffered.length === 0) return;
+    const ahead = v.buffered.end(v.buffered.length - 1) - v.currentTime;
+    if (ahead >= 1.5) { _stallCount = 0; _lastRecover = 0; return; }
+    const now = Date.now();
+    if (now - _lastRecover < RECOVER_COOLDOWN) return;
+    _lastRecover = now;
+    _stallCount++;
+    if (hlsInstance) {
+      if (_stallCount >= STALL_RELOAD_AFTER) { _stallCount = 0; reloadStream(); return; }
+      hlsInstance.startLoad();
+      setTimeout(() => { if (v.paused) v.play().catch(() => {}); }, 800);
+      return;
     }
+    _stallCount = 0;
+    reloadStream();
   }, 5000);
 }
 
@@ -1871,24 +1908,7 @@ if (isDash && window.dashjs) {
 dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
 try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {} tryPlay(video);
 } else if (!isDash && window.Hls && Hls.isSupported()) {
-hlsInstance = new Hls({
-      audioPreference: { langCode: 'eng' },
-      liveSyncDurationCount: 1,
-      liveMaxLatencyDurationCount: 3,
-      liveDurationInfinity: true,
-      maxBufferLength: 30,
-      maxMaxBufferLength: 60,
-      maxBufferSize: 60 * 1000 * 1000,
-      startLevel: -1,
-      capLevelToPlayerSize: true,
-      backBufferLength: 90,
-      fragLoadingTimeOut: 30000,
-      fragLoadingMaxRetry: 5,
-      manifestLoadingTimeOut: 10000,
-      manifestLoadingMaxRetry: 5,
-      levelLoadingTimeOut: 10000,
-      levelLoadingMaxRetry: 5
-    });
+hlsInstance = new Hls(HLS_CFG);
     hlsInstance.loadSource(targetStream);
     hlsInstance.attachMedia(video);
     hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
