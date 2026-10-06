@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Joi — Web Avatar</title>
+<link rel="stylesheet" href="style.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/",
+    "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.5.5/lib/three-vrm.module.js"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="boot" class="overlay">
+  <div class="card">
+    <h1>Joi</h1>
+    <p id="bootMsg">Loading avatar…</p>
+    <div class="bar"><div id="bootBar"></div></div>
+  </div>
+</div>
+
+<div id="hud" hidden>
+  <div class="row">
+    <button data-expr="neutral">neutral</button>
+    <button data-expr="happy">happy</button>
+    <button data-expr="angry">angry</button>
+    <button data-expr="sad">sad</button>
+    <button data-expr="relaxed">relaxed</button>
+    <button data-expr="surprised">surprised</button>
+    <button data-expr="fun">fun</button>
+    <button data-expr="blink">blink</button>
+  </div>
+  <div class="row visemes">
+    <span class="lbl">viseme</span>
+    <button data-viseme="aa">aa</button>
+    <button data-viseme="ih">ih</button>
+    <button data-viseme="ou">ou</button>
+    <button data-viseme="ee">ee</button>
+    <button data-viseme="oh">oh</button>
+    <button data-viseme="_rest">rest</button>
+  </div>
+  <div class="row">
+    <label class="lbl" for="speak">say</label>
+    <input id="speak" type="text" placeholder="type something, press enter" />
+    <button id="talk">talk</button>
+  </div>
+  <p class="credit">
+    Avatar “Seed-san” © VirtualCast, Inc. — VRM 1.0, used with credit.
+  </p>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+:root {
+  --bg: #14161c;
+  --fg: #e8eaf0;
+  --dim: #8b93a7;
+  --accent: #6ea8fe;
+  --panel: rgba(20, 22, 28, 0.82);
+  --line: rgba(255, 255, 255, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+#stage { display: block; width: 100vw; height: 100vh; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.overlay.gone { display: none; }
+
+.card { text-align: center; width: min(420px, 80vw); }
+
+.card h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.card p { margin: 0 0 16px; color: var(--dim); min-height: 1.5em; }
+
+.card p.error { color: #ff8b8b; }
+
+.bar {
+  height: 3px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#bootBar {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+#hud {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  max-width: min(760px, calc(100vw - 24px));
+}
+
+#hud[hidden] { display: none; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.lbl {
+  color: var(--dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 52px;
+}
+
+button {
+  font: inherit;
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+button:hover { background: rgba(255, 255, 255, 0.13); }
+button:active, button.on { border-color: var(--accent); background: rgba(110, 168, 254, 0.18); }
+
+.visemes button { font-variant-numeric: tabular-nums; }
+
+input[type="text"] {
+  flex: 1 1 220px;
+  min-width: 0;
+  font: inherit;
+  color: var(--fg);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 10px;
+}
+
+input[type="text"]:focus { outline: none; border-color: var(--accent); }
+
+.credit {
+  margin: 2px 0 0;
+  color: var(--dim);
+  font-size: 11px;
+}
+
+@media (max-width: 560px) {
+  .lbl { min-width: 100%; }
+  #hud { gap: 6px; padding: 10px; }
+}
