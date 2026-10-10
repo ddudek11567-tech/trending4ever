@@ -480,6 +480,18 @@
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         }
 
+        const CARD_BASE = 'group cursor-pointer bg-white/[0.03] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ';
+        const CARD_SEL = 'border-cyan-400/70 ring-1 ring-cyan-400/40 shadow-lg shadow-cyan-500/10';
+        const CARD_UNSEL = 'border-white/10 hover:border-cyan-400/40 hover:-translate-y-0.5';
+
+        function applySelection() {
+            const cards = document.querySelectorAll('#moviePosterGrid [data-url]');
+            for (const card of cards) {
+                const on = activeMovie && card.dataset.url === activeMovie.url;
+                card.className = CARD_BASE + (on ? CARD_SEL : CARD_UNSEL);
+            }
+        }
+
         function renderMovieGrid(list) {
             const grid = document.getElementById('moviePosterGrid');
             grid.innerHTML = '';
@@ -487,16 +499,13 @@
             list.forEach(m => {
                 const isSelected = activeMovie && activeMovie.url === m.url;
                 const card = document.createElement('div');
-                card.className = `group cursor-pointer bg-white/[0.03] border rounded-xl overflow-hidden transition-all flex flex-col justify-between ${
-                    isSelected 
-                        ? 'border-cyan-400/70 ring-1 ring-cyan-400/40 shadow-lg shadow-cyan-500/10' 
-                        : 'border-white/10 hover:border-cyan-400/40 hover:-translate-y-0.5'
-                }`;
+                card.dataset.url = m.url;
+                card.className = CARD_BASE + (isSelected ? CARD_SEL : CARD_UNSEL);
                 card.onclick = () => selectMovie(m);
 
                 card.innerHTML = `
                     <div class="aspect-[2/3] w-full bg-black/40 relative overflow-hidden">
-                        <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <img src="${m.poster}" alt="${m.title}" referrerpolicy="no-referrer" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                         <span class="absolute top-2 right-2 bg-black/70 backdrop-blur border border-cyan-400/30 text-cyan-300 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">${m.year}</span>
                     </div>
@@ -539,7 +548,7 @@
             video.load();
             if (!noAutoplay) video.play().catch(e => console.log("Autoplay blocked:", e));
 
-            renderMovieGrid(movies);
+            applySelection();
         }
     </script>
 
