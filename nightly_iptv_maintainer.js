@@ -166,25 +166,54 @@ async function chainCheck(url) {
 
 /* ---------- iptv.html parsing ---------- */
 
+// Extract a balanced [...] or {...} span starting at openIdx, respecting
+// strings/escapes. Returns { text, end } (end = index AFTER the closer) or null.
+function extractBalanced(html, openIdx) {
+  const open = html[openIdx];
+  const close = open === '[' ? ']' : open === '{' ? '}' : null;
+  if (!close) return null;
+  let depth = 0, inStr = false, quote = '', esc = false;
+  for (let i = openIdx; i < html.length; i++) {
+    const ch = html[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === quote) { inStr = false; }
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === '`') { inStr = true; quote = ch; continue; }
+    if (ch === open) depth++;
+    else if (ch === close) {
+      depth--;
+      if (depth === 0) return { text: html.slice(openIdx, i + 1), end: i + 1 };
+    }
+  }
+  return null;
+}
+
 function readIptv() {
   const html = fs.readFileSync(IPTV_HTML, 'utf8');
   const startMarker = 'const rawChannels = [';
   const si = html.indexOf(startMarker);
   if (si < 0) throw new Error('rawChannels marker not found');
   const ss = html.indexOf('[', si);
-  const se = html.indexOf('];', ss);
-  if (se < 0) throw new Error('rawChannels array end not found');
-  const arrTxt = html.slice(ss, se + 1);
+  const arrSpan = extractBalanced(html, ss);
+  if (!arrSpan) throw new Error('rawChannels array end not found');
+  const arrTxt = arrSpan.text;
   let chans = eval('(' + arrTxt + ')');
   if (!Array.isArray(chans) || chans.length === 0) throw new Error('rawChannels parse empty');
   const epgStart = html.indexOf('const EPG_IDS=');
   let epg = {};
+  let epgEdge = -1;
   if (epgStart >= 0) {
     const es = html.indexOf('{', epgStart);
-    const ee = html.indexOf('};', es) + 1;
-    epg = JSON.parse(html.slice(es, ee));
+    const epgSpan = extractBalanced(html, es);
+    if (epgSpan) {
+      epg = JSON.parse(epgSpan.text);
+      epgEdge = epgSpan.end;
+    }
   }
-  return { html, si, ss, se, chans, epg, epgStart, epgEdge: epgStart >= 0 ? html.indexOf('};', html.indexOf('{', epgStart)) + 1 : -1 };
+  return { html, si, ss, se: arrSpan.end - 1, chans, epg, epgStart, epgEdge };
 }
 
 function renderEntry(c) {
@@ -479,10 +508,11 @@ async function main() {
   // rebuild iptv.html only if the guide actually changed
   if (iptvChanged) {
     const block = 'const rawChannels = [\n' + finalChans.map(renderEntry).join(',\n') + '\n];';
-    let out = html.slice(0, si) + block + html.slice(se + 2);
+    const arrEnd = html[se + 1] === ';' ? se + 2 : se + 1;
+    let out = html.slice(0, si) + block + html.slice(arrEnd);
     const es = out.indexOf('{', out.indexOf('const EPG_IDS='));
-    const ee = out.indexOf('};', es);
-    out = out.slice(0, es) + JSON.stringify(newEpg) + out.slice(ee + 2);
+    const epgSpan = extractBalanced(out, es);
+    if (epgSpan) out = out.slice(0, es) + JSON.stringify(newEpg) + out.slice(epgSpan.end);
     fs.writeFileSync(IPTV_HTML, out, 'utf8');
     log(`wrote iptv.html (${finalChans.length} channels)`);
   }
