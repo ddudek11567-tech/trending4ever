@@ -8,8 +8,9 @@
 <meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LIVE TV · AURORA</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.4/dist/hls.min.js"></script>
+<script src="https://cdn.dashjs.org/v5.2.1/dash.all.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400;600&display=swap');
@@ -88,7 +89,7 @@ https://trending4ever.com/iptv.html
 <div id="playerWrapper" class="relative h-40 md:h-52 lg:h-56 bg-black">
 <div id="playerContainer" class="w-full h-full relative flex items-center justify-center bg-black">
 <video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>
-<div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById('videoPlayer');vv.muted=false;vv.play();this.classList.add('hidden')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>
+<div id="unmuteChip" onclick="event.stopPropagation();unmutePlayer()" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>
 </div>
 <!-- LIVE OVERLAY -->
 <div class="absolute top-4 left-4 bg-black/70 backdrop-blur border border-cyan-400/30 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2.5 pointer-events-none">
@@ -586,26 +587,7 @@ const rawChannels = [
         "rating": "TV-Y",
         "url": "http://212.5.144.156/disneyjr/index.m3u8",
         "alternates": [
-            {
-                "name": "Filmex",
-                "category": "Movies",
-                "icon": "🎬",
-                "rating": "TV-14",
-                "url": "https://filmex-filmex-xumo.amagi.tv/playlist.m3u8",
-                "alternates": []
-            },
-            {
-                "name": "Filmex Clásico",
-                "category": "Movies",
-                "icon": "🎬",
-                "rating": "TV-14",
-                "url": "https://filmex-filmexclasico-xumo.amagi.tv/playlist.m3u8",
-                "alternates": []
-            },
-            {
-                "label": "Fallback 1",
-                "url": "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8"
-            }
+            "http://23.237.104.106:8080/USA_DISNEY_JUNIOR/index.m3u8"
         ]
     },
     {
@@ -1458,11 +1440,11 @@ const channels = rawChannels.map((c, index) => ({
     id: index + 1,
     number: String(index + 1).padStart(2, '0'),
     name: c.name,
-    category: c.category,
-    icon: c.icon,
+    category: c.category || 'Entertainment',
+    icon: c.icon || '📺',
     url: c.url,
-    rating: c.rating,
-    alternates: c.alternates || [],
+    rating: c.rating || 'TV-14',
+    alternates: normalizeAlternates(c.alternates),
     engine: c.engine || (String(c.url).toLowerCase().includes('.mpd') ? 'dash' : 'hls'),
     epgId: EPG_IDS[c.name] || null,
     source: c.source || 'Original catalog',
@@ -1471,6 +1453,38 @@ const channels = rawChannels.map((c, index) => ({
     show3: `Late Night ${c.name} Special`,
     show4: `Early Morning ${c.name} Feed`
 }));
+
+// ===== SOURCE LIST HELPERS =====
+// Alternates can be plain URLs, {label,url} objects, or (from an old data bug)
+// whole channel objects. Only real fallback URLs are kept.
+function normalizeAlternates(list) {
+    const out = [];
+    (Array.isArray(list) ? list : []).forEach(a => {
+        if (!a) return;
+        if (typeof a === 'object' && (a.name || a.category)) return; // not a fallback entry
+        let u = typeof a === 'string' ? a : (typeof a.url === 'string' ? a.url : '');
+        u = String(u).trim();
+        if (!/^https?:\/\//i.test(u) || out.includes(u)) return;
+        out.push(u);
+    });
+    return out;
+}
+
+// Ordered list of sources for a channel: primary first, then verified fallbacks.
+// On an HTTPS page, HTTP sources are blocked by mixed-content rules, so HTTPS
+// sources are promoted ahead of them.
+function channelStreams(ch) {
+    const out = [];
+    const push = u => {
+        u = String(u || '').trim();
+        if (/^https?:\/\//i.test(u) && !out.includes(u)) out.push(u);
+    };
+    if (ch) { push(ch.url); normalizeAlternates(ch.alternates).forEach(push); }
+    if (location.protocol === 'https:') {
+        out.sort((a, b) => (/^https:/i.test(b) ? 1 : 0) - (/^https:/i.test(a) ? 1 : 0));
+    }
+    return out;
+}
 
 // ===== EPG ENGINE =====
 const epgStore={};let lastList=null;
@@ -1481,7 +1495,7 @@ function fmtRange(a,b){return fmtT(a)+' \u2013 '+fmtT(b)}
 async function fetchEpg(cid){
   if(epgStore[cid])return epgStore[cid];var day=new Date();var days=[utcKey(day),utcKey(new Date(day.getTime()+864e5))];var ck='nxepg_'+cid+'_'+days[0];
   try{var c=localStorage.getItem(ck);if(c){epgStore[cid]=JSON.parse(c);return epgStore[cid]}}catch(e){}
-  var items=[];try{var res=await Promise.all(days.map(function(dd){return fetch('https://epg.pw/api/epg.json?channel_id='+cid+'&lang=en&timezone=VVRD&date='+dd).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}));res.forEach(function(r){(r&&Array.isArray(r.epg_list)?r.epg_list:[]).forEach(function(p){if(!p.start_date)return;var s=Date.parse(p.start_date);if(!isNaN(s))items.push({s:s,t:String(p.title||'').trim(),d:String(p.desc||'').trim()})})});items.sort(function(a,b){return a.s-b.s});for(var i2=0;i2<items.length;i2++){items[i2].e=i2+1<items.length?items[i2+1].s:items[i2].s+36e5}items=items.filter(function(p){return p.e>Date.now()-12*36e5});epgStore[cid]={list:items};if(items.length){try{localStorage.setItem(ck,JSON.stringify(epgStore[cid]))}catch(e){}}}catch(e){epgStore[cid]={list:[]}}
+  var items=[];try{var res=await Promise.all(days.map(function(dd){return fetch('https://epg.pw/api/epg.json?channel_id='+cid+'&lang=en&timezone=VVRD&date='+dd,{signal:(typeof AbortSignal!=='undefined'&&AbortSignal.timeout)?AbortSignal.timeout(8000):undefined}).then(function(r){return r.ok?r.json():null}).catch(function(){return null})}));res.forEach(function(r){(r&&Array.isArray(r.epg_list)?r.epg_list:[]).forEach(function(p){if(!p.start_date)return;var s=Date.parse(p.start_date);if(!isNaN(s))items.push({s:s,t:String(p.title||'').trim(),d:String(p.desc||'').trim()})})});items.sort(function(a,b){return a.s-b.s});for(var i2=0;i2<items.length;i2++){items[i2].e=i2+1<items.length?items[i2+1].s:items[i2].s+36e5}items=items.filter(function(p){return p.e>Date.now()-12*36e5});epgStore[cid]={list:items};if(items.length){try{localStorage.setItem(ck,JSON.stringify(epgStore[cid]))}catch(e){}}}catch(e){epgStore[cid]={list:[]}}
   return epgStore[cid];
 }
 function epgNow(cid){var st=epgStore[cid];if(!st)return null;var t=Date.now();for(var i2=0;i2<st.list.length;i2++){if(st.list[i2].s<=t&&t<st.list[i2].e)return st.list[i2]}return null}
@@ -1493,10 +1507,12 @@ let savedVolume = 1;
 function setVolume(val) {
     const v = document.getElementById('videoPlayer');
     if (!v) return;
-    v.volume = parseFloat(val);
-    v.muted = val == 0;
-    isMuted = val == 0;
-    document.getElementById('volumeLabel').textContent = Math.round(val * 100) + '%';
+    const n = parseFloat(val);
+    v.volume = n;
+    v.muted = n === 0;
+    isMuted = v.muted;
+    savedVolume = n > 0 ? n : savedVolume;
+    document.getElementById('volumeLabel').textContent = Math.round(n * 100) + '%';
     updateMuteIcon();
 }
 function toggleMute() {
@@ -1552,101 +1568,298 @@ function goToShowStart() {
   if (el) { el.textContent = 'START'; el.classList.remove('hidden'); clearTimeout(el._timer); el._timer = setTimeout(() => el.classList.add('hidden'), 2000); }
 }
 
-// Single source of truth for HLS tuning. Both loadPlayerEngine() and
-// reloadStream() must use this, otherwise a stall recovery silently
-// downgrades the player to a weaker config and it degrades from there.
+// ===== PLAYER ENGINE =====
+// One tuning profile for every stream path. liveSyncDurationCount:3 trades a
+// little latency for a much larger live buffer, which is what keeps flaky
+// public HLS feeds from stalling every few minutes. (Previously both player
+// paths shared a config tuned to 1 segment, which stalled constantly.)
 const HLS_CFG = {
-  audioPreference: { langCode: 'eng' },
-  liveSyncDurationCount: 1,
-  liveMaxLatencyDurationCount: 3,
+  enableWorker: true,
+  lowLatencyMode: false,
+  liveSyncDurationCount: 3,
+  liveMaxLatencyDurationCount: 8,
   liveDurationInfinity: true,
   maxBufferLength: 30,
   maxMaxBufferLength: 60,
   maxBufferSize: 60 * 1000 * 1000,
+  backBufferLength: 30,
   startLevel: -1,
   capLevelToPlayerSize: true,
-  backBufferLength: 90,
+  abrEwmaDefaultEstimate: 800000,
+  audioPreference: { lang: 'en' },
+  manifestLoadingTimeOut: 15000,
+  manifestLoadingMaxRetry: 6,
+  manifestLoadingRetryDelay: 1000,
+  manifestLoadingMaxRetryTimeout: 8000,
+  levelLoadingTimeOut: 15000,
+  levelLoadingMaxRetry: 6,
+  levelLoadingRetryDelay: 1000,
+  levelLoadingMaxRetryTimeout: 8000,
   fragLoadingTimeOut: 30000,
-  fragLoadingMaxRetry: 5,
-  manifestLoadingTimeOut: 10000,
-  manifestLoadingMaxRetry: 5,
-  levelLoadingTimeOut: 10000,
-  levelLoadingMaxRetry: 5
+  fragLoadingMaxRetry: 8,
+  fragLoadingRetryDelay: 1000,
+  fragLoadingMaxRetryTimeout: 16000
 };
 
-function reloadStream() {
-  if (!currentChannel) return;
-  const video = document.getElementById('videoPlayer');
-  if (!video) return;
-  if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-  if (dashInstance) { dashInstance.reset(); dashInstance = null; }
-  const container = document.getElementById('playerContainer');
-  if (container) container.innerHTML = '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
+let hlsInstance = null, dashInstance = null;
+let _playwatch = null;
+let _recoverTimer = null;
+let _suppressPauseUntil = 0;
+let _lastProgress = { t: -1, at: 0 };
+let _failStreak = 0;
+let _candidateIndex = 0;
+let _statusKind = '';
+let userPaused = false;
+let __wantPlay = false;
+
+function playerVideo() { return document.getElementById('videoPlayer'); }
+
+function playerShellHtml() {
+  return '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
     + '<div id="audioBtn" onclick="event.stopPropagation();document.getElementById(\'audioMenu\').classList.toggle(\'hidden\')" title="Audio language" class="hidden absolute top-3 right-3 z-30 w-9 h-9 items-center justify-center rounded-full bg-black/70 border border-white/20 text-white/80 text-sm backdrop-blur hover:bg-white/10 transition cursor-pointer">🌐</div>'
     + '<div id="audioMenu" class="hidden absolute top-12 right-3 z-40 min-w-[180px] rounded-xl border border-white/15 bg-neutral-900/95 backdrop-blur shadow-xl"></div>'
-    + '<div id="unmuteChip" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>';
-  const v = document.getElementById('videoPlayer');
-  v.volume = isMuted ? 0 : (savedVolume || 1);
-  v.muted = isMuted;
-  video = v;
-  const targetStream = currentActiveUrl;
-  const isDash = currentChannel && (currentChannel.engine === 'dash' || /\.mpd(?:$|\?)/i.test(targetStream));
-  if (isDash && window.dashjs) {
-    dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
-    try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch(e) {} tryPlay(video);
-  } else if (window.Hls && Hls.isSupported()) {
-    hlsInstance = new Hls(HLS_CFG);
-    hlsInstance.loadSource(targetStream); hlsInstance.attachMedia(video);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => tryPlay(video));
-    hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
-    hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
-    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { hlsInstance.recoverMediaError(); }
-        else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { hlsInstance.startLoad(); }
-        else { hlsInstance.destroy(); hlsInstance = null; setTimeout(reloadStream, 2000); }
-      }
-    });
-    renderAudioMenu();
-  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = targetStream; video.addEventListener('loadedmetadata', () => tryPlay(video), { once: true });
-  } else { video.src = targetStream; tryPlay(video); renderAudioMenu(); }
+    + '<div id="unmuteChip" onclick="event.stopPropagation();unmutePlayer()" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>'
+    + '<div id="streamStatus" class="hidden absolute top-14 left-3 z-30 max-w-[75%] rounded-lg border border-amber-400/40 bg-black/85 px-3 py-2 text-[11px] leading-snug text-amber-100 backdrop-blur"></div>';
 }
 
-// Watchdog: detect stalled playback and auto-recover
-let _playwatch = null;
-let _stallCount = 0;
-let _lastRecover = 0;
-const STALL_RELOAD_AFTER = 3;
-const RECOVER_COOLDOWN = 15000;
-function startPlayWatch() {
-  clearInterval(_playwatch);
-  _stallCount = 0;
-  _lastRecover = 0;
-  _playwatch = setInterval(() => {
-    const v = document.getElementById('videoPlayer');
-    if (!v || !currentChannel) return;
-    if (v.paused && !v.seeking) {
-      const retry = () => { v.play().catch(() => {}); };
-      setTimeout(retry, 1000);
-      setTimeout(retry, 3000);
-    }
-    if (v.seeking || v.paused || v.buffered.length === 0) return;
-    const ahead = v.buffered.end(v.buffered.length - 1) - v.currentTime;
-    if (ahead >= 1.5) { _stallCount = 0; _lastRecover = 0; return; }
-    const now = Date.now();
-    if (now - _lastRecover < RECOVER_COOLDOWN) return;
-    _lastRecover = now;
-    _stallCount++;
-    if (hlsInstance) {
-      if (_stallCount >= STALL_RELOAD_AFTER) { _stallCount = 0; reloadStream(); return; }
-      hlsInstance.startLoad();
-      setTimeout(() => { if (v.paused) v.play().catch(() => {}); }, 800);
+function setStreamStatus(html, kind) {
+  const el = document.getElementById('streamStatus');
+  if (!el) return;
+  if (!html) { el.classList.add('hidden'); el.innerHTML = ''; _statusKind = ''; return; }
+  el.innerHTML = html;
+  _statusKind = kind || 'info';
+  el.classList.remove('hidden');
+}
+function showRetryNotice(msg) {
+  setStreamStatus('<span>' + esc(msg) + '</span> <button onclick="event.stopPropagation();retryCurrentChannel()" class="ml-1 underline font-semibold text-cyan-300">Retry</button>', 'retry');
+}
+function hideReconnecting() { if (_statusKind === 'info') setStreamStatus(''); }
+
+function syncMuteUi() {
+  const v = playerVideo();
+  if (!v) return;
+  isMuted = v.muted || v.volume === 0;
+  const sl = document.getElementById('volumeSlider');
+  const lb = document.getElementById('volumeLabel');
+  if (sl) sl.value = isMuted ? 0 : v.volume;
+  if (lb) lb.textContent = Math.round((isMuted ? 0 : v.volume) * 100) + '%';
+  updateMuteIcon();
+}
+function unmutePlayer() {
+  const v = playerVideo();
+  if (!v) return;
+  v.muted = false;
+  if (!v.volume) v.volume = savedVolume || 1;
+  syncMuteUi();
+  const c = document.getElementById('unmuteChip');
+  if (c) c.classList.add('hidden');
+  tryPlay(v);
+}
+
+function destroyEngines() {
+  clearTimeout(_recoverTimer);
+  _recoverTimer = null;
+  if (hlsInstance) { try { hlsInstance.destroy(); } catch (e) {} hlsInstance = null; }
+  if (dashInstance) { try { dashInstance.reset(); } catch (e) {} dashInstance = null; }
+  renderAudioMenu();
+}
+
+function resetVideoElement(v) {
+  _suppressPauseUntil = Date.now() + 1000;
+  try { v.pause(); } catch (e) {}
+  try { v.removeAttribute('src'); v.load(); } catch (e) {}
+}
+
+function markPlaying() {
+  _lastProgress = { t: -1, at: Date.now() };
+  _failStreak = 0;
+  hideReconnecting();
+}
+
+function bindMediaEvents(v) {
+  v.addEventListener('loadedmetadata', () => { if (__wantPlay && v.paused && !userPaused) tryPlay(v); });
+  v.addEventListener('canplay', () => { if (__wantPlay && v.paused && !userPaused) tryPlay(v); });
+  v.addEventListener('playing', () => { userPaused = false; markPlaying(); });
+  v.addEventListener('timeupdate', () => {
+    if (v.paused || v.currentTime === _lastProgress.t) return;
+    _lastProgress = { t: v.currentTime, at: Date.now() };
+    _failStreak = 0;
+    hideReconnecting();
+  });
+  v.addEventListener('pause', () => {
+    // Ignore pauses caused by our own re-attach, and honour a real user pause.
+    if (Date.now() < _suppressPauseUntil || v.ended) return;
+    userPaused = true;
+  });
+  v.addEventListener('error', () => { if (v.error) scheduleReload(currentActiveUrl, 1500); });
+}
+
+function onHlsError(hls, data, url) {
+  if (!data.fatal || hlsInstance !== hls) return;
+  if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+    try { hls.recoverMediaError(); } catch (e) { scheduleReload(url, 1200); }
+    return;
+  }
+  if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+    // Fragment/playlist hiccups can usually resume in place; manifest failures
+    // need a fresh instance. Both are retried before falling back to another URL.
+    if (!/manifest|level/i.test(String(data.details || ''))) {
+      setStreamStatus('Reconnecting…', 'info');
+      try { hls.startLoad(-1); } catch (e) { scheduleReload(url, 1200); return; }
+      const v = playerVideo();
+      if (v && v.paused && !userPaused) tryPlay(v);
       return;
     }
-    _stallCount = 0;
-    reloadStream();
-  }, 5000);
+  }
+  scheduleReload(url, 1500);
+}
+
+function scheduleReload(url, delay) {
+  clearTimeout(_recoverTimer);
+  setStreamStatus('Reconnecting…', 'info');
+  _recoverTimer = setTimeout(() => {
+    _recoverTimer = null;
+    if (!currentChannel) return;
+    _failStreak++;
+    if (_failStreak <= 2) attachStream(currentActiveUrl || url);
+    else advanceSource();
+  }, Math.max(700, delay || 1200));
+}
+
+function attachStream(url) {
+  const v = playerVideo();
+  if (!v || !currentChannel) return;
+  userPaused = false;
+  _lastProgress = { t: -1, at: Date.now() };
+  if (!url) { showRetryNotice('No playable source for this channel.'); return; }
+
+  // Mixed content: an HTTPS page cannot load HTTP media or XHR. Use an HTTPS
+  // alternate when there is one, otherwise explain it instead of hanging.
+  if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
+    const httpsAlt = channelStreams(currentChannel).find(u => /^https:\/\//i.test(u));
+    if (httpsAlt) { currentActiveUrl = httpsAlt; return attachStream(httpsAlt); }
+    setStreamStatus('This channel is HTTP-only, so browsers block it on the secure site. <a class="underline font-semibold text-cyan-300" href="' + esc(url) + '" target="_blank" rel="noopener">Open source ↗</a>');
+    return;
+  }
+
+  destroyEngines();
+  resetVideoElement(v);
+  v.volume = isMuted ? 0 : (savedVolume || 1);
+  v.muted = isMuted;
+  syncMuteUi();
+  setStreamStatus('');
+  currentActiveUrl = url;
+
+  const isDash = (currentChannel.engine === 'dash' || /\.mpd(?:$|\?)/i.test(url));
+  if (isDash && window.dashjs) {
+    dashInstance = dashjs.MediaPlayer().create();
+    dashInstance.initialize(v, url, true);
+    try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(v)); } catch (e) {}
+    try { dashInstance.on(dashjs.MediaPlayer.events.ERROR, () => scheduleReload(url, 1500)); } catch (e) {}
+  } else if (!isDash && window.Hls && Hls.isSupported()) {
+    const hls = new Hls(HLS_CFG);
+    hlsInstance = hls;
+    hls.on(Hls.Events.MEDIA_ATTACHED, () => { if (hlsInstance === hls) hls.loadSource(url); });
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { if (hlsInstance === hls) tryPlay(v); });
+    hls.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => { if (hlsInstance === hls) renderAudioMenu(); });
+    hls.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => { if (hlsInstance === hls) renderAudioMenu(); });
+    // Bind to THIS instance: a late error from an old channel must not touch
+    // the new one (the old code read the shared global and killed new streams).
+    hls.on(Hls.Events.ERROR, (evt, data) => onHlsError(hls, data, url));
+    hls.attachMedia(v);
+    renderAudioMenu();
+  } else if (!isDash && v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = url;
+    v.addEventListener('loadedmetadata', () => tryPlay(v), { once: true });
+  } else {
+    v.src = url;
+    tryPlay(v);
+  }
+  startPlayWatch();
+}
+
+function playableSources(ch) {
+  const all = channelStreams(ch);
+  if (location.protocol !== 'https:') return all;
+  const https = all.filter(u => /^https:\/\//i.test(u));
+  return https.length ? https : all;
+}
+function firstPlayableUrl(ch) {
+  const list = playableSources(ch);
+  return list.length ? list[0] : ((ch && ch.url) || '');
+}
+function advanceSource() {
+  const list = playableSources(currentChannel);
+  if (!list.length) { showRetryNotice('No playable source for this channel.'); return; }
+  _candidateIndex++;
+  if (_candidateIndex >= list.length) {
+    _candidateIndex = 0;
+    _failStreak = 0;
+    showRetryNotice(list.length > 1 ? 'All sources are unavailable right now.' : 'This stream is not responding.');
+    return;
+  }
+  setStreamStatus('Switching source…', 'info');
+  attachStream(list[_candidateIndex]);
+}
+function retryCurrentChannel() {
+  _failStreak = 0;
+  _candidateIndex = 0;
+  const list = playableSources(currentChannel);
+  if (!list.length) { showRetryNotice('No playable source for this channel.'); return; }
+  attachStream(list[0]);
+}
+
+// ===== STALL WATCHDOG =====
+// Only declares a stall when the playhead actually stops advancing, so a short
+// buffer refill is not mistaken for a dead stream, and a user pause is respected.
+const WATCH_MS = 3000;
+const STALL_AFTER_MS = 12000;
+const NO_DATA_AFTER_MS = 15000;
+function startPlayWatch() {
+  clearInterval(_playwatch);
+  _playwatch = setInterval(checkPlayback, WATCH_MS);
+}
+function checkPlayback() {
+  const v = playerVideo();
+  if (!v || !currentChannel || userPaused) return;
+  if (location.protocol === 'https:' && /^http:\/\//i.test(currentActiveUrl || '')) return;
+  const now = Date.now();
+  if (!_lastProgress.at) _lastProgress.at = now;
+
+  if (v.paused) {
+    if (now - _lastProgress.at > 8000) {
+      tryPlay(v);
+      if (now - _lastProgress.at > 20000) { _lastProgress.at = now; recover(); }
+    }
+    return;
+  }
+  if (v.seeking) { _lastProgress.at = now; return; }
+  if (v.readyState === 0) {
+    if (now - _lastProgress.at > NO_DATA_AFTER_MS) { _lastProgress.at = now; recover(); }
+    return;
+  }
+  if (v.currentTime !== _lastProgress.t) { _lastProgress = { t: v.currentTime, at: now }; return; }
+  if (now - _lastProgress.at < STALL_AFTER_MS) return;
+  _lastProgress.at = now;
+  recover();
+}
+function recover() {
+  _failStreak++;
+  const v = playerVideo();
+  if (!v) return;
+  if (_failStreak === 1) {
+    setStreamStatus('Reconnecting…', 'info');
+    try { if (hlsInstance) hlsInstance.startLoad(-1); } catch (e) {}
+    try { if (v.seekable && v.seekable.length) v.currentTime = v.seekable.end(v.seekable.length - 1) - 0.5; } catch (e) {}
+    if (v.paused) tryPlay(v);
+    return;
+  }
+  if (_failStreak === 2) {
+    setStreamStatus('Reconnecting…', 'info');
+    attachStream(currentActiveUrl);
+    return;
+  }
+  advanceSource();
 }
 
 function timeshift(seconds) {
@@ -1685,8 +1898,13 @@ function loadChannelHistory() {
   try { const d = JSON.parse(localStorage.getItem('aurora_last_channel')); if (d && (Date.now() - d.time) < 86400000) return d; } catch(e) {}
   return null;
 }
-function updateTSProgress() {
-  const video = document.getElementById('videoPlayer');
+let _tsLastPaint = 0;
+function updateTSProgress(now) {
+  requestAnimationFrame(updateTSProgress);
+  if (document.hidden) return;
+  if (now && now - _tsLastPaint < 250) return; // 4 fps is plenty for a clock
+  _tsLastPaint = now || Date.now();
+  const video = playerVideo();
   const bar = document.getElementById('tsProgressBar');
   const pos = document.getElementById('tsPosition');
   const dur = document.getElementById('tsDuration');
@@ -1700,21 +1918,26 @@ function updateTSProgress() {
     pos.textContent = 'LIVE';
     dur.textContent = '';
   }
-  requestAnimationFrame(updateTSProgress);
 }
 
 // ===== AUTOPLAY =====
-let __wantPlay = false;
 function tryPlay(v) {
-    __wantPlay = true; v.autoplay = true; v.playsInline = true;
+    if (!v) v = playerVideo();
+    if (!v || userPaused) return;
+    __wantPlay = true;
+    v.autoplay = true;
+    v.playsInline = true;
     const p = v.play();
-    if (p && p.catch) p.catch(() => { v.muted = true; const q = v.play(); if (q && q.catch) q.catch(() => {}); showUnmuteChip(); });
+    if (p && p.catch) p.catch(() => {
+        // Sound autoplay was blocked: retry muted, then offer the sound chip.
+        v.muted = true;
+        syncMuteUi();
+        const q = v.play();
+        if (q && q.catch) q.catch(() => {});
+        showUnmuteChip();
+    });
 }
 function showUnmuteChip() { const c = document.getElementById('unmuteChip'); if (c) c.classList.remove('hidden'); }
-document.addEventListener('DOMContentLoaded', () => {
-const v = document.getElementById('videoPlayer');
-if (v) { ['loadedmetadata', 'canplay'].forEach(ev => v.addEventListener(ev, () => { if (__wantPlay && v.paused) tryPlay(v); })); }
-});
 
 let currentChannel = null, currentActiveUrl = null;
 
@@ -1783,11 +2006,41 @@ document.addEventListener('DOMContentLoaded', () => {
   renderGuideRows(channels); selectGuideChannel(currentChannel); updateClock();
   requestAnimationFrame(updateTSProgress);
   setInterval(updateClock, 30000);
-  (async () => { for (const [epgName, cid] of Object.entries(EPG_IDS)) { if (!cid) continue; await fetchEpg(cid); const ch = channels.find(x => x.epgId === cid); if (ch) patchRow(ch); updateGuideInfo(currentChannel); await new Promise(r => setTimeout(r, 150)); } renderFeaturedChannels(); })();
-  setInterval(() => { updateGuideInfo(currentChannel); if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); }); renderFeaturedChannels(); }, 60000);
+  // Give the video a couple of seconds to start before hammering the third-party
+  // EPG API (it used to compete with the first segment downloads).
+  setTimeout(() => {
+    (async () => {
+      for (const [epgName, cid] of Object.entries(EPG_IDS)) {
+        if (!cid) continue;
+        await fetchEpg(cid);
+        if (document.hidden) continue;
+        const ch = channels.find(x => x.epgId === cid);
+        if (ch) patchRow(ch);
+        updateGuideInfo(currentChannel);
+        await new Promise(r => setTimeout(r, 150));
+      }
+      renderFeaturedChannels();
+    })();
+  }, 2500);
+  setInterval(() => {
+    if (document.hidden) return;
+    updateGuideInfo(currentChannel);
+    if (lastList) lastList.forEach(ch => { if (ch.epgId && epgStore[ch.epgId]) patchRow(ch); });
+    renderFeaturedChannels();
+  }, 60000);
+  // Mobile browsers pause/throttle video while the tab is hidden; nudge it back.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !currentChannel) return;
+    const v = playerVideo();
+    if (v && v.paused && !userPaused) tryPlay(v);
+  });
+  window.addEventListener('online', () => {
+    const v = playerVideo();
+    if (currentChannel && v && v.paused && !userPaused) retryCurrentChannel();
+  });
 });
 
-let hlsInstance = null, dashInstance = null, prevSelId = null;
+let prevSelId = null;
 
 function slotCellsHtml(st) {
 const up = st.list.filter(p => p.e > Date.now()).slice(0, 4);
@@ -1801,11 +2054,14 @@ return out + '</div>';
 
 function rowInner(ch) {
 const isSelected = currentChannel && currentChannel.id === ch.id;
+const httpBlocked = location.protocol === 'https:' && !channelStreams(ch).some(u => /^https:\/\//i.test(u));
 let s = '<div class="col-span-12 md:col-span-4 px-4 py-2 flex items-center gap-3 ' + (isSelected ? 'bg-white/10 border-l-2 border-cyan-400' : '') + '">'
 + '<span class="' + (isSelected ? 'text-cyan-300' : 'text-white/30') + ' font-disp font-bold w-7 text-right shrink-0">' + ch.number + '</span>'
 + '<span class="text-base shrink-0">' + ch.icon + '</span>'
 + '<div class="min-w-0"><div class="font-semibold truncate">' + esc(ch.name) + '</div>'
-+ '<div class="text-[10px] text-white/35 uppercase">' + ch.category + ' \u2022 ' + ch.rating + '</div></div></div>';
++ '<div class="text-[10px] text-white/35 uppercase">' + ch.category + ' \u2022 ' + ch.rating
++ (httpBlocked ? ' <span class="ml-1 rounded bg-amber-400/15 px-1 py-px text-[9px] font-bold text-amber-300" title="HTTP-only stream: browsers block it on the secure site">HTTP</span>' : '')
++ '</div></div></div>';
 const st = ch.epgId ? epgStore[ch.epgId] : null;
 if (!st) { s += '<div class="col-span-12 md:col-span-8 px-3 py-2 flex items-center text-xs italic ' + (isSelected ? 'text-white/50' : 'text-white/30') + '">'
 + (ch.epgId ? 'Loading schedule\u2026' : 'Live stream \u00b7 schedule unavailable') + '</div>';
@@ -1826,7 +2082,7 @@ row.onclick = () => selectGuideChannel(ch); row.innerHTML = rowInner(ch); contai
 document.getElementById('activeCountBadge').innerText = list.length + ' Channels';
 }
 function patchRow(ch) { if (!lastList) return; const row = document.querySelector('[data-row="' + ch.id + '"]'); if (row) row.innerHTML = rowInner(ch); }
-function filterGuideChannels(query) { const q = query.toLowerCase(); renderGuideRows(channels.filter(ch => ch.name.toLowerCase().includes(q) || ch.category.toLowerCase().includes(q))); }
+function filterGuideChannels(query) { const q = String(query || '').toLowerCase(); renderGuideRows(channels.filter(ch => String(ch.name || '').toLowerCase().includes(q) || String(ch.category || '').toLowerCase().includes(q))); }
 
 function selectGuideChannel(ch) {
  currentChannel = ch; currentActiveUrl = ch.url;
@@ -1856,59 +2112,26 @@ document.getElementById('upNextList').innerHTML = nx.length ? nx.map(p =>
 }
 
 function loadPlayerEngine() {
-const container = document.getElementById('playerContainer');
-container.innerHTML = '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
-+ '<div id="audioBtn" onclick="event.stopPropagation();document.getElementById(\'audioMenu\').classList.toggle(\'hidden\')" title="Audio language" class="hidden absolute top-3 right-3 z-30 w-9 h-9 items-center justify-center rounded-full bg-black/70 border border-white/20 text-white/80 text-sm backdrop-blur hover:bg-white/10 transition cursor-pointer">🌐</div>'
-+ '<div id="audioMenu" class="hidden absolute top-12 right-3 z-40 min-w-[180px] rounded-xl border border-white/15 bg-neutral-900/95 backdrop-blur shadow-xl"></div>'
-+ '<div id="unmuteChip" onclick="event.stopPropagation();const vv=document.getElementById(\'videoPlayer\');vv.muted=false;vv.play();this.classList.add(\'hidden\')" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 z-20 rounded-full bg-black/80 border border-white/20 text-white text-xs font-semibold px-4 py-2 backdrop-blur hover:bg-white/10 transition cursor-pointer">🔇 Tap for sound</div>';
-const video = document.getElementById('videoPlayer');
-// Restore volume state
-video.volume = isMuted ? 0 : (savedVolume || 1);
-video.muted = isMuted;
-document.getElementById('volumeSlider').value = isMuted ? 0 : video.volume;
-document.getElementById('volumeLabel').textContent = Math.round(video.volume * 100) + '%';
-updateMuteIcon();
-// Re-attach events
-['loadedmetadata', 'canplay'].forEach(ev => video.addEventListener(ev, () => { if (__wantPlay && video.paused) tryPlay(video); }));
-const targetStream = currentActiveUrl;
-if (hlsInstance) { hlsInstance.destroy(); hlsInstance = null; }
-if (dashInstance) { dashInstance.reset(); dashInstance = null; }
-const isDash = currentChannel && (currentChannel.engine === 'dash' || /\.mpd(?:$|\?)/i.test(targetStream));
-if (isDash && window.dashjs) {
-dashInstance = dashjs.MediaPlayer().create(); dashInstance.initialize(video, targetStream, true);
-try { dashInstance.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => tryPlay(video)); } catch (e) {} tryPlay(video);
-} else if (!isDash && window.Hls && Hls.isSupported()) {
-hlsInstance = new Hls(HLS_CFG);
-    hlsInstance.loadSource(targetStream);
-    hlsInstance.attachMedia(video);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => { tryPlay(video); });
-    hlsInstance.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => renderAudioMenu());
-    hlsInstance.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => renderAudioMenu());
-    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-          hlsInstance.recoverMediaError();
-        } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-          hlsInstance.startLoad();
-        } else {
-          hlsInstance.destroy();
-          hlsInstance = null;
-          reloadStream();
-        }
-      }
-    });
-    hlsInstance.on(Hls.Events.FRAG_LOADED, () => {
-      if (video.paused && !video.seeking) {
-        video.play().catch(() => {});
-      }
-    });
-    renderAudioMenu();
-    startPlayWatch();
-  } else if (!isDash && video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = targetStream; video.addEventListener('loadedmetadata', () => { tryPlay(video); }, { once: true });
-    startPlayWatch();
-  } else { video.src = targetStream; tryPlay(video); renderAudioMenu(); startPlayWatch(); }
-  }
+  const container = document.getElementById('playerContainer');
+  if (!container) return;
+  destroyEngines();
+  _candidateIndex = 0;
+  _failStreak = 0;
+  __wantPlay = false;
+  userPaused = false;
+  container.innerHTML = playerShellHtml();
+  const video = playerVideo();
+  if (!video) return;
+  bindMediaEvents(video);
+  video.volume = isMuted ? 0 : (savedVolume || 1);
+  video.muted = isMuted;
+  const slider = document.getElementById('volumeSlider');
+  const label = document.getElementById('volumeLabel');
+  if (slider) slider.value = isMuted ? 0 : video.volume;
+  if (label) label.textContent = Math.round(video.volume * 100) + '%';
+  updateMuteIcon();
+  attachStream(firstPlayableUrl(currentChannel));
+}
 
 function renderAudioMenu() {
 const btn = document.getElementById('audioBtn');
