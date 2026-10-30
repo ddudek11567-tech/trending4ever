@@ -1470,9 +1470,19 @@ function normalizeAlternates(list) {
     return out;
 }
 
+// HTTPS relay for HTTP-only streams (see relay-worker/). Deploy the Worker, then
+// put its URL here, e.g. 'https://iptv-relay.your-name.workers.dev/'. While this
+// is empty the page simply flags HTTP-only channels instead of stalling on them.
+let RELAY_BASE = '';
+function viaRelay(u) {
+    if (!RELAY_BASE) return u;
+    if (!/^http:\/\//i.test(u)) return u; // already HTTPS: no relay needed
+    return RELAY_BASE + (RELAY_BASE.includes('?') ? '&' : '?') + 'u=' + encodeURIComponent(u);
+}
+
 // Ordered list of sources for a channel: primary first, then verified fallbacks.
 // On an HTTPS page, HTTP sources are blocked by mixed-content rules, so HTTPS
-// sources are promoted ahead of them.
+// sources are promoted ahead of them (or routed through the relay above).
 function channelStreams(ch) {
     const out = [];
     const push = u => {
@@ -1480,10 +1490,11 @@ function channelStreams(ch) {
         if (/^https?:\/\//i.test(u) && !out.includes(u)) out.push(u);
     };
     if (ch) { push(ch.url); normalizeAlternates(ch.alternates).forEach(push); }
+    const list = out.map(viaRelay);
     if (location.protocol === 'https:') {
-        out.sort((a, b) => (/^https:/i.test(b) ? 1 : 0) - (/^https:/i.test(a) ? 1 : 0));
+        list.sort((a, b) => (/^https:/i.test(b) ? 1 : 0) - (/^https:/i.test(a) ? 1 : 0));
     }
-    return out;
+    return list;
 }
 
 // ===== EPG ENGINE =====
