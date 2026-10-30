@@ -1473,7 +1473,7 @@ function normalizeAlternates(list) {
 // HTTPS relay for HTTP-only streams (see relay-worker/). Deploy the Worker, then
 // put its URL here, e.g. 'https://iptv-relay.your-name.workers.dev/'. While this
 // is empty the page simply flags HTTP-only channels instead of stalling on them.
-let RELAY_BASE = '';
+let RELAY_BASE = 'https://nexus-aurora-relay.tvchannel.workers.dev/';
 function viaRelay(u) {
     if (!RELAY_BASE) return u;
     if (!/^http:\/\//i.test(u)) return u; // already HTTPS: no relay needed
@@ -1644,6 +1644,58 @@ function setStreamStatus(html, kind) {
 function showRetryNotice(msg) {
   setStreamStatus('<span>' + esc(msg) + '</span> <button onclick="event.stopPropagation();retryCurrentChannel()" class="ml-1 underline font-semibold text-cyan-300">Retry</button>', 'retry');
 }
+
+// Strip the relay wrapper back off so links/copies point at the real stream.
+function rawSourceUrl(u) {
+  try {
+    if (RELAY_BASE && String(u).indexOf(RELAY_BASE) === 0) {
+      return decodeURIComponent(new URL(u).searchParams.get('u') || '') || u;
+    }
+  } catch (e) {}
+  return u;
+}
+function fallbackCopy(text, done) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    done();
+  } catch (e) {}
+}
+function copyStreamLink(btn) {
+  const url = btn.getAttribute('data-copy') || '';
+  const done = () => { btn.textContent = 'Copied ✓'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+  } else {
+    fallbackCopy(url, done);
+  }
+}
+function streamLinksHtml(url) {
+  const raw = rawSourceUrl(url);
+  return '<button data-copy="' + esc(raw) + '" onclick="event.stopPropagation();copyStreamLink(this)" class="ml-1 underline font-semibold text-cyan-300">Copy link</button>'
+    + ' <a class="underline font-semibold text-cyan-300" href="' + esc(raw) + '" target="_blank" rel="noopener">Open ↗</a>';
+}
+// HTTP-only stream and no relay configured: explain instead of hanging.
+function showHttpOnlyNotice(url) {
+  setStreamStatus('<span>This channel is HTTP-only, so browsers block it on the secure site. Paste the link into VLC to watch it on your PC.</span> ' + streamLinksHtml(url), 'retry');
+}
+// Host refuses the relay (Cloudflare 520-class): same advice, but it is not the
+// browser's mixed-content rule that is at fault, so say that plainly.
+function showBlockedByHostNotice(url) {
+  setStreamStatus('<span>This stream\'s host blocks the relay, so it cannot play in the browser. Paste the link into VLC on your PC to watch it.</span> ' + streamLinksHtml(url), 'retry');
+  // Stop the stall watchdog, otherwise it keeps "reconnecting" to a host that
+  // will never answer and hides this notice.
+  clearInterval(_playwatch);
+  _playwatch = null;
+  destroyEngines();
+  const v = playerVideo();
+  if (v) { try { v.pause(); } catch (e) {} }
+  hideReconnecting();
+}
 function hideReconnecting() { if (_statusKind === 'info') setStreamStatus(''); }
 
 function syncMuteUi() {
@@ -1707,6 +1759,14 @@ function bindMediaEvents(v) {
 
 function onHlsError(hls, data, url) {
   if (!data.fatal || hlsInstance !== hls) return;
+  // A relayed source that comes back with a Cloudflare origin error (520/521/
+  // 522/523/524) means the stream host refuses the relay outright. Retrying is
+  // pointless, so say so and offer the link instead of looping forever.
+  const status = data.response && data.response.code;
+  if (RELAY_BASE && status >= 500 && status <= 524) {
+    showBlockedByHostNotice(url);
+    return;
+  }
   if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
     try { hls.recoverMediaError(); } catch (e) { scheduleReload(url, 1200); }
     return;
@@ -1737,7 +1797,47 @@ function scheduleReload(url, delay) {
   }, Math.max(700, delay || 1200));
 }
 
+// hls.js happily spends 30+ seconds retrying a manifest the relay already
+// failed on (Cloudflare answers 520/522 when a stream host refuses relay
+// egress), which just looks like a dead player. One cheap probe tells us up
+// front whether this source can ever play in a browser.
+const _relayProbe = new Map();
+function isRelayUrl(u) {
+  return !!RELAY_BASE && String(u).indexOf(RELAY_BASE) === 0;
+}
+function probeRelaySource(url) {
+  setStreamStatus('Connecting…', 'info');
+  fetch(url, { cache: 'no-store' })
+    .then(res => {
+      _relayProbe.set(url, { ok: res.ok, at: Date.now() });
+      if (currentActiveUrl !== url) return; // user switched channel meanwhile
+      if (!res.ok) { showBlockedByHostNotice(url); return; }
+      attachStreamNow(url);
+    })
+    .catch(() => {
+      // The probe itself failed at the network layer: let the player try and
+      // report its own error rather than guessing.
+      _relayProbe.set(url, { ok: true, at: Date.now() });
+      if (currentActiveUrl === url) attachStreamNow(url);
+    });
+}
 function attachStream(url) {
+  const v = playerVideo();
+  if (!v || !currentChannel) return;
+  if (!url) { showRetryNotice('No playable source for this channel.'); return; }
+  currentActiveUrl = url;
+  if (isRelayUrl(url)) {
+    const seen = _relayProbe.get(url);
+    if (seen && Date.now() - seen.at < 60000) {
+      if (seen.ok) return attachStreamNow(url);
+      return showBlockedByHostNotice(url);
+    }
+    return probeRelaySource(url);
+  }
+  attachStreamNow(url);
+}
+
+function attachStreamNow(url) {
   const v = playerVideo();
   if (!v || !currentChannel) return;
   userPaused = false;
@@ -1749,7 +1849,7 @@ function attachStream(url) {
   if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
     const httpsAlt = channelStreams(currentChannel).find(u => /^https:\/\//i.test(u));
     if (httpsAlt) { currentActiveUrl = httpsAlt; return attachStream(httpsAlt); }
-    setStreamStatus('This channel is HTTP-only, so browsers block it on the secure site. <a class="underline font-semibold text-cyan-300" href="' + esc(url) + '" target="_blank" rel="noopener">Open source ↗</a>');
+    showHttpOnlyNotice(url);
     return;
   }
 

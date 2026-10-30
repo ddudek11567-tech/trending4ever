@@ -19,12 +19,15 @@
 // (not recommended for a public deployment).
 const DEFAULT_ALLOWED = [
   'vividmedia.xyz',
+  '195.160.222.162',
   '185.150.189.223',
   '23.237.104.106',
   '23.239.31.26',
   '212.5.144.156',
   '190.197.41.183',
+  '190.14.10.19',
   '41.205.93.154',
+  '85.237.89.160',
   '198.58.104.90',
   'iptv.prosto.tv'
 ];
@@ -83,6 +86,30 @@ function absolutize(ref, base) {
 }
 
 /**
+ * Cloudflare Workers refuse subrequests to bare IPv4 literals (edge error 1003),
+ * but these IPTV panels are almost all IP-only. Mapping the literal to a DNS
+ * name that resolves to the same address (nip.io) sidesteps that entirely.
+ */
+function proxyLiteral(hostname) {
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) return hostname + '.nip.io';
+  return hostname;
+}
+
+function fetchableUrl(rawUrl) {
+  const u = new URL(rawUrl);
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(u.hostname)) {
+    u.hostname = proxyLiteral(u.hostname);
+  }
+  return u.toString();
+}
+
+/** Strip the nip.io wrapper so allow-list entries can be plain IPs. */
+function bareHost(hostname) {
+  const h = String(hostname || '').toLowerCase();
+  return h.replace(/\.nip\.io$/, '').replace(/\.sslip\.io$/, '');
+}
+
+/**
  * Rewrite an HLS manifest so every fetchable URI goes back through this Worker.
  * Handles segment lines, variant playlist lines, #EXT-X-KEY / #EXT-X-MAP /
  * #EXT-X-MEDIA / #EXT-X-PART URI="..." attributes, and protocol-relative URLs.
@@ -136,31 +163,64 @@ async function handle(request, env) {
     return json({ error: 'host not allowed' }, 403);
   }
   const allowList = allowedHosts(env);
-  if (!hostAllowed(target.hostname, allowList)) {
+  if (!hostAllowed(bareHost(target.hostname), allowList)) {
     return json({ error: 'host not allowed', host: target.hostname }, 403);
   }
 
   const upstreamHeaders = {
-    'User-Agent': request.headers.get('X-Relay-UA') || 'VLC/3.0.20 LibVLC/3.0.20',
+    'User-Agent': self.searchParams.get('ua') || request.headers.get('X-Relay-UA') || 'VLC/3.0.20 LibVLC/3.0.20',
     Accept: '*/*',
     Referer: target.origin + '/',
     Origin: target.origin
   };
+  if (self.searchParams.get('noreferer')) delete upstreamHeaders.Referer;
+  if (self.searchParams.get('noorigin')) delete upstreamHeaders.Origin;
+  if (self.searchParams.get('accept')) upstreamHeaders.Accept = self.searchParams.get('accept');
 
-  let upstream;
-  try {
-    upstream = await fetch(target.toString(), {
-      method: 'GET',
-      redirect: 'follow',
-      headers: upstreamHeaders,
-      cf: { cacheTtl: 0, cacheEverything: false }
-    });
-  } catch (e) {
-    return json({ error: 'upstream fetch failed', detail: String(e && e.message || e), url: target.toString() }, 502);
+  // Follow redirects manually so each hop's IP literal can be mapped to a
+  // DNS name (panels routinely 302 to an IP:port).
+  let current = target.toString();
+  let upstream = null;
+  let hops = 0;
+  while (hops < 6) {
+    try {
+      upstream = await fetch(fetchableUrl(current), {
+        method: 'GET',
+        redirect: 'manual',
+        headers: upstreamHeaders,
+        cf: { cacheTtl: 0, cacheEverything: false }
+      });
+    } catch (e) {
+      return json({ error: 'upstream fetch failed', detail: String(e && e.message || e), url: current }, 502);
+    }
+    const loc = upstream.headers.get('location');
+    if (upstream.status >= 300 && upstream.status < 400 && loc) {
+      current = absolutize(loc, current);
+      hops++;
+      continue;
+    }
+    break;
   }
 
-  const finalUrl = upstream.url || target.toString();
+  const finalUrl = current;
   const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
+
+  // Diagnostics: /?u=<url>&debug=1 returns what the upstream actually said.
+  if (self.searchParams.get('debug')) {
+    const buf = await upstream.clone().arrayBuffer();
+    const head = new TextDecoder().decode(buf.slice(0, 600));
+    return json({
+      target: target.toString(),
+      finalUrl,
+      status: upstream.status,
+      contentType,
+      bytes: buf.byteLength,
+      server: upstream.headers.get('server'),
+      cfRay: upstream.headers.get('cf-ray'),
+      location: upstream.headers.get('location'),
+      head: head.replace(/\s+/g, ' ').slice(0, 400)
+    }, 200);
+  }
 
   if (request.method === 'HEAD') {
     return new Response(null, { status: upstream.status, headers: { ...CORS, 'Content-Type': contentType, 'Cache-Control': 'no-store' } });

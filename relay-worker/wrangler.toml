@@ -1,8 +1,9 @@
-name = "iptv-relay"
+﻿name = "nexus-aurora-relay"
 main = "worker.js"
 compatibility_date = "2026-01-01"
 
 # Hosts the relay is allowed to fetch (comma-separated). Leave unset to use the
 # built-in allow-list in worker.js. Use "*" to allow every public host.
-# [vars]
-# ALLOWED_HOSTS = "vividmedia.xyz,185.150.189.223,23.237.104.106"
+
+
+

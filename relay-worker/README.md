@@ -6,9 +6,13 @@ and re-serves them over HTTPS with CORS, rewriting every URI inside the HLS
 manifests (segments, AES keys, sub-playlists) so playback stays inside the
 relay.
 
-It fixes channels like **Playboy** (`http://vividmedia.xyz:80/live/...`), whose
-provider only offers plain HTTP plus a self-signed certificate, so no browser
-can load it directly.
+It fixes the HTTP-only channels whose panels accept requests from outside
+networks (e.g. `iptv.prosto.tv`, `23.237.104.106`, `41.205.93.154`).
+
+Some hosts still cannot be relayed: `vividmedia.xyz` (Playboy) answers
+Cloudflare with `error code: 520`, i.e. it refuses Cloudflare's egress IPs. For
+those the page now shows a "host blocks the relay" notice with **Copy link** /
+**Open** so the stream can be pasted into VLC instead of hanging.
 
 ## What it does
 
@@ -37,27 +41,30 @@ npx wrangler login
 npx wrangler deploy
 ```
 
-Wrangler prints the public URL, e.g.:
+Wrangler prints the public URL (this deployment):
 
 ```
-https://iptv-relay.<your-subdomain>.workers.dev
+https://nexus-aurora-relay.tvchannel.workers.dev
 ```
 
 Optional: give it a stable custom domain in the Cloudflare dashboard
-(Workers → iptv-relay → Settings → Domains & Routes), for example
-`relay.trending4ever.com`.
+(Workers → nexus-aurora-relay → Settings → Domains & Routes), for example
+`relay.trending4ever.com` (needs the domain's nameservers on Cloudflare).
 
 ## Test it
 
 ```powershell
-$worker = 'https://iptv-relay.<your-subdomain>.workers.dev'
-$target = 'http://vividmedia.xyz:80/live/judith11/judith11/518382.m3u8'
+$worker = 'https://nexus-aurora-relay.tvchannel.workers.dev'
+$target = 'http://23.237.104.106:8080/USA_ANIMAL_PLANET/index.m3u8'
 
 # health
 curl.exe "$worker"
 
 # manifest through the relay (should start with #EXTM3U and list relay URLs)
 curl.exe "$worker/?u=$([uri]::EscapeDataString($target))"
+
+# why a source failed (upstream status, final URL, first bytes)
+curl.exe "$worker/?debug=1&u=$([uri]::EscapeDataString($target))"
 ```
 
 ## Wire it into the page
@@ -65,7 +72,7 @@ curl.exe "$worker/?u=$([uri]::EscapeDataString($target))"
 In `iptv.html`, set the constant near the source-list helpers:
 
 ```js
-let RELAY_BASE = 'https://iptv-relay.<your-subdomain>.workers.dev/';
+let RELAY_BASE = 'https://nexus-aurora-relay.tvchannel.workers.dev/';
 ```
 
 Every HTTP-only source is then routed through the relay automatically
@@ -81,8 +88,15 @@ are passed through without buffering to disk.
 ## Notes / risks
 
 - Only needed for the ~70 HTTP-only channels; HTTPS channels never touch it.
+- Cloudflare refuses subrequests to bare IPv4 literals (`error 1003`), and most
+  IPTV panels are IP-only. The Worker therefore rewrites IP hosts to
+  `<ip>.nip.io` (which resolves to the same address) and follows redirects
+  manually so each hop is rewritten too.
+- A host that blocks Cloudflare's egress (520/522) or filters datacenter IPs
+  will not play through this relay; the page detects that and offers the raw
+  link for VLC instead of retrying forever.
 - Adult channels (e.g. Playboy) routed through Cloudflare may conflict with
   their acceptable-use policy. If the Worker gets suspended, the page falls
-  back to the "HTTP-only" notice automatically (no crash, no hang).
+  back to the notice automatically (no crash, no hang).
 - The relay forwards a VLC user-agent and `Referer`/`Origin` of the upstream
   host, because IPTV panels commonly reject requests without them.
