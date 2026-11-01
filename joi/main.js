@@ -73,6 +73,21 @@ function reframe() {
   camera.lookAt(focus);
 }
 
+// Box3.setFromObject includes invisible meshes, so build the box from visible
+// geometry only - otherwise a hidden part still inflates the framing.
+function visibleBox(root) {
+  const out = new THREE.Box3();
+  const one = new THREE.Box3();
+  root.updateMatrixWorld(true);
+  root.traverse((o) => {
+    if (!o.isMesh || !o.geometry) return;
+    for (let p = o; p; p = p.parent) if (!p.visible) return;
+    one.setFromObject(o);
+    if (!one.isEmpty()) out.union(one);
+  });
+  return out;
+}
+
 const key = new THREE.DirectionalLight(0xffffff, 2.4);
 key.position.set(1.6, 2.6, 2.2);
 scene.add(key);
@@ -107,7 +122,20 @@ loader.load(
     vrm.scene.rotation.y = 0.15;
     scene.add(vrm.scene);
 
-    const box = new THREE.Box3().setFromObject(vrm.scene);
+    // This model ships a huge mechanical arm (robo_arm_1/2/3, 1.65 m long) that
+    // hangs off her shoulder at neck height. It dominated the frame and read as
+    // a white robot arm, so hide it. This is a runtime change: the .vrm file is
+    // untouched and the meshes stay in the graph, so it can be toggled back.
+    const hiddenParts = [];
+    vrm.scene.traverse((o) => {
+      if (o.isMesh && /^robo_arm/i.test(o.name)) {
+        o.visible = false;
+        hiddenParts.push(o.name);
+      }
+    });
+    console.log("[peaches] hidden meshes:", hiddenParts.join(", ") || "(none)");
+
+    const box = visibleBox(vrm.scene);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     console.log(
@@ -142,6 +170,19 @@ loader.load(
       "h", h.toFixed(2), "dist", camera.position.distanceTo(frameTarget.focus).toFixed(2)
     );
     if (PROBE) {
+      const m = vrm.meta || {};
+      console.log(
+        "[peaches] meta",
+        JSON.stringify({
+          name: m.name,
+          authors: m.authors,
+          modification: m.modification,
+          commercialUsage: m.commercialUsage,
+          creditNotation: m.creditNotation,
+          allowRedistribution: m.allowRedistribution,
+          licenseUrl: m.licenseUrl,
+        })
+      );
       vrm.scene.traverse((o) => {
         if (!o.isMesh) return;
         const b = new THREE.Box3().setFromObject(o);
