@@ -1,3 +1,9 @@
+// Peaches viewer — VRM 1.0 expressions, visemes, and TTS-driven lip-sync.
+//
+// Copyright (c) 2026 ddudek11567-tech. All rights reserved. See LICENSE.md.
+// Avatar "Seed-san" (c) VirtualCast, Inc. — VRM 1.0, used with credit.
+// Depends on three.js (MIT) and @pixiv/three-vrm (MIT).
+
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { VRMLoaderPlugin, VRMExpressionPresetName } from "@pixiv/three-vrm";
@@ -6,7 +12,12 @@ import { VRMLoaderPlugin, VRMExpressionPresetName } from "@pixiv/three-vrm";
 // works from any URL path (e.g. /peaches.html or /joi/).
 const BASE = new URL(".", import.meta.url);
 const MODEL_URL = new URL("models/Seed-san.vrm", BASE).href;
-const TTS_URL = "http://127.0.0.1:8880/tts";
+// Prefer the same-origin /tts endpoint, which carries the auth cookie and works
+// whether the page is served by serve.py locally or in the cloud. Fall back to a
+// standalone Kokoro server when this page is opened as a standalone file.
+const SAME_ORIGIN_TTS = "/tts";
+const LOCAL_TTS = "http://127.0.0.1:8880/api/tts";
+let ttsUrl = location.protocol === "file:" ? LOCAL_TTS : SAME_ORIGIN_TTS;
 
 // ?probe=1 enables framebuffer readback so a rendered character can be verified
 // numerically (no human or model eyes required).
@@ -73,7 +84,7 @@ loader.load(
     // In three-vrm 3.x the VRM is attached to gltf.userData by VRMLoaderPlugin.
     vrm = gltf.userData.vrm;
     if (!vrm) {
-      console.error("[joi] gltf loaded but no VRM in userData - wrong plugin or VRM version");
+      console.error("[peaches] gltf loaded but no VRM in userData - wrong plugin or VRM version");
       fail("This file is not a VRM 1.0 avatar.");
       return;
     }
@@ -83,7 +94,7 @@ loader.load(
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    console.log("[joi] avatar height (m):", size.y.toFixed(3), "center:", center.toArray());
+    console.log("[peaches] avatar height (m):", size.y.toFixed(3), "center:", center.toArray());
 
     // Frame the head. The bounding-box centre is at half height, so adding a
     // fraction of height to it aims the camera above the head, into empty space.
@@ -94,7 +105,7 @@ loader.load(
     const focus = new THREE.Vector3(center.x, headY, center.z);
     camera.position.set(focus.x, headY + h * 0.04, focus.z + h * 0.36);
     camera.lookAt(focus);
-    console.log("[joi] frame: head y", headY.toFixed(2), "top", top.toFixed(2));
+    console.log("[peaches] frame: head y", headY.toFixed(2), "top", top.toFixed(2));
 
     wireUi(vrm);
     boot.classList.add("gone");
@@ -106,19 +117,17 @@ loader.load(
     if (ev.total) status("Loading avatar…", Math.round((ev.loaded / ev.total) * 100));
   },
   (err) => {
-    console.error("[joi] model load failed", err);
+    console.error("[peaches] model load failed", err);
     fail("Could not load the avatar: " + err.message);
   }
 );
 
 // ---------------------------------------------------------------- expressions
-let current = "neutral";
 const activeButtons = new Map();
 
 function setExpression(name, weight = 1) {
   if (!vrm) return;
   const n = name === "_rest" ? VRMExpressionPresetName.neutral : name;
-  current = n;
   vrm.expressionManager.setValue(n, weight);
   for (const [btnName, el] of activeButtons) el.classList.toggle("on", btnName === name);
 }
@@ -131,8 +140,8 @@ function wireUi(v) {
   const available = new Set(em.expressions.map((e) => e.expressionName));
   const wanted = ["neutral", "happy", "angry", "sad", "relaxed", "surprised", "fun", "blink"];
   const missing = wanted.filter((w) => !available.has(w));
-  console.log("[joi] expressions:", [...available].join(", "));
-  if (missing.length) console.warn("[joi] model lacks presets:", missing.join(", "));
+  console.log("[peaches] expressions:", [...available].join(", "));
+  if (missing.length) console.warn("[peaches] model lacks presets:", missing.join(", "));
 
   document.querySelectorAll("[data-expr]").forEach((b) => {
     const name = b.dataset.expr;
@@ -147,11 +156,11 @@ function wireUi(v) {
 
   document.querySelectorAll("[data-viseme]").forEach((b) => {
     b.addEventListener("click", () => {
-      const v2 = b.dataset.viseme;
-      const val = v2 === "_rest" ? 0 : 1;
-      if (v2 !== "_rest") setExpression("neutral");
-      em.setValue(VRMExpressionPresetName.neutral, v2 === "_rest" ? 1 : 0);
-      if (v2 !== "_rest") em.setValue(v2, val);
+      const name = b.dataset.viseme;
+      const val = name === "_rest" ? 0 : 1;
+      if (name !== "_rest") em.setValue(VRMExpressionPresetName.neutral, 0);
+      else em.setValue(VRMExpressionPresetName.neutral, 1);
+      if (name !== "_rest") em.setValue(name, val);
       for (const el of document.querySelectorAll("[data-viseme]")) el.classList.remove("on");
       b.classList.add("on");
     });
@@ -169,39 +178,61 @@ let activeAudio = null;
 
 const VISEMES = ["aa", "ih", "ou", "ee", "oh"];
 
+async function requestTTS(url, text) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    // Same-origin requests must carry the session cookie.
+    credentials: "same-origin",
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.blob();
+}
+
 async function speak(text) {
   if (!vrm) return;
-  console.log("[joi] requesting TTS:", text);
+  console.log("[peaches] requesting TTS:", text);
 
-  let res;
+  let blob = null;
   try {
-    res = await fetch(TTS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
+    blob = await requestTTS(ttsUrl, text);
   } catch (e) {
-    console.warn("[joi] TTS service unreachable at", TTS_URL, "- falling back to demo visemes");
-    return demoLipsync(2.2);
-  }
-  if (!res.ok) {
-    console.warn("[joi] TTS returned", res.status, "- falling back to demo visemes");
-    return demoLipsync(2.2);
+    console.warn(`[peaches] TTS failed at ${ttsUrl}: ${e.message}`);
+    // If same-origin is unavailable, try a standalone local Kokoro server once.
+    if (ttsUrl !== LOCAL_TTS) {
+      try {
+        blob = await requestTTS(LOCAL_TTS, text);
+        ttsUrl = LOCAL_TTS;
+        console.log("[peaches] using local Kokoro fallback");
+      } catch (e2) {
+        console.warn(`[peaches] local fallback also failed: ${e2.message}`);
+      }
+    }
   }
 
-  const blob = await res.blob();
+  if (!blob) {
+    console.warn("[peaches] no audio; showing demo lip-sync instead");
+    return demoLipsync(2.2);
+  }
   playWithVisemes(blob);
 }
 
 /** Rough amplitude-driven visemes from the live audio signal. */
 function playWithVisemes(blob) {
   audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-  if (activeAudio) { activeAudio.src.stop(); }
+  // Stop any in-flight clip before starting a new one. Audio elements have
+  // .pause(); there is no .src.stop().
+  if (activeAudio) {
+    activeAudio.onended = null;
+    activeAudio.pause();
+    for (const n of VISEMES) vrm.expressionManager.setValue(n, 0);
+  }
 
   const url = URL.createObjectURL(blob);
   const audio = new Audio(url);
   activeAudio = audio;
-  audio.play().catch((e) => console.warn("[joi] autoplay blocked:", e.message));
+  audio.play().catch((e) => console.warn("[peaches] autoplay blocked:", e.message));
 
   const src = audioCtx.createMediaElementSource(audio);
   const analyser = audioCtx.createAnalyser();
@@ -296,7 +327,7 @@ function probe() {
   // Kept short and single-line on purpose: Chrome's log emitter hard-wraps
   // long lines, which breaks downstream parsing.
   console.log(
-    `[joi] PROBEOK frame=${probeFrame} cover=${result.coverage} colors=${result.distinctColors} tris=${result.triangles} calls=${result.calls} expr=${result.expressionNames} inScene=${result.inScene} cam=${result.camera.join("/")} w=${w} h=${h}`
+    `[peaches] PROBEOK frame=${probeFrame} cover=${result.coverage} colors=${result.distinctColors} tris=${result.triangles} calls=${result.calls} expr=${result.expressionNames} inScene=${result.inScene} cam=${result.camera.join("/")} w=${w} h=${h}`
   );
   window.__joiProbe = result;
 }
