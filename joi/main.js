@@ -58,6 +58,21 @@ const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 0.1, 10
 camera.position.set(0, 1.35, 0.9);
 camera.lookAt(0, 1.25, 0);
 
+// Filled in once the avatar loads; reframe() needs it on every resize.
+let frameTarget = null;
+
+// Fit the whole figure in view for the current aspect ratio. Called on load and
+// on resize, so a narrow window crops nothing.
+function reframe() {
+  if (!frameTarget) return;
+  const { focus, height, width } = frameTarget;
+  const vFov = THREE.MathUtils.degToRad(camera.fov);
+  const tan = 2 * Math.tan(vFov / 2);
+  const dist = Math.max(height / tan, width / (tan * camera.aspect)) * 1.18;
+  camera.position.set(focus.x, focus.y + height * 0.02, focus.z + dist);
+  camera.lookAt(focus);
+}
+
 const key = new THREE.DirectionalLight(0xffffff, 2.4);
 key.position.set(1.6, 2.6, 2.2);
 scene.add(key);
@@ -70,6 +85,7 @@ addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
+  reframe();
 });
 
 // ---------------------------------------------------------------- load VRM
@@ -94,18 +110,50 @@ loader.load(
     const box = new THREE.Box3().setFromObject(vrm.scene);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    console.log("[peaches] avatar height (m):", size.y.toFixed(3), "center:", center.toArray());
+    console.log(
+      "[peaches] box min", box.min.toArray().map((n) => +n.toFixed(2)).join("/"),
+      "max", box.max.toArray().map((n) => +n.toFixed(2)).join("/"),
+      "size", size.toArray().map((n) => +n.toFixed(2)).join("/")
+    );
 
-    // Frame the head. The bounding-box centre is at half height, so adding a
-    // fraction of height to it aims the camera above the head, into empty space.
-    // Anchor to the top of the box instead.
+    // Do NOT frame on the bounding-box centre. This model's box is 2.24 m wide
+    // (the robo_arm meshes) and lopsided, x -0.79..1.45, so its centre sits
+    // 0.33 m off the body axis. Framing there put the head off the right edge,
+    // and a 0.36*h camera distance left it 0.57 m from a 1.58 m figure - i.e.
+    // inside the chest, which rendered as a white blob.
+    //
+    // Take the body axis from the humanoid head bone, use the box only for
+    // height, and solve the distance that actually fits the figure in frame.
     const h = size.y;
-    const top = box.max.y;
-    const headY = top - h * 0.13;
-    const focus = new THREE.Vector3(center.x, headY, center.z);
-    camera.position.set(focus.x, headY + h * 0.04, focus.z + h * 0.36);
-    camera.lookAt(focus);
-    console.log("[peaches] frame: head y", headY.toFixed(2), "top", top.toFixed(2));
+    vrm.scene.updateMatrixWorld(true);
+    const headBone = vrm.humanoid?.getNormalizedBoneNode("head");
+    const headPos = new THREE.Vector3();
+    if (headBone) headBone.getWorldPosition(headPos);
+    else headPos.set(center.x, box.max.y - h * 0.13, center.z);
+
+    frameTarget = {
+      focus: new THREE.Vector3(headPos.x, box.min.y + h * 0.5, headPos.z),
+      height: h,
+      width: size.x,
+    };
+    reframe();
+    console.log(
+      "[peaches] frame: axis", headPos.x.toFixed(2), headPos.z.toFixed(2),
+      "h", h.toFixed(2), "dist", camera.position.distanceTo(frameTarget.focus).toFixed(2)
+    );
+    if (PROBE) {
+      vrm.scene.traverse((o) => {
+        if (!o.isMesh) return;
+        const b = new THREE.Box3().setFromObject(o);
+        if (b.isEmpty()) return;
+        const s = b.getSize(new THREE.Vector3());
+        console.log(
+          "[peaches] mesh", o.name || "(unnamed)",
+          "min", b.min.toArray().map((n) => +n.toFixed(2)).join("/"),
+          "size", s.toArray().map((n) => +n.toFixed(2)).join("/")
+        );
+      });
+    }
 
     wireUi(vrm);
     boot.classList.add("gone");
