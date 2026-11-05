@@ -30,6 +30,22 @@ body{background:#020204;color:#fff;font-family:'Inter',sans-serif}
 .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;border-radius:50%;background:#22d3ee;cursor:pointer;border:2px solid rgba(0,0,0,.4)}
 .vol-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#22d3ee;cursor:pointer;border:2px solid rgba(0,0,0,.4)}
 .vol-slider::-moz-range-track{height:4px;border-radius:2px;background:rgba(255,255,255,.2)}
+
+/* FULLSCREEN
+   The custom bar covers the <video> controls, and the browser's own fullscreen
+   button lives there, so the page provides the toggle. .nx-fs is a CSS stand-in
+   for when requestFullscreen() is refused (an iframe without allowfullscreen,
+   iOS, a locked-down browser); the id selector lets it win over Tailwind's
+   height utilities. */
+#playerWrapper:fullscreen,
+#playerWrapper.nx-fs{width:100%;height:100%;max-width:none;max-height:none;background:#000}
+#playerWrapper.nx-fs{position:fixed;inset:0;z-index:9990}
+#playerWrapper:fullscreen{position:fixed;inset:0}
+/* Leave room for the browser's own control bar, which sits at the very bottom. */
+#playerWrapper:fullscreen #playerControlsBar,
+#playerWrapper.nx-fs #playerControlsBar{bottom:5rem}
+#playerWrapper:fullscreen #videoPlayer,
+#playerWrapper.nx-fs #videoPlayer{background:#000}
 </style>
 </head>
 <body class="grain antialiased">
@@ -97,7 +113,7 @@ https://trending4ever.com/iptv.html
 <span id="pipChannelName">Live Stream Monitor</span>
 </div>
 <!-- PLAYER CONTROLS BAR -->
-    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 py-3 flex items-center justify-between">
+    <div id="playerControlsBar" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <button onclick="toggleMute()" id="muteBtn" class="text-white/80 hover:text-white transition text-sm"><i class="fa-solid fa-volume-high"></i></button>
       <input type="range" id="volumeSlider" class="vol-slider" min="0" max="1" step="0.05" value="1" oninput="setVolume(this.value)">
@@ -110,6 +126,7 @@ https://trending4ever.com/iptv.html
       <button onclick="timeshift(10)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 10s"><i class="fa-solid fa-rotate-right"></i></button>
       <button onclick="timeshift(30)" class="text-white/80 hover:text-cyan-300 transition text-sm" title="Forward 30s"><i class="fa-solid fa-forward"></i></button>
       <span id="tsIndicator" class="text-[10px] text-cyan-400 ml-2 hidden"></span>
+      <button onclick="toggleFullscreen(event)" id="fsBtn" class="ml-2 text-white/80 hover:text-cyan-300 transition text-sm" title="Fullscreen (F)" aria-label="Toggle fullscreen"><i class="fa-solid fa-expand"></i></button>
     </div>
   </div>
   <div class="absolute bottom-3 left-4 right-4 flex items-center gap-2">
@@ -1644,6 +1661,110 @@ let userPaused = false;
 let __wantPlay = false;
 
 function playerVideo() { return document.getElementById('videoPlayer'); }
+
+// ===== FULLSCREEN =====
+let _fsFallbackTimer = null;
+// The page's control bar sits over the <video> controls, which is where the
+// browser's fullscreen button normally lives, so the page owns the toggle.
+// Requesting on #playerWrapper (not the <video>) keeps the volume/timeshift
+// bar and the status notices usable while fullscreen.
+function fsElement() { return document.getElementById('playerWrapper'); }
+function nativeFsElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+function fsActive() {
+  const el = fsElement();
+  return !!(nativeFsElement() || (el && el.classList.contains('nx-fs')));
+}
+function updateFullscreenUi() {
+  const el = fsElement();
+  if (nativeFsElement() && el) el.classList.remove('nx-fs'); // API worked: drop the stand-in
+  const pseudo = !!(el && el.classList.contains('nx-fs'));
+  if (!pseudo && _fsHome) restoreFsHome();
+  const on = pseudo || !!nativeFsElement();
+  const btn = document.getElementById('fsBtn');
+  if (btn) {
+    const i = btn.querySelector('i');
+    if (i) i.className = on ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+    btn.title = on ? 'Exit fullscreen (F)' : 'Fullscreen (F)';
+    btn.setAttribute('aria-label', btn.title);
+  }
+  document.body.style.overflow = pseudo ? 'hidden' : '';
+}
+// A transformed ancestor (the card's .fade-in animation leaves one behind)
+// becomes the containing block for position:fixed, which would pin this box to
+// the card instead of the window. Moving the wrapper to <body> while it is
+// pseudo-fullscreen avoids that; Chrome keeps the <video> playing across the
+// move (verified), and it is restored on exit.
+let _fsHome = null;
+function restoreFsHome() {
+  const el = fsElement();
+  if (!el || !_fsHome) return;
+  if (_fsHome.next && _fsHome.next.parentNode === _fsHome.parent) _fsHome.parent.insertBefore(el, _fsHome.next);
+  else _fsHome.parent.appendChild(el);
+  _fsHome = null;
+}
+// CSS stand-in for browsers that refuse requestFullscreen() (iframe without
+// allowfullscreen, iOS, some embedded webviews). Same layout, no API needed.
+function enterPseudoFullscreen() {
+  clearTimeout(_fsFallbackTimer);
+  const el = fsElement();
+  if (!el) return;
+  if (el.parentElement !== document.body) {
+    _fsHome = { parent: el.parentElement, next: el.nextSibling };
+    document.body.appendChild(el);
+  }
+  el.classList.add('nx-fs');
+  updateFullscreenUi();
+}
+function exitFullscreen() {
+  clearTimeout(_fsFallbackTimer);
+  const el = fsElement();
+  try {
+    if (nativeFsElement()) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+  } catch (e) {}
+  if (el) el.classList.remove('nx-fs');
+  restoreFsHome();
+  updateFullscreenUi();
+}
+function toggleFullscreen(ev) {
+  if (ev) { if (ev.stopPropagation) ev.stopPropagation(); }
+  const el = fsElement();
+  const v = playerVideo();
+  if (!el) return;
+  if (fsActive()) { exitFullscreen(); return; }
+
+  // iPhone/iPad: only the <video> element can go fullscreen.
+  if (v && v.webkitEnterFullscreen && /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    try { v.webkitEnterFullscreen(); return; } catch (e) {}
+  }
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (!req) { enterPseudoFullscreen(); return; }
+  let p = null;
+  try { p = req.call(el, { navigationUI: 'hide' }); } catch (e) { p = null; }
+  if (p && typeof p.then === 'function') {
+    p.then(() => updateFullscreenUi(), () => { if (!fsActive()) enterPseudoFullscreen(); });
+  }
+  // Some embeds leave that promise pending forever (an iframe that is not
+  // allowed to go fullscreen), so never wait on it alone.
+  clearTimeout(_fsFallbackTimer);
+  _fsFallbackTimer = setTimeout(() => { if (!fsActive()) enterPseudoFullscreen(); }, 600);
+}
+['fullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(evt => {
+  document.addEventListener(evt, updateFullscreenUi);
+});
+document.addEventListener('keydown', e => {
+  if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+  if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+  else if (e.key === 'Escape' && fsElement() && fsElement().classList.contains('nx-fs')) { exitFullscreen(); }
+});
+document.addEventListener('DOMContentLoaded', () => updateFullscreenUi());
 
 function playerShellHtml() {
   return '<video id="videoPlayer" class="w-full h-full absolute inset-0 object-contain bg-black" controls autoplay playsinline></video>'
