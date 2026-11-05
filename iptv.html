@@ -1480,6 +1480,22 @@ function viaRelay(u) {
     return RELAY_BASE + (RELAY_BASE.includes('?') ? '&' : '?') + 'u=' + encodeURIComponent(u);
 }
 
+// Local relay (pb-relay/pb_relay.py, run on the viewer's own PC) for the stream
+// hosts that refuse Cloudflare egress. vividmedia.xyz answers 520 to every
+// Worker request, so no HTTPS relay can ever reach it. Chrome and Edge treat
+// http://127.0.0.1 as a secure origin, so an HTTPS page may talk to it without
+// hitting mixed-content rules -- this is the one HTTP source that still works.
+const LOCAL_RELAY = 'http://127.0.0.1:8791/live.m3u8';
+const LOCAL_RELAY_HOST = /vividmedia\.xyz|185\.150\.189\.223/i;
+function isLocalRelayUrl(u) {
+    return /^http:\/\/(?:127\.0\.0\.1|localhost)[:/]/i.test(String(u || ''));
+}
+function wantsLocalRelay(ch) {
+    if (!ch) return false;
+    const urls = [ch.url].concat(normalizeAlternates(ch.alternates));
+    return urls.some(u => LOCAL_RELAY_HOST.test(String(u || '')));
+}
+
 // Ordered list of sources for a channel: primary first, then verified fallbacks.
 // On an HTTPS page, HTTP sources are blocked by mixed-content rules, so HTTPS
 // sources are promoted ahead of them (or routed through the relay above).
@@ -1491,7 +1507,11 @@ function channelStreams(ch) {
     };
     if (ch) { push(ch.url); normalizeAlternates(ch.alternates).forEach(push); }
     const list = out.map(viaRelay);
-    if (location.protocol === 'https:') {
+    if (wantsLocalRelay(ch)) {
+        // The local relay is the only source that can play this host, so it
+        // goes first and the HTTPS-first reorder below must not demote it.
+        list.unshift(LOCAL_RELAY);
+    } else if (location.protocol === 'https:') {
         list.sort((a, b) => (/^https:/i.test(b) ? 1 : 0) - (/^https:/i.test(a) ? 1 : 0));
     }
     return list;
@@ -1648,6 +1668,7 @@ function showRetryNotice(msg) {
 // Strip the relay wrapper back off so links/copies point at the real stream.
 function rawSourceUrl(u) {
   try {
+    if (isLocalRelayUrl(u) && currentChannel && currentChannel.url) return currentChannel.url;
     if (RELAY_BASE && String(u).indexOf(RELAY_BASE) === 0) {
       return decodeURIComponent(new URL(u).searchParams.get('u') || '') || u;
     }
@@ -1697,6 +1718,32 @@ function showBlockedByHostNotice(url) {
   hideReconnecting();
 }
 function hideReconnecting() { if (_statusKind === 'info') setStreamStatus(''); }
+
+// The local relay is not running (or died). Say exactly what to start rather
+// than leaving the player retrying a port that nothing is listening on.
+function showLocalRelayNotice(url) {
+  setStreamStatus('<span>This host only plays through the small relay on this PC, and it is not running. Start it with the <b>Playboy relay</b> shortcut on the desktop, then Retry.</span>'
+    + ' <button onclick="event.stopPropagation();retryCurrentChannel()" class="ml-1 underline font-semibold text-cyan-300">Retry</button>'
+    + streamLinksHtml(url), 'retry');
+  clearInterval(_playwatch);
+  _playwatch = null;
+  destroyEngines();
+  const v = playerVideo();
+  if (v) { try { v.pause(); } catch (e) {} }
+  hideReconnecting();
+}
+function probeLocalRelay(url) {
+  setStreamStatus('Connecting to local relay…', 'info');
+  fetch(url, { cache: 'no-store' })
+    .then(res => {
+      if (currentActiveUrl !== url) return;
+      if (res.ok) attachStreamNow(url);
+      else showLocalRelayNotice(url);
+    })
+    .catch(() => {
+      if (currentActiveUrl === url) showLocalRelayNotice(url);
+    });
+}
 
 function syncMuteUi() {
   const v = playerVideo();
@@ -1826,6 +1873,7 @@ function attachStream(url) {
   if (!v || !currentChannel) return;
   if (!url) { showRetryNotice('No playable source for this channel.'); return; }
   currentActiveUrl = url;
+  if (isLocalRelayUrl(url)) return probeLocalRelay(url);
   if (isRelayUrl(url)) {
     const seen = _relayProbe.get(url);
     if (seen && Date.now() - seen.at < 60000) {
@@ -1846,7 +1894,8 @@ function attachStreamNow(url) {
 
   // Mixed content: an HTTPS page cannot load HTTP media or XHR. Use an HTTPS
   // alternate when there is one, otherwise explain it instead of hanging.
-  if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
+  // http://127.0.0.1 is exempt: it counts as a secure origin.
+  if (location.protocol === 'https:' && /^http:\/\//i.test(url) && !isLocalRelayUrl(url)) {
     const httpsAlt = channelStreams(currentChannel).find(u => /^https:\/\//i.test(u));
     if (httpsAlt) { currentActiveUrl = httpsAlt; return attachStream(httpsAlt); }
     showHttpOnlyNotice(url);
@@ -1892,7 +1941,7 @@ function attachStreamNow(url) {
 function playableSources(ch) {
   const all = channelStreams(ch);
   if (location.protocol !== 'https:') return all;
-  const https = all.filter(u => /^https:\/\//i.test(u));
+  const https = all.filter(u => /^https:\/\//i.test(u) || isLocalRelayUrl(u));
   return https.length ? https : all;
 }
 function firstPlayableUrl(ch) {
@@ -1933,7 +1982,7 @@ function startPlayWatch() {
 function checkPlayback() {
   const v = playerVideo();
   if (!v || !currentChannel || userPaused) return;
-  if (location.protocol === 'https:' && /^http:\/\//i.test(currentActiveUrl || '')) return;
+  if (location.protocol === 'https:' && /^http:\/\//i.test(currentActiveUrl || '') && !isLocalRelayUrl(currentActiveUrl)) return;
   const now = Date.now();
   if (!_lastProgress.at) _lastProgress.at = now;
 
